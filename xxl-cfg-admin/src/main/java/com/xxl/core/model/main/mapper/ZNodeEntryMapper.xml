@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ZNodeEntryMapper">
+	
+	<resultMap id="ZNodeEntry" type="com.xxl.core.model.ZNodeEntry" >
+	    <result column="znode_key" property="znodeKey" jdbcType="VARCHAR" />
+	    <result column="znode_value" property="znodeValue" jdbcType="VARCHAR" />
+	    <result column="znode_desc" property="znodeDesc" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.znode_key,
+		t.znode_value,
+		t.znode_desc
+	</sql>
+	
+	<select id="selectLikeKey" parameterType="java.util.HashMap" resultMap="ZNodeEntry">
+		SELECT <include refid="Base_Column_List" />
+		FROM znode_entity AS t
+		<trim prefix="WHERE">
+			<if test="znodeKey != null and znodeKey != '' ">   
+			t.znode_key like '${znodeKey}%'
+        	</if>   
+		</trim>
+	</select>
+	
+	<delete id="deleteByKey" parameterType="java.lang.String" >
+		DELETE FROM znode_entity WHERE znode_key = #{znodeKey}
+	</delete>
+	
+	<insert id="insert" parameterType="com.xxl.core.model.ZNodeEntry" >
+		INSERT INTO znode_entity(znode_key, znode_value, znode_desc)
+		VALUES(#{znodeKey}, #{znodeValue}, #{znodeDesc})
+	</insert>
+	
+	<select id="selectByKey" parameterType="java.util.HashMap" resultMap="ZNodeEntry">
+		SELECT <include refid="Base_Column_List" />
+		FROM znode_entity AS t
+		WHERE t.znode_key = #{znodeKey}
+	</select>
+	
+	<update id="update" parameterType="com.xxl.core.model.ZNodeEntry" >
+		UPDATE znode_entity 
+		SET znode_value = #{znodeValue}
+			, znode_desc = #{znodeDesc}
+		WHERE znode_key = #{znodeKey}
+	</update>
+	
+</mapper>
