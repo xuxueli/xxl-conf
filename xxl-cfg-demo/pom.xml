@@ -112,7 +112,7 @@
 		<dependency>
 			<groupId>com.xxl</groupId>
 			<artifactId>xxl-cfg-client</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1.0.0</version>
 		</dependency>
 
 	</dependencies>

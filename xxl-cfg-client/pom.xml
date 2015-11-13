@@ -7,6 +7,9 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>xxl-cfg-client</artifactId>
+	<version>1.0.0</version>
+	<name>xxl-cfg-client</name>
+	<packaging>jar</packaging>
 
 	<dependencies>
 
