@@ -30,7 +30,7 @@
 	
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="mapperLocations" value="classpath*:com/xxl/core/model/main/mapper/*.xml"/>
+		<property name="mapperLocations" value="classpath:mybatis-mapper/*.xml"/>
 	</bean>
     
     <!-- Template在Junit测试的时候，必须使用scope="prototype"，原因未知 -->
