@@ -14,10 +14,10 @@
 
 	<!-- Main数据源  -->
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-		<property name="driverClassName"><value>${jdbc.driverClassName}</value></property>
+		<property name="driverClassName"><value>${jdbc.driverClass}</value></property>
+		<property name="url"><value>${jdbc.url}</value></property>
 		<property name="username"><value>${jdbc.username}</value></property>
 		<property name="password"><value>${jdbc.password}</value></property>
-		<property name="url"><value>${jdbc.url}</value></property>
 		<property name="maxActive"><value>10</value></property>
 		<property name="maxWait"><value>10000</value></property>
 		<property name="maxIdle"><value>1</value></property>

@@ -25,11 +25,13 @@
 				<property name="location" value="classpath:freemarker.properties" />
 			</bean>
 		</property>
+		<!--
 		<property name="freemarkerVariables">
 			<bean class="org.springframework.beans.factory.config.PropertiesFactoryBean">
 				<property name="location" value="classpath:freemarker.variables.properties" />
 			</bean>
 		</property>
+		-->
 	</bean>
 
 	<!-- 加载多配置文件,占位符方式 : -->

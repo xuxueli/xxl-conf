@@ -5,10 +5,11 @@
 	<artifactId>xxl-cfg</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
+
 	<modules>
-		<module>xxl-cfg-client</module>
 		<module>xxl-cfg-admin</module>
-		<module>xxl-cfg-demo</module>
+		<module>xxl-cfg-core</module>
+		<module>xxl-cfg-example</module>
 	</modules>
 
 </project>

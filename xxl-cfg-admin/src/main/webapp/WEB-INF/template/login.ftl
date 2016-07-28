@@ -32,11 +32,11 @@
 			<p class="login-box-msg">分布式配置管理平台</p>
 			<form id="loginForm">
 				<div class="form-group has-feedback">
-					<input type="text" class="form-control" name="userName" placeholder="请输入账号" minlength="6" maxlength="18" value="xuxueli" >
+					<input type="text" class="form-control" name="userName" placeholder="请输入账号" minlength="6" maxlength="18" value="admin" >
 					<span class="glyphicon glyphicon-envelope form-control-feedback"></span>
 				</div>
 				<div class="form-group has-feedback">
-					<input type="password" class="form-control" name="password" placeholder="请输入密码" minlength="6" maxlength="18" value="111111" >
+					<input type="password" class="form-control" name="password" placeholder="请输入密码" minlength="6" maxlength="18" value="123456" >
 		            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
 				</div>
 				<div class="row">

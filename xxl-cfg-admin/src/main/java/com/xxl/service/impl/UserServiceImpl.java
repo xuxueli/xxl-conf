@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.xxl.core.constant.CommonDic.CommonReturn;
 import com.xxl.core.constant.CommonDic.ReturnCodeEnum;
-import com.xxl.core.model.UserMain;
 import com.xxl.core.result.ReturnT;
-import com.xxl.dao.IUserMainDao;
 import com.xxl.service.IUserService;
 import com.xxl.service.helper.LoginIdentitySessionHelper;
 
@@ -20,9 +18,7 @@ import com.xxl.service.helper.LoginIdentitySessionHelper;
  */
 @Service()
 public class UserServiceImpl implements IUserService {
-	
-	@Resource
-	private IUserMainDao userMainDao;
+
 	
 	/*
 	 * 登陆
@@ -36,12 +32,11 @@ public class UserServiceImpl implements IUserService {
 		if (StringUtils.isBlank(password)) {
 			return new ReturnT<String>(ReturnCodeEnum.FAIL.code(), "登陆失败,请输入密码");
 		}
-		UserMain userMain = userMainDao.selectByPwd(userName, password);
-		if (userMain == null) {
+		if (!userName.equals("admin") && !password.equals("123456")) {
 			return new ReturnT<String>(ReturnCodeEnum.FAIL.code(), "登陆失败,账号邮箱或密码错误");
 		}
 		
-		LoginIdentitySessionHelper.login(session, userMain);
+		LoginIdentitySessionHelper.login(session, userName, password);
 		return CommonReturn.success;
 	}
 	

@@ -8,7 +8,6 @@ public interface IUserService {
 
 	/**
 	 * 登陆
-	 * @param email
 	 * @param password
 	 * @return
 	 */

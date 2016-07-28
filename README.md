@@ -18,8 +18,8 @@ git.osc地址：http://git.oschina.net/xuxueli0323/xxl-cfg
 
 存储结构1.0
 ------------------------
-	服务器端：一个zk集群 + 一个zk路径  = 一套zk配置 = 一套sqlite配置	：/data/appcfg/xxl-cfg.properties
-	客户端：一个zk集群 + 一个zk路径 = 一套client配置					：/data/appcfg/xxl-cfg.properties
+	服务器端：一个zk集群 + 一个zk路径  = 一套zk配置 = 一套sqlite配置	：/data/webapps/xxl-cfg.properties
+	客户端：一个zk集群 + 一个zk路径 = 一套client配置					：/data/webapps/xxl-cfg.properties
 
 存储结构2.0（ing）
 ------------------------

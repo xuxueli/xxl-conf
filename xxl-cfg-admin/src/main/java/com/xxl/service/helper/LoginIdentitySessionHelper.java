@@ -1,14 +1,9 @@
 package com.xxl.service.helper;
 
-import java.lang.reflect.InvocationTargetException;
+import com.xxl.controller.core.LoginIdentity;
+import com.xxl.core.util.HttpSessionUtil;
 
 import javax.servlet.http.HttpSession;
-
-import org.apache.commons.beanutils.BeanUtils;
-
-import com.xxl.controller.core.LoginIdentity;
-import com.xxl.core.model.UserMain;
-import com.xxl.core.util.HttpSessionUtil;
 
 /**
  * 用户登陆信息，操作相关
@@ -17,30 +12,16 @@ import com.xxl.core.util.HttpSessionUtil;
  */
 public class LoginIdentitySessionHelper {
 	private static final String LOGIN_IDENTITY = "LOGIN_IDENTITY";
-	
-	/**
-	 * 填充“用户登录信息”
-	 * @param identity
-	 * @param user
-	 */
-	private static void fillin(LoginIdentity identity, UserMain user){
-		try {
-			BeanUtils.copyProperties(identity, user);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
-	}
+
 
 	/**
 	 * “用户登陆信息”-初始化
-	 * @param user
 	 */
-	public static void login(HttpSession session, UserMain user) {
+	public static void login(HttpSession session, String userName, String password) {
 		// 初始化用户登陆信息
 		LoginIdentity identity = new LoginIdentity();
-		fillin(identity, user);
+		identity.setUserName(userName);
+		identity.setPassword(password);
 		HttpSessionUtil.set(session, LOGIN_IDENTITY, identity);
 	}
 
