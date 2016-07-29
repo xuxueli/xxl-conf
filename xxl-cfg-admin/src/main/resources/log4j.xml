@@ -18,7 +18,6 @@
         </layout>
     </appender>
 
-    
     <root>
         <level value="INFO" />
         <appender-ref ref="CONSOLE" />
