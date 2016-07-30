@@ -1,5 +1,9 @@
-/.project
+# for eclipse
 /.settings/
+/.project
+
+# for idea
 *.iml
-.idea
+*/target
+/.idea
 .DS_Store
