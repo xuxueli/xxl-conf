@@ -16,6 +16,8 @@ public interface IXxlConfNodeService {
 
 	public ReturnT<String> deleteByKey(String znodeKey);
 
-	public ReturnT<String> freshConf(XxlConfNode node);
+	public ReturnT<String> add(XxlConfNode xxlConfNode);
+
+	public ReturnT<String> update(XxlConfNode xxlConfNode);
 
 }

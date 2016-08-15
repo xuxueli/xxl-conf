@@ -26,7 +26,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 	@Override
 	public Map<String,Object> pageList(int offset, int pagesize, String nodeKey) {
 
-		// node in mysql
+		// xxlConfNode in mysql
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("offset", offset);
 		params.put("pagesize", pagesize);
@@ -35,7 +35,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		List<XxlConfNode> data = xxlConfNodeDao.pageList(params);
 		int list_count = xxlConfNodeDao.pageListCount(params);
 
-		// node in mysql, fill value in zookeeper
+		// xxlConfNode in mysql, fill value in zookeeper
 		Set<String> dataSet = new HashSet<String>();
 		Map<String, String> zkOriginMap = XxlCfgClient.client.getAllData();
 		if (CollectionUtils.isNotEmpty(data)) {
@@ -47,7 +47,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 			}
 		}
 
-		// add node only in zookeeper
+		// add xxlConfNode only in zookeeper
 		if (MapUtils.isNotEmpty(zkOriginMap)) {
 			for (Map.Entry<String, String> zkNode: zkOriginMap.entrySet()) {
 				if (!dataSet.contains(zkNode.getKey())) {
@@ -77,17 +77,30 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 	}
 
 	@Override
-	public ReturnT<String> freshConf(XxlConfNode node) {
-		if (node == null || StringUtils.isBlank(node.getNodeKey())) {
-			return new ReturnT<String>(500, "操作失败,znodeKey不可为空");
+	public ReturnT<String> add(XxlConfNode xxlConfNode) {
+		if (xxlConfNode == null || StringUtils.isBlank(xxlConfNode.getNodeKey())) {
+			return new ReturnT<String>(500, "Key不可为空");
 		}
-		int ret = xxlConfNodeDao.update(node);
-		if (ret < 1) {
-			xxlConfNodeDao.insert(node);
+		XxlConfNode existNode = xxlConfNodeDao.selectByKey(xxlConfNode.getNodeKey());
+		if (existNode!=null) {
+			return new ReturnT<String>(500, "Key对应的配置已经存在,不可重复添加");
 		}
-		XxlCfgClient.client.setData(node.getNodeKey(), node.getNodeValue());
+		xxlConfNodeDao.insert(xxlConfNode);
+		XxlCfgClient.client.setData(xxlConfNode.getNodeKey(), xxlConfNode.getNodeValue());
 		return ReturnT.SUCCESS;
 	}
-	
-	
+
+	@Override
+	public ReturnT<String> update(XxlConfNode xxlConfNode) {
+		if (xxlConfNode == null || StringUtils.isBlank(xxlConfNode.getNodeKey())) {
+			return new ReturnT<String>(500, "Key不可为空");
+		}
+		int ret = xxlConfNodeDao.update(xxlConfNode);
+		if (ret < 1) {
+			return new ReturnT<String>(500, "Key对应的配置不存在,请确认");
+		}
+		XxlCfgClient.client.setData(xxlConfNode.getNodeKey(), xxlConfNode.getNodeValue());
+		return ReturnT.SUCCESS;
+	}
+
 }

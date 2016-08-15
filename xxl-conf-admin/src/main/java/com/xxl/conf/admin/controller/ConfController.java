@@ -48,16 +48,27 @@ public class ConfController {
 	public ReturnT<String> delete(String nodeKey){
 		return xxlConfNodeService.deleteByKey(nodeKey);
 	}
+
+	/**
+	 * create/update
+	 * @return
+	 */
+	@RequestMapping("/add")
+	@ResponseBody
+	@PermessionLimit
+	public ReturnT<String> add(XxlConfNode xxlConfNode){
+		return xxlConfNodeService.add(xxlConfNode);
+	}
 	
 	/**
 	 * create/update
 	 * @return
 	 */
-	@RequestMapping("/freshConf")
+	@RequestMapping("/update")
 	@ResponseBody
 	@PermessionLimit
-	public ReturnT<String> freshConf(XxlConfNode xxlConfNode){
-		return xxlConfNodeService.freshConf(xxlConfNode);
+	public ReturnT<String> update(XxlConfNode xxlConfNode){
+		return xxlConfNodeService.update(xxlConfNode);
 	}
 	
 }

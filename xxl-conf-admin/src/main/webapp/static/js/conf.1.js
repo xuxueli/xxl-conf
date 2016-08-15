@@ -148,7 +148,7 @@ $(function(){
             element.parent('div').append(error);  
         },
         submitHandler : function(form) {
-    		$.post(base_url + "/conf/freshConf", $("#addModal .form").serialize(), function(data, status) {
+    		$.post(base_url + "/conf/add", $("#addModal .form").serialize(), function(data, status) {
     			if (data.code == "200") {
     				ComAlert.show(1, "新增配置成功", function(){
 						confTable.fnDraw();
@@ -211,7 +211,7 @@ $(function(){
             element.parent('div').append(error);  
         },
         submitHandler : function(form) {
-    		$.post(base_url + "/conf/freshConf", $("#updateModal .form").serialize(), function(data, status) {
+    		$.post(base_url + "/conf/update", $("#updateModal .form").serialize(), function(data, status) {
     			if (data.code == "200") {
     				ComAlert.show(1, "更新配置成功", function(){
 						confTable.fnDraw();
