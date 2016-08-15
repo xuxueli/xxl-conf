@@ -12,7 +12,7 @@
 	<!-- 启动Spring注解功能 -->
 	<context:annotation-config />
 	<!-- 配置bean作用域 -->
-	<context:component-scan base-package="com.xxl.service.impl, com.xxl.dao.impl" />
+	<context:component-scan base-package="com.xxl.conf.admin.service.impl, com.xxl.conf.admin.dao.impl" />
 
 	<!-- FreeMarker配置 (用处：springMvc视图解析器/生成HTML文件/邮件模板.生成HTML字符串) -->
 	<bean id="freemarkerConfig"
@@ -47,7 +47,7 @@
 		</property>
 	</bean>
 	
-	<bean id="xxlCfgPostProcessor" class="com.xxl.cfg.spring.XxlCfgPostProcessor">
+	<bean id="xxlCfgPostProcessor" class="com.xxl.conf.core.spring.XxlCfgPostProcessor">
         <property name="localPropPath" value="local.properties" />
     </bean>
 

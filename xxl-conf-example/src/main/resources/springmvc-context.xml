@@ -23,14 +23,11 @@
 	<!-- 启动MVC注解功能 -->
 	<mvc:annotation-driven /> 
 	<!-- 配置bean作用域 -->
-	<context:component-scan base-package="com.xxl.controller" />
+	<context:component-scan base-package="com.xxl.conf.example.controller" />
 	
 	<!-- 静态资源映射 （引用 "/resources/**" 的路径引用转到工程的/resources/目录取资源） -->
 	<mvc:resources mapping="/favicon.ico" location="/favicon.ico" />
-	<mvc:resources mapping="/images/**" location="/images/" />
-	<mvc:resources mapping="/css/**" location="/css/" />
-	<mvc:resources mapping="/js/**" location="/js/" />
-	<mvc:resources mapping="/plugin/**" location="/plugin/" />
+	<mvc:resources mapping="/static/**" location="/static/" />
 	<mvc:resources mapping="/**" location="/" />
 	
 	<!-- FreeMarker视图解析  -->

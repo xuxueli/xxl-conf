@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="XxlConfNodeMapper">
+	
+	<resultMap id="XxlConfNode" type="com.xxl.conf.admin.core.model.XxlConfNode" >
+		<result column="id" property="id" />
+		<result column="node_key" property="nodeKey" jdbcType="VARCHAR" />
+	    <result column="node_value" property="nodeValue" jdbcType="VARCHAR" />
+	    <result column="node_desc" property="nodeDesc" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.`id`,
+		t.`node_key`,
+		t.`node_value`,
+		t.`node_desc`
+	</sql>
+
+	<select id="pageList" parameterType="java.util.Map" resultMap="XxlConfNode">
+		SELECT <include refid="Base_Column_List" />
+		FROM XXL_CONF_NODE AS t
+		<trim prefix="WHERE" prefixOverrides="AND | OR" >
+			<if test="nodeKey != null and nodeKey != '' ">
+				t.node_key like '${nodeKey}%'
+			</if>
+		</trim>
+		ORDER BY t.id DESC
+		LIMIT #{offset}, #{pagesize}
+	</select>
+
+	<select id="pageListCount" parameterType="java.util.Map" resultType="int">
+		SELECT count(1)
+		FROM XXL_CONF_NODE AS t
+		<trim prefix="WHERE" prefixOverrides="AND | OR" >
+			<if test="nodeKey != null and nodeKey != '' ">
+				t.node_key like '${nodeKey}%'
+			</if>
+		</trim>
+	</select>
+
+	<delete id="deleteByKey" parameterType="java.lang.String" >
+		DELETE FROM XXL_CONF_NODE WHERE node_key = #{nodeKey}
+	</delete>
+	
+	<insert id="insert" parameterType="com.xxl.conf.admin.core.model.XxlConfNode" >
+		INSERT INTO XXL_CONF_NODE(node_key, node_value, node_desc)
+		VALUES(#{nodeKey}, #{nodeValue}, #{nodeDesc})
+	</insert>
+	
+	<select id="selectByKey" parameterType="java.lang.String" resultMap="XxlConfNode">
+		SELECT <include refid="Base_Column_List" />
+		FROM XXL_CONF_NODE AS t
+		WHERE t.node_key = #{nodeKey}
+	</select>
+	
+	<update id="update" parameterType="com.xxl.conf.admin.core.model.XxlConfNode" >
+		UPDATE XXL_CONF_NODE 
+		SET node_value = #{nodeValue}
+			, node_desc = #{nodeDesc}
+		WHERE node_key = #{nodeKey}
+	</update>
+	
+</mapper>

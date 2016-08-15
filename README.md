@@ -8,7 +8,12 @@ git.osc地址：http://git.oschina.net/xuxueli0323/xxl-conf
 
 博客地址(内附使用教程)：http://www.cnblogs.com/xuxueli/p/4777808.html
 
-邮件：931591021@qq.com
+
+
+/data/webapps/xxl-conf.properties
+
+zkserver=127.0.0.1:2181
+
 
 《分布式配置管理平台xxl-conf》
 ==============================================
