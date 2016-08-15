@@ -2,15 +2,15 @@
 ## 一、简介
 
 
-github地址：https://github.com/xuxueli/xxl-cfg
+github地址：https://github.com/xuxueli/xxl-conf
 
-git.osc地址：http://git.oschina.net/xuxueli0323/xxl-cfg
+git.osc地址：http://git.oschina.net/xuxueli0323/xxl-conf
 
 博客地址(内附使用教程)：http://www.cnblogs.com/xuxueli/p/4777808.html
 
 邮件：931591021@qq.com
 
-《分布式配置管理平台xxl-cfg》
+《分布式配置管理平台xxl-conf》
 ==============================================
 	基于zookeeper实现的配置管理平台，实时推送配置变更
 

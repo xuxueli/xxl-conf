@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>xxl-cfg-admin</title> 
+<title>xxl-conf-admin</title>
 
 <!-- Bootstrap 3.3.5 -->
 <link rel="stylesheet" href="${request.contextPath}/static/lte/bootstrap/css/bootstrap.min.css">

@@ -7,8 +7,8 @@ import java.util.Properties;
  * @author xuxueli 2015-8-28 10:37:43
  */
 public class Environment {
-	private static String environment_file = "/data/webapps/xxl-cfg.properties";
-	private static String base_dir = "/xxl-cfg";
+	private static String environment_file = "/data/webapps/xxl-conf.properties";
+	private static String base_dir = "/xxl-conf";
 	
 	// 环境：beta qa	product
 	private static String deployenv;

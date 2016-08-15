@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>xxl-cfg-admin</title> 
+<title>xxl-conf-admin</title>
 
 <#import "/common/common.macro.ftl" as netCommon>
 <@netCommon.commonStyle />

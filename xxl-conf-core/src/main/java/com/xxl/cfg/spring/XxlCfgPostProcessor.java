@@ -1,11 +1,6 @@
 package com.xxl.cfg.spring;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.Properties;
-
+import com.xxl.cfg.core.XxlCfgLocalCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -20,7 +15,11 @@ import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.util.StringValueResolver;
 
-import com.xxl.cfg.core.XxlCfgLocalCache;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.Properties;
 
 /**
  * invoke between prop load and bean init	PlaceholderConfigurerSupport
@@ -46,15 +45,15 @@ public class XxlCfgPostProcessor implements BeanFactoryPostProcessor, PriorityOr
 			@Override
 			public String resolveStringValue(String strVal) {
 				StringBuffer buf = new StringBuffer(strVal);
-		        // loop replace by xxl-cfg, if the value match '${***}'
+		        // loop replace by xxl-conf, if the value match '${***}'
 				boolean start = strVal.startsWith(placeholderPrefix);
 		        boolean end = strVal.endsWith(placeholderSuffix);
 		        while (start && end) {
-		        	// replace by xxl-cfg
+		        	// replace by xxl-conf
 		        	String key = buf.substring(placeholderPrefix.length(), buf.length() - placeholderSuffix.length());
 		        	String zkValue = XxlCfgLocalCache.get(key, "");
 	        		buf = new StringBuffer(zkValue);
-	        		logger.info(">>>>>>>>>>> xxl-cfg resolved placeholder '" + key + "' to value [" + zkValue + "]");
+	        		logger.info(">>>>>>>>>>> xxl-conf resolved placeholder '" + key + "' to value [" + zkValue + "]");
 		        	start = buf.toString().startsWith(placeholderPrefix);
 		        	end = buf.toString().endsWith(placeholderSuffix);
 		        }
@@ -115,7 +114,7 @@ public class XxlCfgPostProcessor implements BeanFactoryPostProcessor, PriorityOr
 					XxlCfgLocalCache.setLocalProp(localProp);
 				}
 			} catch (Exception e) {
-				logger.error(">>>>>>>>> xxl-cfg local prop file not exists, file name : {}", localPropPath);
+				logger.error(">>>>>>>>> xxl-conf local prop file not exists, file name : {}", localPropPath);
 			} finally {
 				if (in != null) {
 					try {

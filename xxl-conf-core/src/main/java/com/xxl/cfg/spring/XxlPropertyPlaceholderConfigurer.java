@@ -1,9 +1,6 @@
 package com.xxl.cfg.spring;
 
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-
+import com.xxl.cfg.core.XxlCfgClient;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -12,18 +9,20 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 
-import com.xxl.cfg.core.XxlCfgClient;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
 
 /**
  * rewrite PropertyPlaceholderConfigurer
  * @version 1.0
  * @author xuxueli 2015-9-12 19:42:49
  * 
- * 	<!-- xxl-cfg 
+ * 	<!-- xxl-conf
 	<bean id="zkPropertyConfigurer" class="com.xxl.cfg.spring.XxlPropertyPlaceholderConfigurer">
 		<property name="order" value="2"/>
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
-		<property name="rootKey" value="xxl-cfg-demo" />
+		<property name="rootKey" value="xxl-conf-demo" />
 		<property name="locations">  
            <list>  
               <value>classpath:local.properties</value>  

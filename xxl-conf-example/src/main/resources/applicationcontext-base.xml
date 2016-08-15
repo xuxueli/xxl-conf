@@ -28,9 +28,9 @@
 	</bean>
 	
 	<bean id="config1" class="com.xxl.core.constant.Configuration">
-		<property name="key01" value="${xxl-cfg-demo.key01}" />
-		<property name="key02" value="${xxl-cfg-demo.key02}" />
-		<property name="key03" value="${${xxl-cfg-demo.key03}}" />
+		<property name="key01" value="${xxl-conf-demo.key01}" />
+		<property name="key02" value="${xxl-conf-demo.key02}" />
+		<property name="key03" value="${${xxl-conf-demo.key03}}" />
 	</bean>
 
 	<bean id="xxlCfgPostProcessor" class="com.xxl.cfg.spring.XxlCfgPostProcessor">

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>xxl-cfg-admin</title> 
+<title>xxl-conf-admin</title>
 
 <#import "/common/common.macro.ftl" as netCommon>
 <@netCommon.commonStyle />
@@ -30,7 +30,7 @@
 			<!-- Main content -->
 			<section class="content">
 				<div class="callout callout-info">
-					<h4>简介：xxl-cfg-admin</h4>
+					<h4>简介：xxl-conf-admin</h4>
 					<p>分布式配置管理平台：一套完整的基于zookeeper的分布式配置统一解决方案.</p>
 					<p></p>
 	            </div>
