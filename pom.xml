@@ -2,19 +2,19 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.xxl</groupId>
-	<artifactId>xxl-cfg</artifactId>
-	<version>${xxl.cfg.version}</version>
+	<artifactId>xxl-conf</artifactId>
+	<version>${xxl.conf.version}</version>
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>xxl-cfg-admin</module>
-		<module>xxl-cfg-core</module>
-		<module>xxl-cfg-example</module>
+		<module>xxl-conf-admin</module>
+		<module>xxl-conf-core</module>
+		<module>xxl-conf-example</module>
 	</modules>
 
 	<properties>
 		<spring.version>3.2.13.RELEASE</spring.version>
-		<xxl.cfg.version>1.1.0</xxl.cfg.version>
+		<xxl.conf.version>1.1.0</xxl.conf.version>
 	</properties>
 
 	<build>
