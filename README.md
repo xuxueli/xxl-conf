@@ -1,4 +1,7 @@
-# 分布式配置管理平台xxl-cfg
+# 《分布式配置管理平台xxl-conf》
+## 一、简介
+
+
 github地址：https://github.com/xuxueli/xxl-cfg
 
 git.osc地址：http://git.oschina.net/xuxueli0323/xxl-cfg

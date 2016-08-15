@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.xxl</groupId>
 	<artifactId>xxl-cfg</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${xxl.cfg.version}</version>
 	<packaging>pom</packaging>
 
 	<modules>
@@ -11,5 +11,33 @@
 		<module>xxl-cfg-core</module>
 		<module>xxl-cfg-example</module>
 	</modules>
+
+	<properties>
+		<spring.version>3.2.13.RELEASE</spring.version>
+		<xxl.cfg.version>1.1.0</xxl.cfg.version>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+					<encoding>UTF8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<archiveClasses>true</archiveClasses>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
