@@ -26,9 +26,11 @@ $(function(){
 				"visible" : true,
 				"render": function ( data, type, row ) {
 					if (row.nodeValue == row.nodeValueReal) {
-						return row.nodeValue;
+						var temp = (row.nodeValue.length > 20)? row.nodeValue.substring(0, 20)+'...' : row.nodeValue;
+						return "<span title='"+ row.nodeValue +"'>"+ temp +"</span>";;
 					} else {
-						var html = "<span style='color: red'>数据未同步:<br>Mysql="+ row.nodeValue +"<br> ZK="+ row.nodeValueReal +"</span>";
+						var tips = "Mysql:<hr>"+ row.nodeValue +"<br><br>ZK:<hr>"+ row.nodeValueReal +"</span>";
+						var html = "<span style='color: red'>数据未同步: <a href='javascript:;' class='tecTips' tips='"+ tips +"'>查看</a></span>";
 						return html;
 					}
 				}
@@ -82,6 +84,11 @@ $(function(){
 	
 	$("#searchBtn").click(function(){
 		confTable.fnDraw();
+	});
+
+	$("#conf_list").on('click', '.tecTips',function() {
+		var tips = $(this).attr("tips");
+		ComAlertTec.show(tips);
 	});
 	
 	// 删除
@@ -160,11 +167,10 @@ $(function(){
 	// 更新
 	$("#conf_list").on('click', '.update',function() {
 
-		//$("#updateModal .form input[name='id']").val($(this).attr("id"));
-		$("#updateModal .form input[name='nodeKey']").val($(this).attr("nodeKey"));
-		$("#updateModal .form input[name='nodeValue']").val($(this).attr("nodeValue"));
-		//$("#updateModal .form input[name='nodeValueReal']").val($(this).attr("nodeValueReal"));
-		$("#updateModal .form input[name='nodeDesc']").val($(this).attr("nodeDesc"));
+		$("#updateModal .form input[name='nodeKey']").val( $(this).parent('p').attr("nodeKey") );
+		$("#updateModal .form textarea[name='nodeValue']").val( $(this).parent('p').attr("nodeValue") );
+		//$("#updateModal .form input[name='nodeValueReal']").val( $(this).parent('p').attr("nodeKey") );
+		$("#updateModal .form input[name='nodeDesc']").val( $(this).parent('p').attr("nodeDesc") );
 
 		$('#updateModal').modal('show');
 	});
