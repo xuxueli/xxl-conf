@@ -20,22 +20,33 @@ $(function(){
 		"ordering": false,
 		//"scrollX": true,	// X轴滚动条，取消自适应
 		"columns": [
-			{ "data": 'id', "bSortable": false, "visible" : false},
 			{ "data": 'nodeKey', "visible" : true},
-			{ "data": 'nodeValue', "visible" : true},
-			{ "data": 'nodeValueReal', "visible" : true},
+			{
+				"data": 'nodeValue',
+				"visible" : true,
+				"render": function ( data, type, row ) {
+					if (row.nodeValue == row.nodeValueReal) {
+						return row.nodeValue;
+					} else {
+						var html = "<span style='color: red'>数据未同步:<br>Mysql="+ row.nodeValue +"<br> ZK="+ row.nodeValueReal +"</span>";
+						return html;
+					}
+				}
+			},
+			{ "data": 'nodeValueReal', "visible" : false},
 			{ "data": 'nodeDesc', "visible" : true},
 			{ "data": '操作' ,
 				"render": function ( data, type, row ) {
 					return function(){
 						// html
 						var html = '<p id="'+ row.id +'" '+
-							' key="'+ row.key +'" '+
-							' intro="'+ row.intro +'" '+
+							' nodeKey="'+ row.nodeKey +'" '+
+							' nodeValue="'+ row.nodeValue +'" '+
+							' nodeValueReal="'+ row.nodeValueReal +'" '+
+							' nodeDesc="'+ row.nodeDesc +'" '+
 							'>'+
-							'<button class="btn btn-primary btn-xs cache_manage" type="button">缓存操作</button>  '+
-							'<button class="btn btn-warning btn-xs cache_update" type="button">编辑</button>  '+
-							'<button class="btn btn-danger btn-xs cache_delete" type="button">删除</button>  '+
+							'<button class="btn btn-warning btn-xs update" type="button">编辑</button>  '+
+							'<button class="btn btn-danger btn-xs delete" type="button">删除</button>  '+
 							'</p>';
 
 						return html;
@@ -74,17 +85,13 @@ $(function(){
 	});
 	
 	// 删除
-	$(".delete").click(function(){
-		var znodeKey = $(this).attr("znodeKey");
-		if (!znodeKey) {
-			ComAlert.show(2, "znodeKey不可为空");
-			return;
-		}
-		ComConfirm.show("确定要删除：" + znodeKey, function(){
-			$.post(base_url + "/zkcfg/delete", {znodeKey:znodeKey}, function(data, status) {
-				if (data.code == "S") {
+	$("#conf_list").on('click', '.delete',function() {
+		var nodeKey = $(this).parent('p').attr("nodeKey");
+		ComConfirm.show("确定要删除配置：" + nodeKey, function(){
+			$.post( base_url + "/conf/delete", {"nodeKey" : nodeKey}, function(data, status) {
+				if (data.code == "200") {
 					ComAlert.show(1, "删除成功", function(){
-						$("#query").click();
+						confTable.fnDraw();
 					});
 				} else {
 					ComAlert.show(2, data.msg);
@@ -102,33 +109,26 @@ $(function(){
         errorClass : 'help-block',
         focusInvalid : true,  
         rules : {  
-        	znodeKey : {  
+        	nodeKey : {
         		required : true ,
                 minlength: 4,
                 maxlength: 100
             },  
-            znodeValue : {  
-            	required : false ,
-                maxlength: 100
-            },  
-            znodeDesc : {  
-            	required : false ,
-                maxlength: 100
+            nodeValue : {
+            	required : false
+            },
+            nodeDesc : {
+            	required : false
             }
         }, 
         messages : {  
-        	znodeKey : {  
-        		required :"请输入zondeKey."  ,
-                minlength:"密码不应低于4位",
-                maxlength:"密码不应超过100位"
+        	nodeKey : {
+        		required :'请输入"KEY".'  ,
+                minlength:'"KEY"不应低于4位',
+                maxlength:'"KEY"不应超过100位'
             },  
-            znodeValue : {
-            	required :"请输入znodeValue."  ,
-                maxlength:"密码不应超过100位"
-            },  
-            znodeDesc : {
-                maxlength:"密码不应超过100位"
-            }
+            nodeValue : {	},
+            nodeDesc : {	}
         }, 
 		highlight : function(element) {  
             $(element).closest('.form-group').addClass('has-error');  
@@ -141,10 +141,11 @@ $(function(){
             element.parent('div').append(error);  
         },
         submitHandler : function(form) {
-    		$.post(base_url + "/zkcfg/setData", $("#addModal .form").serialize(), function(data, status) {
-    			if (data.code == "S") {
+    		$.post(base_url + "/conf/freshConf", $("#addModal .form").serialize(), function(data, status) {
+    			if (data.code == "200") {
     				ComAlert.show(1, "新增配置成功", function(){
-    					$("#query").click();
+						confTable.fnDraw();
+						$('#addModal').modal('hide');
     				});
     			} else {
     				ComAlert.show(2, data.msg);
@@ -157,45 +158,42 @@ $(function(){
 	});
 	
 	// 更新
-	$(".update").click(function(){
-		$("#updateModal .form input[name='znodeKey']").val($(this).attr("znodeKey"));
-		$("#updateModal .form input[name='znodeValue']").val($(this).attr("znodeValue"));
-		$("#updateModal .form input[name='znodeDesc']").val($(this).attr("znodeDesc"));
+	$("#conf_list").on('click', '.update',function() {
+
+		//$("#updateModal .form input[name='id']").val($(this).attr("id"));
+		$("#updateModal .form input[name='nodeKey']").val($(this).attr("nodeKey"));
+		$("#updateModal .form input[name='nodeValue']").val($(this).attr("nodeValue"));
+		//$("#updateModal .form input[name='nodeValueReal']").val($(this).attr("nodeValueReal"));
+		$("#updateModal .form input[name='nodeDesc']").val($(this).attr("nodeDesc"));
+
 		$('#updateModal').modal('show');
 	});
 	var updateModalValidate = $("#updateModal .form").validate({
 		errorElement : 'span',  
         errorClass : 'help-block',
-        focusInvalid : true,  
-        rules : {  
-        	znodeKey : {  
-        		required : true ,
-                minlength: 4,
-                maxlength: 100
-            },  
-            znodeValue : {  
-            	required : false ,
-                maxlength: 100
-            },  
-            znodeDesc : {  
-            	required : false ,
-                maxlength: 100
-            }
-        }, 
-        messages : {  
-        	znodeKey : {  
-        		required :"请输入zondeKey."  ,
-                minlength:"密码不应低于4位",
-                maxlength:"密码不应超过100位"
-            },  
-            znodeValue : {
-            	required :"请输入znodeValue."  ,
-                maxlength:"密码不应超过100位"
-            },  
-            znodeDesc : {
-                maxlength:"密码不应超过100位"
-            }
-        }, 
+        focusInvalid : true,
+		rules : {
+			nodeKey : {
+				required : true ,
+				minlength: 4,
+				maxlength: 100
+			},
+			nodeValue : {
+				required : false
+			},
+			nodeDesc : {
+				required : false
+			}
+		},
+		messages : {
+			nodeKey : {
+				required :'请输入"KEY".'  ,
+				minlength:'"KEY"不应低于4位',
+				maxlength:'"KEY"不应超过100位'
+			},
+			nodeValue : {	},
+			nodeDesc : {	}
+		},
 		highlight : function(element) {  
             $(element).closest('.form-group').addClass('has-error');  
         },
@@ -207,10 +205,11 @@ $(function(){
             element.parent('div').append(error);  
         },
         submitHandler : function(form) {
-    		$.post(base_url + "/zkcfg/setData", $("#updateModal .form").serialize(), function(data, status) {
-    			if (data.code == "S") {
+    		$.post(base_url + "/conf/freshConf", $("#updateModal .form").serialize(), function(data, status) {
+    			if (data.code == "200") {
     				ComAlert.show(1, "更新配置成功", function(){
-    					$("#query").click();
+						confTable.fnDraw();
+						$('#updateModal').modal('hide');
     				});
     			} else {
     				ComAlert.show(2, data.msg);

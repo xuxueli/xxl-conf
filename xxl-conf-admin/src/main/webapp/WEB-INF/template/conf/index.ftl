@@ -52,9 +52,8 @@
 	                  	<table id="conf_list" class="table table-bordered table-hover">
 		                    <thead>
 		                      	<tr>
-                                    <th>ID</th>
 			                        <th>KEY</th>
-			                        <th>VALUE(mysql)</th>
+			                        <th>VALUE</th>
 			                        <th>VALUE(zk)</th>
 			                        <th>描述</th>
 			                        <th>操作</th>
@@ -103,16 +102,16 @@
 	         	<div class="modal-body">
 					<form class="form-horizontal form" role="form" >
 						<div class="form-group">
-							<label for="firstname" class="col-sm-2 control-label">键</label>
-							<div class="col-sm-10"><input type="text" class="form-control" name="nodeKey" placeholder="请输入zondeKey" minlength="4" maxlength="100" ></div>
+							<label for="firstname" class="col-sm-2 control-label">KEY</label>
+							<div class="col-sm-10"><input type="text" class="form-control" name="nodeKey" placeholder="请输入zondeKey" maxlength="100" ></div>
 						</div>
 						<div class="form-group">
-							<label for="lastname" class="col-sm-2 control-label">值</label>
-							<div class="col-sm-10"><input type="text" class="form-control" name="znodeValue" placeholder="请输入zondeValue" maxlength="100" ></div>
+							<label for="lastname" class="col-sm-2 control-label">VALUE</label>
+							<div class="col-sm-10"><input type="text" class="form-control" name="nodeValue" placeholder="请输入zondeValue" maxlength="512" ></div>
 						</div>
 						<div class="form-group">
 							<label for="lastname" class="col-sm-2 control-label">描述</label>
-							<div class="col-sm-10"><input type="text" class="form-control" name="znodeDesc" placeholder="请输入简介" maxlength="100" ></div>
+							<div class="col-sm-10"><input type="text" class="form-control" name="nodeDesc" placeholder="请输入简介" maxlength="100" ></div>
 						</div>
 						<div class="form-group">
 							<div class="col-sm-offset-2 col-sm-10">
@@ -135,18 +134,18 @@
 	         	</div>
 	         	<div class="modal-body">
 					<form class="form-horizontal form" role="form" >
-						<div class="form-group">
-							<label for="firstname" class="col-sm-2 control-label">键</label>
-							<div class="col-sm-10"><input type="text" class="form-control" name="nodeKey" placeholder="请输入zondeKey" minlength="4" maxlength="100" readonly ></div>
-						</div>
-						<div class="form-group">
-							<label for="lastname" class="col-sm-2 control-label">值</label>
-							<div class="col-sm-10"><input type="text" class="form-control" name="znodeValue" placeholder="请输入zondeValue" maxlength="100" ></div>
-						</div>
-						<div class="form-group">
-							<label for="lastname" class="col-sm-2 control-label">描述</label>
-							<div class="col-sm-10"><input type="text" class="form-control" name="znodeDesc" placeholder="请输入简介" maxlength="100" ></div>
-						</div>
+                        <div class="form-group">
+                            <label for="firstname" class="col-sm-2 control-label">KEY</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" name="nodeKey" placeholder="请输入zondeKey" maxlength="100" ></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-2 control-label">VALUE</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" name="nodeValue" placeholder="请输入zondeValue" maxlength="512" ></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-2 control-label">描述</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" name="nodeDesc" placeholder="请输入简介" maxlength="100" ></div>
+                        </div>
 						<div class="form-group">
 							<div class="col-sm-offset-2 col-sm-10">
 								<button type="submit" class="btn btn-primary"  >保存</button>

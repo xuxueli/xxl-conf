@@ -4,14 +4,12 @@
 <mapper namespace="XxlConfNodeMapper">
 	
 	<resultMap id="XxlConfNode" type="com.xxl.conf.admin.core.model.XxlConfNode" >
-		<result column="id" property="id" />
 		<result column="node_key" property="nodeKey" jdbcType="VARCHAR" />
 	    <result column="node_value" property="nodeValue" jdbcType="VARCHAR" />
 	    <result column="node_desc" property="nodeDesc" jdbcType="VARCHAR" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		t.`id`,
 		t.`node_key`,
 		t.`node_value`,
 		t.`node_desc`
@@ -25,7 +23,7 @@
 				t.node_key like '${nodeKey}%'
 			</if>
 		</trim>
-		ORDER BY t.id DESC
+		ORDER BY t.node_key
 		LIMIT #{offset}, #{pagesize}
 	</select>
 

@@ -3,7 +3,7 @@ package com.xxl.conf.admin.controller;
 import com.xxl.conf.admin.controller.annotation.PermessionLimit;
 import com.xxl.conf.admin.core.model.XxlConfNode;
 import com.xxl.conf.admin.core.util.ReturnT;
-import com.xxl.conf.admin.service.IZNodeEntryService;
+import com.xxl.conf.admin.service.IXxlConfNodeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +22,7 @@ import java.util.Map;
 public class ConfController {
 	
 	@Resource
-	private IZNodeEntryService zNodeEntryService;
+	private IXxlConfNodeService xxlConfNodeService;
 	
 	@RequestMapping("")
 	@PermessionLimit
@@ -35,30 +35,29 @@ public class ConfController {
 	@PermessionLimit
 	public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,
 			@RequestParam(required = false, defaultValue = "10") int length, String nodeKey) {
-		return zNodeEntryService.pageList(start, length, nodeKey);
+		return xxlConfNodeService.pageList(start, length, nodeKey);
 	}
 	
 	/**
 	 * get
 	 * @return
 	 */
-	@RequestMapping("delete")
+	@RequestMapping("/delete")
 	@ResponseBody
 	@PermessionLimit
 	public ReturnT<String> delete(String nodeKey){
-		zNodeEntryService.deleteByKey(nodeKey);
-		return ReturnT.SUCCESS;
+		return xxlConfNodeService.deleteByKey(nodeKey);
 	}
 	
 	/**
 	 * create/update
 	 * @return
 	 */
-	@RequestMapping("setData")
+	@RequestMapping("/freshConf")
 	@ResponseBody
 	@PermessionLimit
-	public ReturnT<String> setData(XxlConfNode node){
-		return zNodeEntryService.updateNode(node);
+	public ReturnT<String> freshConf(XxlConfNode xxlConfNode){
+		return xxlConfNodeService.freshConf(xxlConfNode);
 	}
 	
 }

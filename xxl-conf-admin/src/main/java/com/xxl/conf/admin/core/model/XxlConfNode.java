@@ -6,20 +6,11 @@ package com.xxl.conf.admin.core.model;
  */
 public class XxlConfNode {
 
-	private int id;
 	private String nodeKey; 		// key of prop
 	private String nodeValue; 		// value of prop [in sqlite]
 	private String nodeDesc;		// description of prop
 	
 	private String nodeValueReal; 	// value of prop [in zk]
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public int getId() {
-		return id;
-	}
 
 	public String getNodeKey() {
 		return nodeKey;
