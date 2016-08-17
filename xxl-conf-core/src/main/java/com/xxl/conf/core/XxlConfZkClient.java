@@ -61,7 +61,7 @@ public class XxlConfZkClient implements Watcher {
 
 								EventType eventType = watchedEvent.getType();
 								if (eventType == EventType.NodeCreated) {
-									String path = watchedEvent.getPath();
+									/*String path = watchedEvent.getPath();
 									zooKeeper.exists(path, true);	// add One-time trigger, ZooKeeper的Watcher是一次性的，用过了需要再注册
 
 									String key = pathToKey(path);
@@ -71,7 +71,7 @@ public class XxlConfZkClient implements Watcher {
 									String data = getPathDataByKey(key);
 
 									XxlConfClient.set(key, data);
-									logger.info(">>>>>>>>>> xxl-conf: 新增配置：[{}={}]", new Object[]{key, data});
+									logger.info(">>>>>>>>>> xxl-conf: 新增配置：[{}={}]", new Object[]{key, data});*/
 								} else if (eventType == EventType.NodeDeleted) {
 									String path = watchedEvent.getPath();
 									zooKeeper.exists(path, true);
@@ -82,7 +82,6 @@ public class XxlConfZkClient implements Watcher {
 									}
 
 									XxlConfClient.remove(key);
-									logger.info(">>>>>>>>>> xxl-conf: 删除配置：key ", key);
 								} else if (eventType == EventType.NodeDataChanged) {
 									String path = watchedEvent.getPath();
 									zooKeeper.exists(path, true);
@@ -93,8 +92,7 @@ public class XxlConfZkClient implements Watcher {
 									}
 									String data = getPathDataByKey(key);
 
-									XxlConfClient.set(key, data);
-									logger.info(">>>>>>>>>> xxl-conf: 更新配置: [{}:{}]", new Object[]{key, data});
+									XxlConfClient.update(key, data);
 								} else if (eventType == EventType.NodeChildrenChanged) {
 									// TODO
 								} else if (eventType == EventType.None) {

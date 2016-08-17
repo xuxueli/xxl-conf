@@ -13,7 +13,7 @@
 		</div>
 		<form id="loginForm" method="post" >
 			<div class="login-box-body">
-				<p class="login-box-msg">分布式缓存管理平台</p>
+				<p class="login-box-msg">分布式配置管理平台</p>
 				<div class="form-group has-feedback">
 	            	<input type="text" name="userName" class="form-control" placeholder="请输入登陆账号" value="admin" >
 	            	<span class="glyphicon glyphicon-envelope form-control-feedback"></span>

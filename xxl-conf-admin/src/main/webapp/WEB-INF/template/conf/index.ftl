@@ -34,7 +34,7 @@
                 <div class="row">
                     <div class="col-xs-4">
                         <div class="input-group">
-                            <span class="input-group-addon">缓存模板</span>
+                            <span class="input-group-addon">KEY</span>
                             <input type="text" class="form-control" id="nodeKey" value="${nodeKey}" autocomplete="on" >
                         </div>
                     </div>
@@ -42,7 +42,7 @@
                         <button class="btn btn-block btn-info" id="searchBtn">搜索</button>
                     </div>
                     <div class="col-xs-2">
-                        <button class="btn btn-block btn-success" id="add" type="button">新增缓存模板</button>
+                        <button class="btn btn-block btn-success" id="add" type="button">新增配置</button>
                     </div>
                 </div>
 
