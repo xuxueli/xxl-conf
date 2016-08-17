@@ -34,7 +34,7 @@
 					<a target="_blank" href="https://github.com/xuxueli/xxl-conf">github地址</a>&nbsp;&nbsp;&nbsp;&nbsp;
 					<iframe src="https://ghbtns.com/github-btn.html?user=xuxueli&repo=xxl-conf&type=star&count=true" frameborder="0" scrolling="0" width="170px" height="20px" style="margin-bottom:-5px;"></iframe>
 					<br><br>
-					<a target="_blank" href="http://www.cnblogs.com/xuxueli/p/4777808.html">cnblog地址</a>
+					<a target="_blank" href="http://my.oschina.net/xuxueli/blog/734267">cnblog地址</a>
 					<br><br>
 					<a >技术交流群(仅作技术交流)：367260654</a>&nbsp;&nbsp;&nbsp;&nbsp;
 					<a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=4686e3fe01118445c75673a66b4cc6b2c7ce0641528205b6f403c179062b0a52">
