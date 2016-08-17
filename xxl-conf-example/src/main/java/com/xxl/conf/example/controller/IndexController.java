@@ -1,6 +1,6 @@
 package com.xxl.conf.example.controller;
 
-import com.xxl.conf.core.XxlCfgLocalCache;
+import com.xxl.conf.core.XxlConfClient;
 import com.xxl.conf.example.core.constant.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,11 +19,11 @@ public class IndexController {
 	@RequestMapping("")
 	@ResponseBody
 	public List<Configuration> index(){
-		
+
 		Configuration config2 = new Configuration();
-		config2.setKey01(XxlCfgLocalCache.get("xxl-conf-demo.key01", null));
-		config2.setKey02(XxlCfgLocalCache.get("xxl-conf-demo.key02", null));
-		config2.setKey03(XxlCfgLocalCache.get("xxl-conf-demo.key03", null));
+		config2.setKey01(XxlConfClient.get("key01", null));
+		config2.setKey02(XxlConfClient.get("key02", null));
+		config2.setKey03(XxlConfClient.get("key03", null));
 		
 		List<Configuration> list = new ArrayList<Configuration>();
 		list.add(config1);

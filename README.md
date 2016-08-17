@@ -14,6 +14,8 @@ git.osc地址：http://git.oschina.net/xuxueli0323/xxl-conf
 
 zkserver=127.0.0.1:2181
 
+zkclient
+
 
 《分布式配置管理平台xxl-conf》
 ==============================================

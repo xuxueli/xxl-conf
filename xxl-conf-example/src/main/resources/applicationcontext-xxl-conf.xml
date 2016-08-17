@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+
+	<bean id="config1" class="com.xxl.conf.example.core.constant.Configuration">
+		<property name="key01" value="${key01}" />
+		<property name="key02" value="${key02}" />
+		<property name="key03" value="${${key03}}" />
+	</bean>
+
+	<bean id="xxlConfPropertyPlaceholderConfigurer" class="com.xxl.conf.core.spring.XxlConfPropertyPlaceholderConfigurer" />
+
+</beans>

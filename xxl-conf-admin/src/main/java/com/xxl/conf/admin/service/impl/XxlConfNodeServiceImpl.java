@@ -4,7 +4,7 @@ import com.xxl.conf.admin.core.model.XxlConfNode;
 import com.xxl.conf.admin.core.util.ReturnT;
 import com.xxl.conf.admin.dao.IXxlConfNodeDao;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
-import com.xxl.conf.core.XxlCfgClient;
+import com.xxl.conf.core.XxlConfZkClient;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -37,7 +37,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 
 		// xxlConfNode in mysql, fill value in zookeeper
 		Set<String> dataSet = new HashSet<String>();
-		Map<String, String> zkOriginMap = XxlCfgClient.client.getAllData();
+		Map<String, String> zkOriginMap = XxlConfZkClient.getAllData();
 		if (CollectionUtils.isNotEmpty(data)) {
 			for (XxlConfNode node: data) {
 				if (MapUtils.isNotEmpty(zkOriginMap)) {
@@ -68,10 +68,10 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 	}
 
 	@Override
-	public ReturnT<String> deleteByKey(String znodeKey) {
-		if (StringUtils.isNotBlank(znodeKey)) {
-			xxlConfNodeDao.deleteByKey(znodeKey);
-			XxlCfgClient.client.delete(znodeKey);
+	public ReturnT<String> deleteByKey(String nodeKey) {
+		if (StringUtils.isNotBlank(nodeKey)) {
+			xxlConfNodeDao.deleteByKey(nodeKey);
+			XxlConfZkClient.deletePathByKey(nodeKey);
 		}
 		return ReturnT.SUCCESS;
 	}
@@ -86,7 +86,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 			return new ReturnT<String>(500, "Key对应的配置已经存在,不可重复添加");
 		}
 		xxlConfNodeDao.insert(xxlConfNode);
-		XxlCfgClient.client.setData(xxlConfNode.getNodeKey(), xxlConfNode.getNodeValue());
+		XxlConfZkClient.setPathDataByKey(xxlConfNode.getNodeKey(), xxlConfNode.getNodeValue());
 		return ReturnT.SUCCESS;
 	}
 
@@ -99,7 +99,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		if (ret < 1) {
 			return new ReturnT<String>(500, "Key对应的配置不存在,请确认");
 		}
-		XxlCfgClient.client.setData(xxlConfNode.getNodeKey(), xxlConfNode.getNodeValue());
+		XxlConfZkClient.setPathDataByKey(xxlConfNode.getNodeKey(), xxlConfNode.getNodeValue());
 		return ReturnT.SUCCESS;
 	}
 

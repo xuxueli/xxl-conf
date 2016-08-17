@@ -52,14 +52,6 @@
 			<version>1.9.13</version>
 		</dependency>
 
-		<!-- json-lib (级联:commons-beanutils/collections/lang/ezmorph) -->
-		<dependency>
-			<groupId>net.sf.json-lib</groupId>
-			<artifactId>json-lib</artifactId>
-			<version>2.4</version>
-			<classifier>jdk15</classifier>
-		</dependency>
-
 		<!-- slf4j (级联:log4j/slf4j-api) -->
 		<dependency>
 			<groupId>org.slf4j</groupId>

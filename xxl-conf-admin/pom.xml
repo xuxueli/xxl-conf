@@ -52,14 +52,6 @@
 			<version>1.9.13</version>
 		</dependency>
 
-		<!-- json-lib (级联:commons-beanutils/collections/lang/ezmorph) -->
-		<dependency>
-			<groupId>net.sf.json-lib</groupId>
-			<artifactId>json-lib</artifactId>
-			<version>2.4</version>
-			<classifier>jdk15</classifier>
-		</dependency>
-
 		<!-- dbcp (1.x适用jdk6 + ) -->
 		<dependency>
 			<groupId>commons-dbcp</groupId>
@@ -86,16 +78,17 @@
 			<version>2.3.20</version>
 		</dependency>
 
-		<!-- fileupload -->
+		<!-- commons-lang -->
 		<dependency>
-			<groupId>commons-fileupload</groupId>
-			<artifactId>commons-fileupload</artifactId>
-			<version>1.2.2</version>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
 		</dependency>
+		<!-- commons-collections -->
 		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.2.1</version>
 		</dependency>
 
 		<!-- junit -->
