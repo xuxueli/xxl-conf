@@ -138,7 +138,7 @@
 					<form class="form-horizontal form" role="form" >
                         <div class="form-group">
                             <label for="firstname" class="col-sm-2 control-label">KEY</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="nodeKey" placeholder="请输入KEY" maxlength="100" ></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" name="nodeKey" placeholder="请输入KEY" maxlength="100" readonly></div>
                         </div>
                         <div class="form-group">
                             <label for="lastname" class="col-sm-2 control-label">描述</label>
