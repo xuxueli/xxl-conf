@@ -66,7 +66,7 @@ public class XxlConfPropertyPlaceholderConfigurer extends PropertyPlaceholderCon
 		}
 		
 		// TODO Auto-generated method stub
-		super.processProperties(beanFactoryToProcess, props);
+		//super.processProperties(beanFactoryToProcess, props);
 	}
 
 	@Override
