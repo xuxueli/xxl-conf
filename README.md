@@ -121,24 +121,20 @@ Tips: 从此项目中抛弃properties文件, jdbc地址配置、redis地址配�
 
 
 - 方式1: XML文件中的占位符方式
-```
-<bean id="configuration" class="com.xxl.conf.example.core.constant.Configuration">
-    <property name="paramByXml" value="${key01}" />
-</bean>
-```
-
-    
+    ```
+    <bean id="configuration" class="com.xxl.conf.example.core.constant.Configuration">
+        <property name="paramByXml" value="${key01}" />
+    </bean>
+    ```
     特点:
     - 上面配置说明: 在项目启动时, Configuration的paramByXml属性, 会根据配置的占位符${key01}, 去XXL-CONF中匹配KEY=key01的配置信息, 赋值给paramByXml;
     - 目前, 该方式配置信息, 只会在项目启动时从XXL-CONF中加载一次, 项目启动后该值不会变更。 例如配置数据连接信息, 如果XXL-CONF平台中连接地址配置改边, 需要重启后才生效;
     - 该方式, 底层本质上是通过 "方式2: API方式" 实现的。
 
 - 方式2: API方式
-```
-String paramByClient = XxlConfClient.get("key02", null);
-```
-
-    
+    ```
+    String paramByClient = XxlConfClient.get("key02", null);
+    ```
     特点:
     - 上面代码说明: 会获取XXL-CONF平台中KEY=key02的配置信息, 如果不存在值使用传递的默认值;
     - 因为Zookeeper会实时推送配置更新到客户端, 因此该方法放回的值可以XXL-CONF平台中的值保持实时一致;
