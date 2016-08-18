@@ -112,7 +112,11 @@ Tips: 从此项目中抛弃properties文件, jdbc地址配置、redis地址配�
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201608/17205147_7SBG.png "在这里输入图片标题")
 
-至此, 一条配置信息已经添加完成,
+至此, 一条配置信息已经添加完成.
+
+通过client端,可以实时获取配置信息, 通过本地已经加载过得配置将会接受Zookeeper的更新推送, 如下如日志:
+
+![输入图片说明](https://static.oschina.net/uploads/img/201608/18111816_Of9e.png "在这里输入图片标题")
 
 #### 2.6 项目中使用XXL-CONF 
 
