@@ -65,14 +65,13 @@ Tips: 从此项目中抛弃properties文件, jdbc地址配置、redis地址配�
     
 - **B：配置“JDBC链接”**：
 
-
-    配置文件位置: 源码/xxl-conf/xxl-conf-admin/src/main/resources/jdbc.properties
-    作用: 配置数据在数据库中的备份
+    - 配置文件位置: 源码/xxl-conf/xxl-conf-admin/src/main/resources/jdbc.properties
+    - 作用: 配置数据在数据库中的备份
     
     
 - **C：配置“登录账号和密码”**：
 
-    配置文件位置: 源码/xxl-conf/xxl-conf-admin/src/main/resources/config.properties
+    - 配置文件位置: 源码/xxl-conf/xxl-conf-admin/src/main/resources/config.properties
 
 
 #### 2.4 配置部署“接入XXL-CONF的Demo项目”
