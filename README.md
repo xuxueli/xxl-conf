@@ -67,15 +67,48 @@ XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为�
 
 #### 2.3 "配置中心" 设计
 
-- 配置信息存储(ZK): 系统在ZK集群中占用一个根目录 "/xxl-conf", 每新增一条配置项, 将会在该目录下新增一个子节点。
-- 配置信息存储(DB): 配置信息在ZK中的新增、变更等操作, 将会同步备份到Mysql中, 进一步保证数据的安全性;
-- 配置推送: 配置推送功能在ZK的Watch机制实现。Client在第一次PULL一条配置信息时将会Watch该配置对应的ZK节点, 因此, 当对该配置项进行配置更新等操作时, 将会触发ZK的NodeDataChanged广播, Client竟会立刻得到通知并刷新本地缓存中的配置信息;
+![输入图片说明](https://static.oschina.net/uploads/img/201609/13165343_V4Mt.jpg "在这里输入图片标题")
+
+- 1、ZK设计: 系统在ZK集群中占用一个根目录 "/xxl-conf", 每新增一条配置项, 将会在该目录下新增一个子节点。结构如下图, 当配置变更时将会触发ZK节点的变更, 将会触发对应类型的ZK广播。
+- 2、数据库备份配置信息: 配置信息在ZK中的新增、变更等操作, 将会同步备份到Mysql中, 进一步保证数据的安全性;
+- 3、配置推送: 配置推送功能在ZK的Watch机制实现。Client在加载一条配置信息时将会Watch该配置对应的ZK节点, 因此, 当对该配置项进行配置更新等操作时, 将会触发ZK的NodeDataChanged广播, Client竟会立刻得到通知并刷新本地缓存中的配置信息;
+
+**ZK之watcher普及(来源官方文档,以及网络博客)**
+
+    1、可以注册watcher的方法：getData、exists、getChildren。
+    2、可以触发watcher的方法：create、delete、setData。连接断开的情况下触发的watcher会丢失。
+    3、一个Watcher实例是一个回调函数，被回调一次后就被移除了。如果还需要关注数据的变化，需要再次注册watcher。
+    4、New ZooKeeper时注册的watcher叫default watcher，它不是一次性的，只对client的连接状态变化作出反应。(推荐ZK初始化时, 主动Watcher如exists)
+    5、实现永久监听: 由于zookeeper是一次性监听，所以我们必须在wather的process方法里面再设置监听。
+    6、getChildren("/path")监视/path的子节点，如果（/path）自己删了，也会触发NodeDeleted事件。
+
+
+《操作--事件》 | event For “/path” | 	event For “/path/child”
+--- | --- | ---
+create(“/path”) | EventType.NodeCreated | 无
+delete(“/path”) |   EventType.NodeDeleted | 无
+setData(“/path”) |  EventType.NodeDataChanged | 无
+create(“/path/child”) | EventType.NodeChildrenChanged（getChild） | EventType.NodeCreated
+delete(“/path/child”) | EventType.NodeChildrenChanged（getChild） | EventType.NodeDeleted
+setData(“/path/child”) | 无 | EventType.NodeDataChanged
+
+
+《事件--Watch方式》 | Default Watcher | exists(“/path”) | getData(“/path”) | 	getChildren(“/path”)
+--- | --- | --- | ---
+EventType.None  | 触发 | 触发 | 触发 | 触发 
+EventType.NodeCreated  |  | 触发 | 触发 |  
+EventType.NodeDeleted  |  | 触发 | 触发 | 
+EventType.NodeDataChanged  |  | 触发 | 触发 | 
+EventType.NodeChildrenChanged  |  |  |  | 触发 
+
 
 #### 2.4 "配置管理中心" 设计
 
 "配置管理中心" 是 "配置中心" 的上层封装, 提供Web界面供用户对配置信息进行配置查询、配置新增、配置更新和配置删除等操作;
 
 #### 2.4 "客户端" 设计
+
+![输入图片说明](https://static.oschina.net/uploads/img/201609/13181051_5hCL.jpg "在这里输入图片标题")
 
 XXL-CONF的客户端主要分为三层:
 
