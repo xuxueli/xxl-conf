@@ -17,6 +17,7 @@ XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为�
 #### 1.3 背景
 
 **why not properties**
+
 常规项目开发过程中, 通常会将配置信息位于在项目resource目录下的properties文件文件中, 配置信息通常包括有: jdbc地址配置、redis地址配置、活动开关、阈值配置、黑白名单……等等。使用properties维护配置信息将会导致以下几个问题:
 
 - 1、需要手动修改properties文件; 
