@@ -111,13 +111,21 @@ EventType.NodeChildrenChanged  |  |  |  | 触发
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201609/14111236_q8oi.jpg "在这里输入图片标题")
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/14111248_wzwN.jpg "在这里输入图片标题")
-
-XXL-CONF的客户端主要分为三层:
+**API方式加载配置**: 客户端主要分为三层:
 
 - ZK-Client : 第一层为ZK远程客户端的封装, 当业务方项目初始化某一个用到的配置项时, 将会触发ZK-Client对该配置对应节点的Watch, 因此当该节点变动时将会监听到ZK的类似NodeDataChanged的广播, 可以实时获取最新配置信息; 
 - Ehcache : 第二层为客户端本地缓存, 可以大大提高系统的并发能力, 当配置初始化或者接受到ZK-Client的配置变更时, 将会把配置信息缓存只Encache中, 业务中针对配置的查询都是读缓存方式实现, 降低对ZK集群的压力;
 - Client-API : 第三层为暴露给业务方使用API, 简单易用, 一行代码获取配置信息, 同时可保证API获取到的配置信息是实时最新的配置信息;
+
+(API方式加载配置, 因为底层做了配置本地缓存, 因此可以放心应用在业务代码中, 不必担心并发压力。完整的支持配置实时推送更新)
+
+![输入图片说明](https://static.oschina.net/uploads/img/201609/14111248_wzwN.jpg "在这里输入图片标题")
+
+**Bean方式加载配置**: 
+
+系统会在Spring容器中追加一个"PropertyPlaceholderConfigurer"属性解析器, 内部通过自定义的"StringValueResolver"解析器解析配置占位符 "${...}", 匹配到的配置信息将调用"XXL-CFONF"的API客户端加载最新配置信息进行Bean对象的属性赋值,最终完成实例化过程。
+
+(Bean方式加载配置,仅仅在实例化时加载一次; 考虑都实例化后的对象通常为持久化对象, 如数据库连接池对象, 不建议配置的太灵活, 因此Bean类型配置更新需要重启机器)
 
 ## 三、快速入门
 
