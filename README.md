@@ -109,7 +109,9 @@ EventType.NodeChildrenChanged  |  |  |  | 触发
 
 #### 2.4 "客户端" 设计
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/13181051_5hCL.jpg "在这里输入图片标题")
+![输入图片说明](https://static.oschina.net/uploads/img/201609/14111236_q8oi.jpg "在这里输入图片标题")
+
+![输入图片说明](https://static.oschina.net/uploads/img/201609/14111248_wzwN.jpg "在这里输入图片标题")
 
 XXL-CONF的客户端主要分为三层:
 
