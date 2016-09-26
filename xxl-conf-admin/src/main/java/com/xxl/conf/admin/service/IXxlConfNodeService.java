@@ -12,9 +12,9 @@ import java.util.Map;
  */
 public interface IXxlConfNodeService {
 
-	public Map<String,Object> pageList(int offset, int pagesize, String nodeKey);
+	public Map<String,Object> pageList(int offset, int pagesize, String nodeGroup, String nodeKey);
 
-	public ReturnT<String> deleteByKey(String znodeKey);
+	public ReturnT<String> deleteByKey(String nodeGroup, String nodeKey);
 
 	public ReturnT<String> add(XxlConfNode xxlConfNode);
 

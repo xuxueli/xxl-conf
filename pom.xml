@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.xxl</groupId>
 	<artifactId>xxl-conf</artifactId>
-	<version>${xxl.conf.version}</version>
+	<version>1.2.0</version>
 	<packaging>pom</packaging>
 
 	<modules>
@@ -12,10 +12,7 @@
 		<module>xxl-conf-example</module>
 	</modules>
 
-	<properties>
-		<spring.version>3.2.13.RELEASE</spring.version>
-		<xxl.conf.version>1.1.0</xxl.conf.version>
-	</properties>
+
 
 	<build>
 		<plugins>

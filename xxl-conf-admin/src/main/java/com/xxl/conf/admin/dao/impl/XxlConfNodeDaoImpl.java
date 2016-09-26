@@ -6,6 +6,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,8 +31,12 @@ public class XxlConfNodeDaoImpl implements IXxlConfNodeDao {
 	}
 
 	@Override
-	public int deleteByKey(String nodeKey) {
-		return sqlSessionTemplate.delete("XxlConfNodeMapper.deleteByKey", nodeKey);
+	public int deleteByKey(String nodeGroup, String nodeKey) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("nodeGroup", nodeGroup);
+		params.put("nodeKey", nodeKey);
+
+		return sqlSessionTemplate.delete("XxlConfNodeMapper.deleteByKey", params);
 	}
 
 	@Override
@@ -40,8 +45,12 @@ public class XxlConfNodeDaoImpl implements IXxlConfNodeDao {
 	}
 
 	@Override
-	public XxlConfNode selectByKey(String nodeKey) {
-		return sqlSessionTemplate.selectOne("XxlConfNodeMapper.selectByKey", nodeKey);
+	public XxlConfNode selectByKey(String nodeGroup, String nodeKey) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("nodeGroup", nodeGroup);
+		params.put("nodeKey", nodeKey);
+
+		return sqlSessionTemplate.selectOne("XxlConfNodeMapper.selectByKey", params);
 	}
 
 	@Override

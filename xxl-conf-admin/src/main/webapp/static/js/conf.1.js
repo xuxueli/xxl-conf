@@ -10,6 +10,7 @@ $(function(){
 			type:"post",
 			data : function ( d ) {
 				var obj = {};
+				obj.nodeGroup = $('#nodeGroup').val();
 				obj.nodeKey = $('#nodeKey').val();
 				obj.start = d.start;
 				obj.length = d.length;
@@ -20,7 +21,9 @@ $(function(){
 		"ordering": false,
 		//"scrollX": true,	// X轴滚动条，取消自适应
 		"columns": [
-			{ "data": 'nodeKey', "visible" : true},
+			{ "data": 'nodeGroup', "visible" : false},
+			{ "data": 'nodeKey', "visible" : false},
+			{ "data": 'groupKey', "visible" : true},
 			{
 				"data": 'nodeValue',
 				"visible" : true,
@@ -42,6 +45,7 @@ $(function(){
 					return function(){
 						// html
 						var html = '<p id="'+ row.id +'" '+
+							' nodeGroup="'+ row.nodeGroup +'" '+
 							' nodeKey="'+ row.nodeKey +'" '+
 							' nodeValue="'+ row.nodeValue +'" '+
 							' nodeValueReal="'+ row.nodeValueReal +'" '+
@@ -93,17 +97,25 @@ $(function(){
 	
 	// 删除
 	$("#conf_list").on('click', '.delete',function() {
+		var nodeGroup = $(this).parent('p').attr("nodeGroup");
 		var nodeKey = $(this).parent('p').attr("nodeKey");
 		ComConfirm.show("确定要删除配置：" + nodeKey, function(){
-			$.post( base_url + "/conf/delete", {"nodeKey" : nodeKey}, function(data, status) {
-				if (data.code == "200") {
-					ComAlert.show(1, "删除成功", function(){
-						confTable.fnDraw();
-					});
-				} else {
-					ComAlert.show(2, data.msg);
+			$.post(
+				base_url + "/conf/delete",
+				{
+					"nodeGroup" : nodeGroup,
+					"nodeKey" : nodeKey
+				},
+				function(data, status) {
+					if (data.code == "200") {
+						ComAlert.show(1, "删除成功", function(){
+							confTable.fnDraw();
+						});
+					} else {
+						ComAlert.show(2, data.msg);
+					}
 				}
-			});
+			);
 		});
 	});
 	
@@ -115,7 +127,7 @@ $(function(){
 		errorElement : 'span',  
         errorClass : 'help-block',
         focusInvalid : true,  
-        rules : {  
+        rules : {
         	nodeKey : {
         		required : true ,
                 minlength: 4,
@@ -128,7 +140,7 @@ $(function(){
             	required : false
             }
         }, 
-        messages : {  
+        messages : {
         	nodeKey : {
         		required :'请输入"KEY".'  ,
                 minlength:'"KEY"不应低于4位',
@@ -167,6 +179,7 @@ $(function(){
 	// 更新
 	$("#conf_list").on('click', '.update',function() {
 
+		$("#updateModal .form input[name='nodeGroup']").val( $(this).parent('p').attr("nodeGroup") );
 		$("#updateModal .form input[name='nodeKey']").val( $(this).parent('p').attr("nodeKey") );
 		$("#updateModal .form textarea[name='nodeValue']").val( $(this).parent('p').attr("nodeValue") );
 		//$("#updateModal .form input[name='nodeValueReal']").val( $(this).parent('p').attr("nodeKey") );

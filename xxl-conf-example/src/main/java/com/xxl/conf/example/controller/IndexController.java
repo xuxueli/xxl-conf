@@ -34,7 +34,7 @@ public class IndexController {
          * 说明: API方式获取, 只需要执行diamante "XxlConfClient.get("key", null)" 即可, 在业务中使用比较方便 ,而且接受XXL-CONF实时推送更新。 同时因为底层有配置缓存,并不存在性能问题;
          *
          */
-		String paramByClient = XxlConfClient.get("key02", null);
+		String paramByClient = XxlConfClient.get("project_waimai.key02", null);
 
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("paramByXml", paramByXml);

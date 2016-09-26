@@ -35,9 +35,9 @@
                     <div class="col-xs-4">
                         <div class="input-group">
                             <span class="input-group-addon">分组</span>
-                            <select class="form-control" id="prefix" >
-							<#list XxlConfNodeGroup as prefix>
-                                <option value="${prefix}" >${prefix.title}</option>
+                            <select class="form-control" id="nodeGroup" >
+							<#list XxlConfNodeGroup as group>
+                                <option value="${group}" >${group.title}</option>
 							</#list>
                             </select>
                         </div>
@@ -62,7 +62,9 @@
 	                  	<table id="conf_list" class="table table-bordered table-hover">
 		                    <thead>
 		                      	<tr>
-			                        <th>KEY</th>
+                                    <th>GROUP</th>
+                                    <th>KEY</th>
+			                        <th>GROUP_KEY</th>
 			                        <th>VALUE</th>
 			                        <th>VALUE(zk)</th>
 			                        <th>描述</th>
@@ -111,6 +113,16 @@
 	         	</div>
 	         	<div class="modal-body">
 					<form class="form-horizontal form" role="form" >
+                        <div class="form-group">
+                            <label for="firstname" class="col-sm-2 control-label">分组</label>
+                            <div class="col-sm-4">
+								<select class="form-control" name="nodeGroup" >
+									<#list XxlConfNodeGroup as group>
+										<option value="${group}" >${group.title}</option>
+									</#list>
+								</select>
+                        	</div>
+                        </div>
 						<div class="form-group">
 							<label for="firstname" class="col-sm-2 control-label">KEY</label>
 							<div class="col-sm-10"><input type="text" class="form-control" name="nodeKey" placeholder="请输入KEY" maxlength="100" ></div>
@@ -146,6 +158,10 @@
 	         	</div>
 	         	<div class="modal-body">
 					<form class="form-horizontal form" role="form" >
+                        <div class="form-group">
+                            <label for="firstname" class="col-sm-2 control-label">GROUP</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" name="nodeGroup" placeholder="请输入KEY" maxlength="100" readonly></div>
+                        </div>
                         <div class="form-group">
                             <label for="firstname" class="col-sm-2 control-label">KEY</label>
                             <div class="col-sm-10"><input type="text" class="form-control" name="nodeKey" placeholder="请输入KEY" maxlength="100" readonly></div>

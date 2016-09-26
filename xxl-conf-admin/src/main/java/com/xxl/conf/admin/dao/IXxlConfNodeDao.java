@@ -16,11 +16,11 @@ public interface IXxlConfNodeDao {
 	public List<XxlConfNode> pageList(Map<String, Object> params);
 	public int pageListCount(Map<String, Object> params);
 
-	public int deleteByKey(String nodeKey);
+	public int deleteByKey(String nodeGroup, String nodeKey);
 
 	public void insert(XxlConfNode xxlConfNode);
 
-	public XxlConfNode selectByKey(String nodeKey);
+	public XxlConfNode selectByKey(String nodeGroup, String nodeKey);
 
 	public int update(XxlConfNode xxlConfNode);
 	

@@ -4,12 +4,13 @@
 	<parent>
 		<groupId>com.xxl</groupId>
 		<artifactId>xxl-conf</artifactId>
-		<version>${xxl.conf.version}</version>
+		<version>1.2.0</version>
 	</parent>
 	<artifactId>xxl-conf-admin</artifactId>
 	<packaging>war</packaging>
 
 	<properties>
+		<xxl.conf.version>1.2.0</xxl.conf.version>
 		<spring.version>3.2.13.RELEASE</spring.version>
 	</properties>
 

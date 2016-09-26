@@ -10,7 +10,7 @@
 
 	<!-- XML文件测试用,可删除 -->
 	<bean id="configuration" class="com.xxl.conf.example.core.constant.Configuration">
-		<property name="paramByXml" value="${key01}" />
+		<property name="paramByXml" value="${project_waimai.key01}" />
 	</bean>
 
 </beans>

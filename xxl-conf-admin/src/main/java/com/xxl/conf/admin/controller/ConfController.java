@@ -29,15 +29,16 @@ public class ConfController {
 	@PermessionLimit
 	public String index(Model model, String znodeKey){
 		model.addAttribute("XxlConfNodeGroup", XxlConfNodeGroup.values());
-		return "conf/index";
+		return "conf/conf.index";
 	}
 
 	@RequestMapping("/pageList")
 	@ResponseBody
 	@PermessionLimit
 	public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,
-			@RequestParam(required = false, defaultValue = "10") int length, String nodeKey) {
-		return xxlConfNodeService.pageList(start, length, nodeKey);
+			@RequestParam(required = false, defaultValue = "10") int length,
+			String nodeGroup, String nodeKey) {
+		return xxlConfNodeService.pageList(start, length, nodeGroup, nodeKey);
 	}
 	
 	/**
@@ -47,8 +48,8 @@ public class ConfController {
 	@RequestMapping("/delete")
 	@ResponseBody
 	@PermessionLimit
-	public ReturnT<String> delete(String nodeKey){
-		return xxlConfNodeService.deleteByKey(nodeKey);
+	public ReturnT<String> delete(String nodeGroup, String nodeKey){
+		return xxlConfNodeService.deleteByKey(nodeGroup, nodeKey);
 	}
 
 	/**
