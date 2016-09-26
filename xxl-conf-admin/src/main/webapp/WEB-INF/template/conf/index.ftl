@@ -34,6 +34,16 @@
                 <div class="row">
                     <div class="col-xs-4">
                         <div class="input-group">
+                            <span class="input-group-addon">分组</span>
+                            <select class="form-control" id="prefix" >
+							<#list XxlConfNodeGroup as prefix>
+                                <option value="${prefix}" >${prefix.title}</option>
+							</#list>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <div class="input-group">
                             <span class="input-group-addon">KEY</span>
                             <input type="text" class="form-control" id="nodeKey" value="${nodeKey}" autocomplete="on" >
                         </div>

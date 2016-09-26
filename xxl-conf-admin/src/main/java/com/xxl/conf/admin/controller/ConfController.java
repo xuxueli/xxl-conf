@@ -1,6 +1,7 @@
 package com.xxl.conf.admin.controller;
 
 import com.xxl.conf.admin.controller.annotation.PermessionLimit;
+import com.xxl.conf.admin.core.constant.XxlConfNodeGroup;
 import com.xxl.conf.admin.core.model.XxlConfNode;
 import com.xxl.conf.admin.core.util.ReturnT;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
@@ -27,6 +28,7 @@ public class ConfController {
 	@RequestMapping("")
 	@PermessionLimit
 	public String index(Model model, String znodeKey){
+		model.addAttribute("XxlConfNodeGroup", XxlConfNodeGroup.values());
 		return "conf/index";
 	}
 
