@@ -122,7 +122,7 @@ public class XxlConfZkClient implements Watcher {
 			}
 		}
 		if (zooKeeper == null) {
-			throw new NullPointerException(">>>>>>>>>>> xxl-cache, XMemcachedUtil.memcachedClient is null.");
+			throw new NullPointerException(">>>>>>>>>>> xxl-cache, XxlConfZkClient.zooKeeper is null.");
 		}
 		return zooKeeper;
 	}
