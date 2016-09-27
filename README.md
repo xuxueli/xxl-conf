@@ -278,7 +278,8 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 - 1、配置分组: 支持对配置进行分组管理, 每条配置将会生成全局唯一标示GroupKey,在client端使用时,需要通过该值匹配对应的配置信息;
 
 #### 规划中
-- 1、zookeeper客户端优化, 或将改用zkclient或者curator；
+- 1、配置分组, 在线维护;
+- 2、zookeeper客户端优化, 或将改用zkclient或者curator；
 
 ## 五、其他
 
