@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 @Controller
 public class IndexController {
@@ -18,7 +16,7 @@ public class IndexController {
 	
 	@RequestMapping("")
 	@ResponseBody
-	public Map<String, String> index(){
+	public String index(){
 
         /**
          * 方式1: XML文件中的占位符方式
@@ -36,10 +34,8 @@ public class IndexController {
          */
 		String paramByClient = XxlConfClient.get("project_waimai.key02", null);
 
-		Map<String, String> map = new LinkedHashMap<String, String>();
-		map.put("paramByXml", paramByXml);
-		map.put("paramByClient", paramByClient);
-
-		return map;
+		String result = "XML:<hr>project_waimai.key01=" + paramByXml;
+		result += "<br><br><br>API:<hr>project_waimai.key02=" + paramByClient;
+		return result;
 	}
 }

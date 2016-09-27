@@ -63,6 +63,7 @@ XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为�
 
 系统配置信息以K/V的形式存在, "配置项" 属性如下:
 
+- 分组: "配置项" 的分组, 便于配置分组管理;
 - KEY : "配置项" 的全局唯一标识, 对应一条配置信息;
 - VALUE : "配置项" 中保存的数据信息, 仅仅支持String字符串格式; 
 - 描述 : 配置项的描述信息;
@@ -222,11 +223,11 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 
 进入"配置管理界面",点击"新增配置"按钮
 
-![输入图片说明](https://static.oschina.net/uploads/img/201608/17204953_DMHC.png "在这里输入图片标题")
+![输入图片说明](https://static.oschina.net/uploads/img/201609/27103547_Ztff.png "在这里输入图片标题")
 
 在弹出界面,填写配置信息
 
-![输入图片说明](https://static.oschina.net/uploads/img/201608/17205147_7SBG.png "在这里输入图片标题")
+![输入图片说明](https://static.oschina.net/uploads/img/201609/27103706_iExP.png "在这里输入图片标题")
 
 至此, 一条配置信息已经添加完成.
 
