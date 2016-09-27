@@ -119,7 +119,14 @@ $(function(){
 			);
 		});
 	});
-	
+
+    // jquery.validate 自定义校验 “英文字母开头，只含有英文字母、数字和下划线”
+    jQuery.validator.addMethod("myValid01", function(value, element) {
+        var length = value.length;
+        var valid = /^[a-z][a-z0-9_]*$/;
+        return this.optional(element) || valid.test(value);
+    }, "KEY只能由小写字母、数字和.组成,须以小写字母开头");
+
 	// 新增
 	$("#add").click(function(){
 		$('#addModal').modal('show');
@@ -132,7 +139,8 @@ $(function(){
         	nodeKey : {
         		required : true ,
                 minlength: 4,
-                maxlength: 100
+                maxlength: 100,
+                myValid01: true
             },  
             nodeValue : {
             	required : false
