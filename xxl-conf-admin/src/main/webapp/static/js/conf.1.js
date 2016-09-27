@@ -51,6 +51,7 @@ $(function(){
 							' nodeValueReal="'+ row.nodeValueReal +'" '+
 							' nodeDesc="'+ row.nodeDesc +'" '+
 							'>'+
+							'<textarea name="nodeValue" style="display:none;" >'+ row.nodeValue +'</textarea>  '+
 							'<button class="btn btn-warning btn-xs update" type="button">编辑</button>  '+
 							'<button class="btn btn-danger btn-xs delete" type="button">删除</button>  '+
 							'</p>';
@@ -181,8 +182,9 @@ $(function(){
 
 		$("#updateModal .form input[name='nodeGroup']").val( $(this).parent('p').attr("nodeGroup") );
 		$("#updateModal .form input[name='nodeKey']").val( $(this).parent('p').attr("nodeKey") );
-		$("#updateModal .form textarea[name='nodeValue']").val( $(this).parent('p').attr("nodeValue") );
-		//$("#updateModal .form input[name='nodeValueReal']").val( $(this).parent('p').attr("nodeKey") );
+		//$("#updateModal .form input[name='nodeValueReal']").val( $(this).parent('p').attr("nodeValueReal") );
+		//$("#updateModal .form textarea[name='nodeValue']").val( $(this).parent('p').attr("nodeValue") );
+		$("#updateModal .form textarea[name='nodeValue']").val( $(this).parent('p').find("textarea[name='nodeValue']").val() );
 		$("#updateModal .form input[name='nodeDesc']").val( $(this).parent('p').attr("nodeDesc") );
 
 		$('#updateModal').modal('show');
