@@ -2,7 +2,6 @@ package com.xxl.conf.core;
 
 import com.xxl.conf.core.util.Environment;
 import org.apache.zookeeper.*;
-import org.apache.zookeeper.Watcher.Event.EventType;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,59 +52,31 @@ public class XxlConfZkClient implements Watcher {
 		if (zooKeeper==null) {
 			try {
 				if (INSTANCE_INIT_LOCK.tryLock(2, TimeUnit.SECONDS)) {
-					zooKeeper = new ZooKeeper(Environment.ZK_ADDRESS, 100000, new Watcher() {
+					zooKeeper = new ZooKeeper(Environment.ZK_ADDRESS, 30000, new Watcher() {
 						@Override
 						public void process(WatchedEvent watchedEvent) {
 							try {
 								logger.info(">>>>>>>>>> xxl-conf: watcher:{}", watchedEvent);
 
-								EventType eventType = watchedEvent.getType();
-								if (eventType == EventType.NodeCreated) {
-									/*String path = watchedEvent.getPath();
-									zooKeeper.exists(path, true);	// add One-time trigger, ZooKeeper的Watcher是一次性的，用过了需要再注册
+                                // session expire, close old and create new
+                                if (watchedEvent.getState() == Event.KeeperState.Expired) {
+                                    zooKeeper.close();
+                                    zooKeeper = null;
+                                    getInstance();
+                                }
 
-									String key = pathToKey(path);
-									if (key == null) {
-										return;
-									}
-									String data = getPathDataByKey(key);
-
-									XxlConfClient.set(key, data);
-									logger.info(">>>>>>>>>> xxl-conf: 新增配置：[{}={}]", new Object[]{key, data});*/
-								} else if (eventType == EventType.NodeDeleted) {
-									String path = watchedEvent.getPath();
-									zooKeeper.exists(path, true);
-
-									String key = pathToKey(path);
-									if (key == null) {
-										return;
-									}
-
-									XxlConfClient.remove(key);
-								} else if (eventType == EventType.NodeDataChanged) {
-									String path = watchedEvent.getPath();
-									zooKeeper.exists(path, true);
-
-									String key = pathToKey(path);
-									if (key == null) {
-										return;
-									}
-									String data = getPathDataByKey(key);
-
-									XxlConfClient.update(key, data);
-								} else if (eventType == EventType.NodeChildrenChanged) {
-									// TODO
-								} else if (eventType == EventType.None) {
-									// TODO
-								}
-
-								// session expire, close old and create new
-								if (watchedEvent.getState() == Event.KeeperState.Expired) {
-									zooKeeper.close();
-									zooKeeper = null;
-									getInstance();
-								}
-
+                                String path = watchedEvent.getPath();
+                                String key = pathToKey(path);
+                                if (key != null) {
+                                    // add One-time trigger
+                                    zooKeeper.exists(path, true);
+                                    if (watchedEvent.getType() == Event.EventType.NodeDeleted) {
+                                        XxlConfClient.remove(key);
+                                    } else if (watchedEvent.getType() == Event.EventType.NodeDataChanged) {
+                                        String data = getPathDataByKey(key);
+                                        XxlConfClient.update(key, data);
+                                    }
+                                }
 							} catch (KeeperException e) {
 								e.printStackTrace();
 							} catch (InterruptedException e) {
@@ -142,7 +113,7 @@ public class XxlConfZkClient implements Watcher {
 	 * @return ZnodeKey
 	 */
 	private static String pathToKey(String nodePath){
-		if (nodePath.length() <= Environment.CONF_DATA_PATH.length()) {
+		if (nodePath==null || nodePath.length() <= Environment.CONF_DATA_PATH.length() || !nodePath.startsWith(Environment.CONF_DATA_PATH)) {
 			return null;
 		}
 		return nodePath.substring(Environment.CONF_DATA_PATH.length()+1, nodePath.length());
