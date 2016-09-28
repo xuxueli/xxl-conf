@@ -52,39 +52,43 @@ public class XxlConfZkClient implements Watcher {
 		if (zooKeeper==null) {
 			try {
 				if (INSTANCE_INIT_LOCK.tryLock(2, TimeUnit.SECONDS)) {
-					zooKeeper = new ZooKeeper(Environment.ZK_ADDRESS, 20000, new Watcher() {
-						@Override
-						public void process(WatchedEvent watchedEvent) {
-							try {
-								logger.info(">>>>>>>>>> xxl-conf: watcher:{}", watchedEvent);
+					try {
+						zooKeeper = new ZooKeeper(Environment.ZK_ADDRESS, 20000, new Watcher() {
+							@Override
+							public void process(WatchedEvent watchedEvent) {
+								try {
+									logger.info(">>>>>>>>>> xxl-conf: watcher:{}", watchedEvent);
 
-                                // session expire, close old and create new
-                                if (watchedEvent.getState() == Event.KeeperState.Expired) {
-                                    zooKeeper.close();
-                                    zooKeeper = null;
-                                    getInstance();
-                                }
+									// session expire, close old and create new
+									if (watchedEvent.getState() == Event.KeeperState.Expired) {
+										zooKeeper.close();
+										zooKeeper = null;
+										getInstance();
+									}
 
-                                String path = watchedEvent.getPath();
-                                String key = pathToKey(path);
-                                if (key != null) {
-                                    // add One-time trigger
-                                    zooKeeper.exists(path, true);
-                                    if (watchedEvent.getType() == Event.EventType.NodeDeleted) {
-                                        XxlConfClient.remove(key);
-                                    } else if (watchedEvent.getType() == Event.EventType.NodeDataChanged) {
-                                        String data = getPathDataByKey(key);
-                                        XxlConfClient.update(key, data);
-                                    }
-                                }
-							} catch (KeeperException e) {
-								e.printStackTrace();
-							} catch (InterruptedException e) {
-								e.printStackTrace();
+									String path = watchedEvent.getPath();
+									String key = pathToKey(path);
+									if (key != null) {
+										// add One-time trigger
+										zooKeeper.exists(path, true);
+										if (watchedEvent.getType() == Event.EventType.NodeDeleted) {
+											XxlConfClient.remove(key);
+										} else if (watchedEvent.getType() == Event.EventType.NodeDataChanged) {
+											String data = getPathDataByKey(key);
+											XxlConfClient.update(key, data);
+										}
+									}
+								} catch (KeeperException e) {
+									e.printStackTrace();
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
 							}
-						}
-					});
-					XxlConfZkClient.createWithParent(Environment.CONF_DATA_PATH);	// init cfg root path
+						});
+						XxlConfZkClient.createWithParent(Environment.CONF_DATA_PATH);	// init cfg root path
+					} finally {
+						INSTANCE_INIT_LOCK.unlock();
+					}
                 }
 			} catch (InterruptedException e) {
 				e.printStackTrace();
