@@ -208,7 +208,16 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
     ```
     - 配置文件作用: 配置Zookeeper的地址信息
     
-- **B：配置“XXL-CONF配置解析器”**：
+- **B：maven 依赖**：
+    ```
+    <dependency>
+        <groupId>com.xxl</groupId>
+        <artifactId>xxl-conf-core</artifactId>
+        <version>${xxl.conf.version}</version>
+    </dependency>
+    ```
+    
+- **C：配置“XXL-CONF配置解析器”**：
 
     - 配置文件地址: 源码/xxl-conf/xxl-conf-example/src/main/resources/applicationcontext-xxl-conf.xml
     - 配置内容: 
@@ -216,6 +225,11 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
     <!-- XXL-CONF配置解析器 -->
     <bean id="xxlConfPropertyPlaceholderConfigurer" class="com.xxl.conf.core.spring.XxlConfPropertyPlaceholderConfigurer" />
     ```
+
+- **D：配置“local.properties”**：
+
+    - 配置文件地址: 源码/xxl-conf/xxl-conf-example/src/main/resources/local.properties
+    - 功能: XXL-CONF 加载配置时会优先加载 "local.properties" 中的配置, 然后才会加载ZK中的配置。可以将一些希望存放本地的配置存放在该文件。
     
 #### 3.5 新增配置信息
 
