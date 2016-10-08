@@ -36,15 +36,31 @@ XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为�
 - 5、不同环境 "同一个上线包" : 因为差异化的配置托管在配置中心, 因此一个上线包可以复用在生产、测试等各个运行环境, 提供能效;
 
 #### 1.4 下载
-源码地址 (将会在两个git仓库同步发布最新代码)
+##### 源码地址 (将会在两个git仓库同步发布最新代码)
+
 - [github地址](https://github.com/xuxueli/xxl-conf)
 - [git.oschina地址](https://git.oschina.net/xuxueli0323/xxl-conf)
 
-博客地址
+
+    最新Release版本: v1.3.0
+    最新Beta版本: v1.3.0
+ 
+##### 中央仓库地址 (最新Release版本)
+```
+<dependency>
+  <groupId>com.xuxueli</groupId>
+  <artifactId>xxl-conf-core</artifactId>
+  <version>1.3.0</version>
+  <classifier>javadoc</classifier>
+</dependency>
+```
+
+##### 博客地址 (将会在两个博客同步更新文档)
+
 - [oschina地址](http://my.oschina.net/xuxueli/blog/734267)
 - [cnblogs地址](http://www.cnblogs.com/xuxueli/p/4777808.html)
 
-技术交流群(仅作技术交流)：367260654    [![image](http://pub.idqqimg.com/wpa/images/group.png)](http://shang.qq.com/wpa/qunwpa?idkey=4686e3fe01118445c75673a66b4cc6b2c7ce0641528205b6f403c179062b0a52 )
+##### 技术交流群(仅作技术交流)：367260654    [![image](http://pub.idqqimg.com/wpa/images/group.png)](http://shang.qq.com/wpa/qunwpa?idkey=4686e3fe01118445c75673a66b4cc6b2c7ce0641528205b6f403c179062b0a52 )
 
 #### 1.5 环境
 - Maven3+
