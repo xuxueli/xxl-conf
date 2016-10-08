@@ -1,8 +1,9 @@
 package com.xxl.conf.admin.service.impl;
 
-import com.xxl.conf.admin.core.constant.XxlConfNodeGroup;
+import com.xxl.conf.admin.core.model.XxlConfGroup;
 import com.xxl.conf.admin.core.model.XxlConfNode;
 import com.xxl.conf.admin.core.util.ReturnT;
+import com.xxl.conf.admin.dao.IXxlConfGroupDao;
 import com.xxl.conf.admin.dao.IXxlConfNodeDao;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
 import com.xxl.conf.core.XxlConfZkClient;
@@ -24,19 +25,15 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 	
 	@Resource
 	private IXxlConfNodeDao xxlConfNodeDao;
+	@Resource
+	private IXxlConfGroupDao xxlConfGroupDao;
 
 	@Override
 	public Map<String,Object> pageList(int offset, int pagesize, String nodeGroup, String nodeKey) {
 
 		// xxlConfNode in mysql
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("offset", offset);
-		params.put("pagesize", pagesize);
-		params.put("nodeGroup", nodeGroup);
-		params.put("nodeKey", nodeKey);
-
-		List<XxlConfNode> data = xxlConfNodeDao.pageList(params);
-		int list_count = xxlConfNodeDao.pageListCount(params);
+		List<XxlConfNode> data = xxlConfNodeDao.pageList(offset, pagesize, nodeGroup, nodeKey);
+		int list_count = xxlConfNodeDao.pageListCount(offset, pagesize, nodeGroup, nodeKey);
 
 		// fill value in zk
 		if (CollectionUtils.isNotEmpty(data)) {
@@ -77,8 +74,9 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		if (StringUtils.isBlank(xxlConfNode.getNodeGroup())) {
 			return new ReturnT<String>(500, "配置分组不可为空");
 		}
-		if (XxlConfNodeGroup.valueOf(xxlConfNode.getNodeGroup())==null) {
-			return new ReturnT<String>(500, "配置分组参数非法");
+		XxlConfGroup group = xxlConfGroupDao.load(xxlConfNode.getNodeGroup());
+		if (group==null) {
+			return new ReturnT<String>(500, "配置分组不存在");
 		}
 		if (StringUtils.isBlank(xxlConfNode.getNodeKey())) {
 			return new ReturnT<String>(500, "配置Key不可为空");

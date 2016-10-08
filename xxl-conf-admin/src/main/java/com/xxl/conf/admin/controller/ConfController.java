@@ -1,9 +1,10 @@
 package com.xxl.conf.admin.controller;
 
 import com.xxl.conf.admin.controller.annotation.PermessionLimit;
-import com.xxl.conf.admin.core.constant.XxlConfNodeGroup;
+import com.xxl.conf.admin.core.model.XxlConfGroup;
 import com.xxl.conf.admin.core.model.XxlConfNode;
 import com.xxl.conf.admin.core.util.ReturnT;
+import com.xxl.conf.admin.dao.IXxlConfGroupDao;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,14 +23,19 @@ import java.util.Map;
 @Controller
 @RequestMapping("/conf")
 public class ConfController {
-	
+
+	@Resource
+	private IXxlConfGroupDao xxlConfGroupDao;
 	@Resource
 	private IXxlConfNodeService xxlConfNodeService;
 	
 	@RequestMapping("")
 	@PermessionLimit
 	public String index(Model model, String znodeKey){
-		model.addAttribute("XxlConfNodeGroup", XxlConfNodeGroup.values());
+
+		List<XxlConfGroup> list = xxlConfGroupDao.findAll();
+
+		model.addAttribute("XxlConfNodeGroup", list);
 		return "conf/conf.index";
 	}
 

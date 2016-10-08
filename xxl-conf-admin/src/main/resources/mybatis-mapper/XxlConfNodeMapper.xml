@@ -21,7 +21,9 @@
 		SELECT <include refid="Base_Column_List" />
 		FROM XXL_CONF_NODE AS t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
-			t.node_group = #{nodeGroup}
+			<if test="nodeGroup != null and nodeGroup != '' ">
+				t.node_group = #{nodeGroup}
+			</if>
 			<if test="nodeKey != null and nodeKey != '' ">
 				AND t.node_key like CONCAT('%',#{nodeKey},'%')
 			</if>
@@ -34,7 +36,9 @@
 		SELECT count(1)
 		FROM XXL_CONF_NODE AS t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
+			<if test="nodeGroup != null and nodeGroup != '' ">
 			t.node_group = #{nodeGroup}
+			</if>
 			<if test="nodeKey != null and nodeKey != '' ">
 				AND t.node_key like CONCAT('%',#{nodeKey},'%')
 			</if>

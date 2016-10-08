@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.xxl</groupId>
 		<artifactId>xxl-conf</artifactId>
-		<version>1.2.0</version>
+		<version>1.2.1</version>
 	</parent>
 	<artifactId>xxl-conf-core</artifactId>
 	<packaging>jar</packaging>

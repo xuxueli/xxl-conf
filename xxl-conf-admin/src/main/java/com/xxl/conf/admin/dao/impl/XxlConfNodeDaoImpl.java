@@ -21,12 +21,26 @@ public class XxlConfNodeDaoImpl implements IXxlConfNodeDao {
 	private SqlSessionTemplate sqlSessionTemplate;
 
 	@Override
-	public List<XxlConfNode> pageList(Map<String, Object> params) {
+	public List<XxlConfNode> pageList(int offset, int pagesize, String nodeGroup, String nodeKey) {
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("offset", offset);
+		params.put("pagesize", pagesize);
+		params.put("nodeGroup", nodeGroup);
+		params.put("nodeKey", nodeKey);
+
 		return sqlSessionTemplate.selectList("XxlConfNodeMapper.pageList", params);
 	}
 
 	@Override
-	public int pageListCount(Map<String, Object> params) {
+	public int pageListCount(int offset, int pagesize, String nodeGroup, String nodeKey) {
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("offset", offset);
+		params.put("pagesize", pagesize);
+		params.put("nodeGroup", nodeGroup);
+		params.put("nodeKey", nodeKey);
+
 		return sqlSessionTemplate.selectOne("XxlConfNodeMapper.pageListCount", params);
 	}
 

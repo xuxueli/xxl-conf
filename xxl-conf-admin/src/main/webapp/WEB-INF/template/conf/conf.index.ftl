@@ -37,7 +37,8 @@
                             <span class="input-group-addon">分组</span>
                             <select class="form-control" id="nodeGroup" >
 							<#list XxlConfNodeGroup as group>
-                                <option value="${group}" >${group.title}</option>
+                                <option value="" >全部</option>
+                                <option value="${group.groupName}" >${group.groupTitle}</option>
 							</#list>
                             </select>
                         </div>
@@ -118,7 +119,7 @@
                             <div class="col-sm-4">
 								<select class="form-control" name="nodeGroup" >
 									<#list XxlConfNodeGroup as group>
-										<option value="${group}" >${group.title}</option>
+                                        <option value="${group.groupName}" >${group.groupTitle}</option>
 									</#list>
 								</select>
                         	</div>

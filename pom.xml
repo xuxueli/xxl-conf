@@ -1,18 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.xxl</groupId>
+	<groupId>com.xuxueli</groupId>
 	<artifactId>xxl-conf</artifactId>
-	<version>1.2.0</version>
+	<version>1.2.1</version>
 	<packaging>pom</packaging>
+
+	<name>xxl-conf</name>
+	<description>A lightweight distributed configuration management platform.</description>
+	<url>http://www.xuxueli.com/</url>
 
 	<modules>
 		<module>xxl-conf-admin</module>
 		<module>xxl-conf-core</module>
 		<module>xxl-conf-example</module>
 	</modules>
-
-
 
 	<build>
 		<plugins>
@@ -31,10 +33,105 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.2</version>
 				<configuration>
-					<archiveClasses>true</archiveClasses>
+					<archiveClasses>false</archiveClasses>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19.1</version>
+				<configuration>
+					<skip>true</skip>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
+
+	<licenses>
+		<license>
+			<name>GNU General Public License, version 2</name>
+			<url>http://opensource.org/licenses/GPL-2.0</url>
+		</license>
+	</licenses>
+	<scm>
+		<tag>master</tag>
+		<url>https://github.com/xuxueli/xxl-conf.git</url>
+		<connection>scm:git:https://github.com/xuxueli/xxl-conf.git</connection>
+		<developerConnection>scm:git:git@github.com:xuxueli/xxl-conf.git</developerConnection>
+	</scm>
+	<developers>
+		<developer>
+			<id>XXL</id>
+			<name>xuxueli</name>
+			<email>931591021@qq.com</email>
+			<url>https://github.com/xuxueli</url>
+		</developer>
+	</developers>
+
+	<profiles>
+
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<!-- Source -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>2.2.1</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- Javadoc -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>2.9.1</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- GPG -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.6</version>
+						<configuration>
+							<useAgent>false</useAgent>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+			<distributionManagement>
+				<snapshotRepository>
+					<id>oss</id>
+					<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+				</snapshotRepository>
+				<repository>
+					<id>oss</id>
+					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+				</repository>
+			</distributionManagement>
+		</profile>
+	</profiles>
 
 </project>

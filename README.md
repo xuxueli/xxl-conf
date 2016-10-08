@@ -13,7 +13,7 @@ XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为�
 - 6、HA: 配置中心基于Zookeeper集群, 只要集群节点保证存活数量大于N/2+1, 就可保证服务稳定, 避免单点风险;
 - 7、分布式: 可方便的接入线上分布式部署的各个业务线, 统一管理配置信息;
 - 8、配置共享: 平台中的配置信息针对各个业务线是平等的, 各个业务线可以共享配置中心的配置信息, 当然也可以配置业务内专属配置信息;
-- 9、配置分组: 支持对配置进行分组管理, 每条配置将会生成全局唯一标示GroupKey,在client端使用时,需要通过该值匹配对应的配置信息;;
+- 9、配置分组: 支持对配置进行分组管理, 每条配置将会生成全局唯一标示GroupKey,在client端使用时,需要通过该值匹配对应的配置信息;
 
 #### 1.3 背景
 
@@ -230,8 +230,14 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 
     - 配置文件地址: 源码/xxl-conf/xxl-conf-example/src/main/resources/local.properties
     - 功能: XXL-CONF 加载配置时会优先加载 "local.properties" 中的配置, 然后才会加载ZK中的配置。可以将一些希望存放本地的配置存放在该文件。当不需要本地配置时, 可删除该文件。
-    
-#### 3.5 新增配置信息
+
+#### 3.5 新增配置分组
+
+![输入图片说明](https://static.oschina.net/uploads/img/201610/08182521_r2e4.png "在这里输入图片标题")
+
+每个配置分组对应一个唯一的GroupName，作为该分组下配置的统一前缀。在“分组管理”栏目可以创建并管理配置分组信息，系统已经提供一个默认分组.
+   
+#### 3.6 新增配置信息
 
 登录"配置管理中心"
 
@@ -251,7 +257,7 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201608/18111816_Of9e.png "在这里输入图片标题")
 
-#### 3.6 项目中使用XXL-CONF 
+#### 3.7 项目中使用XXL-CONF 
 
     项目: xxl-conf-example:   (可以参考 com.xxl.conf.example.controller.IndexController.index() )
     作用: 接入XXl-CONF的Demo项目
@@ -260,20 +266,20 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 - 方式1: XML文件中的占位符方式
     ```
     <bean id="configuration" class="com.xxl.conf.example.core.constant.Configuration">
-        <property name="paramByXml" value="${key01}" />
+        <property name="paramByXml" value="${default.key01}" />
     </bean>
     ```
     特点:
-    - 上面配置说明: 在项目启动时, Configuration的paramByXml属性, 会根据配置的占位符${key01}, 去XXL-CONF中匹配KEY=key01的配置信息, 赋值给paramByXml;
+    - 上面配置说明: 在项目启动时, Configuration的paramByXml属性, 会根据配置的占位符${default.key01}, 去XXL-CONF中匹配KEY=key01的配置信息, 赋值给paramByXml;
     - 目前, 该方式配置信息, 只会在项目启动时从XXL-CONF中加载一次, 项目启动后该值不会变更。 例如配置数据连接信息, 如果XXL-CONF平台中连接地址配置改边, 需要重启后才生效;
     - 该方式, 底层本质上是通过 "方式2: API方式" 实现的。
 
 - 方式2: API方式
     ```
-    String paramByClient = XxlConfClient.get("key02", null);
+    String paramByClient = XxlConfClient.get("default.key02", null);
     ```
     特点:
-    - 上面代码说明: 会获取XXL-CONF平台中KEY=key02的配置信息, 如果不存在值使用传递的默认值;
+    - 上面代码说明: 会获取XXL-CONF平台中KEY=default.key02的配置信息, 如果不存在值使用传递的默认值;
     - 因为Zookeeper会实时推送配置更新到客户端, 因此该方法放回的值可以XXL-CONF平台中的值保持实时一致;
     - XXL-CONF会对Zookeeper推送的配置信息做本地缓存, 该方法查询的是缓存的配置信息, 因此该方法并不会产生性能问题, 使用时不需要考虑性能问题;
 
@@ -291,9 +297,11 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 #### 4.2 版本1.2.0新特性
 - 1、配置分组: 支持对配置进行分组管理, 每条配置将会生成全局唯一标示GroupKey,在client端使用时,需要通过该值匹配对应的配置信息;
 
+#### 4.3 版本1.2.1新特性
+- 1、支持在线维护配置分组；
+
 #### 规划中
-- 1、配置分组, 在线维护;
-- 2、zookeeper客户端优化, 或将改用zkclient或者curator；
+- 1、zookeeper客户端优化, 或将改用zkclient或者curator；
 
 ## 五、其他
 

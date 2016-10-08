@@ -4,7 +4,6 @@ package com.xxl.conf.admin.dao;
 import com.xxl.conf.admin.core.model.XxlConfNode;
 
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -13,8 +12,8 @@ import java.util.Map;
  */
 public interface IXxlConfNodeDao {
 
-	public List<XxlConfNode> pageList(Map<String, Object> params);
-	public int pageListCount(Map<String, Object> params);
+	public List<XxlConfNode> pageList(int offset, int pagesize, String nodeGroup, String nodeKey);
+	public int pageListCount(int offset, int pagesize, String nodeGroup, String nodeKey);
 
 	public int deleteByKey(String nodeGroup, String nodeKey);
 

@@ -8,9 +8,9 @@
 	<!-- XXL-CONF配置解析器 -->
 	<bean id="xxlConfPropertyPlaceholderConfigurer" class="com.xxl.conf.core.spring.XxlConfPropertyPlaceholderConfigurer" />
 
-	<!-- XML文件测试用,可删除 -->
+	<!-- XML占位符方式使用示例,可删除 -->
 	<bean id="configuration" class="com.xxl.conf.example.core.constant.Configuration">
-		<property name="paramByXml" value="${project_waimai.key01}" />
+		<property name="paramByXml" value="${default.key01}" />
 	</bean>
 
 </beans>
