@@ -51,7 +51,6 @@ XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为�
   <groupId>com.xuxueli</groupId>
   <artifactId>xxl-conf-core</artifactId>
   <version>1.3.0</version>
-  <classifier>javadoc</classifier>
 </dependency>
 ```
 
