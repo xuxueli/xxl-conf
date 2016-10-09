@@ -36,10 +36,10 @@
                         <div class="input-group">
                             <span class="input-group-addon">分组</span>
                             <select class="form-control" id="nodeGroup" >
-							<#list XxlConfNodeGroup as group>
                                 <option value="" >全部</option>
-                                <option value="${group.groupName}" >${group.groupTitle}</option>
-							</#list>
+								<#list XxlConfNodeGroup as group>
+									<option value="${group.groupName}" >${group.groupTitle}</option>
+								</#list>
                             </select>
                         </div>
                     </div>
