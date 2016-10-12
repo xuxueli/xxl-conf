@@ -41,7 +41,7 @@ public class XxlConfClient {
 	}
 
 	public static String get(String key, String defaultVal) {
-		if (localProp!=null && localProp.contains(key)) {
+		if (localProp!=null && localProp.containsKey(key)) {
 			return localProp.getProperty(key);
 		}
 		if (cache != null) {
