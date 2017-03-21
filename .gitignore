@@ -7,3 +7,4 @@
 */target
 /.idea
 .DS_Store
+.gitattributes
