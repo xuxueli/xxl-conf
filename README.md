@@ -320,8 +320,9 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 - 2、项目groupId从com.xxl迁移至com.xuxueli，为推送maven中央仓库做准备；
 - 3、v1.3.0版本开始，推送公共依赖至中央仓库；
 
-#### 规划中
-- 1、zookeeper客户端优化, 或将改用zkclient或者curator；
+#### TODO LIST
+- 1、权限管理：以分组为权限最小单元，只有分组的成员用户才有权限进行对应的配置操作；
+- 2、zookeeper客户端优化, 或将改用zkclient或者curator；
 
 ## 五、其他
 
