@@ -325,6 +325,7 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 #### TODO LIST
 - 1、权限管理：以分组为权限最小单元，只有分组的成员用户才有权限进行对应的配置操作；
 - 2、zookeeper客户端优化, 或将改用zkclient或者curator；
+- 3、local cache 备份到磁盘；zk异常且local properties未配置时，从磁盘上读取配置；
 
 ## 五、其他
 
