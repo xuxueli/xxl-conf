@@ -29,8 +29,8 @@ public class PropertiesUtil {
 			ClassLoader loder = Thread.currentThread().getContextClassLoader();
 			URL url = loder.getResource(propertyFileName); // 方式1：配置更新不需要重启JVM
 			if (url != null) {
-				in = new FileInputStream(url.getPath());
-				// in = loder.getResourceAsStream(propertyFileName); // 方式2：配置更新需重启JVM
+				//in = new FileInputStream(url.getPath());
+				in = loder.getResourceAsStream(propertyFileName); // 方式2：配置更新需重启JVM
 				if (in != null) {
 					prop.load(in);
 				}
@@ -99,11 +99,6 @@ public class PropertiesUtil {
      */
 	public static boolean getBoolean(Properties prop, String key) {
 		return Boolean.valueOf(getString(prop, key));
-	}
-
-	public static void main(String[] args) {
-		Properties prop = loadProperties("config.properties");
-		System.out.println(getString(prop, "login.username"));
 	}
 
 }

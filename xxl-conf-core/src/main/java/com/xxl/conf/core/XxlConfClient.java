@@ -16,7 +16,9 @@ import java.util.Properties;
  */
 public class XxlConfClient {
 	private static Logger logger = LoggerFactory.getLogger(XxlConfClient.class);
-	public static Properties localProp = PropertiesUtil.loadProperties("local.properties");
+
+	public static Properties localProp = PropertiesUtil.loadProperties("xxl-conf.properties");
+
 	private static Cache cache;
 	static {
 		CacheManager manager = CacheManager.create();	// default use ehcche.xml under src

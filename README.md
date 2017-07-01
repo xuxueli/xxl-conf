@@ -175,8 +175,9 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 ## 三、快速入门
 
 #### 3.1 初始化“数据库”
-请下载项目源码并解压，获取 "调度数据库初始化SQL脚本"(脚本文件为: 源码解压根目录xxl-conf/db/xxl-conf.sql) 并执行即可。
-
+请下载项目源码并解压，获取 "调度数据库初始化SQL脚本" 并执行即可。脚本位置如下：
+ 
+    xxl-conf/db/xxl-conf.sql
 
 #### 3.2 编译源码
 解压源码,按照maven格式将源码导入IDE, 使用maven进行编译即可，源码结构如下图所示：
@@ -187,69 +188,73 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 - xxl-conf-core：公共依赖
 - xxl-conf-example: 接入XXl-CONF的Demo项目
 
-#### 3.3 配置部署“配置管理中心”
+#### 3.3 “配置管理中心” 项目配置
 
     项目：xxl-conf-admin
-    作用：查询和管理线上配置信息
+    作用：管理线上配置信息
     
-- **A：配置“Zookeeper地址列表”**：
+配置文件位置：
 
-    - 配置文件位置: /data/webapps/xxl-conf.properties     (使用硬盘绝对路径, 好处是: 该机器上所有项目可共享该Zookeeper地址配置)
-    - 配置文件内容:
-    ```
-    // 支持zookeeper地址集群配置, 如有多个地址用逗号分隔
-    zkserver=127.0.0.1:2181
-    ```
-    - 配置文件作用: 配置Zookeeper的地址信息
+    xxl-conf/xxl-conf-admin/src/main/resources/xxl-config-admin.properties
     
-- **B：配置“JDBC链接”**：
+配置项目说明：
+```
+# xxl-conf, zk address  （配置中心zookeeper集群地址，如有多个地址用逗号分隔）
+xxl.conf.zkserver=127.0.0.1:2181
 
-    - 配置文件位置: 源码/xxl-conf/xxl-conf-admin/src/main/resources/jdbc.properties
-    - 作用: 配置数据在数据库中的备份
-    
-    
-- **C：配置“登录账号和密码”**：
+# xxl-conf, jdbc    （配置中心mysql地址）
+xxl.conf.jdbc.driverClass=com.mysql.jdbc.Driver
+xxl.conf.jdbc.url=jdbc:mysql://localhost:3306/xxl-conf?Unicode=true&amp;characterEncoding=UTF-8
+xxl.conf.jdbc.username=root
+xxl.conf.jdbc.password=root_pwd
 
-    - 配置文件位置: 源码/xxl-conf/xxl-conf-admin/src/main/resources/config.properties
+# xxl-conf, admin login （管理中心登录账号密码）
+xxl.conf.login.username=admin
+xxl.conf.login.password=123456
+```
 
-
-#### 3.4 配置部署“接入XXL-CONF的Demo项目”
+#### 3.4 “接入XXL-CONF的Demo项目” 项目配置
 
     项目：xxl-conf-example
     作用：供用户参考学习如何接入XXL-CONF
-    
-- **A：配置“Zookeeper地址列表”**：
 
-    - 配置文件位置: /data/webapps/xxl-conf.properties     (使用硬盘绝对路径, 好处是: 该机器上所有项目可共享该Zookeeper地址配置)
-    - 配置文件内容:
-    ```
-    // 支持zookeeper地址集群配置, 如有多个地址用逗号分隔
-    zkserver=127.0.0.1:2181
-    ```
-    - 配置文件作用: 配置Zookeeper的地址信息
-    
-- **B：maven 依赖**：
-    ```
-    <dependency>
-        <groupId>com.xxl</groupId>
-        <artifactId>xxl-conf-core</artifactId>
-        <version>${xxl.conf.version}</version>
-    </dependency>
-    ```
-    
-- **C：配置“XXL-CONF配置解析器”**：
+##### A、引入maven依赖
+```
+<!-- xxl-conf-client -->
+<dependency>
+    <groupId>com.xuxueli</groupId>
+    <artifactId>xxl-conf-core</artifactId>
+    <version>${xxl.conf.version}</version>
+</dependency>
+```
 
-    - 配置文件地址: 源码/xxl-conf/xxl-conf-example/src/main/resources/applicationcontext-xxl-conf.xml
-    - 配置内容: 
-    ```
-    <!-- XXL-CONF配置解析器 -->
-    <bean id="xxlConfPropertyPlaceholderConfigurer" class="com.xxl.conf.core.spring.XxlConfPropertyPlaceholderConfigurer" />
-    ```
+##### B、配置 “XXL-CONF配置解析器”
 
-- **D：配置“local.properties”**：
+可参考配置文件：
 
-    - 配置文件地址: 源码/xxl-conf/xxl-conf-example/src/main/resources/local.properties
-    - 功能: XXL-CONF 加载配置时会优先加载 "local.properties" 中的配置, 然后才会加载ZK中的配置。可以将一些希望存放本地的配置存放在该文件。当不需要本地配置时, 可删除该文件。
+    /xxl-conf/xxl-conf-example/src/main/resources/spring/applicationcontext-xxl-conf.xml
+
+
+配置项说明
+```
+<!-- XXL-CONF配置解析器 -->
+<bean id="xxlConfPropertyPlaceholderConfigurer" class="com.xxl.conf.core.spring.XxlConfPropertyPlaceholderConfigurer" />
+```
+
+##### C、设置 "xxl-conf.properties" 
+
+可参考配置文件：
+
+    /xxl-conf/xxl-conf-example/src/main/resources/xxl-conf.properties
+
+配置项说明
+```
+# xxl-conf, zk address  （配置中心zookeeper集群地址，如有多个地址用逗号分隔）
+xxl.conf.zkserver=127.0.0.1:2181
+```
+
+该配置文件，除了支持配置ZK地址，还可以配置一些本地配置。
+XXL-CONF 加载配置时会优先加载 "xxl-conf.properties" 中的配置, 然后才会加载ZK中的配置。可以将一些希望存放本地的配置存放在该文件。
 
 #### 3.5 新增配置分组
 
@@ -321,6 +326,9 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 - 1、支持在线维护配置分组；
 - 2、项目groupId从com.xxl迁移至com.xuxueli，为推送maven中央仓库做准备；
 - 3、v1.3.0版本开始，推送公共依赖至中央仓库；
+
+#### 4.4 版本1.3.1新特性(Coding)
+- zookeeper地址方式从磁盘迁移至项目内；
 
 #### TODO LIST
 - 1、权限管理：以分组为权限最小单元，只有分组的成员用户才有权限进行对应的配置操作；

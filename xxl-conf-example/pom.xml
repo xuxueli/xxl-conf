@@ -4,13 +4,13 @@
 	<parent>
 		<groupId>com.xuxueli</groupId>
 		<artifactId>xxl-conf</artifactId>
-		<version>1.3.0</version>
+		<version>1.3.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>xxl-conf-example</artifactId>
 	<packaging>war</packaging>
 
 	<properties>
-		<xxl.conf.version>1.3.0</xxl.conf.version>
+		<xxl.conf.version>1.3.1-SNAPSHOT</xxl.conf.version>
 		<spring.version>3.2.13.RELEASE</spring.version>
 	</properties>
 
