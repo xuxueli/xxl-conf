@@ -73,13 +73,150 @@ XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为�
 - Zookeeper3.4+
 - Mysql5.5+
 
-## 二、总体设计
+## 二、快速入门
 
-#### 2.1 架构图
+#### 2.1 初始化“数据库”
+请下载项目源码并解压，获取 "调度数据库初始化SQL脚本" 并执行即可。脚本位置如下：
+ 
+    xxl-conf/db/xxl-conf.sql
+
+#### 2.2 编译源码
+解压源码,按照maven格式将源码导入IDE, 使用maven进行编译即可，源码结构如下图所示：
+
+![输入图片说明](https://static.oschina.net/uploads/img/201608/17202150_YgLy.png "在这里输入图片标题")
+
+- xxl-conf-admin：配置管理中心
+- xxl-conf-core：公共依赖
+- xxl-conf-example: 接入XXl-CONF的Demo项目
+
+#### 2.3 “配置管理中心” 项目配置
+
+    项目：xxl-conf-admin
+    作用：管理线上配置信息
+    
+配置文件位置：
+
+    xxl-conf/xxl-conf-admin/src/main/resources/xxl-config-admin.properties
+    
+配置项目说明：
+```
+# xxl-conf, zk address  （配置中心zookeeper集群地址，如有多个地址用逗号分隔）
+xxl.conf.zkserver=127.0.0.1:2181
+
+# xxl-conf, jdbc    （配置中心mysql地址）
+xxl.conf.jdbc.driverClass=com.mysql.jdbc.Driver
+xxl.conf.jdbc.url=jdbc:mysql://localhost:3306/xxl-conf?Unicode=true&amp;characterEncoding=UTF-8
+xxl.conf.jdbc.username=root
+xxl.conf.jdbc.password=root_pwd
+
+# xxl-conf, admin login （管理中心登录账号密码）
+xxl.conf.login.username=admin
+xxl.conf.login.password=123456
+```
+
+#### 2.4 “接入XXL-CONF的Demo项目” 项目配置
+
+    项目：xxl-conf-example
+    作用：供用户参考学习如何接入XXL-CONF
+
+##### A、引入maven依赖
+```
+<!-- xxl-conf-client -->
+<dependency>
+    <groupId>com.xuxueli</groupId>
+    <artifactId>xxl-conf-core</artifactId>
+    <version>${xxl.conf.version}</version>
+</dependency>
+```
+
+##### B、配置 “XXL-CONF配置解析器”
+
+可参考配置文件：
+
+    /xxl-conf/xxl-conf-example/src/main/resources/spring/applicationcontext-xxl-conf.xml
+
+
+配置项说明
+```
+<!-- XXL-CONF配置解析器 -->
+<bean id="xxlConfPropertyPlaceholderConfigurer" class="com.xxl.conf.core.spring.XxlConfPropertyPlaceholderConfigurer" />
+```
+
+##### C、设置 "xxl-conf.properties" 
+
+可参考配置文件：
+
+    /xxl-conf/xxl-conf-example/src/main/resources/xxl-conf.properties
+
+配置项说明
+```
+# xxl-conf, zk address  （配置中心zookeeper集群地址，如有多个地址用逗号分隔）
+xxl.conf.zkserver=127.0.0.1:2181
+```
+
+该配置文件，除了支持配置ZK地址，还可以配置一些本地配置。
+XXL-CONF 加载配置时会优先加载 "xxl-conf.properties" 中的配置, 然后才会加载ZK中的配置。可以将一些希望存放本地的配置存放在该文件。
+
+#### 2.5 新增配置分组
+
+![输入图片说明](https://static.oschina.net/uploads/img/201610/08182521_r2e4.png "在这里输入图片标题")
+
+每个配置分组对应一个唯一的GroupName，作为该分组下配置的统一前缀。在“分组管理”栏目可以创建并管理配置分组信息，系统已经提供一个默认分组.
+   
+#### 2.6 新增配置信息
+
+登录"配置管理中心"
+
+![输入图片说明](https://static.oschina.net/uploads/img/201608/17204649_Lo7W.png "在这里输入图片标题")
+
+进入"配置管理界面",点击"新增配置"按钮
+
+![输入图片说明](https://static.oschina.net/uploads/img/201609/27103547_Ztff.png "在这里输入图片标题")
+
+在弹出界面,填写配置信息
+
+![输入图片说明](https://static.oschina.net/uploads/img/201609/27103706_iExP.png "在这里输入图片标题")
+
+至此, 一条配置信息已经添加完成.
+
+通过client端,可以实时获取配置信息, 通过本地已经加载过得配置将会接受Zookeeper的更新推送, 如下如日志:
+
+![输入图片说明](https://static.oschina.net/uploads/img/201608/18111816_Of9e.png "在这里输入图片标题")
+
+#### 2.7 项目中使用XXL-CONF 
+
+    项目: xxl-conf-example:   (可以参考 com.xxl.conf.example.controller.IndexController.index() )
+    作用: 接入XXl-CONF的Demo项目
+
+
+- 方式1: XML文件中的占位符方式
+    ```
+    <bean id="configuration" class="com.xxl.conf.example.core.constant.Configuration">
+        <property name="paramByXml" value="${default.key01}" />
+    </bean>
+    ```
+    特点:
+    - 上面配置说明: 在项目启动时, Configuration的paramByXml属性, 会根据配置的占位符${default.key01}, 去XXL-CONF中匹配KEY=key01的配置信息, 赋值给paramByXml;
+    - 目前, 该方式配置信息, 只会在项目启动时从XXL-CONF中加载一次, 项目启动后该值不会变更。 例如配置数据连接信息, 如果XXL-CONF平台中连接地址配置改边, 需要重启后才生效;
+    - 该方式, 底层本质上是通过 "方式2: API方式" 实现的。
+
+- 方式2: API方式
+    ```
+    String paramByClient = XxlConfClient.get("default.key02", null);
+    ```
+    特点:
+    - 上面代码说明: 会获取XXL-CONF平台中KEY=default.key02的配置信息, 如果不存在值使用传递的默认值;
+    - 因为Zookeeper会实时推送配置更新到客户端, 因此该方法放回的值可以XXL-CONF平台中的值保持实时一致;
+    - XXL-CONF会对Zookeeper推送的配置信息做本地缓存, 该方法查询的是缓存的配置信息, 因此该方法并不会产生性能问题, 使用时不需要考虑性能问题;
+    
+
+## 三、总体设计
+
+#### 3.1 架构图
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201609/13124946_jTID.jpg "在这里输入图片标题")
 
-#### 2.2 "配置项" 设计
+#### 3.2 "配置项" 设计
 
 系统配置信息以K/V的形式存在, "配置项" 属性如下:
 
@@ -90,7 +227,7 @@ XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为�
 
 每条配置,将会生成全局唯一标示GroupKey,在client端使用时,需要通过该值匹配对应的配置信息;
 
-#### 2.3 "配置中心" 设计
+#### 3.3 "配置中心" 设计
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201609/13165343_V4Mt.jpg "在这里输入图片标题")
 
@@ -148,11 +285,11 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
     
 总结: 由于一致性协议带来的额外网络交互，消息开销，以及本地log的IO开销，再加上ZK本身每1000条批量处理1次的优化策略，写入的平均响应时间总会在50-60ms之上。但是整体的TPS还是可观的。单个写入数据的体积越大，响应时间越长，TPS越低，这也是普遍规律了。压测过程中log文件对磁盘的消耗很大。实际运行中应该使用自动脚本定时删除历史log和snapshot文件。
 
-#### 2.4 "配置管理中心" 设计
+#### 3.4 "配置管理中心" 设计
 
 "配置管理中心" 是 "配置中心" 的上层封装, 提供Web界面供用户对配置信息进行配置查询、配置新增、配置更新和配置删除等操作;
 
-#### 2.4 "客户端" 设计
+#### 3.5 "客户端" 设计
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201609/14111236_q8oi.jpg "在这里输入图片标题")
 
@@ -172,141 +309,7 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 
 (Bean方式加载配置,仅仅在实例化时加载一次; 考虑都实例化后的对象通常为持久化对象, 如数据库连接池对象, 不建议配置的太灵活, 因此Bean类型配置更新需要重启机器)
 
-## 三、快速入门
 
-#### 3.1 初始化“数据库”
-请下载项目源码并解压，获取 "调度数据库初始化SQL脚本" 并执行即可。脚本位置如下：
- 
-    xxl-conf/db/xxl-conf.sql
-
-#### 3.2 编译源码
-解压源码,按照maven格式将源码导入IDE, 使用maven进行编译即可，源码结构如下图所示：
-
-![输入图片说明](https://static.oschina.net/uploads/img/201608/17202150_YgLy.png "在这里输入图片标题")
-
-- xxl-conf-admin：配置管理中心
-- xxl-conf-core：公共依赖
-- xxl-conf-example: 接入XXl-CONF的Demo项目
-
-#### 3.3 “配置管理中心” 项目配置
-
-    项目：xxl-conf-admin
-    作用：管理线上配置信息
-    
-配置文件位置：
-
-    xxl-conf/xxl-conf-admin/src/main/resources/xxl-config-admin.properties
-    
-配置项目说明：
-```
-# xxl-conf, zk address  （配置中心zookeeper集群地址，如有多个地址用逗号分隔）
-xxl.conf.zkserver=127.0.0.1:2181
-
-# xxl-conf, jdbc    （配置中心mysql地址）
-xxl.conf.jdbc.driverClass=com.mysql.jdbc.Driver
-xxl.conf.jdbc.url=jdbc:mysql://localhost:3306/xxl-conf?Unicode=true&amp;characterEncoding=UTF-8
-xxl.conf.jdbc.username=root
-xxl.conf.jdbc.password=root_pwd
-
-# xxl-conf, admin login （管理中心登录账号密码）
-xxl.conf.login.username=admin
-xxl.conf.login.password=123456
-```
-
-#### 3.4 “接入XXL-CONF的Demo项目” 项目配置
-
-    项目：xxl-conf-example
-    作用：供用户参考学习如何接入XXL-CONF
-
-##### A、引入maven依赖
-```
-<!-- xxl-conf-client -->
-<dependency>
-    <groupId>com.xuxueli</groupId>
-    <artifactId>xxl-conf-core</artifactId>
-    <version>${xxl.conf.version}</version>
-</dependency>
-```
-
-##### B、配置 “XXL-CONF配置解析器”
-
-可参考配置文件：
-
-    /xxl-conf/xxl-conf-example/src/main/resources/spring/applicationcontext-xxl-conf.xml
-
-
-配置项说明
-```
-<!-- XXL-CONF配置解析器 -->
-<bean id="xxlConfPropertyPlaceholderConfigurer" class="com.xxl.conf.core.spring.XxlConfPropertyPlaceholderConfigurer" />
-```
-
-##### C、设置 "xxl-conf.properties" 
-
-可参考配置文件：
-
-    /xxl-conf/xxl-conf-example/src/main/resources/xxl-conf.properties
-
-配置项说明
-```
-# xxl-conf, zk address  （配置中心zookeeper集群地址，如有多个地址用逗号分隔）
-xxl.conf.zkserver=127.0.0.1:2181
-```
-
-该配置文件，除了支持配置ZK地址，还可以配置一些本地配置。
-XXL-CONF 加载配置时会优先加载 "xxl-conf.properties" 中的配置, 然后才会加载ZK中的配置。可以将一些希望存放本地的配置存放在该文件。
-
-#### 3.5 新增配置分组
-
-![输入图片说明](https://static.oschina.net/uploads/img/201610/08182521_r2e4.png "在这里输入图片标题")
-
-每个配置分组对应一个唯一的GroupName，作为该分组下配置的统一前缀。在“分组管理”栏目可以创建并管理配置分组信息，系统已经提供一个默认分组.
-   
-#### 3.6 新增配置信息
-
-登录"配置管理中心"
-
-![输入图片说明](https://static.oschina.net/uploads/img/201608/17204649_Lo7W.png "在这里输入图片标题")
-
-进入"配置管理界面",点击"新增配置"按钮
-
-![输入图片说明](https://static.oschina.net/uploads/img/201609/27103547_Ztff.png "在这里输入图片标题")
-
-在弹出界面,填写配置信息
-
-![输入图片说明](https://static.oschina.net/uploads/img/201609/27103706_iExP.png "在这里输入图片标题")
-
-至此, 一条配置信息已经添加完成.
-
-通过client端,可以实时获取配置信息, 通过本地已经加载过得配置将会接受Zookeeper的更新推送, 如下如日志:
-
-![输入图片说明](https://static.oschina.net/uploads/img/201608/18111816_Of9e.png "在这里输入图片标题")
-
-#### 3.7 项目中使用XXL-CONF 
-
-    项目: xxl-conf-example:   (可以参考 com.xxl.conf.example.controller.IndexController.index() )
-    作用: 接入XXl-CONF的Demo项目
-
-
-- 方式1: XML文件中的占位符方式
-    ```
-    <bean id="configuration" class="com.xxl.conf.example.core.constant.Configuration">
-        <property name="paramByXml" value="${default.key01}" />
-    </bean>
-    ```
-    特点:
-    - 上面配置说明: 在项目启动时, Configuration的paramByXml属性, 会根据配置的占位符${default.key01}, 去XXL-CONF中匹配KEY=key01的配置信息, 赋值给paramByXml;
-    - 目前, 该方式配置信息, 只会在项目启动时从XXL-CONF中加载一次, 项目启动后该值不会变更。 例如配置数据连接信息, 如果XXL-CONF平台中连接地址配置改边, 需要重启后才生效;
-    - 该方式, 底层本质上是通过 "方式2: API方式" 实现的。
-
-- 方式2: API方式
-    ```
-    String paramByClient = XxlConfClient.get("default.key02", null);
-    ```
-    特点:
-    - 上面代码说明: 会获取XXL-CONF平台中KEY=default.key02的配置信息, 如果不存在值使用传递的默认值;
-    - 因为Zookeeper会实时推送配置更新到客户端, 因此该方法放回的值可以XXL-CONF平台中的值保持实时一致;
-    - XXL-CONF会对Zookeeper推送的配置信息做本地缓存, 该方法查询的是缓存的配置信息, 因此该方法并不会产生性能问题, 使用时不需要考虑性能问题;
 
 ## 四、历史版本
 #### 4.1 版本1.1.0新特性
