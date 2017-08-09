@@ -50,7 +50,7 @@ public class IndexController {
     @PermessionLimit(limit=false)
     public ReturnT<String> loginDo(HttpServletRequest request, HttpServletResponse response, String userName, String password, String ifRemember){
         if (!PermissionInterceptor.ifLogin(request)) {
-            Properties prop = PropertiesUtil.loadProperties("xxl-config.properties");
+            Properties prop = PropertiesUtil.loadProperties("xxl-conf.properties");
             if (StringUtils.isNotBlank(userName) && StringUtils.isNotBlank(password)
                     && PropertiesUtil.getString(prop, "xxl.conf.login.username").equals(userName)
                     && PropertiesUtil.getString(prop, "xxl.conf.login.password").equals(password)) {
