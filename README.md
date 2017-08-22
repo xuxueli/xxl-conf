@@ -1,13 +1,41 @@
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-job/master/doc/images/xxl-logo.jpg "在这里输入图片标题")
+<p align="center">
+    <a href="http://www.xuxueli.com/xxl-conf/">
+        <img src="https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/xxl-logo.jpg" width="150">
+    </a>
+    <h3 align="center">XXL-CONF | 分布式配置管理平台</h3>
+    <p align="center">
+        XXL-CONF, A distributed configuration management platform.
+        <br>
+        <a href="http://www.xuxueli.com/xxl-conf/"><strong>-- Browse website. --</strong></a>
+        <br>
+        <br>
+        <a href="https://travis-ci.org/xuxueli/xxl-conf">
+            <img src="https://travis-ci.org/xuxueli/xxl-conf.svg?branch=master" >
+        </a>
+        <a href="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-conf/">
+            <img src="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-conf/badge.svg" >
+        </a>
+         <a href="https://github.com/xuxueli/xxl-conf/releases">
+             <img src="https://img.shields.io/github/release/xuxueli/xxl-conf.svg" >
+         </a>
+         <a href="http://www.gnu.org/licenses/gpl-3.0.html">
+             <img src="https://img.shields.io/badge/license-GPLv3-blue.svg" >
+         </a>
+    </p>    
+</p>
 
-# 《分布式配置管理平台XXL-CONF》
->XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为分布式业务提供统一的配置管理服务”。现已开放源代码，开箱即用。
+## 简介
+XXL-CONF is a distributed configuration management platform.    
+It's core design goal is "provide uniform configuration management for distributed systems".    
+Now, it's already open source, and many companies use it in production environments, real "out-of-the-box".
 
-### 1、文档
+XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为分布式业务提供统一的配置管理服务”。现已开放源代码并接入多家公司线上产品线，开箱即用。
 
-[XXL-CONF官方文档](https://github.com/xuxueli/xxl-conf/blob/master/doc/XXL-CONF官方文档.md)
 
-### 2 特性
+## 文档
+- [中文文档](https://github.com/xuxueli/xxl-conf/blob/master/doc/XXL-CONF官方文档.md)
+
+## 特性
 - 1、简单易用: 上手非常简单, 只需要引入maven依赖和一行配置即可;
 - 2、在线管理: 提供配置管理中心, 支持在线管理配置信息;
 - 3、实时推送: 配置信息更新后, Zookeeper实时推送配置信息, 项目中配置数据会实时更新并生效, 不需要重启线上机器;
@@ -19,14 +47,9 @@
 - 9、配置分组: 支持对配置进行分组管理, 每条配置将会生成全局唯一标示GroupKey,在client端使用时,需要通过该值匹配对应的配置信息;
 
 
-### 2 架构图
+## 背景
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/13124946_jTID.jpg "在这里输入图片标题")
-
-
-### 3 背景
-
-**why not properties**
+> why not properties
 
 常规项目开发过程中, 通常会将配置信息位于在项目resource目录下的properties文件文件中, 配置信息通常包括有: jdbc地址配置、redis地址配置、活动开关、阈值配置、黑白名单……等等。使用properties维护配置信息将会导致以下几个问题:
 
@@ -36,7 +59,7 @@
 - 4、配置生效不及时: 因为流程复杂, 新的配置生效需要经历比较长的时间才可以生效;
 - 5、不同环境上线包不一致: 例如JDBC连接, 不同环境需要差异化配置;
 
-**why XXL-CONF**
+> why XXL-CONF
 
 - 1、不需要 (手动修改properties文件) : 在配置管理中心提供的Web界面中, 定位到指定配置项, 输入新的配置的值, 点击更新按钮即可;
 - 2、不需要 (重新编译打包) : 配置更新后, 实时推送新配置信息至项目中, 不需要编译打包;
@@ -44,17 +67,16 @@
 - 4、配置生效 "非常及时" : 点击更新按钮, 新的配置信息将会即可推送到项目中, 瞬间生效, 非常及时。比如一些开关类型的配置, 配置变更后, 将会立刻推送至项目中并生效, 相对常规配置修改繁琐的流程, 及时性可谓天壤之别; 
 - 5、不同环境 "同一个上线包" : 因为差异化的配置托管在配置中心, 因此一个上线包可以复用在生产、测试等各个运行环境, 提供能效;
 
-### 4 下载
-##### 源码地址 (将会在两个git仓库同步发布最新代码)
 
-- [github地址](https://github.com/xuxueli/xxl-conf)
-- [git.oschina地址](https://git.oschina.net/xuxueli0323/xxl-conf)
+#### 源码仓库地址
 
+源码仓库地址 | Release Download
+--- | ---
+[https://github.com/xuxueli/xxl-conf](https://github.com/xuxueli/xxl-conf) | [Download](https://github.com/xuxueli/xxl-conf/releases)  
+[http://git.oschina.net/xuxueli0323/xxl-conf](http://git.oschina.net/xuxueli0323/xxl-conf) | [Download](http://git.oschina.net/xuxueli0323/xxl-conf/releases)
 
-    最新Release版本: v1.3.0
-    最新快照版本: v1.3.1
  
-##### 中央仓库地址 (最新Release版本)
+#### 中央仓库地址
 ```
 <dependency>
   <groupId>com.xuxueli</groupId>
@@ -68,21 +90,37 @@
 - [oschina地址](http://my.oschina.net/xuxueli/blog/734267)
 - [cnblogs地址](http://www.cnblogs.com/xuxueli/p/4777808.html)
 
-##### 技术交流群 (仅作技术交流)
+## 技术交流
 
-- 群4：464762661    [![image](http://pub.idqqimg.com/wpa/images/group.png)](http://shang.qq.com/wpa/qunwpa?idkey=c1660fbf8f81934b6f9095f9212f413ed2b127e72223502bb3c65888a0236ad3 )
-- 群3：242151780    （群即将满，请加群4）
-- 群2：438249535    （群即将满，请加群4）
-- 群1：367260654    （群即将满，请加群4）
+- 腾讯QQ群（6）：399758605
+- 腾讯QQ群（5）：138274130
+- 腾讯QQ群（4）：464762661
+- 腾讯QQ群（3）：242151780
+- 腾讯QQ群（2）：438249535
+- 腾讯QQ群（1）：367260654
 
 
-### 5 报告问题
-XXL-CONF托管在Github上，如有问题可在 [ISSUES](https://github.com/xuxueli/xxl-conf/issues) 上提问，也可以加入上文技术交流群；
+## 项目贡献
+Contributions are welcome! Open a pull request to fix a bug, or open an [Issue](https://github.com/xuxueli/xxl-conf/issues/) to discuss a new feature or change.
 
-### 6 接入登记
+欢迎参与项目贡献！比如提交PR修复一个bug，或者新建 [Issue](https://github.com/xuxueli/xxl-conf/issues/) 讨论新特性或者变更。
+
+## 接入登记
 更多接入公司，欢迎在github [登记](https://github.com/xuxueli/xxl-conf/issues/2 )
 
----
-### 7、支持的话可以扫一扫，支持 [XXL系列](https://github.com/xuxueli) 的建设：）
 
-![输入图片说明](http://images2015.cnblogs.com/blog/554415/201605/554415-20160513183306234-1939652116.png "在这里输入图片标题")
+## Copyright and License
+This product is open source and free, and will continue to provide free community technical support. Individual or enterprise users are free to access and use.
+
+- Licensed under the GNU General Public License (GPL) v3.
+- Copyright (c) 2015-present, xuxueli.
+
+产品开源免费，并且将持续提供免费的社区技术支持。个人或企业内部可自由的接入和使用。
+
+## 捐赠
+No matter how much the amount is enough to express your thought, thank you very much ：）
+
+无论金额多少都足够表达您这份心意，非常感谢 ：）
+
+微信：<img src="https://raw.githubusercontent.com/xuxueli/xxl-job/master/doc/images/donate-wechat.png" width="200">
+支付宝：<img src="https://raw.githubusercontent.com/xuxueli/xxl-job/master/doc/images/donate-alipay.jpg" width="200">

@@ -349,13 +349,17 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 
 ## 五、其他
 
-### 5.1 报告问题
-XXL-CONF托管在Github上，如有问题可在 [ISSUES](https://github.com/xuxueli/xxl-conf/issues) 上提问，也可以加入上文技术交流群；
+### 5.1 项目贡献
+欢迎参与项目贡献！比如提交PR修复一个bug，或者新建 [Issue](https://github.com/xuxueli/xxl-conf/issues/) 讨论新特性或者变更。
 
 ### 5.2 接入登记
 更多接入公司，欢迎在github [登记](https://github.com/xuxueli/xxl-conf/issues/2 )
 
 ---
-### 支持的话可以扫一扫，支持 [XXL系列](https://github.com/xuxueli) 的建设：）
+## 捐赠
+No matter how much the amount is enough to express your thought, thank you very much ：）
 
-![输入图片说明](http://images2015.cnblogs.com/blog/554415/201605/554415-20160513183306234-1939652116.png "在这里输入图片标题")
+无论金额多少都足够表达您这份心意，非常感谢 ：）
+
+微信：<img src="https://raw.githubusercontent.com/xuxueli/xxl-job/master/doc/images/donate-wechat.png" width="200">
+支付宝：<img src="https://raw.githubusercontent.com/xuxueli/xxl-job/master/doc/images/donate-alipay.jpg" width="200">
