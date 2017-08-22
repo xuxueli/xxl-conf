@@ -23,61 +23,37 @@
 		</property>
 	</bean>
 
-	<!-- Main数据源  -->
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-		<property name="driverClassName"><value>${xxl.conf.jdbc.driverClass}</value></property>
-		<property name="url"><value>${xxl.conf.jdbc.url}</value></property>
-		<property name="username"><value>${xxl.conf.jdbc.username}</value></property>
-		<property name="password"><value>${xxl.conf.jdbc.password}</value></property>
-		<property name="maxActive"><value>10</value></property>
-		<property name="maxWait"><value>10000</value></property>
-		<property name="maxIdle"><value>1</value></property>
-		<property name="initialSize"><value>1</value></property>
-		<property name="removeAbandoned"><value>true</value></property>
-		<property name="testWhileIdle"><value>true</value></property>
-		<property name="testOnBorrow"><value>false</value></property>
-		<property name="validationQuery"><value>SELECT 1</value></property> 
+	<!-- ********************************* part 1 :for datasource ********************************* -->
+
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"  destroy-method="close">
+		<property name="driverClass" value="${xxl.conf.jdbc.driverClass}" />
+		<property name="jdbcUrl" value="${xxl.conf.jdbc.url}" />
+		<property name="user" value="${xxl.conf.jdbc.username}" />
+		<property name="password" value="${xxl.conf.jdbc.password}" />
+		<property name="initialPoolSize" value="3" />
+		<property name="minPoolSize" value="2" />
+		<property name="maxPoolSize" value="10" />
+		<property name="maxIdleTime" value="60" />
+		<property name="acquireRetryDelay" value="1000" />
+		<property name="acquireRetryAttempts" value="10" />
+		<property name="preferredTestQuery" value="SELECT 1" />
 	</bean>
-	
+
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="mapperLocations" value="classpath:mybatis-mapper/*.xml"/>
 	</bean>
     
-    <!-- Template在Junit测试的时候，必须使用scope="prototype" -->
-    <bean id="sqlSessionTemplate"  class="org.mybatis.spring.SqlSessionTemplate" scope="prototype">  
+    <bean id="sqlSessionTemplate"  class="org.mybatis.spring.SqlSessionTemplate" scope="prototype">
           <constructor-arg index="0" ref="sqlSessionFactory" />  
     </bean>
 
+	<!-- ********************************* part 2 :for tx ********************************* -->
 
-
-	<!-- 事务管理器（声明式事务） -->
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
-	<!-- 启动事务注解（方式1：注解方式） -->
 	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
 
-	<!-- 事务通知（方式2：XML事务管理） -->
-	<tx:advice id="txAdvice" transaction-manager="transactionManager">
-		<tx:attributes>
-			<tx:method name="detail*" propagation="SUPPORTS" />
-			<tx:method name="visit*" propagation="SUPPORTS" />
-			<tx:method name="get*" propagation="SUPPORTS" />
-			<tx:method name="find*" propagation="SUPPORTS" />
-			<tx:method name="check*" propagation="SUPPORTS" />
-			<tx:method name="list*" propagation="SUPPORTS" />
-			<tx:method name="*" propagation="REQUIRED" rollback-for="exception" />
-		</tx:attributes>
-	</tx:advice>
-
-	<!-- AOP配置 -->
-	<aop:config>
-		<!-- 定义一个切入点 -->
-		<aop:pointcut id="txoperation" expression="execution(* com.xxl.conf.admin.service.impl.*.*(..))" />
-		<!-- 切入点事务通知 -->
-		<aop:advisor pointcut-ref="txoperation" advice-ref="txAdvice" />
-	</aop:config>
-	
 </beans>
