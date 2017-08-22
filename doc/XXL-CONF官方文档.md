@@ -24,7 +24,7 @@ XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为�
 
 ### 1.3 背景
 
-**why not properties**
+> why not properties
 
 常规项目开发过程中, 通常会将配置信息位于在项目resource目录下的properties文件文件中, 配置信息通常包括有: jdbc地址配置、redis地址配置、活动开关、阈值配置、黑白名单……等等。使用properties维护配置信息将会导致以下几个问题:
 
@@ -43,16 +43,20 @@ XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为�
 - 5、不同环境 "同一个上线包" : 因为差异化的配置托管在配置中心, 因此一个上线包可以复用在生产、测试等各个运行环境, 提供能效;
 
 ### 1.4 下载
-#### 源码地址 (将会在两个git仓库同步发布最新代码)
 
-- [github地址](https://github.com/xuxueli/xxl-conf)
-- [git.oschina地址](https://git.oschina.net/xuxueli0323/xxl-conf)
+#### 文档地址
 
+- [中文文档](https://github.com/xuxueli/xxl-conf/blob/master/doc/XXL-CONF官方文档.md)
 
-    最新Release版本: v1.3.0
-    最新Beta版本: v1.3.0
+#### 源码仓库地址
+
+源码仓库地址 | Release Download
+--- | ---
+[https://github.com/xuxueli/xxl-conf](https://github.com/xuxueli/xxl-conf) | [Download](https://github.com/xuxueli/xxl-conf/releases)  
+[http://git.oschina.net/xuxueli0323/xxl-conf](http://git.oschina.net/xuxueli0323/xxl-conf) | [Download](http://git.oschina.net/xuxueli0323/xxl-conf/releases)
+
  
-#### 中央仓库地址 (最新Release版本)
+#### 中央仓库地址
 ```
 <dependency>
   <groupId>com.xuxueli</groupId>
@@ -61,17 +65,14 @@ XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为�
 </dependency>
 ```
 
-#### 博客地址 (将会在两个博客同步更新文档)
+#### 技术交流
 
-- [oschina地址](http://my.oschina.net/xuxueli/blog/734267)
-- [cnblogs地址](http://www.cnblogs.com/xuxueli/p/4777808.html)
-
-#### 技术交流群 (仅作技术交流)
-
-- 群4：464762661    [![image](http://pub.idqqimg.com/wpa/images/group.png)](http://shang.qq.com/wpa/qunwpa?idkey=c1660fbf8f81934b6f9095f9212f413ed2b127e72223502bb3c65888a0236ad3 )
-- 群3：242151780    （群即将满，请加群4）
-- 群2：438249535    （群即将满，请加群4）
-- 群1：367260654    （群即将满，请加群4）
+- 腾讯QQ群（6）：399758605
+- 腾讯QQ群（5）：138274130
+- 腾讯QQ群（4）：464762661
+- 腾讯QQ群（3）：242151780
+- 腾讯QQ群（2）：438249535
+- 腾讯QQ群（1）：367260654
 
 ### 1.5 环境
 - Maven3+
