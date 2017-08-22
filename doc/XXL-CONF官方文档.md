@@ -353,7 +353,7 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 欢迎参与项目贡献！比如提交PR修复一个bug，或者新建 [Issue](https://github.com/xuxueli/xxl-conf/issues/) 讨论新特性或者变更。
 
 ### 5.2 接入登记
-更多接入公司，欢迎在github [登记](https://github.com/xuxueli/xxl-conf/issues/2 )
+更多接入的公司，欢迎在 [登记地址](https://github.com/xuxueli/xxl-conf/issues/2 ) 登记，登记仅仅为了产品推广。
 
 ---
 ## 捐赠
