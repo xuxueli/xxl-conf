@@ -9,34 +9,38 @@
 	<artifactId>xxl-conf-core</artifactId>
 	<packaging>jar</packaging>
 
+	<name>${project.artifactId}</name>
+	<description>A lightweight distributed configuration management platform.</description>
+	<url>http://www.xuxueli.com/</url>
+
 	<dependencies>
 
 		<!-- zookeeper -->
 		<dependency>
 			<groupId>org.apache.zookeeper</groupId>
 			<artifactId>zookeeper</artifactId>
-			<version>3.4.6</version>
+			<version>${zookeeper.version}</version>
 		</dependency>
 
 		<!-- encache -->
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
-			<version>2.9.1</version>
+			<version>${ehcache.version}</version>
 		</dependency>
 
-		<!-- slf4j (ref:log4j/slf4j-api) -->
+		<!-- slf4j -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.5</version>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j-api.version}</version>
 		</dependency>
 
 		<!-- spring-beans -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
-			<version>3.2.13.RELEASE</version>
+			<version>${spring.version}</version>
 		</dependency>
 
 	</dependencies>

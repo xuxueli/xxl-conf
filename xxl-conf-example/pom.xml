@@ -9,14 +9,8 @@
 	<artifactId>xxl-conf-example</artifactId>
 	<packaging>war</packaging>
 
-	<properties>
-		<xxl.conf.version>1.3.1-SNAPSHOT</xxl.conf.version>
-		<spring.version>3.2.13.RELEASE</spring.version>
-	</properties>
-
 	<dependencies>
 		<!-- springframe start -->
-		<!-- (级联spring:aopalliance + commons-logging + spring-aop/beans/context/core/expression/web/webmvc) -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
@@ -38,74 +32,58 @@
 			<version>${spring.version}</version>
 		</dependency>
 		<!-- springframe end -->
-
-		<!-- aspectjweaver (支撑spring) -->
+		<!-- aspectjweaver (support spring aop) -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
-			<version>1.8.2</version>
+			<version>${aspectjweaver.version}</version>
 		</dependency>
-
-		<!-- jackson (支撑spring) -->
+		<!-- jackson (support spring json) -->
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
-			<version>1.9.13</version>
+			<version>${jackson-mapper-asl.version}</version>
 		</dependency>
 
-		<!-- slf4j (级联:log4j/slf4j-api) -->
+		<!-- slf4j -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.5</version>
+			<version>${slf4j-api.version}</version>
 		</dependency>
 
 		<!-- freemarker -->
 		<dependency>
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
-			<version>2.3.20</version>
+			<version>${freemarker.version}</version>
 		</dependency>
 
-		<!-- fileupload -->
+		<!-- servlet -->
 		<dependency>
-			<groupId>commons-fileupload</groupId>
-			<artifactId>commons-fileupload</artifactId>
-			<version>1.2.2</version>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${javax.servlet-api.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>${jsp-api.version}</version>
 		</dependency>
 
 		<!-- junit -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
-		</dependency>
-
-		<!-- servlet -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet.jsp</groupId>
-			<artifactId>jsp-api</artifactId>
-			<version>2.1</version>
-			<scope>provided</scope>
 		</dependency>
 
 		<!-- xxl-conf-client -->
 		<dependency>
 			<groupId>com.xuxueli</groupId>
 			<artifactId>xxl-conf-core</artifactId>
-			<version>${xxl.conf.version}</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 
 	</dependencies>

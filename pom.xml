@@ -16,6 +16,30 @@
 		<module>xxl-conf-example</module>
 	</modules>
 
+	<properties>
+		<javax.servlet-api.version>3.0.1</javax.servlet-api.version>
+		<jsp-api.version>2.2</jsp-api.version>
+
+		<spring.version>3.2.18.RELEASE</spring.version>
+		<jackson-mapper-asl.version>1.9.13</jackson-mapper-asl.version>
+		<aspectjweaver.version>1.8.7</aspectjweaver.version>
+		<slf4j-api.version>1.7.25</slf4j-api.version>
+		<freemarker.version>2.3.20</freemarker.version>
+		<junit.version>4.11</junit.version>
+
+		<commons-lang.version>2.6</commons-lang.version>
+		<commons-collections.version>3.2.1</commons-collections.version>
+
+		<zookeeper.version>3.4.6</zookeeper.version>
+		<ehcache.version>2.9.1</ehcache.version>
+
+		<c3p0.version>0.9.5.2</c3p0.version>
+		<mysql-connector-java.version>5.1.29</mysql-connector-java.version>
+		<mybatis-spring.version>1.2.2</mybatis-spring.version>
+		<mybatis.version>3.2.8</mybatis.version>
+	</properties>
+
+
 	<build>
 		<plugins>
 			<plugin>
@@ -23,8 +47,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 					<encoding>UTF8</encoding>
 				</configuration>
 			</plugin>
