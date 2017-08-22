@@ -46,7 +46,7 @@ XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为�
 
 #### 文档地址
 
-- [中文文档](https://github.com/xuxueli/xxl-conf/blob/master/doc/XXL-CONF官方文档.md)
+- [中文文档](http://www.xuxueli.com/xxl-conf/)
 
 #### 源码仓库地址
 
