@@ -1,4 +1,11 @@
-# 《分布式配置管理平台XXL-CONF》
+## 《分布式配置管理平台XXL-CONF》
+
+[![Build Status](https://travis-ci.org/xuxueli/xxl-conf.svg?branch=master)](https://travis-ci.org/xuxueli/xxl-conf)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-conf/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-conf/)
+[![GitHub release](https://img.shields.io/github/release/xuxueli/xxl-conf.svg)](https://github.com/xuxueli/xxl-conf/releases)
+[![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
+
+
 ## 一、简介
 
 #### 1.1 概述
@@ -335,8 +342,9 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 
 #### TODO LIST
 - 1、权限管理：以分组为权限最小单元，只有分组的成员用户才有权限进行对应的配置操作；
-- 2、zookeeper客户端优化, 或将改用zkclient或者curator；
+- 2、zookeeper客户端迁移至curator；
 - 3、local cache 备份到磁盘；zk异常且local properties未配置时，从磁盘上读取配置；
+- 4、优化官方文档，制作项目网站；
 
 ## 五、其他
 
