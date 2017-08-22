@@ -5,10 +5,13 @@
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 
-	<!-- XXL-CONF配置解析器 -->
+	<!-- ********************************* 核心配置[必须]：XXL-CONF 配置解析器 ********************************* -->
+
 	<bean id="xxlConfPropertyPlaceholderConfigurer" class="com.xxl.conf.core.spring.XxlConfPropertyPlaceholderConfigurer" />
 
-	<!-- XML占位符方式使用示例,可删除 -->
+
+	<!-- ********************************* 测试使用示例（可删除）：XML占位符方式，注入配置 ********************************* -->
+
 	<bean id="configuration" class="com.xxl.conf.example.core.constant.Configuration">
 		<property name="paramByXml" value="${default.key01}" />
 	</bean>

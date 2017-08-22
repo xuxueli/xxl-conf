@@ -4,7 +4,11 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	id="WebApp_ID" version="2.5">
 	<display-name>xxl-conf-admin</display-name>
-	
+	<context-param>
+		<param-name>webAppRootKey</param-name>
+		<param-value>xxl-conf-admin</param-value>
+	</context-param>
+
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath*:spring/applicationcontext-*.xml</param-value>
@@ -47,10 +51,6 @@
 		<servlet-name>springmvc</servlet-name>
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
-
-	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
-	</welcome-file-list>
 
 	<error-page>
 		<error-code>404</error-code>

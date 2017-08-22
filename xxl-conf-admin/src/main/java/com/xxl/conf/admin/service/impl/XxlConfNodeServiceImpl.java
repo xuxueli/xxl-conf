@@ -18,7 +18,7 @@ import java.util.Map;
 
 /**
  * 配置
- * @author xuxueli
+ * @author xuxueli 2016-08-15 22:53
  */
 @Service()
 public class XxlConfNodeServiceImpl implements IXxlConfNodeService {

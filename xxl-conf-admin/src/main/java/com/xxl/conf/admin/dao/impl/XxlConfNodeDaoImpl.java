@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * 配置
- * @author xuxueli
+ * @author xuxueli 16/10/8.
  */
 @Repository
 public class XxlConfNodeDaoImpl implements IXxlConfNodeDao {
