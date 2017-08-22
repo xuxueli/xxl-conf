@@ -1,6 +1,6 @@
 <p align="center">
     <a href="http://www.xuxueli.com/xxl-conf/">
-        <img src="https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/xxl-logo.jpg" width="150">
+        <img src="https://raw.githubusercontent.com/xuxueli/xxl-job/master/doc/images/xxl-logo.jpg" width="150">
     </a>
     <h3 align="center">XXL-CONF | 分布式配置管理平台</h3>
     <p align="center">
