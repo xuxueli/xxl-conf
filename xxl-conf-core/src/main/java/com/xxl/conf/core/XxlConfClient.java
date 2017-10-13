@@ -8,7 +8,12 @@ import net.sf.ehcache.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * local cache
@@ -18,7 +23,9 @@ public class XxlConfClient {
 	private static Logger logger = LoggerFactory.getLogger(XxlConfClient.class);
 
 	public static Properties localProp = PropertiesUtil.loadProperties("xxl-conf.properties");
-
+	//一个节点可以被多个bean所使用
+	public static Map<String,Set<Field>> pathFieldCache = new ConcurrentHashMap<>();
+	public static Map<Field,Object> fieldObjectCache = new ConcurrentHashMap<>();
 	private static Cache cache;
 	static {
 		CacheManager manager = CacheManager.create();	// default use ehcche.xml under src
@@ -68,7 +75,19 @@ public class XxlConfClient {
 		}
 		return false;
 	}
-
+	public static boolean addCallBack(String path,Field field,Object object) {
+		Set<Field> fieldSet = pathFieldCache.get(path);
+		if (fieldSet == null) {
+			fieldSet = new HashSet<>();
+			fieldSet.add(field);
+		}else {
+			fieldSet.add(field);
+		}
+		logger.info("ValueAnnotationProcessor->handler addCallback");
+		fieldObjectCache.put(field,object);
+		pathFieldCache.put(path,fieldSet);
+		return true;
+	}
 	public static void main(String[] args) {
 		String key = "key";
 		String value = "hello";

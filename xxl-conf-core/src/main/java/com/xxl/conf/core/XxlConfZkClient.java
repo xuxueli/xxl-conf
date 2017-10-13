@@ -7,9 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -76,6 +78,7 @@ public class XxlConfZkClient implements Watcher {
 										} else if (watchedEvent.getType() == Event.EventType.NodeDataChanged) {
 											String data = getPathDataByKey(key);
 											XxlConfClient.update(key, data);
+											triggerCallBack(key,data);
 										}
 									}
 								} catch (KeeperException e) {
@@ -258,7 +261,18 @@ public class XxlConfZkClient implements Watcher {
 		}
 		return allData;
 	}
-
+	private static void triggerCallBack(String key,String value){
+		Set<Field> fieldSet = XxlConfClient.pathFieldCache.get(key);
+		for (Field field : fieldSet) {
+//			field.setAccessible(true);
+			Object object = XxlConfClient.fieldObjectCache.get(field);
+			try {
+				field.set(object,value);
+			} catch (IllegalAccessException e) {
+				logger.error(">>>>>>>>>>> triggerCallBack error! key={} , value={}",key,value);
+			}
+		}
+	}
 	public static void main(String[] args) throws InterruptedException, KeeperException {
 		setPathDataByKey("key02", "666");
 		System.out.println(getPathDataByKey("key02"));
