@@ -341,7 +341,8 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 - 2、zookeeper客户端迁移至curator；
 - 3、local cache 备份到磁盘；zk异常且local properties未配置时，从磁盘上读取配置；
 - 4、优化官方文档，制作项目网站；
-- 5、zk客户端优化，强化断线重连 + getInstance做二次校验； 
+- 5、zk客户端优化，强化断线重连 + getInstance做二次校验；
+- 6、客户端断线重连强化，除了依赖ZK之外，定时守护线程周期性校验ZK状态。考虑是否周期性刷新缓存； 
 
 ## 五、其他
 
