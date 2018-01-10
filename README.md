@@ -1,7 +1,5 @@
 <p align="center">
-    <a href="http://www.xuxueli.com/xxl-conf/">
-        <img src="https://raw.githubusercontent.com/xuxueli/xxl-job/master/doc/images/xxl-logo.jpg" width="150">
-    </a>
+    <img src="https://raw.githubusercontent.com/xuxueli/xxl-job/master/doc/images/xxl-logo.jpg" width="150">
     <h3 align="center">XXL-CONF | 分布式配置管理平台</h3>
     <p align="center">
         XXL-CONF, A distributed configuration management platform.
