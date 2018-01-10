@@ -6,7 +6,7 @@
     <p align="center">
         XXL-CONF, A distributed configuration management platform.
         <br>
-        <a href="http://www.xuxueli.com/xxl-conf/"><strong>-- Browse website. --</strong></a>
+        <a href="http://www.xuxueli.com/xxl-conf/"><strong>-- Home Page --</strong></a>
         <br>
         <br>
         <a href="https://travis-ci.org/xuxueli/xxl-conf">
