@@ -53,7 +53,7 @@ XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为�
 源码仓库地址 | Release Download
 --- | ---
 [https://github.com/xuxueli/xxl-conf](https://github.com/xuxueli/xxl-conf) | [Download](https://github.com/xuxueli/xxl-conf/releases)  
-[http://git.oschina.net/xuxueli0323/xxl-conf](http://git.oschina.net/xuxueli0323/xxl-conf) | [Download](http://git.oschina.net/xuxueli0323/xxl-conf/releases)
+[http://gitee.com/xuxueli0323/xxl-conf](http://gitee.com/xuxueli0323/xxl-conf) | [Download](http://gitee.com/xuxueli0323/xxl-conf/releases)
 
  
 #### 中央仓库地址
