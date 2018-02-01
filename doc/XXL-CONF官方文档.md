@@ -81,7 +81,7 @@ XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为�
 ### 2.1 初始化“数据库”
 请下载项目源码并解压，获取 "调度数据库初始化SQL脚本" 并执行即可。脚本位置如下：
  
-    xxl-conf/db/xxl-conf.sql
+    xxl-conf/doc/db/xxl-conf.sql
 
 ### 2.2 编译源码
 解压源码,按照maven格式将源码导入IDE, 使用maven进行编译即可，源码结构如下图所示：
