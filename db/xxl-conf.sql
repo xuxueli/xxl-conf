@@ -13,7 +13,8 @@ CREATE TABLE `XXL_CONF_NODE` (
   `node_desc` varchar(100) DEFAULT NULL COMMENT '配置简介',
   UNIQUE KEY `u_group_key` (`node_group`,`node_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-INSERT INTO `XXL_CONF_NODE` VALUES ('default', 'key01', '168', '测试配置01'), ('default', 'key02', '127.0.0.1:3307', '测试配置02');
+
+INSERT INTO `XXL_CONF_NODE` VALUES ('default', 'key01', '168', '测试配置01'), ('default', 'key02', '127.0.0.1:3307', '测试配置02'), ('default', 'key03', 'true', '测试配置03');
 
 COMMIT;
 

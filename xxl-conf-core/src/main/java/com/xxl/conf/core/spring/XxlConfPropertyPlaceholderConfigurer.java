@@ -16,10 +16,9 @@ import java.util.Properties;
 
 /**
  * rewrite PropertyPlaceholderConfigurer
+ *
  * @version 1.0
  * @author xuxueli 2015-9-12 19:42:49
- *
- * <bean id="xxlConfPropertyPlaceholderConfigurer" class="com.xxl.conf.core.spring.XxlConfPropertyPlaceholderConfigurer" />
  *
  */
 public class XxlConfPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer {
