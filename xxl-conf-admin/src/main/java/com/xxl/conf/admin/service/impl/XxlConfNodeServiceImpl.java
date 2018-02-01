@@ -6,9 +6,9 @@ import com.xxl.conf.admin.core.util.ReturnT;
 import com.xxl.conf.admin.dao.IXxlConfGroupDao;
 import com.xxl.conf.admin.dao.IXxlConfNodeDao;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
-import com.xxl.conf.core.XxlConfZkClient;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import com.xxl.conf.core.core.XxlConfZkClient;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -20,9 +20,10 @@ import java.util.Map;
  * 配置
  * @author xuxueli 2016-08-15 22:53
  */
-@Service()
+@Service
 public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
-	
+
+
 	@Resource
 	private IXxlConfNodeDao xxlConfNodeDao;
 	@Resource
@@ -68,9 +69,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 
 	@Override
 	public ReturnT<String> add(XxlConfNode xxlConfNode) {
-		if (xxlConfNode == null) {
-			return new ReturnT<String>(500, "参数缺失");
-		}
+		// valud
 		if (StringUtils.isBlank(xxlConfNode.getNodeGroup())) {
 			return new ReturnT<String>(500, "配置分组不可为空");
 		}
@@ -81,10 +80,17 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		if (StringUtils.isBlank(xxlConfNode.getNodeKey())) {
 			return new ReturnT<String>(500, "配置Key不可为空");
 		}
+
+		// value force null to ""
+		if (xxlConfNode.getNodeValue() == null) {
+			xxlConfNode.setNodeValue("");
+		}
+
 		XxlConfNode existNode = xxlConfNodeDao.selectByKey(xxlConfNode.getNodeGroup(), xxlConfNode.getNodeKey());
 		if (existNode!=null) {
 			return new ReturnT<String>(500, "Key对应的配置已经存在,不可重复添加");
 		}
+
 		xxlConfNodeDao.insert(xxlConfNode);
 
 		String groupKey = XxlConfZkClient.generateGroupKey(xxlConfNode.getNodeGroup(), xxlConfNode.getNodeKey());
@@ -95,9 +101,16 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 
 	@Override
 	public ReturnT<String> update(XxlConfNode xxlConfNode) {
+		// valud
 		if (xxlConfNode == null || StringUtils.isBlank(xxlConfNode.getNodeKey())) {
 			return new ReturnT<String>(500, "Key不可为空");
 		}
+
+		// value force null to ""
+		if (xxlConfNode.getNodeValue() == null) {
+			xxlConfNode.setNodeValue("");
+		}
+
 		int ret = xxlConfNodeDao.update(xxlConfNode);
 		if (ret < 1) {
 			return new ReturnT<String>(500, "Key对应的配置不存在,请确认");

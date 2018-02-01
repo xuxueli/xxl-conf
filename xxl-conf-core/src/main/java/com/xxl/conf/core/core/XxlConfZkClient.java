@@ -1,6 +1,5 @@
-package com.xxl.conf.core;
+package com.xxl.conf.core.core;
 
-import com.xxl.conf.core.util.Environment;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
@@ -53,7 +52,7 @@ public class XxlConfZkClient implements Watcher {
 			try {
 				if (INSTANCE_INIT_LOCK.tryLock(2, TimeUnit.SECONDS)) {
 					try {
-						zooKeeper = new ZooKeeper(Environment.ZK_ADDRESS, 20000, new Watcher() {
+						zooKeeper = new ZooKeeper(XxlConfPropConf.get(Environment.ZK_ADDRESS), 20000, new Watcher() {
 							@Override
 							public void process(WatchedEvent watchedEvent) {
 								try {
@@ -72,10 +71,11 @@ public class XxlConfZkClient implements Watcher {
 										// add One-time trigger
 										zooKeeper.exists(path, true);
 										if (watchedEvent.getType() == Event.EventType.NodeDeleted) {
-											XxlConfClient.remove(key);
+											// conf deleted
 										} else if (watchedEvent.getType() == Event.EventType.NodeDataChanged) {
+											// conf updated
 											String data = getPathDataByKey(key);
-											XxlConfClient.update(key, data);
+											XxlConfLocalCacheConf.set(key, data);
 										}
 									}
 								} catch (KeeperException e) {

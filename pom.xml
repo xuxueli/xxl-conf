@@ -20,23 +20,23 @@
 		<javax.servlet-api.version>3.0.1</javax.servlet-api.version>
 		<jsp-api.version>2.2</jsp-api.version>
 
-		<spring.version>3.2.18.RELEASE</spring.version>
-		<jackson-mapper-asl.version>1.9.13</jackson-mapper-asl.version>
-		<aspectjweaver.version>1.8.7</aspectjweaver.version>
+		<spring.version>4.3.13.RELEASE</spring.version>
+		<jackson.version>2.9.3</jackson.version>
+		<aspectjweaver.version>1.8.13</aspectjweaver.version>
 		<slf4j-api.version>1.7.25</slf4j-api.version>
-		<freemarker.version>2.3.20</freemarker.version>
-		<junit.version>4.11</junit.version>
+		<freemarker.version>2.3.23</freemarker.version>
+		<junit.version>4.12</junit.version>
 
-		<commons-lang.version>2.6</commons-lang.version>
-		<commons-collections.version>3.2.1</commons-collections.version>
+		<commons-collections4.version>4.1</commons-collections4.version>
+		<commons-lang3.version>3.7</commons-lang3.version>
 
-		<zookeeper.version>3.4.6</zookeeper.version>
-		<ehcache.version>2.9.1</ehcache.version>
+		<zookeeper.version>3.4.11</zookeeper.version>
+		<ehcache.version>3.4.0</ehcache.version>
 
 		<c3p0.version>0.9.5.2</c3p0.version>
-		<mysql-connector-java.version>5.1.29</mysql-connector-java.version>
-		<mybatis-spring.version>1.2.2</mybatis-spring.version>
-		<mybatis.version>3.2.8</mybatis.version>
+		<mysql-connector-java.version>5.1.45</mysql-connector-java.version>
+		<mybatis-spring.version>1.3.1</mybatis-spring.version>
+		<mybatis.version>3.4.5</mybatis.version>
 	</properties>
 
 
@@ -50,6 +50,14 @@
 					<source>1.7</source>
 					<target>1.7</target>
 					<encoding>UTF8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
 			<plugin>

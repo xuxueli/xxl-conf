@@ -1,6 +1,6 @@
 package com.xxl.conf.admin.core.model;
 
-import com.xxl.conf.core.XxlConfZkClient;
+import com.xxl.conf.core.core.XxlConfZkClient;
 
 /**
  * 配置节点

@@ -24,11 +24,11 @@
 
 		<!-- encache -->
 		<dependency>
-			<groupId>net.sf.ehcache</groupId>
+			<groupId>org.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
 			<version>${ehcache.version}</version>
 		</dependency>
-
+		
 		<!-- slf4j -->
 		<dependency>
 			<groupId>org.slf4j</groupId>

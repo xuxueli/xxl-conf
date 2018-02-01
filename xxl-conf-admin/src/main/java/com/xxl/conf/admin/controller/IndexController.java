@@ -4,8 +4,7 @@ package com.xxl.conf.admin.controller;
 import com.xxl.conf.admin.controller.annotation.PermessionLimit;
 import com.xxl.conf.admin.controller.interceptor.PermissionInterceptor;
 import com.xxl.conf.admin.core.util.ReturnT;
-import com.xxl.conf.core.util.PropertiesUtil;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Properties;
 
 
 /**
@@ -28,11 +26,7 @@ public class IndexController {
     private static Logger logger = LoggerFactory.getLogger(IndexController.class.getName());
 
     @RequestMapping("/")
-    @PermessionLimit(limit=false)
     public String index(Model model, HttpServletRequest request) {
-        if (!PermissionInterceptor.ifLogin(request)) {
-            return "redirect:/toLogin";
-        }
         return "redirect:/conf";
     }
 
@@ -49,19 +43,21 @@ public class IndexController {
     @ResponseBody
     @PermessionLimit(limit=false)
     public ReturnT<String> loginDo(HttpServletRequest request, HttpServletResponse response, String userName, String password, String ifRemember){
-        if (!PermissionInterceptor.ifLogin(request)) {
-            Properties prop = PropertiesUtil.loadProperties("xxl-conf.properties");
-            if (StringUtils.isNotBlank(userName) && StringUtils.isNotBlank(password)
-                    && PropertiesUtil.getString(prop, "xxl.conf.login.username").equals(userName)
-                    && PropertiesUtil.getString(prop, "xxl.conf.login.password").equals(password)) {
-                boolean ifRem = false;
-                if (StringUtils.isNotBlank(ifRemember) && "on".equals(ifRemember)) {
-                    ifRem = true;
-                }
-                PermissionInterceptor.login(response, ifRem);
-            } else {
-                return new ReturnT<String>(500, "账号或密码错误");
-            }
+        // valid
+        if (PermissionInterceptor.ifLogin(request)) {
+            return ReturnT.SUCCESS;
+        }
+
+        // param
+        if (StringUtils.isBlank(userName) || StringUtils.isBlank(password)){
+            return new ReturnT<String>(500, "账号或密码为空");
+        }
+        boolean ifRem = (StringUtils.isNotBlank(ifRemember) && "on".equals(ifRemember))?true:false;
+
+        // do login
+        boolean loginRet = PermissionInterceptor.login(response, userName, password, ifRem);
+        if (!loginRet) {
+            return new ReturnT<String>(500, "账号或密码错误");
         }
         return ReturnT.SUCCESS;
     }

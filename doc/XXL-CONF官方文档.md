@@ -90,7 +90,7 @@ XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为�
 
 - xxl-conf-admin：配置管理中心
 - xxl-conf-core：公共依赖
-- xxl-conf-example: 接入XXl-CONF的Demo项目
+- xxl-conf-sample: 接入XXl-CONF的Demo项目
 
 ### 2.3 “配置管理中心” 项目配置
 
@@ -119,7 +119,7 @@ xxl.conf.login.password=123456
 
 ### 2.4 “接入XXL-CONF的Demo项目” 项目配置
 
-    项目：xxl-conf-example
+    项目：xxl-conf-sample
     作用：供用户参考学习如何接入XXL-CONF
 
 #### A、引入maven依赖
@@ -136,7 +136,7 @@ xxl.conf.login.password=123456
 
 可参考配置文件：
 
-    /xxl-conf/xxl-conf-example/src/main/resources/spring/applicationcontext-xxl-conf.xml
+    /xxl-conf/xxl-conf-sample/src/main/resources/spring/applicationcontext-xxl-conf.xml
 
 
 配置项说明
@@ -149,7 +149,7 @@ xxl.conf.login.password=123456
 
 可参考配置文件：
 
-    /xxl-conf/xxl-conf-example/src/main/resources/xxl-conf.properties
+    /xxl-conf/xxl-conf-sample/src/main/resources/xxl-conf.properties
 
 配置项说明
 ```
@@ -188,7 +188,7 @@ XXL-CONF 加载配置时会优先加载 "xxl-conf.properties" 中的配置, 然�
 
 ### 2.7 项目中使用XXL-CONF 
 
-    项目: xxl-conf-example:   (可以参考 com.xxl.conf.example.controller.IndexController.index() )
+    项目: xxl-conf-sample:   (可以参考 com.xxl.conf.example.controller.IndexController.index() )
     作用: 接入XXl-CONF的Demo项目
 
 
@@ -335,6 +335,8 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 
 ### 4.4 版本1.3.1新特性(Coding)
 - zookeeper地址方式从磁盘迁移至项目内；
+- 升级依赖版本，如Ehcache、Spring等；
+- 配置文件，支持自定义文件位置，同时支持磁盘文件和项目resource下两种配置方式；
 
 ### TODO LIST
 - 1、权限管理：以分组为权限最小单元，只有分组的成员用户才有权限进行对应的配置操作；
@@ -342,7 +344,13 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 - 3、local cache 备份到磁盘；zk异常且local properties未配置时，从磁盘上读取配置；
 - 4、优化官方文档，制作项目网站；
 - 5、zk客户端优化，强化断线重连 + getInstance做二次校验；
-- 6、客户端断线重连强化，除了依赖ZK之外，定时守护线程周期性校验ZK状态。考虑是否周期性刷新缓存； 
+- 6、客户端断线重连强化，除了依赖ZK之外，定时守护线程周期性校验ZK状态。考虑是否周期性刷新缓存；
+- 7、规范代码结构；
+- 8、配置支持版本回溯；
+- 9、支持@Value注解获取配置；
+- 10、三种配置获取方式，除API支持动态推送外，XML配置和@Value注解也支持配置推送；
+- 11、针对 null 做缓存;
+- 12、Local Cache缓存长度固定为1000，采用LRU策略移除。长度考虑支持自定义；
 
 ## 五、其他
 
