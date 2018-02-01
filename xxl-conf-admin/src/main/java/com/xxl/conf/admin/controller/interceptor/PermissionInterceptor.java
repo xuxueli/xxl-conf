@@ -24,7 +24,7 @@ public class PermissionInterceptor extends HandlerInterceptorAdapter implements 
 	@Override
 	public void afterPropertiesSet() throws Exception {
 
-		String username = XxlConfPropConf.get("xxl.conf.login.username");
+		String username = XxlConfPropConf.get("xxl.conf.login.username");	// can not user @Value or XML，because inteceptor work with mvc, init before service
 		String password = XxlConfPropConf.get("xxl.conf.login.password");
 
 		// login token
