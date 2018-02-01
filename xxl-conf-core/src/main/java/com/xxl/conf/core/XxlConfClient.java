@@ -27,19 +27,17 @@ public class XxlConfClient {
 		}
 
 		// level 2: local cache
-		String cacheConf = XxlConfLocalCacheConf.get(key);
-		if (cacheConf != null) {
-			return cacheConf;
+		XxlConfLocalCacheConf.CacheNode cacheNode = XxlConfLocalCacheConf.get(key);
+		if (cacheNode != null) {
+			return cacheNode.getValue();
 		}
 
 		// level 3	(get-and-watch, add-local-cache)
 		String zkData = XxlConfZkClient.getPathDataByKey(key);
-		if (zkData!=null) {
-			XxlConfLocalCacheConf.set(key, zkData);
+		XxlConfLocalCacheConf.set(key, zkData);		// cache null value
+		if (zkData != null) {
 			return zkData;
 		}
-
-		// TODO，针对 null 做缓存
 
 		return defaultVal;
 	}

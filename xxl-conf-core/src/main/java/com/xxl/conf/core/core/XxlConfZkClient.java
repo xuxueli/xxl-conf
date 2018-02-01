@@ -75,7 +75,7 @@ public class XxlConfZkClient implements Watcher {
 										} else if (watchedEvent.getType() == Event.EventType.NodeDataChanged) {
 											// conf updated
 											String data = getPathDataByKey(key);
-											XxlConfLocalCacheConf.set(key, data);
+											XxlConfLocalCacheConf.update(key, data);
 										}
 									}
 								} catch (KeeperException e) {

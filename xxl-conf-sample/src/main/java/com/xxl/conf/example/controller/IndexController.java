@@ -53,7 +53,7 @@ public class IndexController {
 		 * 			- 支持动态推送更新；
 		 *
          */
-		model.addAttribute("key03", XxlConfClient.get("default.key03", null));
+		model.addAttribute("key03", XxlConfClient.get("default.key04", null));
 
 		return "index";
 	}
