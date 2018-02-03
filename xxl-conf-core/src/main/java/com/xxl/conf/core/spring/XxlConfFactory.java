@@ -2,6 +2,9 @@ package com.xxl.conf.core.spring;
 
 import com.xxl.conf.core.XxlConfClient;
 import com.xxl.conf.core.annotaion.XxlConf;
+import com.xxl.conf.core.core.XxlConfLocalCacheConf;
+import com.xxl.conf.core.core.XxlConfPropConf;
+import com.xxl.conf.core.core.XxlConfZkClient;
 import com.xxl.conf.core.listener.XxlConfListener;
 import com.xxl.conf.core.listener.XxlConfListenerFactory;
 import com.xxl.conf.core.listener.impl.AnnoRefreshXxlConfListener;
@@ -28,11 +31,14 @@ import java.lang.reflect.Field;
 public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 	private static Logger logger = LoggerFactory.getLogger(XxlConfFactory.class);
 
-	public void start(){
-		// TODO， init
+	public void init(){
+		XxlConfPropConf.init();
+		XxlConfLocalCacheConf.init();
+		XxlConfZkClient.init();
 	}
-
-	public void destory(){
+	public void destroy(){
+		XxlConfLocalCacheConf.destroy();
+		XxlConfZkClient.destroy();
 	}
 
 	/**

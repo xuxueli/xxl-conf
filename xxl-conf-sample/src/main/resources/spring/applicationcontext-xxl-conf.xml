@@ -6,7 +6,7 @@
 
 
 	<!-- ********************************* 核心配置[必须]：XXL-CONF 配置工厂 ********************************* -->
-	<bean id="xxlConf" class="com.xxl.conf.core.spring.XxlConfFactory" />
+	<bean id="xxlConf" class="com.xxl.conf.core.spring.XxlConfFactory" init-method="init" destroy-method="destroy" />
 
 
 	<!-- ********************************* 测试示例（可删除） ********************************* -->

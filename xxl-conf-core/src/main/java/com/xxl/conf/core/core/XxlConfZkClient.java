@@ -53,7 +53,7 @@ public class XxlConfZkClient implements Watcher {
 			try {
 				if (INSTANCE_INIT_LOCK.tryLock(2, TimeUnit.SECONDS)) {
 					try {
-						zooKeeper = new ZooKeeper(XxlConfPropConf.get(com.xxl.conf.core.env.Environment.ZK_ADDRESS), 20000, new Watcher() {
+						zooKeeper = new ZooKeeper(XxlConfPropConf.get(Environment.ZK_ADDRESS), 20000, new Watcher() {
 							@Override
 							public void process(WatchedEvent watchedEvent) {
 								try {
@@ -80,9 +80,9 @@ public class XxlConfZkClient implements Watcher {
 										}
 									}
 								} catch (KeeperException e) {
-									e.printStackTrace();
+									logger.error(e.getMessage(), e);
 								} catch (InterruptedException e) {
-									e.printStackTrace();
+									logger.error(e.getMessage(), e);
 								}
 							}
 						});
@@ -90,17 +90,31 @@ public class XxlConfZkClient implements Watcher {
 					} finally {
 						INSTANCE_INIT_LOCK.unlock();
 					}
+					logger.info(">>>>>>>>>> xxl-conf, XxlConfZkClient init success.");
                 }
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 		}
 		if (zooKeeper == null) {
 			throw new NullPointerException(">>>>>>>>>>> xxl-cache, XxlConfZkClient.zooKeeper is null.");
 		}
 		return zooKeeper;
+	}
+	
+	public static void init(){
+		getInstance();
+	}
+	public static void destroy(){
+		if (zooKeeper!=null) {
+			try {
+				zooKeeper.close();
+			} catch (InterruptedException e) {
+				logger.error(e.getMessage(), e);
+			}
+		}
 	}
 
 	/**
@@ -163,9 +177,9 @@ public class XxlConfZkClient implements Watcher {
 			}
 			return getInstance().exists(path, true);
 		} catch (KeeperException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -184,9 +198,9 @@ public class XxlConfZkClient implements Watcher {
 				logger.info(">>>>>>>>>> zookeeper node path not found :{}", key);
 			}
 		} catch (KeeperException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 	}
 
@@ -206,7 +220,7 @@ public class XxlConfZkClient implements Watcher {
 			}
 			return zooKeeper.setData(path, data.getBytes(),stat.getVersion());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -231,9 +245,9 @@ public class XxlConfZkClient implements Watcher {
 				logger.info(">>>>>>>>>> xxl conf, znodeKey[{}] not found.", key);
 			}
 		} catch (KeeperException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -253,9 +267,9 @@ public class XxlConfZkClient implements Watcher {
 				}
 			}
 		} catch (KeeperException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 		return allData;
 	}

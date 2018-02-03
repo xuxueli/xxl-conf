@@ -20,7 +20,7 @@ public class XxlConfLocalCacheConf {
 
     private static CacheManager cacheManager = null;
     private static Cache<String, CacheNode> xxlConfLocalCache = null;
-    static {
+    public static void init(){
         // cacheManager
         cacheManager = CacheManagerBuilder.newCacheManagerBuilder().build(true);		// default use ehcche.xml under src
 
@@ -30,13 +30,13 @@ public class XxlConfLocalCacheConf {
                         .newCacheConfigurationBuilder(String.class, CacheNode.class, ResourcePoolsBuilder.heap(1000))	// .withExpiry、.withEvictionAdvisor （default lru）
         );
 
-        logger.info(">>>>>>>>>> xxl-conf, local cache init success.");
+        logger.info(">>>>>>>>>> xxl-conf, XxlConfLocalCacheConf init success.");
     }
 
     /**
      * close cache manager
      */
-    public static void close(){
+    public static void destroy(){
         if (cacheManager != null) {
             cacheManager.close();
         }
