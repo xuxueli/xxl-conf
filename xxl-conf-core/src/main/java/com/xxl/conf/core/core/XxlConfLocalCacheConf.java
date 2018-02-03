@@ -10,6 +10,10 @@ import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 /**
  * local cache conf
  *
@@ -43,7 +47,25 @@ public class XxlConfLocalCacheConf {
     }
 
     /**
-     * set conf
+     * refresh conf
+     */
+    public static void reloadAll(){
+        Set<String> keySet = new HashSet<>();
+        Iterator<Cache.Entry<String, CacheNode>> iterator = xxlConfLocalCache.iterator();
+        while (iterator.hasNext()) {
+            Cache.Entry<String, CacheNode> item = iterator.next();
+            keySet.add(item.getKey());
+        }
+        if (keySet.size() > 1) {
+            for (String key: keySet) {
+                String zkData = XxlConfZkClient.getPathDataByKey(key);
+                xxlConfLocalCache.put(key, new CacheNode(zkData));
+            }
+        }
+    }
+
+    /**
+     * set conf (invoke listener)
      *
      * @param key
      * @param value
@@ -57,7 +79,7 @@ public class XxlConfLocalCacheConf {
     }
 
     /**
-     * update conf  (only update exists key)
+     * update conf  (only update exists key)  (invoke listener)
      *
      * @param key
      * @param value

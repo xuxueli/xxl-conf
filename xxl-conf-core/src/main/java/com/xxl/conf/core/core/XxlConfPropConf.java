@@ -37,7 +37,7 @@ public class XxlConfPropConf {
             }
         }
 
-        logger.info(">>>>>>>>>> xxl-conf, prop conf init success.");
+        logger.info(">>>>>>>>>> xxl-conf, XxlConfPropConf init success.");
     }
 
     private static Properties loadProp(String propertyFileName) {
