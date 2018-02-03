@@ -35,7 +35,7 @@ public class IndexController {
 		model.addAttribute("key01", demoConf.paramByXml);
 
 		/**
-		 * 方式2: @Value注解方式
+		 * 方式2: “@XxlConf”注解方式
 		 *
 		 * 		- 参考 "IndexController.paramByAnno" 属性配置；示例代码 "@XxlConf("default.key02") public String paramByAnno;"；
 		 * 		- 用法：对象Field上加注解 ""@XxlConf("default.key02")"，支持设置默认值，支持设置是否开启动态刷新；
@@ -43,7 +43,7 @@ public class IndexController {
 		 * 			- 配置从配置中心自动加载；
 		 * 			- 存在LocalCache，不用担心性能问题；
 		 * 			- 支持设置配置默认值；
-		 * 			- 支持设置是否开启动态刷新（TODO ,实现中）
+		 * 			- 支持设置是否开启动态刷新;
 		 */
 		model.addAttribute("key02", demoConf.paramByAnno);
 

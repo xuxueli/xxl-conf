@@ -99,7 +99,7 @@ XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为�
     
 配置文件位置：
 
-    xxl-conf/xxl-conf-admin/src/main/resources/xxl-config-admin.properties
+    xxl-conf/xxl-conf-admin/src/main/resources/xxl-conf.properties
     
 配置项目说明：
 ```
@@ -135,14 +135,14 @@ xxl.conf.login.password=123456
 #### B、配置 “XXL-CONF配置解析器”
 
 可参考配置文件：
-
-    /xxl-conf/xxl-conf-sample/src/main/resources/spring/applicationcontext-xxl-conf.xml
-
+```
+/xxl-conf/xxl-conf-sample/src/main/resources/spring/applicationcontext-xxl-conf.xml
+```
 
 配置项说明
 ```
-<!-- XXL-CONF配置解析器 -->
-<bean id="xxlConfPropertyPlaceholderConfigurer" class="com.xxl.conf.core.spring.XxlConfFactory" />
+<!-- ********************************* 核心配置[必须]：XXL-CONF 配置工厂 ********************************* -->
+<bean id="xxlConf" class="com.xxl.conf.core.spring.XxlConfFactory" init-method="init" destroy-method="destroy" />
 ```
 
 #### C、设置 "xxl-conf.properties" 
@@ -192,26 +192,52 @@ XXL-CONF 加载配置时会优先加载 "xxl-conf.properties" 中的配置, 然�
     作用: 接入XXl-CONF的Demo项目
 
 
-- 方式1: XML文件中的占位符方式
+- 方式1: XML占位符方式
+    - 参考 "applicationcontext-xxl-conf.xml" 中 "DemoConf.paramByXml" 属性配置 ""；示例代码如下：
     ```
     <bean id="configuration" class="com.xxl.conf.example.core.constant.DemoConf">
         <property name="paramByXml" value="${default.key01}" />
     </bean>
     ```
-    特点:
-    - 上面配置说明: 在项目启动时, Configuration的paramByXml属性, 会根据配置的占位符${default.key01}, 去XXL-CONF中匹配KEY=key01的配置信息, 赋值给paramByXml;
-    - 目前, 该方式配置信息, 只会在项目启动时从XXL-CONF中加载一次, 项目启动后该值不会变更。 例如配置数据连接信息, 如果XXL-CONF平台中连接地址配置改边, 需要重启后才生效;
-    - 该方式, 底层本质上是通过 "方式2: API方式" 实现的。
-
-- 方式2: API方式
-    ```
-    String paramByClient = XxlConfClient.get("default.key02", null);
-    ```
-    特点:
-    - 上面代码说明: 会获取XXL-CONF平台中KEY=default.key02的配置信息, 如果不存在值使用传递的默认值;
-    - 因为Zookeeper会实时推送配置更新到客户端, 因此该方法放回的值可以XXL-CONF平台中的值保持实时一致;
-    - XXL-CONF会对Zookeeper推送的配置信息做本地缓存, 该方法查询的是缓存的配置信息, 因此该方法并不会产生性能问题, 使用时不需要考虑性能问题;
+    - 用法：占位符方式 "${default.key01}"，支持嵌套占位符；
+    - 优点：
+    	- 配置从配置中心自动加载；
+    	- 存在LocalCache，不用担心性能问题；
+    	- 支持嵌套占位符；
+    - 缺点：不支持支持动态推送更新
     
+   
+
+- 方式2: “@XxlConf”注解方式
+    - 参考 "IndexController.paramByAnno" 属性配置；示例代码 
+    ```
+    @XxlConf("default.key02")
+    public String paramByAnno;
+    ```
+    - 用法：对象Field上加注解 ""@XxlConf("default.key02")"，支持设置默认值，支持设置是否开启动态刷新；
+    - 优点：
+        - 配置从配置中心自动加载；
+        - 存在LocalCache，不用担心性能问题；
+        - 支持设置配置默认值；
+        - 支持设置是否开启动态刷新;
+        
+“@XxlConf”注解属性 | 说明
+--- | ---
+value | 配置Key
+defaultValue | 配置为空时的默认值
+callback | 配置更新时，是否需要同步刷新配置
+        
+- 方式3: API方式
+        - 参考 "IndexController" 代码如下：
+        ```
+        String paramByClient = XxlConfClient.get("default.key02", null);
+        ```
+        - 用法：代码中直接调用API即可，示例代码 ""XxlConfClient.get("key", null)"";
+        - 优点：
+        	- 配置从配置中心自动加载；
+        	- 支持动态推送更新；
+        	- 支持多数据类型；
+ 
 
 ## 三、总体设计
 
