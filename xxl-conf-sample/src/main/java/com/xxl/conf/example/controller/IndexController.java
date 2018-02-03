@@ -15,9 +15,6 @@ public class IndexController {
 	@Resource
 	private Configuration configuration;
 
-	@Value("${default.key02}")
-	private String paramByAnno;
-	
 	@RequestMapping("")
 	public String index(Model model){
 
@@ -42,7 +39,7 @@ public class IndexController {
 		 * 			- 存在LocalCache，不用担心性能问题；
 		 *		- 缺点：不支持支持动态推送更新
 		 */
-		model.addAttribute("key02", paramByAnno);
+		model.addAttribute("key02", configuration.paramByAnno);
 
         /**
          * 方式3: API方式
@@ -53,7 +50,7 @@ public class IndexController {
 		 * 			- 支持动态推送更新；
 		 *
          */
-		model.addAttribute("key03", XxlConfClient.get("default.key04", null));
+		model.addAttribute("key03", XxlConfClient.get("default.key03", null));
 
 		return "index";
 	}
