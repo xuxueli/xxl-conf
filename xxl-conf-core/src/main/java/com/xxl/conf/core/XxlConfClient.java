@@ -4,6 +4,8 @@ import com.xxl.conf.core.exception.XxlConfException;
 import com.xxl.conf.core.core.XxlConfLocalCacheConf;
 import com.xxl.conf.core.core.XxlConfPropConf;
 import com.xxl.conf.core.core.XxlConfZkClient;
+import com.xxl.conf.core.listener.XxlConfListener;
+import com.xxl.conf.core.listener.XxlConfListenerFactory;
 
 /**
  * xxl conf client
@@ -94,5 +96,15 @@ public class XxlConfClient {
 		return Boolean.valueOf(value);
 	}
 
+	/**
+	 * add listener with xxl conf change
+	 *
+	 * @param key
+	 * @param xxlConfListener
+	 * @return
+	 */
+	public static boolean addListener(String key, XxlConfListener xxlConfListener){
+		return XxlConfListenerFactory.addListener(key, xxlConfListener);
+	}
 	
 }
