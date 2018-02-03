@@ -1,3 +1,5 @@
+CREATE database if NOT EXISTS `xxl-conf` default character set utf8 collate utf8_general_ci;
+use `xxl-conf`;
 
 CREATE TABLE `XXL_CONF_GROUP` (
   `group_name` varchar(100) NOT NULL,

@@ -32,7 +32,8 @@ $(function(){
 						var temp = (row.nodeValue.length > 20)? row.nodeValue.substring(0, 20)+'...' : row.nodeValue;
 						return "<span title='"+ row.nodeValue +"'>"+ temp +"</span>";;
 					} else {
-						var tips = "Mysql:<hr>"+ row.nodeValue +"<br><br>ZK:<hr>"+ row.nodeValueReal +"</span>";
+						var tips = "Mysql:<br>"+ row.nodeValue
+							+"<hr>ZK:<br>"+ row.nodeValueReal;
 						var html = "<span style='color: red'>数据未同步: <a href='javascript:;' class='tecTips' tips='"+ tips +"'>查看</a></span>";
 						return html;
 					}
