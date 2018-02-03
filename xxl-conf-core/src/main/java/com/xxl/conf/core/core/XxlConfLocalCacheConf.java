@@ -47,7 +47,7 @@ public class XxlConfLocalCacheConf {
     }
 
     /**
-     * refresh conf
+     * refresh conf (watch + refresh)
      */
     public static void reloadAll(){
         Set<String> keySet = new HashSet<>();
