@@ -227,7 +227,7 @@ public class XxlConfZkClient implements Watcher {
 				}
 				return znodeValue;
 			} else {
-				logger.info(">>>>>>>>>> znodeKey[{}] not found.", key);
+				logger.info(">>>>>>>>>> xxl conf, znodeKey[{}] not found.", key);
 			}
 		} catch (KeeperException e) {
 			e.printStackTrace();

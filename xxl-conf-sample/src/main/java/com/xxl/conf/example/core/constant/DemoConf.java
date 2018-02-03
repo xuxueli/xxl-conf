@@ -1,5 +1,6 @@
 package com.xxl.conf.example.core.constant;
 
+import com.xxl.conf.core.annotaion.XxlConf;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
@@ -9,7 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
  */
 public class DemoConf {
 
-	@Value("${default.key02}")
+	@XxlConf("default.key02")
 	public String paramByAnno;
 
 	public String paramByXml;
