@@ -52,7 +52,7 @@ public class AnnoRefreshXxlConfListener implements XxlConfListener {
     public void onChange(String key) throws Exception {
         if (objectList!=null && objectList.size()>0) {
             for (Object object: objectList) {
-                XxlConfFactory.refreshBeanWithXxlConf(object);
+                XxlConfFactory.refreshBeanWithXxlConf(object, key);
             }
         }
     }

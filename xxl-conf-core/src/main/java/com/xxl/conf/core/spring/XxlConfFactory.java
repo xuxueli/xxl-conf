@@ -77,13 +77,19 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 	 *
 	 * @param beanWithXxlConf
 	 */
-	public static void refreshBeanWithXxlConf(final Object beanWithXxlConf){
+	public static void refreshBeanWithXxlConf(final Object beanWithXxlConf, final String key){
 		ReflectionUtils.doWithFields(beanWithXxlConf.getClass(), new ReflectionUtils.FieldCallback() {
 			@Override
 			public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
 				if (field.isAnnotationPresent(XxlConf.class)) {
 					XxlConf xxlConf = field.getAnnotation(XxlConf.class);
 					String confKey = xxlConf.value();
+
+					// key not match, not allow refresh
+					if (key!=null && !key.equals(confKey)) {
+						return;
+					}
+
 					String confValue = XxlConfClient.get(confKey, xxlConf.defaultValue());
 
 					field.setAccessible(true);
@@ -116,7 +122,7 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 
 					// Annotation：resolves '@XxlConf' annotations within bean definition fields
 					final Object beanWithXxlConf = beanFactoryToProcess.getBean(beanName);
-					refreshBeanWithXxlConf(beanWithXxlConf);	// refresh bean with xxl conf
+					refreshBeanWithXxlConf(beanWithXxlConf, null);	// refresh bean with xxl conf
 				}
 			}
 		}
