@@ -21,7 +21,7 @@ public class XxlConfPropConf {
     private static Logger logger = LoggerFactory.getLogger(XxlConfPropConf.class);
 
     private static final ConcurrentHashMap<String, String> propConf = new ConcurrentHashMap<>();
-    public static void init(){
+    static {
         // default prop
         Properties prop = loadProp(Environment.DEFAULT_PROP);
         if (prop.stringPropertyNames()!=null && prop.stringPropertyNames().size()>0) {
@@ -37,7 +37,7 @@ public class XxlConfPropConf {
             }
         }
 
-        logger.info(">>>>>>>>>> xxl-conf, XxlConfPropConf init success.");
+        logger.info(">>>>>>>>>> xxl-conf, prop conf init success.");
     }
 
     private static Properties loadProp(String propertyFileName) {

@@ -340,10 +340,10 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 - 修复配置值为null值时，配置请求穿透到ZK的问题；
 - Local Cache缓存长度固定为1000，采用LRU策略移除。
 - 规范代码结构；
-- 支持 @XxlValue 注解获取配置；【迭代中】
+- 支持 @XxlValue 注解获取配置；
+- @XxlValue 支持动态刷新；
 - XML 、 @XxlConf 和 API 三种方式； 
 - 前端UI更新，AdminLTE 和 Layui 等；
-
 
 ### TODO LIST
 - 1、权限管理：以分组为权限最小单元，只有分组的成员用户才有权限进行对应的配置操作，有权限才可查看和再次分配；
@@ -361,6 +361,7 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 - 13、支持为conf设置监听器，支持通过配置监听实现动态刷新连接池等高级功能；
 - 14、重连优化，重连后重新watch；
 - 15、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；
+- 16、XML 方式支持动态刷新，
 
 ## 五、其他
 

@@ -20,7 +20,7 @@ public class XxlConfLocalCacheConf {
 
     private static CacheManager cacheManager = null;
     private static Cache<String, CacheNode> xxlConfLocalCache = null;
-    public static void init(){
+    static {
         // cacheManager
         cacheManager = CacheManagerBuilder.newCacheManagerBuilder().build(true);		// default use ehcche.xml under src
 

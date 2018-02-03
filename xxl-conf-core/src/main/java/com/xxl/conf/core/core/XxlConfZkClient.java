@@ -53,7 +53,7 @@ public class XxlConfZkClient implements Watcher {
 			try {
 				if (INSTANCE_INIT_LOCK.tryLock(2, TimeUnit.SECONDS)) {
 					try {
-						zooKeeper = new ZooKeeper(XxlConfPropConf.get(Environment.ZK_ADDRESS), 20000, new Watcher() {
+						zooKeeper = new ZooKeeper(XxlConfPropConf.get(Environment.ZK_ADDRESS), 10000, new Watcher() {
 							@Override
 							public void process(WatchedEvent watchedEvent) {
 								try {
@@ -103,10 +103,7 @@ public class XxlConfZkClient implements Watcher {
 		}
 		return zooKeeper;
 	}
-	
-	public static void init(){
-		getInstance();
-	}
+
 	public static void destroy(){
 		if (zooKeeper!=null) {
 			try {
@@ -272,16 +269,6 @@ public class XxlConfZkClient implements Watcher {
 			logger.error(e.getMessage(), e);
 		}
 		return allData;
-	}
-
-	public static void main(String[] args) throws InterruptedException, KeeperException {
-		setPathDataByKey("key02", "666");
-		System.out.println(getPathDataByKey("key02"));
-
-		System.out.println(getAllData());
-		getInstance().delete(com.xxl.conf.core.env.Environment.CONF_DATA_PATH + "/key02", -1);
-		getInstance().delete(Environment.CONF_DATA_PATH, -1);
-
 	}
 
 }

@@ -32,9 +32,6 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 	private static Logger logger = LoggerFactory.getLogger(XxlConfFactory.class);
 
 	public void init(){
-		XxlConfPropConf.init();
-		XxlConfLocalCacheConf.init();
-		XxlConfZkClient.init();
 	}
 	public void destroy(){
 		XxlConfLocalCacheConf.destroy();

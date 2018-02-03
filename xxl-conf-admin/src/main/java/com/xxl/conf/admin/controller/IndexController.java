@@ -4,6 +4,7 @@ package com.xxl.conf.admin.controller;
 import com.xxl.conf.admin.controller.annotation.PermessionLimit;
 import com.xxl.conf.admin.controller.interceptor.PermissionInterceptor;
 import com.xxl.conf.admin.core.util.ReturnT;
+import com.xxl.conf.admin.service.impl.LoginService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,6 +27,9 @@ import javax.servlet.http.HttpServletResponse;
 public class IndexController {
     private static Logger logger = LoggerFactory.getLogger(IndexController.class.getName());
 
+    @Resource
+    private LoginService loginService;
+
     @RequestMapping("/")
     public String index(Model model, HttpServletRequest request) {
         return "redirect:/conf";
@@ -33,7 +38,7 @@ public class IndexController {
     @RequestMapping("/toLogin")
     @PermessionLimit(limit=false)
     public String toLogin(Model model, HttpServletRequest request) {
-        if (PermissionInterceptor.ifLogin(request)) {
+        if (loginService.ifLogin(request)) {
             return "redirect:/";
         }
         return "login";
@@ -44,7 +49,7 @@ public class IndexController {
     @PermessionLimit(limit=false)
     public ReturnT<String> loginDo(HttpServletRequest request, HttpServletResponse response, String userName, String password, String ifRemember){
         // valid
-        if (PermissionInterceptor.ifLogin(request)) {
+        if (loginService.ifLogin(request)) {
             return ReturnT.SUCCESS;
         }
 
@@ -55,7 +60,7 @@ public class IndexController {
         boolean ifRem = (StringUtils.isNotBlank(ifRemember) && "on".equals(ifRemember))?true:false;
 
         // do login
-        boolean loginRet = PermissionInterceptor.login(response, userName, password, ifRem);
+        boolean loginRet = loginService.login(response, userName, password, ifRem);
         if (!loginRet) {
             return new ReturnT<String>(500, "账号或密码错误");
         }
@@ -66,8 +71,8 @@ public class IndexController {
     @ResponseBody
     @PermessionLimit(limit=false)
     public ReturnT<String> logout(HttpServletRequest request, HttpServletResponse response){
-        if (PermissionInterceptor.ifLogin(request)) {
-            PermissionInterceptor.logout(request, response);
+        if (loginService.ifLogin(request)) {
+            loginService.logout(request, response);
         }
         return ReturnT.SUCCESS;
     }
