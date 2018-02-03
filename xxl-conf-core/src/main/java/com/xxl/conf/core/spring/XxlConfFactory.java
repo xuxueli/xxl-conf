@@ -21,12 +21,14 @@ import java.util.Properties;
  * @author xuxueli 2015-9-12 19:42:49
  *
  */
-public class XxlConfPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer {
-	private static Logger logger = LoggerFactory.getLogger(XxlConfPropertyPlaceholderConfigurer.class);
+public class XxlConfFactory extends PropertyPlaceholderConfigurer {
+	private static Logger logger = LoggerFactory.getLogger(XxlConfFactory.class);
 
+	// ---------------------- annotation ----------------------
+
+	// ---------------------- xml ----------------------
 	@Override
 	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {
-
 		// init value resolver
 		StringValueResolver valueResolver = new StringValueResolver() {
 			String placeholderPrefix = "${";

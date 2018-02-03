@@ -1,8 +1,7 @@
 package com.xxl.conf.example.controller;
 
 import com.xxl.conf.core.XxlConfClient;
-import com.xxl.conf.example.core.constant.Configuration;
-import org.springframework.beans.factory.annotation.Value;
+import com.xxl.conf.example.core.constant.DemoConf;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +12,7 @@ import javax.annotation.Resource;
 public class IndexController {
 	
 	@Resource
-	private Configuration configuration;
+	private DemoConf demoConf;
 
 	@RequestMapping("")
 	public String index(Model model){
@@ -21,14 +20,14 @@ public class IndexController {
         /**
          * 方式1: XML占位符方式
          *
-		 * 		- 参考 "applicationcontext-xxl-conf.xml" 中 "Configuration.paramByXml" 属性配置；
+		 * 		- 参考 "applicationcontext-xxl-conf.xml" 中 "DemoConf.paramByXml" 属性配置；
 		 * 		- 优点：
 		 * 			- 配置从配置中心自动加载；
 		 * 			- 存在LocalCache，不用担心性能问题；
 		 * 		- 缺点：不支持支持动态推送更新
          *
          */
-		model.addAttribute("key01", configuration.paramByXml);
+		model.addAttribute("key01", demoConf.paramByXml);
 
 		/**
 		 * 方式2: @Value注解方式
@@ -39,7 +38,7 @@ public class IndexController {
 		 * 			- 存在LocalCache，不用担心性能问题；
 		 *		- 缺点：不支持支持动态推送更新
 		 */
-		model.addAttribute("key02", configuration.paramByAnno);
+		model.addAttribute("key02", demoConf.paramByAnno);
 
         /**
          * 方式3: API方式

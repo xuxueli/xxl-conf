@@ -142,7 +142,7 @@ xxl.conf.login.password=123456
 配置项说明
 ```
 <!-- XXL-CONF配置解析器 -->
-<bean id="xxlConfPropertyPlaceholderConfigurer" class="com.xxl.conf.core.spring.XxlConfPropertyPlaceholderConfigurer" />
+<bean id="xxlConfPropertyPlaceholderConfigurer" class="com.xxl.conf.core.spring.XxlConfFactory" />
 ```
 
 #### C、设置 "xxl-conf.properties" 
@@ -194,7 +194,7 @@ XXL-CONF 加载配置时会优先加载 "xxl-conf.properties" 中的配置, 然�
 
 - 方式1: XML文件中的占位符方式
     ```
-    <bean id="configuration" class="com.xxl.conf.example.core.constant.Configuration">
+    <bean id="configuration" class="com.xxl.conf.example.core.constant.DemoConf">
         <property name="paramByXml" value="${default.key01}" />
     </bean>
     ```

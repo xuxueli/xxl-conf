@@ -3,9 +3,11 @@ package com.xxl.conf.example.core.constant;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
- * 测试用,可删除
+ *  测试示例（可删除）
+ *
+ *  @author xuxueli
  */
-public class Configuration {
+public class DemoConf {
 
 	@Value("${default.key02}")
 	public String paramByAnno;
