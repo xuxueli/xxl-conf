@@ -10,7 +10,7 @@
 
 
 	<!-- ********************************* 测试示例（可删除） ********************************* -->
-	<bean id="configuration" class="com.xxl.conf.example.core.constant.DemoConf">
+	<bean id="demoConf" class="com.xxl.conf.example.core.constant.DemoConf">
 		<property name="paramByXml" value="${default.key01}" />
 	</bean>
 

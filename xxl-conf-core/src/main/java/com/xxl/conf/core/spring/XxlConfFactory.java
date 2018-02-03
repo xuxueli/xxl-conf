@@ -9,7 +9,12 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionVisitor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.Ordered;
+import org.springframework.core.env.ConfigurablePropertyResolver;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringValueResolver;
 
 import java.util.Properties;
@@ -21,16 +26,17 @@ import java.util.Properties;
  * @author xuxueli 2015-9-12 19:42:49
  *
  */
-public class XxlConfFactory extends PropertyPlaceholderConfigurer {
+public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 	private static Logger logger = LoggerFactory.getLogger(XxlConfFactory.class);
 
-	// ---------------------- annotation ----------------------
-
-	// ---------------------- xml ----------------------
-	@Override
-	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {
+	/**
+	 * xxl conf bean definition visitor
+	 *
+	 * @return
+	 */
+	private BeanDefinitionVisitor getXxlConfBeanDefinitionVisitor(){
 		// init value resolver
-		StringValueResolver valueResolver = new StringValueResolver() {
+		StringValueResolver xxlConfValueResolver = new StringValueResolver() {
 			String placeholderPrefix = "${";
 			String placeholderSuffix = "}";
 			@Override
@@ -53,21 +59,35 @@ public class XxlConfFactory extends PropertyPlaceholderConfigurer {
 		};
 
 		// init bean define visitor
-		BeanDefinitionVisitor visitor = new BeanDefinitionVisitor(valueResolver);
+		BeanDefinitionVisitor xxlConfVisitor = new BeanDefinitionVisitor(xxlConfValueResolver);
+		return xxlConfVisitor;
+	}
+
+	@Override
+	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, ConfigurablePropertyResolver propertyResolver) throws BeansException {
+		//super.processProperties(beanFactoryToProcess, propertyResolver);
+
+		// xxlConf Visitor
+		BeanDefinitionVisitor xxlConfVisitor = getXxlConfBeanDefinitionVisitor();
 
 		// visit bean definition
 		String[] beanNames = beanFactoryToProcess.getBeanDefinitionNames();
 		if (beanNames != null && beanNames.length > 0) {
 			for (String beanName : beanNames) {
 				if (!(beanName.equals(this.beanName) && beanFactoryToProcess.equals(this.beanFactory))) {
+					// XML：resolves ${...} placeholders within bean definition property values
+
 					BeanDefinition bd = beanFactoryToProcess.getBeanDefinition(beanName);
-					visitor.visitBeanDefinition(bd);
+					xxlConfVisitor.visitBeanDefinition(bd);
+
+					// Annotation：resolves ${...} placeholders within bean definition annotations
+					//Object object = beanFactoryToProcess.getBean(beanName);
+
 				}
 			}
 		}
-		
-		// TODO Auto-generated method stub
-		//super.processProperties(beanFactoryToProcess, props);
+
+		logger.info(">>>>>>>>>>> xxl conf, processProperties success}");
 	}
 
 	@Override

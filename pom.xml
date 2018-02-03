@@ -20,7 +20,7 @@
 		<javax.servlet-api.version>3.0.1</javax.servlet-api.version>
 		<jsp-api.version>2.2</jsp-api.version>
 
-		<spring.version>4.3.13.RELEASE</spring.version>
+		<spring.version>4.3.14.RELEASE</spring.version>
 		<jackson.version>2.9.3</jackson.version>
 		<aspectjweaver.version>1.8.13</aspectjweaver.version>
 		<slf4j-api.version>1.7.25</slf4j-api.version>
