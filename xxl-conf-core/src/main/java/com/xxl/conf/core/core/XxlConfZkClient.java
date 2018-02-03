@@ -1,5 +1,6 @@
 package com.xxl.conf.core.core;
 
+import com.xxl.conf.core.env.Environment;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
@@ -52,7 +53,7 @@ public class XxlConfZkClient implements Watcher {
 			try {
 				if (INSTANCE_INIT_LOCK.tryLock(2, TimeUnit.SECONDS)) {
 					try {
-						zooKeeper = new ZooKeeper(XxlConfPropConf.get(Environment.ZK_ADDRESS), 20000, new Watcher() {
+						zooKeeper = new ZooKeeper(XxlConfPropConf.get(com.xxl.conf.core.env.Environment.ZK_ADDRESS), 20000, new Watcher() {
 							@Override
 							public void process(WatchedEvent watchedEvent) {
 								try {
@@ -85,7 +86,7 @@ public class XxlConfZkClient implements Watcher {
 								}
 							}
 						});
-						XxlConfZkClient.createWithParent(Environment.CONF_DATA_PATH);	// init cfg root path
+						XxlConfZkClient.createWithParent(com.xxl.conf.core.env.Environment.CONF_DATA_PATH);	// init cfg root path
 					} finally {
 						INSTANCE_INIT_LOCK.unlock();
 					}
@@ -117,10 +118,10 @@ public class XxlConfZkClient implements Watcher {
 	 * @return ZnodeKey
 	 */
 	private static String pathToKey(String nodePath){
-		if (nodePath==null || nodePath.length() <= Environment.CONF_DATA_PATH.length() || !nodePath.startsWith(Environment.CONF_DATA_PATH)) {
+		if (nodePath==null || nodePath.length() <= com.xxl.conf.core.env.Environment.CONF_DATA_PATH.length() || !nodePath.startsWith(com.xxl.conf.core.env.Environment.CONF_DATA_PATH)) {
 			return null;
 		}
-		return nodePath.substring(Environment.CONF_DATA_PATH.length()+1, nodePath.length());
+		return nodePath.substring(com.xxl.conf.core.env.Environment.CONF_DATA_PATH.length()+1, nodePath.length());
 	}
 
 	/**
@@ -129,7 +130,7 @@ public class XxlConfZkClient implements Watcher {
 	 * @return znodePath
 	 */
 	private static String keyToPath(String nodeKey){
-		return Environment.CONF_DATA_PATH + "/" + nodeKey;
+		return com.xxl.conf.core.env.Environment.CONF_DATA_PATH + "/" + nodeKey;
 	}
 
 	public static String generateGroupKey(String nodeGroup, String nodeKey){
@@ -244,7 +245,7 @@ public class XxlConfZkClient implements Watcher {
 	private static Map<String, String> getAllData(){
 		Map<String, String> allData = new HashMap<String, String>();
 		try {
-			List<String> childKeys = getInstance().getChildren(Environment.CONF_DATA_PATH, true);
+			List<String> childKeys = getInstance().getChildren(com.xxl.conf.core.env.Environment.CONF_DATA_PATH, true);
 			if (childKeys!=null && childKeys.size()>0) {
 				for (String key : childKeys) {
 					String data = getPathDataByKey(key);
@@ -264,7 +265,7 @@ public class XxlConfZkClient implements Watcher {
 		System.out.println(getPathDataByKey("key02"));
 
 		System.out.println(getAllData());
-		getInstance().delete(Environment.CONF_DATA_PATH + "/key02", -1);
+		getInstance().delete(com.xxl.conf.core.env.Environment.CONF_DATA_PATH + "/key02", -1);
 		getInstance().delete(Environment.CONF_DATA_PATH, -1);
 
 	}

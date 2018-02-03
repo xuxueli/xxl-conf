@@ -1,11 +1,13 @@
-package com.xxl.conf.core.core;
+package com.xxl.conf.core.env;
 
 /**
- * 环境基类
+ * xxl conf enviroment
+ *
  * @author xuxueli 2015-8-28 10:37:43
  */
 public class Environment {
 
+	// ---------------------- prop ----------------------
 	/**
 	 * default prop
 	 */
@@ -17,15 +19,15 @@ public class Environment {
 	public static final String PROP_FILE_LOCATION = "xxl.conf.prop.file.location";
 
 	/**
-	 * conf data path in zk
-     */
-	public static final String CONF_DATA_PATH = "/xxl-conf";
-
-
-	/**
 	 * zk address, as "ip1:port,ip2:port"
      */
 	public static final String ZK_ADDRESS = "xxl.conf.zkserver";		// zk地址：格式
+
+	// ---------------------- zk ----------------------
+	/**
+	 * conf data path in zk
+	 */
+	public static final String CONF_DATA_PATH = "/xxl-conf";
 
 }
 

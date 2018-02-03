@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
 
+/**
+ * @author xuxueli 2018-02-04 01:27:30
+ */
 @Controller
 public class IndexController {
 	

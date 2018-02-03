@@ -1,4 +1,4 @@
-package com.xxl.conf.core.core;
+package com.xxl.conf.core.exception;
 
 /**
  * xxl conf exception

@@ -1,6 +1,7 @@
 package com.xxl.conf.core.core;
 
 import com.xxl.conf.core.XxlConfClient;
+import com.xxl.conf.core.listener.XxlConfListenerFactory;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
@@ -51,6 +52,8 @@ public class XxlConfLocalCacheConf {
     public static void set(String key, String value) {
         xxlConfLocalCache.put(key, new CacheNode(value));
         logger.info(">>>>>>>>>> xxl-conf: SET: [{}={}]", key, value);
+
+        XxlConfListenerFactory.onChange(key);
     }
 
     /**
@@ -63,6 +66,8 @@ public class XxlConfLocalCacheConf {
         if (xxlConfLocalCache!=null && xxlConfLocalCache.containsKey(key)) {
             xxlConfLocalCache.put(key, new CacheNode(value));
             logger.info(">>>>>>>>>> xxl-conf: UPDATE: [{}={}]", key, value);
+
+            XxlConfListenerFactory.onChange(key);
         }
     }
 

@@ -1,6 +1,6 @@
 package com.xxl.conf.core;
 
-import com.xxl.conf.core.core.XxlConfException;
+import com.xxl.conf.core.exception.XxlConfException;
 import com.xxl.conf.core.core.XxlConfLocalCacheConf;
 import com.xxl.conf.core.core.XxlConfPropConf;
 import com.xxl.conf.core.core.XxlConfZkClient;

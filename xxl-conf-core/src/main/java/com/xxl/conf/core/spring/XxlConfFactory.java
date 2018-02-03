@@ -2,6 +2,9 @@ package com.xxl.conf.core.spring;
 
 import com.xxl.conf.core.XxlConfClient;
 import com.xxl.conf.core.annotaion.XxlConf;
+import com.xxl.conf.core.listener.XxlConfListener;
+import com.xxl.conf.core.listener.XxlConfListenerFactory;
+import com.xxl.conf.core.listener.impl.AnnoRefreshXxlConfListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -20,12 +23,17 @@ import java.lang.reflect.Field;
 /**
  * rewrite PropertyPlaceholderConfigurer
  *
- * @version 1.0
  * @author xuxueli 2015-9-12 19:42:49
- *
  */
 public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 	private static Logger logger = LoggerFactory.getLogger(XxlConfFactory.class);
+
+	public void start(){
+		// TODO， init
+	}
+
+	public void destory(){
+	}
 
 	/**
 	 * xxl conf BeanDefinitionVisitor
@@ -48,7 +56,7 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 					String key = buf.substring(placeholderPrefix.length(), buf.length() - placeholderSuffix.length());
 					String zkValue = XxlConfClient.get(key, "");
 					buf = new StringBuffer(zkValue);
-					logger.info(">>>>>>>>>>> xxl-conf, resolved placeholder [" + key + "] to value [" + zkValue + "]");
+					logger.info(">>>>>>>>>>> xxl conf, resolved placeholder success, [{}={}]", key, zkValue);
 					start = buf.toString().startsWith(placeholderPrefix);
 					end = buf.toString().endsWith(placeholderSuffix);
 				}
@@ -59,6 +67,31 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 		// xxl conf BeanDefinitionVisitor
 		BeanDefinitionVisitor xxlConfVisitor = new BeanDefinitionVisitor(xxlConfValueResolver);
 		return xxlConfVisitor;
+	}
+
+	/**
+	 * refresh bean with xxl conf
+	 *
+	 * @param beanWithXxlConf
+	 */
+	public static void refreshBeanWithXxlConf(final Object beanWithXxlConf){
+		ReflectionUtils.doWithFields(beanWithXxlConf.getClass(), new ReflectionUtils.FieldCallback() {
+			@Override
+			public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+				if (field.isAnnotationPresent(XxlConf.class)) {
+					XxlConf xxlConf = field.getAnnotation(XxlConf.class);
+					String confKey = xxlConf.value();
+					String confValue = XxlConfClient.get(confKey, xxlConf.defaultValue());
+
+					field.setAccessible(true);
+					field.set(beanWithXxlConf, confValue);
+					logger.info(">>>>>>>>>>> xxl conf, refreshBeanWithXxlConf success, [{}={}]", confKey, confValue);
+					if (xxlConf.callback()) {
+						AnnoRefreshXxlConfListener.addKeyObject(confKey, beanWithXxlConf);
+					}
+				}
+			}
+		});
 	}
 
 	@Override
@@ -80,23 +113,7 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 
 					// Annotation：resolves '@XxlConf' annotations within bean definition fields
 					final Object beanWithXxlConf = beanFactoryToProcess.getBean(beanName);
-					ReflectionUtils.doWithFields(beanWithXxlConf.getClass(), new ReflectionUtils.FieldCallback() {
-						@Override
-						public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-							if (field.isAnnotationPresent(XxlConf.class)) {
-								XxlConf xxlConf = field.getAnnotation(XxlConf.class);
-								String confValue = XxlConfClient.get(xxlConf.value(), xxlConf.defaultValue());
-
-								field.setAccessible(true);
-								field.set(beanWithXxlConf, confValue);
-
-								if (xxlConf.callback()) {
-									// TODO，CONF Listener
-								}
-							}
-						}
-					});
-
+					refreshBeanWithXxlConf(beanWithXxlConf);	// refresh bean with xxl conf
 				}
 			}
 		}
