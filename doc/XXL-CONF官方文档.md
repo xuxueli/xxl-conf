@@ -371,6 +371,7 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 - XML 、 @XxlConf 和 API 三种方式； 
 - 断线重连优化，重新watch，全量同步缓存；
 - 支持为配置设置Listener，监听值变更并调用监听逻辑。可据此动态刷新JDBC连接池等高级功能；
+- ZK重连时，重新加载LocalCache中配置；
 
 ### TODO LIST
 - 1、权限管理：以分组为权限最小单元，只有分组的成员用户才有权限进行对应的配置操作，有权限才可查看和再次分配；
@@ -386,6 +387,8 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 - 11、admin平台移除prop名依赖，core支持prop别名；
 - 12、前端UI更新，AdminLTE 和 Layui 等；
 - 13、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；
+- 14、新增springboot类型sample项目；
+
 
 
 ## 五、其他

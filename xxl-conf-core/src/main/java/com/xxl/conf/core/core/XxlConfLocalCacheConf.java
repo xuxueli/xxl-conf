@@ -60,6 +60,7 @@ public class XxlConfLocalCacheConf {
             for (String key: keySet) {
                 String zkData = XxlConfZkClient.getPathDataByKey(key);
                 xxlConfLocalCache.put(key, new CacheNode(zkData));
+                logger.info(">>>>>>>>>> xxl-conf: RELOAD: [{}={}]", key, zkData);
             }
         }
     }

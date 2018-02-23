@@ -66,6 +66,10 @@ public class XxlConfZkClient {
 										zooKeeper = null;
 										getInstance();
 									}
+									// session SyncConnected, conf reload
+									if (watchedEvent.getState() == Event.KeeperState.SyncConnected) {
+										XxlConfLocalCacheConf.reloadAll();
+									}
 
 									String path = watchedEvent.getPath();
 									String key = pathToKey(path);
@@ -91,8 +95,6 @@ public class XxlConfZkClient {
 						zooKeeper = new ZooKeeper(XxlConfPropConf.get(Environment.ZK_ADDRESS), 10000, watcher);
 						XxlConfZkClient.createWithParent(Environment.CONF_DATA_PATH);	// init cfg root path
 
-						// conf reload
-						XxlConfLocalCacheConf.reloadAll();
 					} finally {
 						INSTANCE_INIT_LOCK.unlock();
 					}

@@ -1,12 +1,9 @@
 package com.xxl.conf.core.spring;
 
 import com.xxl.conf.core.XxlConfClient;
-import com.xxl.conf.core.annotaion.XxlConf;
+import com.xxl.conf.core.annotation.XxlConf;
 import com.xxl.conf.core.core.XxlConfLocalCacheConf;
-import com.xxl.conf.core.core.XxlConfPropConf;
 import com.xxl.conf.core.core.XxlConfZkClient;
-import com.xxl.conf.core.listener.XxlConfListener;
-import com.xxl.conf.core.listener.XxlConfListenerFactory;
 import com.xxl.conf.core.listener.impl.AnnoRefreshXxlConfListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,23 +43,34 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 	private static BeanDefinitionVisitor getXxlConfBeanDefinitionVisitor(){
 		// xxl conf StringValueResolver
 		StringValueResolver xxlConfValueResolver = new StringValueResolver() {
+
+			boolean ifNested = false;   // if nested replace conf
 			String placeholderPrefix = "${";
 			String placeholderSuffix = "}";
+
 			@Override
 			public String resolveStringValue(String strVal) {
 				StringBuffer buf = new StringBuffer(strVal);
-				// loop replace by xxl-conf, if the value match '${***}'
+
+				// replace by xxl-conf, if the value match '${***}'
 				boolean start = strVal.startsWith(placeholderPrefix);
 				boolean end = strVal.endsWith(placeholderSuffix);
+
 				while (start && end) {
 					// replace by xxl-conf
 					String key = buf.substring(placeholderPrefix.length(), buf.length() - placeholderSuffix.length());
 					String zkValue = XxlConfClient.get(key, "");
 					buf = new StringBuffer(zkValue);
 					logger.info(">>>>>>>>>>> xxl conf, resolved placeholder success, [{}={}]", key, zkValue);
-					start = buf.toString().startsWith(placeholderPrefix);
-					end = buf.toString().endsWith(placeholderSuffix);
+					if (ifNested) {
+						start = buf.toString().startsWith(placeholderPrefix);
+						end = buf.toString().endsWith(placeholderSuffix);
+					} else {
+						start = false;
+						end = false;
+					}
 				}
+
 				return buf.toString();
 			}
 		};

@@ -1,4 +1,4 @@
-package com.xxl.conf.core.annotaion;
+package com.xxl.conf.core.annotation;
 
 import java.lang.annotation.*;
 

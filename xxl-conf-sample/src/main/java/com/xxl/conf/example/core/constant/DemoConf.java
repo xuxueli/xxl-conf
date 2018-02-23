@@ -1,7 +1,6 @@
 package com.xxl.conf.example.core.constant;
 
-import com.xxl.conf.core.annotaion.XxlConf;
-import org.springframework.beans.factory.annotation.Value;
+import com.xxl.conf.core.annotation.XxlConf;
 
 /**
  *  测试示例（可删除）
