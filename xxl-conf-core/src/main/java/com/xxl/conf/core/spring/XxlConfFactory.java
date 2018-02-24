@@ -4,6 +4,7 @@ import com.xxl.conf.core.XxlConfClient;
 import com.xxl.conf.core.annotation.XxlConf;
 import com.xxl.conf.core.core.XxlConfLocalCacheConf;
 import com.xxl.conf.core.core.XxlConfZkConf;
+import com.xxl.conf.core.exception.XxlConfException;
 import com.xxl.conf.core.listener.impl.AnnoRefreshXxlConfListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,8 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringValueResolver;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * rewrite PropertyPlaceholderConfigurer
@@ -82,34 +85,28 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 	}
 
 	/**
-	 * refresh bean with xxl conf
+	 * refresh bean with xxl conf (all)
 	 *
 	 * @param beanWithXxlConf
 	 */
-	public static void refreshBeanWithXxlConf(final Object beanWithXxlConf, final String key){
-		ReflectionUtils.doWithFields(beanWithXxlConf.getClass(), new ReflectionUtils.FieldCallback() {
-			@Override
-			public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-				if (field.isAnnotationPresent(XxlConf.class)) {
-					XxlConf xxlConf = field.getAnnotation(XxlConf.class);
-					String confKey = xxlConf.value();
+	public static void refreshBeanWithXxlConf(Object beanWithXxlConf, List<Field> annoBeanFields){
+		for (Field annoField : annoBeanFields) {
+			XxlConf xxlConf = annoField.getAnnotation(XxlConf.class);
+			String confKey = xxlConf.value();
 
-					// key not match, not allow refresh
-					if (key!=null && !key.equals(confKey)) {
-						return;
-					}
+			String confValue = XxlConfClient.get(confKey, xxlConf.defaultValue());
 
-					String confValue = XxlConfClient.get(confKey, xxlConf.defaultValue());
-
-					field.setAccessible(true);
-					field.set(beanWithXxlConf, confValue);
-					logger.info(">>>>>>>>>>> xxl conf, refreshBeanWithXxlConf success, {}:[{}={}]", beanWithXxlConf, confKey, confValue);
-					if (xxlConf.callback()) {
-						AnnoRefreshXxlConfListener.addKeyObject(confKey, beanWithXxlConf);
-					}
-				}
+			annoField.setAccessible(true);
+			try {
+				annoField.set(beanWithXxlConf, confValue);
+			} catch (IllegalAccessException e) {
+				throw new XxlConfException(e);
 			}
-		});
+			logger.info(">>>>>>>>>>> xxl conf, refreshBeanWithXxlConf success, {}:[{}={}]", beanWithXxlConf, confKey, confValue);
+			if (xxlConf.callback()) {
+				AnnoRefreshXxlConfListener.addKeyObject(confKey, beanWithXxlConf, annoField);
+			}
+		}
 	}
 
 	@Override
@@ -117,7 +114,7 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 		//super.processProperties(beanFactoryToProcess, propertyResolver);
 
 		// xxl conf BeanDefinitionVisitor
-		BeanDefinitionVisitor xxlConfVisitor = getXxlConfBeanDefinitionVisitor();
+		BeanDefinitionVisitor xxlConfDBVisitor = getXxlConfBeanDefinitionVisitor();
 
 		// visit bean definition
 		String[] beanNames = beanFactoryToProcess.getBeanDefinitionNames();
@@ -126,12 +123,38 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 				if (!(beanName.equals(this.beanName) && beanFactoryToProcess.equals(this.beanFactory))) {
 
 					// XML：resolves '${...}' placeholders within bean definition property values
-					BeanDefinition bd = beanFactoryToProcess.getBeanDefinition(beanName);
-					xxlConfVisitor.visitBeanDefinition(bd);
+					BeanDefinition beanDefinition = beanFactoryToProcess.getBeanDefinition(beanName);
+					xxlConfDBVisitor.visitBeanDefinition(beanDefinition);
+
 
 					// Annotation：resolves '@XxlConf' annotations within bean definition fields
-					final Object beanWithXxlConf = beanFactoryToProcess.getBean(beanName);
-					refreshBeanWithXxlConf(beanWithXxlConf, null);	// refresh bean with xxl conf
+					if (beanDefinition.getBeanClassName() == null) {
+						continue;
+					}
+					Class beanClazz = null;
+					try {
+						beanClazz = Class.forName(beanDefinition.getBeanClassName());
+					} catch (ClassNotFoundException e) {
+						logger.error(">>>>>>>>>>> xxl-conf, annotation bean class invalid, error msg:{}", e.getMessage());
+					}
+					if (beanClazz == null) {
+						continue;
+					}
+					final List<Field> annoBeanFields = new ArrayList<>();
+					ReflectionUtils.doWithFields(beanClazz, new ReflectionUtils.FieldCallback() {
+						@Override
+						public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+							if (field.isAnnotationPresent(XxlConf.class)) {
+								annoBeanFields.add(field);
+							}
+						}
+					});
+					if (annoBeanFields.size() < 1) {
+						continue;
+					}
+
+					Object beanWithXxlConf = beanFactoryToProcess.getBean(beanName);
+					refreshBeanWithXxlConf(beanWithXxlConf, annoBeanFields);	// refresh bean with xxl conf
 				}
 			}
 		}

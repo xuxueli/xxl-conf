@@ -363,7 +363,7 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 - 1、支持通过 "@XxlConf" 注解获取配置；
 - 2、动态推送更新：目前支持 "XML、 @XxlConf、API" 三种配置方式，除XML方式外，其他几种方式均支持配置动态刷新；
 - 3、配置变更监听功能：可开发Listener逻辑，监听配置变更事件，可据此动态刷新JDBC连接池等高级功能；
-- 4、新增守护线程，周期性刷新Local Cache中配置数据并watch，进一步提高配置时效性；
+- 4、客户端断线重连强化，除了依赖ZK之外，新增守护线程，周期性刷新Local Cache中配置数据并watch，进一步提高配置时效性；
 - 5、ZK过期重连时，主动刷新LocalCache中配置数据，提高异常情况下配置时效性；
 - 6、主动缓存null或不存在类型配置，避免配置请求穿透到ZK引发雪崩问题；
 - 7、Local Cache缓存长度固定为1000，采用LRU策略移除。
@@ -371,24 +371,21 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 - 9、环境配置文件，支持自定义存放位置，项目resource下或磁盘目录下均可；
 - 10、支持设置ZK中配置存储路径，方便实现多环境复用ZK集群；
 - 11、升级依赖版本，如Ehcache、Spring等；
-- 12、Sample项目目录结构规范；
-
+- 12、ZK重入锁做二次校验，防止并发冲突；
+- 13、Sample项目目录结构规范；
+- 14、新增SpringBoot类型Sample项目；
 
 
 ### TODO LIST
 - 1、权限管理：以分组为权限最小单元，只有分组的成员用户才有权限进行对应的配置操作，有权限才可查看和再次分配；
-- 2、zookeeper客户端迁移至curator；
-- 3、local cache 备份到磁盘；zk异常且local properties未配置时，从磁盘上读取配置；
-- 4、优化官方文档，制作项目网站；
-- 5、zk客户端优化，强化断线重连 + getInstance做二次校验；
-- 6、客户端断线重连强化，除了依赖ZK之外，定时守护线程周期性校验ZK状态。
-- 7、配置支持版本回溯；
-- 8、XML 方式支持动态推送更新，
-- 9、Local Cache缓存长度考虑支持自定义；
-- 10、前端UI更新，AdminLTE 和 Layui 等；
-- 12、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；
-- 13、新增springboot类型sample项目；
-
+- 2、配置支持版本回溯；
+- 3、记录操作Log；
+- 4、zookeeper客户端迁移至curator；
+- 5、local cache 备份到磁盘；zk异常且local properties未配置时，从磁盘上读取配置；
+- 6、XML 方式支持动态推送更新，
+- 7、Local Cache缓存长度考虑支持自定义；
+- 8、前端UI更新，AdminLTE 和 Layui 等；
+- 9、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；
 
 
 ## 五、其他

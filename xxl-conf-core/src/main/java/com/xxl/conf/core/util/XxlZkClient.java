@@ -84,12 +84,14 @@ public class XxlZkClient {
 		if (zooKeeper==null) {
 			try {
 				if (INSTANCE_INIT_LOCK.tryLock(2, TimeUnit.SECONDS)) {
-					try {
-						zooKeeper = new ZooKeeper(zkServer, 10000, watcher);
-					} finally {
-						INSTANCE_INIT_LOCK.unlock();
+					if (zkServer == null) {		// 二次校验，防止并发创建client
+						try {
+							zooKeeper = new ZooKeeper(zkServer, 10000, watcher);
+						} finally {
+							INSTANCE_INIT_LOCK.unlock();
+						}
+						logger.info(">>>>>>>>>> xxl-conf, XxlZkClient init success.");
 					}
-					logger.info(">>>>>>>>>> xxl-conf, XxlZkClient init success.");
 				}
 			} catch (InterruptedException e) {
 				logger.error(e.getMessage(), e);

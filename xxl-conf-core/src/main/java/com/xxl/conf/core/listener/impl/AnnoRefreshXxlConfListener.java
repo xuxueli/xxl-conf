@@ -4,7 +4,9 @@ import com.xxl.conf.core.listener.XxlConfListener;
 import com.xxl.conf.core.listener.XxlConfListenerFactory;
 import com.xxl.conf.core.spring.XxlConfFactory;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,13 +18,52 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class AnnoRefreshXxlConfListener implements XxlConfListener {
 
-    // listener:object = 1:N
-    private List<Object> objectList = Collections.synchronizedList(new ArrayList<>());
-    public void addObject(Object object){
-        if (!objectList.contains(object)) {
-            objectList.add(object);
+
+    // ---------------------- listener ----------------------
+
+    // bean prop: object + field
+    public static class BeanField{
+        private Object object;
+        private Field field;
+
+        public BeanField() {
+        }
+
+        public BeanField(Object object, Field field) {
+            this.object = object;
+            this.field = field;
+        }
+
+        public Object getObject() {
+            return object;
+        }
+
+        public void setObject(Object object) {
+            this.object = object;
+        }
+
+        public Field getField() {
+            return field;
+        }
+
+        public void setField(Field field) {
+            this.field = field;
         }
     }
+
+    // listener(key):beanprop(object-field) = 1:N
+    private List<BeanField> beanFieldList = Collections.synchronizedList(new ArrayList<BeanField>());
+    public void addObject(BeanField beanProp){
+        for (BeanField item: beanFieldList) {
+            if (item.getObject() == beanProp.getObject() && item.getField()==beanProp.getField()) {
+                return;
+            }
+        }
+        beanFieldList.add(beanProp);
+    }
+
+
+    // ---------------------- listener map ----------------------
 
     /**
      *   key:listener = 1:1
@@ -30,7 +71,7 @@ public class AnnoRefreshXxlConfListener implements XxlConfListener {
     private static ConcurrentHashMap<String, AnnoRefreshXxlConfListener> keyListener = new ConcurrentHashMap<>();
 
     /**
-     * get listener whis key
+     * get listener this key
      * @param key
      * @return
      */
@@ -43,16 +84,16 @@ public class AnnoRefreshXxlConfListener implements XxlConfListener {
         keyListener.put(key, annoRefreshXxlConfListener);
         return annoRefreshXxlConfListener;
     }
-    public static void addKeyObject(String key, Object object){
+    public static void addKeyObject(String key, Object object, Field field){
         AnnoRefreshXxlConfListener annoRefreshXxlConfListener = AnnoRefreshXxlConfListener.getAnnoRefreshXxlConfListener(key);
-        annoRefreshXxlConfListener.addObject(object);
+        annoRefreshXxlConfListener.addObject(new BeanField(object, field));
     }
 
     @Override
     public void onChange(String key) throws Exception {
-        if (objectList!=null && objectList.size()>0) {
-            for (Object object: objectList) {
-                XxlConfFactory.refreshBeanWithXxlConf(object, key);
+        if (beanFieldList!=null && beanFieldList.size()>0) {
+            for (BeanField beanField: beanFieldList) {
+                XxlConfFactory.refreshBeanWithXxlConf(beanField.getObject(), Arrays.asList(beanField.getField()));
             }
         }
     }
