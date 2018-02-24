@@ -153,7 +153,7 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 						continue;
 					}
 
-					Object beanWithXxlConf = beanFactoryToProcess.getBean(beanName);
+					Object beanWithXxlConf = beanFactoryToProcess.getBean(beanName);	// TODO，springboot环境下，通过该方法 "getBean" 获取获取部分Bean，如Spring和Jackson等组件的Bean 会报错。原因未知；
 					refreshBeanWithXxlConf(beanWithXxlConf, annoBeanFields);	// refresh bean with xxl conf
 				}
 			}
