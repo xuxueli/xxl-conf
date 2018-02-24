@@ -12,36 +12,6 @@
 
 
 	<mvc:annotation-driven />
-	<context:component-scan base-package="com.xxl.conf.example.controller" />
-
-
-	<mvc:resources mapping="/favicon.ico" location="/favicon.ico" />
-	<mvc:resources mapping="/static/**" location="/static/" />
-	<mvc:resources mapping="/**" location="/" />
-
-
-    <bean id="viewResolver"	class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
-        <property name="viewClass" value="org.springframework.web.servlet.view.freemarker.FreeMarkerView" />
-        <property name="prefix" value="" />
-        <property name="suffix" value=".ftl" />
-        <property name="contentType" value="text/html;charset=UTF-8" />
-        <property name="exposeSpringMacroHelpers" value="true" />
-        <property name="exposeRequestAttributes" value="true" />
-        <property name="exposeSessionAttributes" value="true" />
-        <property name="requestContextAttribute" value="request" />
-        <property name="cache" value="true" />
-        <property name="order" value="0" />
-    </bean>
-
-
-	<bean id="freemarkerConfig"	class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
-		<property name="freemarkerSettings">
-			<bean id="freemarkerPropertiesBean"
-				  class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-				<property name="location" value="classpath:freemarker.properties" />
-			</bean>
-		</property>
-		<property name="templateLoaderPath" value="/WEB-INF/template/" />
-	</bean>
+	<context:component-scan base-package="com.xxl.conf.sample.controller" />
 
 </beans>

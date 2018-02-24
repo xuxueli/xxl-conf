@@ -49,7 +49,6 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 		// xxl conf StringValueResolver
 		StringValueResolver xxlConfValueResolver = new StringValueResolver() {
 
-			boolean ifNested = false;   // if nested replace conf
 			String placeholderPrefix = "${";
 			String placeholderSuffix = "}";
 
@@ -66,14 +65,11 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 					String key = buf.substring(placeholderPrefix.length(), buf.length() - placeholderSuffix.length());
 					String zkValue = XxlConfClient.get(key, "");
 					buf = new StringBuffer(zkValue);
+
+					// loop replace like "${aaa} ... aaa=${bbb}"
+					start = buf.toString().startsWith(placeholderPrefix);
+					end = buf.toString().endsWith(placeholderSuffix);
 					logger.info(">>>>>>>>>>> xxl conf, resolved placeholder success, [{}={}]", key, zkValue);
-					if (ifNested) {
-						start = buf.toString().startsWith(placeholderPrefix);
-						end = buf.toString().endsWith(placeholderSuffix);
-					} else {
-						start = false;
-						end = false;
-					}
 				}
 
 				return buf.toString();
@@ -107,7 +103,7 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 
 					field.setAccessible(true);
 					field.set(beanWithXxlConf, confValue);
-					logger.info(">>>>>>>>>>> xxl conf, refreshBeanWithXxlConf success, beanWithXxlConf:[{}={}]", beanWithXxlConf, confKey, confValue);
+					logger.info(">>>>>>>>>>> xxl conf, refreshBeanWithXxlConf success, {}:[{}={}]", beanWithXxlConf, confKey, confValue);
 					if (xxlConf.callback()) {
 						AnnoRefreshXxlConfListener.addKeyObject(confKey, beanWithXxlConf);
 					}

@@ -1,4 +1,4 @@
-package com.xxl.conf.example.core.constant;
+package com.xxl.conf.sample.core.constant;
 
 import com.xxl.conf.core.annotation.XxlConf;
 

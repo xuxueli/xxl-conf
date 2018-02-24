@@ -6,6 +6,7 @@ import com.xxl.conf.admin.core.util.ReturnT;
 import com.xxl.conf.admin.dao.IXxlConfGroupDao;
 import com.xxl.conf.admin.dao.IXxlConfNodeDao;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
+import com.xxl.conf.core.core.XxlConfLocalCacheConf;
 import com.xxl.conf.core.core.XxlConfZkConf;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -126,6 +127,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, DisposableBe
 
 	@Override
 	public void destroy() throws Exception {
+		XxlConfLocalCacheConf.destroy();
 		XxlConfZkConf.destroy();
 	}
 

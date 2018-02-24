@@ -32,9 +32,23 @@ $(function(){
 						var temp = (row.nodeValue.length > 20)? row.nodeValue.substring(0, 20)+'...' : row.nodeValue;
 						return "<span title='"+ row.nodeValue +"'>"+ temp +"</span>";;
 					} else {
-						var tips = "Mysql:<br>"+ row.nodeValue
-							+"<hr>ZK:<br>"+ row.nodeValueReal;
-						var html = "<span style='color: red'>数据未同步: <a href='javascript:;' class='tecTips' tips='"+ tips +"'>查看</a></span>";
+						var confDiff = '<table border=1 bordercolor="white" ' +
+							'style="border-collapse:collapse;width: 100%;table-layout:fixed;word-wrap:break-word;" >\n' +
+                        '        <tbody>\n' +
+                        '            <tr>\n' +
+                        '                <td style="width:20%;padding: 10px;" >DB</td>\n' +
+                        '                <td style="width:80%;padding: 10px;" >' + row.nodeValue + '</td>\n' +
+                        '            </tr>\n' +
+						'			 <tr>\n' +
+                        '                <td style="width:20%;padding: 10px;" >ZK</td>\n' +
+                        '                <td style="width:20%;padding: 10px;" >' + row.nodeValueReal + '</td>\n' +
+                        '            </tr>\n' +
+                        '        </tbody>\n' +
+                        '    </table>';
+                        confDiffArr[row.groupKey] = confDiff;
+
+						var html = "<span style='color: red'>数据未同步: <a href='javascript:;' class='tecTips' groupKey='"+ row.groupKey +"' >查看</a></span>";
+
 						return html;
 					}
 				}
@@ -92,9 +106,13 @@ $(function(){
 		confTable.fnDraw();
 	});
 
+    var confDiffArr = {};
 	$("#conf_list").on('click', '.tecTips',function() {
-		var tips = $(this).attr("tips");
-		ComAlertTec.show(tips);
+		var groupKey = $(this).attr("groupKey");
+
+        var confDiff = confDiffArr[groupKey];
+
+		ComAlertTec.show(confDiff);
 	});
 	
 	// 删除
