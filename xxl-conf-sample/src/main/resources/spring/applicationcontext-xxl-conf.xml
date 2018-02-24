@@ -5,8 +5,8 @@
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 
-	<!-- ********************************* 核心配置[必须]：XXL-CONF 配置工厂 ********************************* -->
-	<bean id="xxlConf" class="com.xxl.conf.core.spring.XxlConfFactory" init-method="init" destroy-method="destroy" />
+	<!-- ********************************* XXL-CONF 配置工厂[非必须]：Spring容器中启用 "XML占位符方式" 和 "“@XxlConf”注解方式" 配置时才需要 ********************************* -->
+	<bean id="xxlConf" class="com.xxl.conf.core.spring.XxlConfFactory" init-method="init" destroy-method="destroy"  />
 
 
 	<!-- ********************************* 测试示例（可删除） ********************************* -->

@@ -1,9 +1,9 @@
 package com.xxl.conf.core;
 
-import com.xxl.conf.core.exception.XxlConfException;
 import com.xxl.conf.core.core.XxlConfLocalCacheConf;
 import com.xxl.conf.core.core.XxlConfPropConf;
-import com.xxl.conf.core.core.XxlConfZkClient;
+import com.xxl.conf.core.core.XxlConfZkConf;
+import com.xxl.conf.core.exception.XxlConfException;
 import com.xxl.conf.core.listener.XxlConfListener;
 import com.xxl.conf.core.listener.XxlConfListenerFactory;
 
@@ -35,8 +35,8 @@ public class XxlConfClient {
 		}
 
 		// level 3	(get-and-watch, add-local-cache)
-		String zkData = XxlConfZkClient.getPathDataByKey(key);
-		XxlConfLocalCacheConf.set(key, zkData);		// cache null value
+		String zkData = XxlConfZkConf.get(key);
+		XxlConfLocalCacheConf.set(key, zkData, "SET");		// support cache null value
 		if (zkData != null) {
 			return zkData;
 		}

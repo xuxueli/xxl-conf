@@ -7,7 +7,6 @@
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
-
 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="fileEncoding" value="utf-8" />
 		<!--<property name="ignoreResourceNotFound" value="true" />
@@ -15,7 +14,7 @@
 		<property name="ignoreUnresolvablePlaceholders" value="true" />-->
 		<property name="locations">
 			<list>
-				<value>classpath*:xxl-conf.properties</value>
+				<value>classpath*:xxl-conf-admin.properties</value>
 			</list>
 		</property>
 	</bean>
@@ -23,10 +22,10 @@
 	<!-- ********************************* part 1 :for datasource ********************************* -->
 
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"  destroy-method="close">
-		<property name="driverClass" value="${xxl.conf.jdbc.driverClass}" />
-		<property name="jdbcUrl" value="${xxl.conf.jdbc.url}" />
-		<property name="user" value="${xxl.conf.jdbc.username}" />
-		<property name="password" value="${xxl.conf.jdbc.password}" />
+		<property name="driverClass" value="${xxl.conf.admin.jdbc.driverClass}" />
+		<property name="jdbcUrl" value="${xxl.conf.admin.jdbc.url}" />
+		<property name="user" value="${xxl.conf.admin.jdbc.username}" />
+		<property name="password" value="${xxl.conf.admin.jdbc.password}" />
 		<property name="initialPoolSize" value="3" />
 		<property name="minPoolSize" value="2" />
 		<property name="maxPoolSize" value="10" />

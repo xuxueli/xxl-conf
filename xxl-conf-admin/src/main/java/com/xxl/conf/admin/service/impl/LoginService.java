@@ -19,10 +19,10 @@ public class LoginService {
 
     public static final String LOGIN_IDENTITY_KEY = "XXL_CONF_LOGIN_IDENTITY";
 
-    @Value("${xxl.conf.login.username}")
+    @Value("${xxl.conf.admin.login.username}")
     private String username;    // can not user @Value or XML in mvc inteceptor，because inteceptor work with mvc, init before service
 
-    @Value("${xxl.conf.login.password}")
+    @Value("${xxl.conf.admin.login.password}")
     private String password;
 
     private String makeToken(String username, String password){

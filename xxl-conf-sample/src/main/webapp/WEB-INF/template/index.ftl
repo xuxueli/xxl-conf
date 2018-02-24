@@ -22,7 +22,7 @@
                 <td>${key01}</td>
             </tr>
             <tr>
-                <td>2、@Value方式</td>
+                <td>2、@XxlConf方式</td>
                 <td>default.key02</td>
                 <td>${key02}</td>
             </tr>

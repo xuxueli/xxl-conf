@@ -1,6 +1,6 @@
 package com.xxl.conf.admin.core.model;
 
-import com.xxl.conf.core.core.XxlConfZkClient;
+import com.xxl.conf.core.core.XxlConfZkConf;
 
 /**
  * 配置节点
@@ -49,7 +49,7 @@ public class XxlConfNode {
 	}
 
 	public String getGroupKey() {
-		return XxlConfZkClient.generateGroupKey(nodeGroup, nodeKey);
+		return XxlConfZkConf.generateGroupKey(nodeGroup, nodeKey);
 	}
 
 	public String getNodeValueReal() {

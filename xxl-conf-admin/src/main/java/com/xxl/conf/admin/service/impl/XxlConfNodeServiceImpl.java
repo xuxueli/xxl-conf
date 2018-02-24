@@ -6,9 +6,10 @@ import com.xxl.conf.admin.core.util.ReturnT;
 import com.xxl.conf.admin.dao.IXxlConfGroupDao;
 import com.xxl.conf.admin.dao.IXxlConfNodeDao;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
-import com.xxl.conf.core.core.XxlConfZkClient;
+import com.xxl.conf.core.core.XxlConfZkConf;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -21,7 +22,7 @@ import java.util.Map;
  * @author xuxueli 2016-08-15 22:53
  */
 @Service
-public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
+public class XxlConfNodeServiceImpl implements IXxlConfNodeService, DisposableBean {
 
 
 	@Resource
@@ -39,7 +40,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		// fill value in zk
 		if (CollectionUtils.isNotEmpty(data)) {
 			for (XxlConfNode node: data) {
-				String realNodeValue = XxlConfZkClient.getPathDataByKey(node.getGroupKey());
+				String realNodeValue = XxlConfZkConf.get(node.getGroupKey());
 				node.setNodeValueReal(realNodeValue);
 			}
 		}
@@ -61,8 +62,8 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 
 		xxlConfNodeDao.deleteByKey(nodeGroup, nodeKey);
 
-		String groupKey = XxlConfZkClient.generateGroupKey(nodeGroup, nodeKey);
-		XxlConfZkClient.deletePathByKey(groupKey);
+		String groupKey = XxlConfZkConf.generateGroupKey(nodeGroup, nodeKey);
+		XxlConfZkConf.delete(groupKey);
 
 		return ReturnT.SUCCESS;
 	}
@@ -93,8 +94,8 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 
 		xxlConfNodeDao.insert(xxlConfNode);
 
-		String groupKey = XxlConfZkClient.generateGroupKey(xxlConfNode.getNodeGroup(), xxlConfNode.getNodeKey());
-		XxlConfZkClient.setPathDataByKey(groupKey, xxlConfNode.getNodeValue());
+		String groupKey = XxlConfZkConf.generateGroupKey(xxlConfNode.getNodeGroup(), xxlConfNode.getNodeKey());
+		XxlConfZkConf.set(groupKey, xxlConfNode.getNodeValue());
 
 		return ReturnT.SUCCESS;
 	}
@@ -116,10 +117,16 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 			return new ReturnT<String>(500, "Key对应的配置不存在,请确认");
 		}
 
-		String groupKey = XxlConfZkClient.generateGroupKey(xxlConfNode.getNodeGroup(), xxlConfNode.getNodeKey());
-		XxlConfZkClient.setPathDataByKey(groupKey, xxlConfNode.getNodeValue());
+		String groupKey = XxlConfZkConf.generateGroupKey(xxlConfNode.getNodeGroup(), xxlConfNode.getNodeKey());
+		XxlConfZkConf.set(groupKey, xxlConfNode.getNodeValue());
 
 		return ReturnT.SUCCESS;
+	}
+
+
+	@Override
+	public void destroy() throws Exception {
+		XxlConfZkConf.destroy();
 	}
 
 }

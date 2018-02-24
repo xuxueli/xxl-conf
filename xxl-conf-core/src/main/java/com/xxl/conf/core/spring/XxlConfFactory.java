@@ -3,7 +3,7 @@ package com.xxl.conf.core.spring;
 import com.xxl.conf.core.XxlConfClient;
 import com.xxl.conf.core.annotation.XxlConf;
 import com.xxl.conf.core.core.XxlConfLocalCacheConf;
-import com.xxl.conf.core.core.XxlConfZkClient;
+import com.xxl.conf.core.core.XxlConfZkConf;
 import com.xxl.conf.core.listener.impl.AnnoRefreshXxlConfListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,12 +28,17 @@ import java.lang.reflect.Field;
 public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 	private static Logger logger = LoggerFactory.getLogger(XxlConfFactory.class);
 
+	// ---------------------- init/destroy ----------------------
+
 	public void init(){
 	}
 	public void destroy(){
 		XxlConfLocalCacheConf.destroy();
-		XxlConfZkClient.destroy();
+		XxlConfZkConf.destroy();
 	}
+
+
+	// ---------------------- spring xml/annotation conf ----------------------
 
 	/**
 	 * xxl conf BeanDefinitionVisitor
@@ -102,7 +107,7 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 
 					field.setAccessible(true);
 					field.set(beanWithXxlConf, confValue);
-					logger.info(">>>>>>>>>>> xxl conf, refreshBeanWithXxlConf success, [{}={}]", confKey, confValue);
+					logger.info(">>>>>>>>>>> xxl conf, refreshBeanWithXxlConf success, beanWithXxlConf:[{}={}]", beanWithXxlConf, confKey, confValue);
 					if (xxlConf.callback()) {
 						AnnoRefreshXxlConfListener.addKeyObject(confKey, beanWithXxlConf);
 					}

@@ -1,5 +1,6 @@
-package com.xxl.conf.core;
+package com.xxl.conf.sample;
 
+import com.xxl.conf.core.XxlConfClient;
 import org.junit.Test;
 
 /**
