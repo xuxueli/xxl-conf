@@ -371,6 +371,7 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 - 9、环境配置文件，支持自定义存放位置，项目resource下或磁盘目录下均可；
 - 10、支持设置ZK中配置存储路径，方便实现多环境复用ZK集群；
 - 11、升级依赖版本，如Ehcache、Spring等；
+- 12、Sample项目目录结构规范；
 
 
 

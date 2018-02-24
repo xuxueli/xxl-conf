@@ -5,16 +5,16 @@
 	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
 		<param name="Target" value="System.out" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="xxl-conf-sample %-d{yyyy-MM-dd HH:mm:ss} [%c]-[%t]-[%M]-[%L]-[%p] %m%n" />
+			<param name="ConversionPattern" value="xxl-conf-sample-spring %-d{yyyy-MM-dd HH:mm:ss} [%c]-[%t]-[%M]-[%L]-[%p] %m%n" />
 		</layout>
 	</appender>
 	
     <appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="file" value="/data/applogs/xxl-conf/xxl-conf-sample.log"/>
+        <param name="file" value="/data/applogs/xxl-conf/xxl-conf-sample-spring.log"/>
         <param name="append" value="true"/>
         <param name="encoding" value="UTF-8"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="xxl-conf-sample %-d{yyyy-MM-dd HH:mm:ss} [%c]-[%t]-[%M]-[%L]-[%p] %m%n"/>
+            <param name="ConversionPattern" value="xxl-conf-sample-spring %-d{yyyy-MM-dd HH:mm:ss} [%c]-[%t]-[%M]-[%L]-[%p] %m%n"/>
         </layout>
     </appender>
 
