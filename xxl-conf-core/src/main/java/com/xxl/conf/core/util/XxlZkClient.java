@@ -84,7 +84,7 @@ public class XxlZkClient {
 		if (zooKeeper==null) {
 			try {
 				if (INSTANCE_INIT_LOCK.tryLock(2, TimeUnit.SECONDS)) {
-					if (zkServer == null) {		// 二次校验，防止并发创建client
+					if (zooKeeper==null) {		// 二次校验，防止并发创建client
 						try {
 							zooKeeper = new ZooKeeper(zkServer, 10000, watcher);
 						} finally {
