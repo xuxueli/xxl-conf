@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * local cache conf
@@ -22,9 +23,14 @@ import java.util.Set;
 public class XxlConfLocalCacheConf {
     private static Logger logger = LoggerFactory.getLogger(XxlConfClient.class);
 
+
+    // ---------------------- init/destroy ----------------------
+
     private static CacheManager cacheManager = null;
     private static Cache<String, CacheNode> xxlConfLocalCache = null;
-    static {
+    private static Thread refreshThread;
+    private static boolean refreshThreadStop = false;
+    private static void init(){
         // cacheManager
         cacheManager = CacheManagerBuilder.newCacheManagerBuilder().build(true);		// default use ehcche.xml under src
 
@@ -34,7 +40,27 @@ public class XxlConfLocalCacheConf {
                         .newCacheConfigurationBuilder(String.class, CacheNode.class, ResourcePoolsBuilder.heap(1000))	// .withExpiry、.withEvictionAdvisor （default lru）
         );
 
+        // refresh thread
+        refreshThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!refreshThreadStop) {
+                    try {
+                        TimeUnit.SECONDS.sleep(60);
+                        reloadAll();
+                    } catch (InterruptedException e) {
+                        logger.error(e.getMessage(), e);
+                    }
+                }
+            }
+        });
+        refreshThread.setDaemon(true);
+        refreshThread.start();
+
         logger.info(">>>>>>>>>> xxl-conf, XxlConfLocalCacheConf init success.");
+    }
+    static {
+        init();
     }
 
     /**
@@ -44,10 +70,39 @@ public class XxlConfLocalCacheConf {
         if (cacheManager != null) {
             cacheManager.close();
         }
+        if (refreshThread != null) {
+            refreshThreadStop = true;
+            refreshThread.interrupt();
+        }
     }
 
     /**
-     * refresh conf (watch + refresh)
+     * local cache node
+     */
+    public static class CacheNode{
+        private String value;
+
+        public CacheNode() {
+        }
+
+        public CacheNode(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+    }
+
+
+    // ---------------------- util ----------------------
+
+    /**
+     * reload all conf (watch + refresh)
      */
     public static void reloadAll(){
         Set<String> keySet = new HashSet<>();
@@ -58,10 +113,18 @@ public class XxlConfLocalCacheConf {
         }
         if (keySet.size() > 1) {
             for (String key: keySet) {
-                String zkData = XxlConfZkClient.getPathDataByKey(key);
-                xxlConfLocalCache.put(key, new CacheNode(zkData));
+                String zkData = XxlConfZkConf.get(key);
+
+                CacheNode existNode = xxlConfLocalCache.get(key);
+                if (existNode!=null && existNode.getValue()!=null && existNode.getValue().equals(zkData)) {
+                    logger.debug(">>>>>>>>>> xxl-conf: RELOAD unchange-pass [{}].", key);
+                } else {
+                    set(key, zkData, "RELOAD");
+                }
+
             }
         }
+        logger.info(">>>>>>>>>> xxl-conf: RELOAD finish.");
     }
 
     /**
@@ -71,9 +134,9 @@ public class XxlConfLocalCacheConf {
      * @param value
      * @return
      */
-    public static void set(String key, String value) {
+    public static void set(String key, String value, String optType) {
         xxlConfLocalCache.put(key, new CacheNode(value));
-        logger.info(">>>>>>>>>> xxl-conf: SET: [{}={}]", key, value);
+        logger.info(">>>>>>>>>> xxl-conf: {}: [{}={}]", optType, key, value);
 
         XxlConfListenerFactory.onChange(key);
     }
@@ -86,10 +149,7 @@ public class XxlConfLocalCacheConf {
      */
     public static void update(String key, String value) {
         if (xxlConfLocalCache!=null && xxlConfLocalCache.containsKey(key)) {
-            xxlConfLocalCache.put(key, new CacheNode(value));
-            logger.info(">>>>>>>>>> xxl-conf: UPDATE: [{}={}]", key, value);
-
-            XxlConfListenerFactory.onChange(key);
+            set(key, value, "UPDATE");
         }
     }
 
@@ -118,29 +178,6 @@ public class XxlConfLocalCacheConf {
             return cacheNode;
         }
         return null;
-    }
-
-
-    /**
-     * local cache node
-     */
-    public static class CacheNode{
-        private String value;
-
-        public CacheNode() {
-        }
-
-        public CacheNode(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
     }
 
 }
