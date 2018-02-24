@@ -11,6 +11,7 @@
 
 	<modules>
 		<module>xxl-conf-sample-spring</module>
+		<module>xxl-conf-sample-springboot</module>
 	</modules>
 
 </project>
