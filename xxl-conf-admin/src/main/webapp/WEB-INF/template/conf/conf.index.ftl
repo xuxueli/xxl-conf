@@ -46,7 +46,7 @@
                     <div class="col-xs-4">
                         <div class="input-group">
                             <span class="input-group-addon">KEY</span>
-                            <input type="text" class="form-control" id="nodeKey" value="${nodeKey}" autocomplete="on" >
+                            <input type="text" class="form-control" id="nodeKey" autocomplete="on" >
                         </div>
                     </div>
                     <div class="col-xs-2">
