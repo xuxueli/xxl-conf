@@ -42,7 +42,7 @@ public class IndexController {
         /**
          * 方式2: @XxlConf 注解方式
          *
-         * 		- 参考 "IndexController.paramByAnno" 属性配置；示例代码 "@XxlConf("key") public String paramByAnno;"；
+         * 		- 参考 "DemoConf.paramByAnno" 属性配置；示例代码 "@XxlConf("key") public String paramByAnno;"；
          * 		- 用法：对象Field上加注解 ""@XxlConf("default.key02")"，支持设置默认值，支持设置是否开启动态刷新；
          * 		- 优点：
          * 			- 配置从配置中心自动加载；
@@ -55,7 +55,7 @@ public class IndexController {
         /**
          * 方式3: XML占位符方式
          *
-         * 		- 参考 "applicationcontext-xxl-conf.xml" 中 "DemoConf.paramByXml" 属性配置 ""；示例代码 "<property name="paramByXml" value="${key}" />"；
+         * 		- 参考 "applicationcontext-xxl-conf.xml" 中 "DemoConf.paramByXml" 属性配置；示例代码 "<property name="paramByXml" value="${key}" />"；
          * 		- 用法：占位符方式 "${key}"，支持嵌套占位符；
          * 		- 优点：
          * 			- 配置从配置中心自动加载；

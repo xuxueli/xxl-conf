@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>分布式配置管理平台</title>
+<title>配置管理中心</title>
 
 <#import "/common/common.macro.ftl" as netCommon>
 <@netCommon.commonStyle />
@@ -60,7 +60,7 @@
 				<!-- 全部配置 -->
 				<div class="box box-info2">
 	                <div class="box-body">
-	                  	<table id="conf_list" class="table table-bordered table-hover">
+	                  	<table id="conf_list" class="table table-bordered table-hover" width="100%" >
 		                    <thead>
 		                      	<tr>
                                     <th>GROUP</th>
@@ -72,24 +72,7 @@
 			                        <th>操作</th>
 		                      	</tr>
 							</thead>
-		                    <tbody>
-		                    	<#if fileterData?exists>
-		                    		<#list fileterData as item>
-		                    			<tr>
-					                        <td>${item.nodeKey}</td>
-					                        <td <#if item.znodeValue != item.znodeValueReal>style="color:red;font: italic bold"</#if> >${item.znodeValue}</td>
-					                        <td <#if item.znodeValue != item.znodeValueReal>style="color:red;font: italic bold"</#if> >${item.znodeValueReal}</td>
-					                        <td>${item.znodeDesc}</td>
-					                        <td>
-					                        	<div class="input-group">
-						                      		<button class="btn btn-primary btn-xs update" type="button" nodeKey="${item.nodeKey}" znodeValue="${item.znodeValue}" znodeDesc="${item.znodeDesc}" >更新</button>&nbsp;
-						                      		<button class="btn btn-danger btn-xs delete" type="button" nodeKey="${item.nodeKey}">删除</button>
-					                        	</div>
-					                        </td>
-				                      	</tr>
-		                    		</#list>
-		                    	</#if>
-		                    </tbody>
+		                    <tbody></tbody>
 	                  	</table>
 					</div><!-- /.box-body -->
 				</div><!-- /.box -->

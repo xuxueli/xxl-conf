@@ -61,8 +61,8 @@
 <#macro commonHeader>
 	<header class="main-header">
 		<a href="${request.contextPath}/" class="logo">
-			<span class="logo-mini"><b>X</b>XL</span>
-			<span class="logo-lg"><b>分布式配置管理平台</b></span>
+			<span class="logo-mini"><b>XXL</b></span>
+			<span class="logo-lg"><b>配置管理中心</b></span>
 		</a>
 		<nav class="navbar navbar-static-top" role="navigation">
 			<a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button"><span class="sr-only">切换导航</span></a>
@@ -86,7 +86,7 @@
 		<section class="sidebar">
 			<!-- sidebar menu: : style can be found in sidebar.less -->
 			<ul class="sidebar-menu">
-				<li class="header">常用模块</li>
+				<li class="header">导航</li>
 				<li class="nav-click" ><a href="${request.contextPath}/conf"><i class="fa fa-circle-o text-red"></i> <span>配置管理</span></a></li>
                 <li class="nav-click" ><a href="${request.contextPath}/group"><i class="fa fa-circle-o text-red"></i> <span>分组管理</span></a></li>
 				<li class="nav-click" ><a href="${request.contextPath}/help"><i class="fa fa-circle-o text-yellow"></i><span>使用教程</span></a></li>
@@ -98,7 +98,7 @@
 
 <#macro commonFooter >
 	<footer class="main-footer">
-		Powered by <b>XXL-CONF</b> 1.3
+		Powered by <b>XXL-CONF</b> 1.3.1(快照版)
 		<div class="pull-right hidden-xs">
 			<strong>Copyright &copy; 2015-${.now?string('yyyy')} &nbsp;
                 <a href="http://www.xuxueli.com/" target="_blank" >xuxueli</a>

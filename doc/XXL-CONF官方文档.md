@@ -9,18 +9,22 @@
 ## 一、简介
 
 ### 1.1 概述
-XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为分布式业务提供统一的配置管理服务”。现已开放源代码，开箱即用。
+XXL-CONF 是一个分布式配置管理平台，提供统一的配置管理服务。现已开放源代码，开箱即用。
 
 ### 1.2 特性
-- 1、简单易用: 上手非常简单, 只需要引入maven依赖和一行配置即可;
-- 2、在线管理: 提供配置管理中心, 支持在线管理配置信息;
-- 3、实时推送: 配置信息更新后, Zookeeper实时推送配置信息, 项目中配置数据会实时更新并生效, 不需要重启线上机器;
-- 4、高性能: 系统会对Zookeeper推送的配置信息, 在Encache中做本地缓存, 在接受推送更新或者缓存失效时会及时更新缓存数据, 因此业务中对配置数据的查询并不存在性能问题;
-- 5、配置备份: 配置数据首先会保存在Zookeeper中, 同时, 在MySQL中会对配置信息做备份, 保证配置数据的安全性;
-- 6、HA: 配置中心基于Zookeeper集群, 只要集群节点保证存活数量大于N/2+1, 就可保证服务稳定, 避免单点风险;
-- 7、分布式: 可方便的接入线上分布式部署的各个业务线, 统一管理配置信息;
-- 8、配置共享: 平台中的配置信息针对各个业务线是平等的, 各个业务线可以共享配置中心的配置信息, 当然也可以配置业务内专属配置信息;
-- 9、配置分组: 支持对配置进行分组管理, 每条配置将会生成全局唯一标示GroupKey,在client端使用时,需要通过该值匹配对应的配置信息;
+- 1、简单: 提供简洁实用的API，上手简单；
+- 2、在线管理: 提供配置中心, 通过Web界面在线操作配置数据;
+- 3、动态推送更新: 配置更新后, Zookeeper实时推送配置信息, 项目中配置数据会实时更新并生效, 不需要重启线上机器;
+- 4、高性能: 底层通过Ehcache对ZK推送的配置做Local Cache, 提高性能;
+- 5、客户端断线重连强化：除了依赖ZK之外，设置守护线程，提高异常情况下配置时效性；
+- 6、配置备份: 配置数据同时在ZK与MySQL中存储和备份， 提高配置数据的安全性;
+- 7、HA: 配置服务基于ZK集群, 只要集群节点保证存活数量大于N/2N+1, 就可保证服务稳定, 避免单点风险;
+- 8、分布式: 支持多业务线接入并统一管理配置信息，支撑分布式业务场景;
+- 9、分组隔离: 支持对配置进行分组管理, 方便隔离不同业务线配置;
+- 10、多种配置方式：支持 "API、 @XxlConf、XML" 三种配置方式；
+- 11、配置变更监听功能：可开发Listener逻辑，监听配置变更事件，可据此动态刷新JDBC连接池等高级功能；
+- 12、空配置处理：主动缓存null或不存在类型配置，避免配置请求穿透到ZK引发雪崩问题；
+
 
 ### 1.3 背景
 
@@ -36,7 +40,7 @@ XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为�
 
 > why XXL-CONF
 
-- 1、不需要 (手动修改properties文件) : 在配置管理中心提供的Web界面中, 定位到指定配置项, 输入新的配置的值, 点击更新按钮即可;
+- 1、不需要 (手动修改properties文件) : 在配置中心提供的Web界面中, 定位到指定配置项, 输入新的配置的值, 点击更新按钮即可;
 - 2、不需要 (重新编译打包) : 配置更新后, 实时推送新配置信息至项目中, 不需要编译打包;
 - 3、不需要 (重启线上服务器) : 配置更新后, 实时推送新配置信息至项目中, 实时生效, 不需要重启线上机器; (在项目集群部署时, 将会节省大量的时间, 避免了集群机器一个一个的重启, 费时费力)
 - 4、配置生效 "非常及时" : 点击更新按钮, 新的配置信息将会即可推送到项目中, 瞬间生效, 非常及时。比如一些开关类型的配置, 配置变更后, 将会立刻推送至项目中并生效, 相对常规配置修改繁琐的流程, 及时性可谓天壤之别; 
@@ -61,7 +65,7 @@ XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为�
 <dependency>
   <groupId>com.xuxueli</groupId>
   <artifactId>xxl-conf-core</artifactId>
-  <version>1.3.0</version>
+  <version>{最新稳定版}</version>
 </dependency>
 ```
 
@@ -90,37 +94,48 @@ XXL-CONF 是一个分布式配置管理平台，其核心设计目标是“为�
 
 - xxl-conf-admin：配置管理中心
 - xxl-conf-core：公共依赖
-- xxl-conf-sample: 接入XXl-CONF的Demo项目
+- xxl-conf-sample: 接入XXl-CONF的示例项目，供用户参考学习
+    - xxl-conf-sample-spring：spring版本
+    - xxl-conf-sample-springboot：springboot版本
 
 ### 2.3 “配置管理中心” 项目配置
 
     项目：xxl-conf-admin
-    作用：管理线上配置信息
+    作用：管理配置数据，配置变更时实时推送配置信息至接入项目中；
     
 配置文件位置：
 
-    xxl-conf/xxl-conf-admin/src/main/resources/xxl-conf.properties
+```
+xxl-conf/xxl-conf-admin/src/main/resources/xxl-conf.properties
+```
     
 配置项目说明：
 ```
-# xxl-conf, zk address  （配置中心zookeeper集群地址，如有多个地址用逗号分隔）
-xxl.conf.zkserver=127.0.0.1:2181
+########### xxl conf client info ###########
 
-# xxl-conf, jdbc    （配置中心mysql地址）
-xxl.conf.jdbc.driverClass=com.mysql.jdbc.Driver
-xxl.conf.jdbc.url=jdbc:mysql://localhost:3306/xxl-conf?Unicode=true&amp;characterEncoding=UTF-8
-xxl.conf.jdbc.username=root
-xxl.conf.jdbc.password=root_pwd
+# 配置中心zookeeper集群地址，如有多个地址用逗号分隔；
+xxl.conf.zkaddress=127.0.0.1:2181
+# 配置在zookeeper中的存储目录；
+xxl.conf.zkpath=/xxl-conf
 
-# xxl-conf, admin login （管理中心登录账号密码）
-xxl.conf.login.username=admin
-xxl.conf.login.password=123456
+
+########### xxl conf admin info ###########
+
+# xxl-conf, jdbc        （JDBC配置）
+xxl.conf.admin.jdbc.driverClass=com.mysql.jdbc.Driver
+xxl.conf.admin.jdbc.url=jdbc:mysql://localhost:3306/xxl-conf?Unicode=true&amp;characterEncoding=UTF-8
+xxl.conf.admin.jdbc.username=root
+xxl.conf.admin.jdbc.password=root_pwd
+
+# xxl-conf, admin login     （登录账号密码）
+xxl.conf.admin.login.username=admin
+xxl.conf.admin.login.password=123456
 ```
 
-### 2.4 “接入XXL-CONF的Demo项目” 项目配置
+### 2.4 “接入XXL-CONF的示例项目” 项目配置
 
-    项目：xxl-conf-sample
-    作用：供用户参考学习如何接入XXL-CONF
+    项目：xxl-conf-sample-spring
+    作用：接入XXl-CONF的示例项目，供用户参考学习
 
 #### A、引入maven依赖
 ```
@@ -128,49 +143,57 @@ xxl.conf.login.password=123456
 <dependency>
     <groupId>com.xuxueli</groupId>
     <artifactId>xxl-conf-core</artifactId>
-    <version>${xxl.conf.version}</version>
+    <version>{最新稳定版}</version>
 </dependency>
 ```
 
-#### B、配置 “XXL-CONF配置解析器”
+#### B、添加 XXL-CONF 配置文件
 
 可参考配置文件：
 ```
-/xxl-conf/xxl-conf-sample/src/main/resources/spring/applicationcontext-xxl-conf.xml
+xxl-conf/xxl-conf-sample/xxl-conf-sample-spring/src/main/resources/xxl-conf.properties
 ```
 
 配置项说明
 ```
-<!-- ********************************* 核心配置[必须]：XXL-CONF 配置工厂 ********************************* -->
-<bean id="xxlConf" class="com.xxl.conf.core.spring.XxlConfFactory" init-method="init" destroy-method="destroy" />
+# 环境配置文件地址，默认加载当前文件，即 "xxl-conf.properties"，也可指定为其他文件如 "xxl-conf.properties" 或 "file:/data/webapps/xxl-conf.properties"
+xxl.conf.envprop.location=
+# 本地配置：优先加载该 "本地配置文件"（默认为"xxl-conf-local.properties"） 中的配置数据，其次加载配置中心中配置数据。可以将一些希望存放本地的配置存放在该文件。
+xxl.conf.localprop.location=
+
+# 配置中心zookeeper集群地址，如有多个地址用逗号分隔；
+xxl.conf.zkaddress=127.0.0.1:2181
+# 配置在zookeeper中的存储目录；
+xxl.conf.zkpath=/xxl-conf
 ```
 
-#### C、设置 "xxl-conf.properties" 
+#### C、XXL-CONF 配置工厂初始化[非必须]
+
+说明：该配置为可选项。XXL-CONF 提供多种配置方式，包括 "API、 @XxlConf、XML" 三种配置方式。
+仅在Spring容器中启用 "XML占位符方式" 和 "@XxlConf 注解方式" 配置时才需要，仅使用"API"方式时可忽略该配置；
+
 
 可参考配置文件：
-
-    /xxl-conf/xxl-conf-sample/src/main/resources/xxl-conf.properties
+```
+xxl-conf/xxl-conf-sample/xxl-conf-sample-spring/src/main/resources/spring/applicationcontext-xxl-conf.xml
+```
 
 配置项说明
 ```
-# xxl-conf, zk address  （配置中心zookeeper集群地址，如有多个地址用逗号分隔）
-xxl.conf.zkserver=127.0.0.1:2181
+<!-- ********************************* XXL-CONF 配置工厂[非必须]：仅在Spring容器中启用 "XML占位符方式" 和 "@XxlConf 注解方式" 配置时才需要，仅使用"API"方式时可忽略该配置 ********************************* -->
+<bean id="xxlConf" class="com.xxl.conf.core.spring.XxlConfFactory" init-method="init" destroy-method="destroy"  />
 ```
 
-该配置文件，除了支持配置ZK地址，还可以配置一些本地配置。
-XXL-CONF 加载配置时会优先加载 "xxl-conf.properties" 中的配置, 然后才会加载ZK中的配置。可以将一些希望存放本地的配置存放在该文件。
 
 ### 2.5 新增配置分组
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201610/08182521_r2e4.png "在这里输入图片标题")
 
-每个配置分组对应一个唯一的GroupName，作为该分组下配置的统一前缀。在“分组管理”栏目可以创建并管理配置分组信息，系统已经提供一个默认分组.
+每个配置分组对应一个唯一的GroupName，作为该分组下配置的统一前缀。
+可通过配置分组来隔离各业务线配置数据，避免业务配置干扰。
+在“分组管理”界面可以创建并管理配置分组信息，系统已经提供一个默认分组.
    
 ### 2.6 新增配置信息
-
-登录"配置管理中心"
-
-![输入图片说明](https://static.oschina.net/uploads/img/201608/17204649_Lo7W.png "在这里输入图片标题")
 
 进入"配置管理界面",点击"新增配置"按钮
 
@@ -187,29 +210,31 @@ XXL-CONF 加载配置时会优先加载 "xxl-conf.properties" 中的配置, 然�
 ![输入图片说明](https://static.oschina.net/uploads/img/201608/18111816_Of9e.png "在这里输入图片标题")
 
 ### 2.7 项目中使用XXL-CONF 
-
-    项目: xxl-conf-sample:   (可以参考 com.xxl.conf.example.controller.IndexController.index() )
-    作用: 接入XXl-CONF的Demo项目
+参考 "三、客户端配置获取"；
 
 
-- 方式1: XML占位符方式
-    - 参考 "applicationcontext-xxl-conf.xml" 中 "DemoConf.paramByXml" 属性配置 ""；示例代码如下：
+## 三、客户端配置获取
+XXL-CONF 提供多种配置方式，包括 "API、 @XxlConf、XML" 三种配置方式，介绍如下。
+
+> 可参考项目 "xxl-conf-sample-spring"（接入XXl-CONF的示例项目，供用户参考学习），代码位置：com.xxl.conf.sample.controller.IndexController.index() 
+
+
+### 方式1: API方式
+
+    - 参考 "IndexController" 代码如下：
     ```
-    <bean id="configuration" class="com.xxl.conf.example.core.constant.DemoConf">
-        <property name="paramByXml" value="${default.key01}" />
-    </bean>
+    String paramByApi = XxlConfClient.get("default.key01", null);
     ```
-    - 用法：占位符方式 "${default.key01}"，支持嵌套占位符；
+    - 用法：代码中直接调用API即可，示例代码 ""XxlConfClient.get("key", null)"";
     - 优点：
-    	- 配置从配置中心自动加载；
-    	- 存在LocalCache，不用担心性能问题；
-    	- 支持嵌套占位符；
-    - 缺点：不支持支持动态推送更新
-    
-   
+        - 配置从配置中心自动加载；
+        - 存在LocalCache，不用担心性能问题；
+        - 支持动态推送更新；
+        - 支持多数据类型；
 
-- 方式2: “@XxlConf”注解方式
-    - 参考 "IndexController.paramByAnno" 属性配置；示例代码 
+
+### 方式2: @XxlConf 注解方式
+    - 参考 "DemoConf.paramByAnno" 属性配置；示例代码 
     ```
     @XxlConf("default.key02")
     public String paramByAnno;
@@ -219,33 +244,36 @@ XXL-CONF 加载配置时会优先加载 "xxl-conf.properties" 中的配置, 然�
         - 配置从配置中心自动加载；
         - 存在LocalCache，不用担心性能问题；
         - 支持设置配置默认值；
-        - 支持设置是否开启动态刷新;
+        - 支持动态推送更新，可配置是否开启推送更新;
         
 “@XxlConf”注解属性 | 说明
 --- | ---
 value | 配置Key
 defaultValue | 配置为空时的默认值
 callback | 配置更新时，是否需要同步刷新配置
-        
-- 方式3: API方式
-        - 参考 "IndexController" 代码如下：
-        ```
-        String paramByClient = XxlConfClient.get("default.key02", null);
-        ```
-        - 用法：代码中直接调用API即可，示例代码 ""XxlConfClient.get("key", null)"";
-        - 优点：
-        	- 配置从配置中心自动加载；
-        	- 支持动态推送更新；
-        	- 支持多数据类型；
- 
 
-## 三、总体设计
 
-### 3.1 架构图
+### 方式3: XML占位符方式
+    - 参考 "applicationcontext-xxl-conf.xml" 中 "DemoConf.paramByXml" 属性配置；示例代码如下：
+    ```
+    <bean id="demoConf" class="com.xxl.conf.sample.demo.DemoConf">
+        <property name="paramByXml" value="${default.key03}" />
+    </bean>
+    ```
+    - 用法：占位符方式 "${key}"，支持嵌套占位符；
+    - 优点：
+        - 配置从配置中心自动加载；
+    	- 存在LocalCache，不用担心性能问题；
+    	- 支持嵌套占位符；
+    - 缺点：不支持支持动态推送更新
+
+## 四、总体设计
+
+### 4.1 架构图
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201609/13124946_jTID.jpg "在这里输入图片标题")
 
-### 3.2 "配置项" 设计
+### 4.2 "配置项" 设计
 
 系统配置信息以K/V的形式存在, "配置项" 属性如下:
 
@@ -256,7 +284,7 @@ callback | 配置更新时，是否需要同步刷新配置
 
 每条配置,将会生成全局唯一标示GroupKey,在client端使用时,需要通过该值匹配对应的配置信息;
 
-### 3.3 "配置中心" 设计
+### 4.3 "配置中心" 设计
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201609/13165343_V4Mt.jpg "在这里输入图片标题")
 
@@ -314,11 +342,11 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
     
 总结: 由于一致性协议带来的额外网络交互，消息开销，以及本地log的IO开销，再加上ZK本身每1000条批量处理1次的优化策略，写入的平均响应时间总会在50-60ms之上。但是整体的TPS还是可观的。单个写入数据的体积越大，响应时间越长，TPS越低，这也是普遍规律了。压测过程中log文件对磁盘的消耗很大。实际运行中应该使用自动脚本定时删除历史log和snapshot文件。
 
-### 3.4 "配置管理中心" 设计
+### 4.4 "配置管理中心" 设计
 
 "配置管理中心" 是 "配置中心" 的上层封装, 提供Web界面供用户对配置信息进行配置查询、配置新增、配置更新和配置删除等操作;
 
-### 3.5 "客户端" 设计
+### 4.5 "客户端" 设计
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201609/14111236_q8oi.jpg "在这里输入图片标题")
 
@@ -340,8 +368,8 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 
 
 
-## 四、历史版本
-### 4.1 版本1.1.0新特性
+## 五、历史版本
+### 5.1 版本1.1.0新特性
 - 1、简单易用: 上手非常简单, 只需要引入maven依赖和一行配置即可;
 - 2、在线管理: 提供配置管理中心, 支持在线管理配置信息;
 - 3、实时推送: 配置信息更新后, Zookeeper实时推送配置信息, 项目中配置数据会实时更新并生效, 不需要重启线上机器;
@@ -351,15 +379,15 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 - 7、分布式: 可方便的接入线上分布式部署的各个业务线, 统一管理配置信息;
 - 8、配置共享: 平台中的配置信息针对各个业务线是平等的, 各个业务线可以共享配置中心的配置信息, 当然也可以配置业务内专属配置信息;
 
-### 4.2 版本1.2.0新特性
+### 5.2 版本1.2.0新特性
 - 1、配置分组: 支持对配置进行分组管理, 每条配置将会生成全局唯一标示GroupKey,在client端使用时,需要通过该值匹配对应的配置信息;
 
-### 4.3 版本1.3.0新特性
+### 5.3 版本1.3.0新特性
 - 1、支持在线维护配置分组；
 - 2、项目groupId从com.xxl迁移至com.xuxueli，为推送maven中央仓库做准备；
 - 3、v1.3.0版本开始，推送公共依赖至中央仓库；
 
-### 4.4 版本1.3.1新特性(Coding)
+### 5.4 版本1.3.1新特性(Coding)
 - 1、支持通过 "@XxlConf" 注解获取配置；
 - 2、动态推送更新：目前支持 "XML、 @XxlConf、API" 三种配置方式，除XML方式外，其他几种方式均支持配置动态刷新；
 - 3、配置变更监听功能：可开发Listener逻辑，监听配置变更事件，可据此动态刷新JDBC连接池等高级功能；
@@ -388,19 +416,20 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 - 9、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；
 
 
-## 五、其他
+## 六、其他
 
-### 5.1 项目贡献
-欢迎参与项目贡献！比如提交PR修复一个bug，或者新建 [Issue](https://github.com/xuxueli/xxl-conf/issues/) 讨论新特性或者变更。
+### 6.1 项目贡献
+欢迎参与项目贡献！比如提交PR修一个bug，或者新建 [Issue](https://github.com/xuxueli/xxl-conf/issues/) 讨论新特性或者变更。
 
-### 5.2 接入登记
+### 6.2 用户接入登记
 更多接入的公司，欢迎在 [登记地址](https://github.com/xuxueli/xxl-conf/issues/2 ) 登记，登记仅仅为了产品推广。
 
+### 6.3 开源协议和版权
+产品开源免费，并且将持续提供免费的社区技术支持。个人或企业内部可自由的接入和使用。
+
+- Licensed under the GNU General Public License (GPL) v3.
+- Copyright (c) 2015-present, xuxueli.
+
 ---
-## 捐赠
-No matter how much the amount is enough to express your thought, thank you very much ：）
-
-无论金额多少都足够表达您这份心意，非常感谢 ：）
-
-微信：<img src="https://raw.githubusercontent.com/xuxueli/xxl-job/master/doc/images/donate-wechat.png" width="200">
-支付宝：<img src="https://raw.githubusercontent.com/xuxueli/xxl-job/master/doc/images/donate-alipay.jpg" width="200">
+### 捐赠
+无论捐赠金额多少都足够表达您这份心意，非常感谢 ：）      [前往捐赠](http://www.xuxueli.com/page/donate.html )

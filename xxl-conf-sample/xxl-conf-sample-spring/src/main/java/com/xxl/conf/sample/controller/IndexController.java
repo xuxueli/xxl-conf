@@ -42,7 +42,7 @@ public class IndexController {
 		/**
 		 * 方式2: @XxlConf 注解方式
 		 *
-		 * 		- 参考 "IndexController.paramByAnno" 属性配置；示例代码 "@XxlConf("key") public String paramByAnno;"；
+		 * 		- 参考 "DemoConf.paramByAnno" 属性配置；示例代码 "@XxlConf("key") public String paramByAnno;"；
 		 * 		- 用法：对象Field上加注解 ""@XxlConf("default.key02")"，支持设置默认值，支持设置是否开启动态刷新；
 		 * 		- 优点：
 		 * 			- 配置从配置中心自动加载；
