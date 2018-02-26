@@ -156,7 +156,7 @@ xxl-conf/xxl-conf-sample/xxl-conf-sample-spring/src/main/resources/xxl-conf.prop
 
 配置项说明
 ```
-# 环境配置文件地址，默认加载当前文件，即 "xxl-conf.properties"，也可指定为其他文件如 "xxl-conf02.properties" 或 "file:/data/webapps/xxl-conf02.properties"
+# 环境配置文件地址，默认加载当前文件（默认为 "xxl-conf.properties"），也可指定为其他文件如 "xxl-conf02.properties" 或 "file:/data/webapps/xxl-conf.properties"
 xxl.conf.envprop.location=
 # 本地配置：优先加载该 "本地配置文件"（默认为"xxl-conf-local.properties"） 中的配置数据，其次加载配置中心中配置数据。可以将一些希望存放本地的配置存放在该文件。
 xxl.conf.localprop.location=
