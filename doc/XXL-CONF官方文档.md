@@ -185,7 +185,9 @@ xxl-conf/xxl-conf-sample/xxl-conf-sample-spring/src/main/resources/spring/applic
 ```
 
 
-### 2.5 新增配置分组
+### 2.5 添加配置 & 分组
+
+#### A 新增 "配置分组"
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201610/08182521_r2e4.png "在这里输入图片标题")
 
@@ -193,9 +195,9 @@ xxl-conf/xxl-conf-sample/xxl-conf-sample-spring/src/main/resources/spring/applic
 可通过配置分组来隔离各业务线配置数据，避免业务配置干扰。
 在“分组管理”界面可以创建并管理配置分组信息，系统已经提供一个默认分组.
    
-### 2.6 新增配置信息
+#### B 新增 "配置数据"
 
-进入"配置管理界面",点击"新增配置"按钮
+进入"配置管理界面", 选择配置分组后，点击"新增配置"按钮
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201609/27103547_Ztff.png "在这里输入图片标题")
 
@@ -203,13 +205,10 @@ xxl-conf/xxl-conf-sample/xxl-conf-sample-spring/src/main/resources/spring/applic
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201609/27103706_iExP.png "在这里输入图片标题")
 
-至此, 一条配置信息已经添加完成.
+至此, 一条配置信息已经添加完成；   
+通过Client端可以实时获取配置信息, 并且将会自动接收配置推送更新； 
 
-通过client端,可以实时获取配置信息, 通过本地已经加载过得配置将会接受Zookeeper的更新推送, 如下如日志:
-
-![输入图片说明](https://static.oschina.net/uploads/img/201608/18111816_Of9e.png "在这里输入图片标题")
-
-### 2.7 项目中使用XXL-CONF 
+### 2.7 项目中获取 "配置数据"
 参考 "三、客户端配置获取"；
 
 
