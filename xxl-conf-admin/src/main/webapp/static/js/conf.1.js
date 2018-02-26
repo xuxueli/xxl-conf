@@ -23,9 +23,10 @@ $(function(){
 		"columns": [
 			{ "data": 'nodeGroup', "visible" : false},
 			{ "data": 'nodeKey', "visible" : false},
-			{ "data": 'groupKey', "visible" : true},
+			{ "data": 'groupKey', 'width': '20%', "visible" : true},
 			{
 				"data": 'nodeValue',
+				'width': '30%',
 				"visible" : true,
 				"render": function ( data, type, row ) {
 					if (row.nodeValue == row.nodeValueReal) {
@@ -54,8 +55,10 @@ $(function(){
 				}
 			},
 			{ "data": 'nodeValueReal', "visible" : false},
-			{ "data": 'nodeDesc', "visible" : true},
-			{ "data": '操作' ,
+			{ "data": 'nodeDesc', 'width': '40%', "visible" : true},
+			{
+				"data": '操作',
+				'width': '10%' ,
 				"render": function ( data, type, row ) {
 					return function(){
 						// html
