@@ -6,7 +6,7 @@
 		<artifactId>xxl-conf</artifactId>
 		<version>1.4.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>xxl-conf-sample</artifactId>
+	<artifactId>xxl-conf-samples</artifactId>
 	<packaging>pom</packaging>
 
 	<modules>
