@@ -12,19 +12,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.*;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinitionVisitor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurablePropertyResolver;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringValueResolver;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * rewrite PropertyPlaceholderConfigurer
@@ -70,7 +66,7 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 	 * refresh bean with xxl conf (fieldNames)
 	 */
 	public static void refreshBeanField(BeanRefreshXxlConfListener.BeanField beanField, String value){
-		Object bean = beanFactory.getBean(beanField.getBeanName());
+		Object bean = beanFactory.getBean(beanField.getBeanName());		// TODO，springboot环境下，通过该方法 "getBean" 获取获取部分Bean，如Spring和Jackson等组件的Bean 会报错。原因未知；
 		if (bean != null) {
 			BeanWrapper beanWrapper = new BeanWrapperImpl(bean);
 
@@ -88,7 +84,7 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 			// refresh field: set or field
 			if (propertyDescriptor!=null && propertyDescriptor.getWriteMethod() != null) {
 				beanWrapper.setPropertyValue(beanField.getProperty(), value);
-				logger.info(">>>>>>>>>>> xxl-conf, refreshBeanField[set] success, {}#{}:[{}={}]",
+				logger.info(">>>>>>>>>>> xxl-conf, refreshBeanField[set] success, {}#{}:{}",
 						beanField.getBeanName(), beanField.getProperty(), value);
 			} else {
 				Field[] beanFields = bean.getClass().getDeclaredFields();
@@ -98,7 +94,7 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 							fieldItem.setAccessible(true);
 							try {
 								fieldItem.set(bean, value);
-								logger.info(">>>>>>>>>>> xxl-conf, refreshBeanField[field] success, {}#{}:[{}={}]",
+								logger.info(">>>>>>>>>>> xxl-conf, refreshBeanField[field] success, {}#{}:{}",
 										beanField.getBeanName(), beanField.getProperty(), value);
 							} catch (IllegalAccessException e) {
 								throw new XxlConfException(e);
@@ -114,45 +110,38 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, ConfigurablePropertyResolver propertyResolver) throws BeansException {
 		//super.processProperties(beanFactoryToProcess, propertyResolver);
 
-		// xxl conf BeanDefinitionVisitor
-		BeanDefinitionVisitor xxlConfDBVisitor = new BeanDefinitionVisitor(new StringValueResolver() {
-			@Override
-			public String resolveStringValue(String strVal) {
-				if (xmlKeyValid(strVal)) {
-					String key = xmlKeyParse(strVal);
-					String value = XxlConfClient.get(key, "");
-					logger.info(">>>>>>>>>>> xxl-conf, resolved placeholder success, [{}={}]", key, value);
-					return value;
-				} else {
-					return strVal;
-				}
-			}
-		});
-
 		// visit bean definition
 		String[] beanNames = beanFactoryToProcess.getBeanDefinitionNames();
 		if (beanNames != null && beanNames.length > 0) {
-			for (String beanName : beanNames) {
+			for (final String beanName : beanNames) {
 				if (!(beanName.equals(this.beanName) && beanFactoryToProcess.equals(this.beanFactory))) {
 
-					// XML('${...}')：resolves placeholders + watch
+					// 1、XML('${...}')：resolves placeholders + watch
 					BeanDefinition beanDefinition = beanFactoryToProcess.getBeanDefinition(beanName);
 					MutablePropertyValues pvs = beanDefinition.getPropertyValues();
 					PropertyValue[] pvArray = pvs.getPropertyValues();
 					for (PropertyValue pv : pvArray) {
 						if (pv.getValue() instanceof TypedStringValue) {
+							String propertyName = pv.getName();
 							String typeStringVal = ((TypedStringValue) pv.getValue()).getValue();
 							if (xmlKeyValid(typeStringVal)) {
 								// object + property
-								String key = xmlKeyParse(typeStringVal);
-								BeanRefreshXxlConfListener.addBeanField(key, new BeanRefreshXxlConfListener.BeanField(beanName, pv.getName()));
+								String confKey = xmlKeyParse(typeStringVal);
+								String confValue = XxlConfClient.get(confKey, "");
+
+								// resolves placeholders
+								BeanRefreshXxlConfListener.BeanField beanField = new BeanRefreshXxlConfListener.BeanField(beanName, propertyName);
+								refreshBeanField(beanField, confValue);
+
+								// watch
+								BeanRefreshXxlConfListener.addBeanField(confKey, beanField);
 							}
 						}
 					}
-					xxlConfDBVisitor.visitBeanDefinition(beanDefinition);
+					/*new BeanDefinitionVisitor(new StringValueResolver()).visitBeanDefinition(beanDefinition);*/
 
 
-					// Annotation('@XxlConf')：resolves conf + watch
+					// 2、Annotation('@XxlConf')：resolves conf + watch
 					if (beanDefinition.getBeanClassName() == null) {
 						continue;
 					}
@@ -165,37 +154,31 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 					if (beanClazz == null) {
 						continue;
 					}
-					final List<Field> annoBeanFields = new ArrayList<>();
 					ReflectionUtils.doWithFields(beanClazz, new ReflectionUtils.FieldCallback() {
 						@Override
 						public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
 							if (field.isAnnotationPresent(XxlConf.class)) {
-								annoBeanFields.add(field);
+								String propertyName = field.getName();
+								XxlConf xxlConf = field.getAnnotation(XxlConf.class);
+
+								String confKey = xxlConf.value();
+								String confValue = XxlConfClient.get(confKey, xxlConf.defaultValue());
+
+
+								// resolves placeholders
+								BeanRefreshXxlConfListener.BeanField beanField = new BeanRefreshXxlConfListener.BeanField(beanName, propertyName);
+								refreshBeanField(beanField, confValue);
+
+								// watch
+								if (xxlConf.callback()) {
+									BeanRefreshXxlConfListener.addBeanField(confKey, beanField);
+								}
+
+								/*field.setAccessible(true);
+								field.set(beanWithXxlConf, confValue);*/
 							}
 						}
 					});
-					if (annoBeanFields.size() < 1) {
-						continue;
-					}
-
-					Object beanWithXxlConf = beanFactory.getBean(beanName);	// TODO，springboot环境下，通过该方法 "getBean" 获取获取部分Bean，如Spring和Jackson等组件的Bean 会报错。原因未知；
-					for (Field annoField : annoBeanFields) {
-						XxlConf xxlConf = annoField.getAnnotation(XxlConf.class);
-
-						String confKey = xxlConf.value();
-						String confValue = XxlConfClient.get(confKey, xxlConf.defaultValue());
-
-						annoField.setAccessible(true);
-						try {
-							annoField.set(beanWithXxlConf, confValue);
-						} catch (IllegalAccessException e) {
-							throw new XxlConfException(e);
-						}
-						logger.info(">>>>>>>>>>> xxl-conf, refreshBeanWithXxlConf success, {}#{}:[{}={}]", beanWithXxlConf, annoField.getName(), confKey, confValue);
-						if (xxlConf.callback()) {
-							BeanRefreshXxlConfListener.addBeanField(confKey, new BeanRefreshXxlConfListener.BeanField(beanName, annoField.getName()));
-						}
-					}
 				}
 			}
 		}
