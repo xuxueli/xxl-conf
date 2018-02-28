@@ -56,12 +56,10 @@ public class IndexController {
 		 * 方式3: XML占位符方式
 		 *
 		 * 		- 参考 "applicationcontext-xxl-conf.xml" 中 "DemoConf.paramByXml" 属性配置 ""；示例代码 "<property name="paramByXml" value="${key}" />"；
-		 * 		- 用法：占位符方式 "${key}"，支持嵌套占位符；
+		 * 		- 用法：占位符方式 "${key}"；
 		 * 		- 优点：
 		 * 			- 配置从配置中心自动加载；
 		 * 			- 存在LocalCache，不用担心性能问题；
-		 * 			- 支持嵌套占位符；
-		 * 		- 缺点：不支持支持动态推送更新
 		 *
 		 */
 		list.add("3、XML占位符方式: default.key03=" + demoConf.paramByXml);

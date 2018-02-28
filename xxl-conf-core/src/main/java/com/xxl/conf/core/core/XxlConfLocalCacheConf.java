@@ -138,7 +138,7 @@ public class XxlConfLocalCacheConf {
         xxlConfLocalCache.put(key, new CacheNode(value));
         logger.info(">>>>>>>>>> xxl-conf: {}: [{}={}]", optType, key, value);
 
-        XxlConfListenerFactory.onChange(key);
+        XxlConfListenerFactory.onChange(key, value);
     }
 
     /**

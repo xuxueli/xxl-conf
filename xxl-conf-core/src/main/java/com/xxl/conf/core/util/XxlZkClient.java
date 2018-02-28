@@ -207,7 +207,7 @@ public class XxlZkClient {
 					znodeValue = new String(resultData);
 				}
 			} else {
-				logger.info(">>>>>>>>>> xxl conf, path[{}] not found.", path);
+				logger.info(">>>>>>>>>> xxl-conf, path[{}] not found.", path);
 			}
 			return znodeValue;
 		} catch (Exception e) {

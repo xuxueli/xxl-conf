@@ -259,12 +259,10 @@ callback | 配置更新时，是否需要同步刷新配置
         <property name="paramByXml" value="${default.key03}" />
     </bean>
     ```
-    - 用法：占位符方式 "${key}"，支持嵌套占位符；
+    - 用法：占位符方式 "${key}"；
     - 优点：
         - 配置从配置中心自动加载；
     	- 存在LocalCache，不用担心性能问题；
-    	- 支持嵌套占位符；
-    - 缺点：不支持支持动态推送更新
 
 ## 四、总体设计
 
@@ -388,7 +386,7 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 
 ### 5.4 版本1.3.1新特性(Coding)
 - 1、支持通过 "@XxlConf" 注解获取配置；
-- 2、动态推送更新：目前支持 "XML、 @XxlConf、API" 三种配置方式，除XML方式外，其他几种方式均支持配置动态刷新；
+- 2、动态推送更新：目前支持 "XML、 @XxlConf、API" 三种配置方式，均支持配置动态刷新；
 - 3、配置变更监听功能：可开发Listener逻辑，监听配置变更事件，可据此动态刷新JDBC连接池等高级功能；
 - 4、客户端断线重连强化，除了依赖ZK之外，新增守护线程，周期性刷新Local Cache中配置数据并watch，进一步提高配置时效性；
 - 5、ZK过期重连时，主动刷新LocalCache中配置数据，提高异常情况下配置时效性；
@@ -409,10 +407,9 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 - 3、记录操作Log；
 - 4、zookeeper客户端迁移至curator；
 - 5、local cache 备份到磁盘；zk异常且local properties未配置时，从磁盘上读取配置；
-- 6、XML 方式支持动态推送更新，
-- 7、Local Cache缓存长度考虑支持自定义；
-- 8、前端UI更新，AdminLTE 和 Layui 等；
-- 9、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；
+- 6、Local Cache缓存长度考虑支持自定义；
+- 7、前端UI更新，AdminLTE 和 Layui 等；
+- 8、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；
 
 
 ## 六、其他
