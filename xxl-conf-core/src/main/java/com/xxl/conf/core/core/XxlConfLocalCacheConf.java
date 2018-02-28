@@ -48,10 +48,13 @@ public class XxlConfLocalCacheConf {
                     try {
                         TimeUnit.SECONDS.sleep(60);
                         reloadAll();
-                    } catch (InterruptedException e) {
+                        logger.info(">>>>>>>>>> xxl-conf, refresh thread reloadAll success.");
+                    } catch (Exception e) {
+                        logger.error(">>>>>>>>>> xxl-conf, refresh thread error.");
                         logger.error(e.getMessage(), e);
                     }
                 }
+                logger.info(">>>>>>>>>> xxl-conf, refresh thread stoped.");
             }
         });
         refreshThread.setDaemon(true);
@@ -124,7 +127,6 @@ public class XxlConfLocalCacheConf {
 
             }
         }
-        logger.info(">>>>>>>>>> xxl-conf: RELOAD finish.");
     }
 
     /**

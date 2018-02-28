@@ -34,6 +34,7 @@ public class XxlConfZkConf {
 						xxlZkClient.destroy();
 						xxlZkClient.getClient();
 						XxlConfLocalCacheConf.reloadAll();
+						logger.info(">>>>>>>>>> xxl-conf, zk re-connect reloadAll success.");
 					}
 
 					String path = watchedEvent.getPath();
