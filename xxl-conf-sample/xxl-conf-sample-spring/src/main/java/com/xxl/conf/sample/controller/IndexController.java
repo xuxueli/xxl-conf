@@ -32,7 +32,7 @@ public class IndexController {
 		 * 		- 用法：代码中直接调用API即可，示例代码 ""XxlConfClient.get("key", null)"";
 		 * 		- 优点：
 		 * 			- 配置从配置中心自动加载；
-		 * 			- 存在LocalCache，不用担心性能问题；
+		 * 			- 存在LocalCache，不用担心性能问题；；
 		 * 			- 支持动态推送更新；
 		 * 			- 支持多数据类型；
 		 */
@@ -47,15 +47,15 @@ public class IndexController {
 		 * 		- 优点：
 		 * 			- 配置从配置中心自动加载；
 		 * 			- 存在LocalCache，不用担心性能问题；
+		 * 			- 支持动态推送更新；
 		 * 			- 支持设置配置默认值；
-		 * 			- 支持动态推送更新，可配置是否开启推送更新;
 		 */
 		list.add("2、@XxlConf 注解方式: default.key02=" + demoConf.paramByAnno);
 
 		/**
 		 * 方式3: XML占位符方式
 		 *
-		 * 		- 参考 "applicationcontext-xxl-conf.xml" 中 "DemoConf.paramByXml" 属性配置 ""；示例代码 "<property name="paramByXml" value="${key}" />"；
+		 * 		- 参考 "applicationcontext-xxl-conf.xml" 中 "DemoConf.paramByXml" 属性配置；示例代码 "<property name="paramByXml" value="${key}" />"；
 		 * 		- 用法：占位符方式 "${key}"；
 		 * 		- 优点：
 		 * 			- 配置从配置中心自动加载；
