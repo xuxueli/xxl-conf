@@ -130,15 +130,4 @@ public class XxlConfZkConf {
 		return Environment.ZK_PATH + "/" + nodeKey;
 	}
 
-	/**
-	 * generate group key
-	 *
-	 * @param nodeGroup
-	 * @param nodeKey
-	 * @return
-	 */
-	public static String generateGroupKey(String nodeGroup, String nodeKey){
-		return nodeGroup + "." + nodeKey;
-	}
-
 }

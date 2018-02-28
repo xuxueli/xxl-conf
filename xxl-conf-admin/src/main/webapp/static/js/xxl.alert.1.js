@@ -5,7 +5,7 @@
  */
 
 // 通用提示
-var ComAlert = {
+/*var ComAlert = {
     html:function(){
         var html =
             '<div class="modal fade" id="ComAlert" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">' +
@@ -47,7 +47,7 @@ var ComAlert = {
 
         // $("#ComAlert").on('hide.bs.modal', function () {	});	// 监听关闭
     }
-};
+};*/
 
 // 通用确认弹框
 var ComConfirm = {

@@ -1,5 +1,12 @@
 $(function(){
 
+    // appname change
+    $('#appname').on('change', function(){
+        //reload
+        var appname = $('#appname').val();
+        window.location.href = base_url + "/conf?appname=" + appname;
+    });
+
 	// init date tables
 	var confTable = $("#conf_list").dataTable({
 		"deferRender": true,
@@ -10,8 +17,8 @@ $(function(){
 			type:"post",
 			data : function ( d ) {
 				var obj = {};
-				obj.nodeGroup = $('#nodeGroup').val();
-				obj.nodeKey = $('#nodeKey').val();
+				obj.appname = $('#appname').val();
+				obj.key = $('#key').val();
 				obj.start = d.start;
 				obj.length = d.length;
 				return obj;
@@ -21,55 +28,48 @@ $(function(){
 		"ordering": false,
 		//"scrollX": true,	// X轴滚动条，取消自适应
 		"columns": [
-			{ "data": 'nodeGroup', "visible" : false},
-			{ "data": 'nodeKey', "visible" : false},
-			{ "data": 'groupKey', 'width': '20%', "visible" : true},
+			{ "data": 'key', 'width': '20%', "visible" : true},
 			{
-				"data": 'nodeValue',
+				"data": 'zkValue',
 				'width': '30%',
 				"visible" : true,
 				"render": function ( data, type, row ) {
-					if (row.nodeValue == row.nodeValueReal) {
-						var temp = (row.nodeValue.length > 20)? row.nodeValue.substring(0, 20)+'...' : row.nodeValue;
-						return "<span title='"+ row.nodeValue +"'>"+ temp +"</span>";;
+					if (row.value == row.zkValue) {
+						var temp = (row.value.length > 20)? row.value.substring(0, 20)+'...' : row.value;
+						return "<span title='"+ row.value +"'>"+ temp +"</span>";;
 					} else {
 						var confDiff = '<table border=1 bordercolor="white" ' +
 							'style="border-collapse:collapse;width: 100%;table-layout:fixed;word-wrap:break-word;" >\n' +
                         '        <tbody>\n' +
                         '            <tr>\n' +
                         '                <td style="width:20%;padding: 10px;" >DB</td>\n' +
-                        '                <td style="width:80%;padding: 10px;" >' + row.nodeValue + '</td>\n' +
+                        '                <td style="width:80%;padding: 10px;" >' + row.value + '</td>\n' +
                         '            </tr>\n' +
 						'			 <tr>\n' +
                         '                <td style="width:20%;padding: 10px;" >ZK</td>\n' +
-                        '                <td style="width:20%;padding: 10px;" >' + row.nodeValueReal + '</td>\n' +
+                        '                <td style="width:20%;padding: 10px;" >' + row.zkValue + '</td>\n' +
                         '            </tr>\n' +
                         '        </tbody>\n' +
                         '    </table>';
-                        confDiffArr[row.groupKey] = confDiff;
+                        confDiffArr[row.key] = confDiff;
 
-						var html = "<span style='color: red'>数据未同步: <a href='javascript:;' class='tecTips' groupKey='"+ row.groupKey +"' >查看</a></span>";
+						var html = "<span style='color: red'>数据未同步: <a href='javascript:;' class='tecTips' key='"+ row.key +"' >查看</a></span>";
 
 						return html;
 					}
 				}
 			},
-			{ "data": 'nodeValueReal', "visible" : false},
-			{ "data": 'nodeDesc', 'width': '40%', "visible" : true},
+			{ "data": 'title', 'width': '40%', "visible" : true},
 			{
 				"data": '操作',
 				'width': '10%' ,
 				"render": function ( data, type, row ) {
 					return function(){
+
+                        confData[row.key] = row;
+
 						// html
-						var html = '<p id="'+ row.id +'" '+
-							' nodeGroup="'+ row.nodeGroup +'" '+
-							' nodeKey="'+ row.nodeKey +'" '+
-							' nodeValue="'+ row.nodeValue +'" '+
-							' nodeValueReal="'+ row.nodeValueReal +'" '+
-							' nodeDesc="'+ row.nodeDesc +'" '+
-							'>'+
-							'<textarea name="nodeValue" style="display:none;" >'+ row.nodeValue +'</textarea>  '+
+						var html = '<p key="'+ row.key +'" >'+
 							'<button class="btn btn-warning btn-xs update" type="button">编辑</button>  '+
 							'<button class="btn btn-danger btn-xs delete" type="button">删除</button>  '+
 							'</p>';
@@ -111,32 +111,42 @@ $(function(){
 
     var confDiffArr = {};
 	$("#conf_list").on('click', '.tecTips',function() {
-		var groupKey = $(this).attr("groupKey");
+		var key = $(this).attr("key");
 
-        var confDiff = confDiffArr[groupKey];
+        var confDiff = confDiffArr[key];
 
 		ComAlertTec.show(confDiff);
 	});
-	
+
+
+    var confData = {};
+
 	// 删除
 	$("#conf_list").on('click', '.delete',function() {
-		var nodeGroup = $(this).parent('p').attr("nodeGroup");
-		var nodeKey = $(this).parent('p').attr("nodeKey");
-		ComConfirm.show("确定要删除配置：" + nodeKey, function(){
+
+        var key = $(this).parent('p').attr("key");
+
+		ComConfirm.show("确定要删除配置：" + key, function(){
 			$.post(
 				base_url + "/conf/delete",
 				{
-					"nodeGroup" : nodeGroup,
-					"nodeKey" : nodeKey
+					"key" : key
 				},
 				function(data, status) {
-					if (data.code == "200") {
-						ComAlert.show(1, "删除成功", function(){
-							confTable.fnDraw();
-						});
-					} else {
-						ComAlert.show(2, data.msg);
-					}
+                    if (data.code == 200) {
+                        layer.open({
+                            icon: '1',
+                            content: '删除成功' ,
+                            end: function(layero, index){
+                                confTable.fnDraw();
+                            }
+                        });
+                    } else {
+                        layer.open({
+                            icon: '2',
+                            content: (data.msg||'删除失败')
+                        });
+                    }
 				}
 			);
 		});
@@ -147,7 +157,7 @@ $(function(){
         var length = value.length;
         var valid = /^[a-z][a-z0-9.]*$/;
         return this.optional(element) || valid.test(value);
-    }, "KEY只能由小写字母、数字和.组成,须以小写字母开头");
+    }, "限制以小写字母开头，由小写字母、数字和.组成");
 
 	// 新增
 	$("#add").click(function(){
@@ -158,27 +168,23 @@ $(function(){
         errorClass : 'help-block',
         focusInvalid : true,  
         rules : {
-        	nodeKey : {
-        		required : true ,
-                minlength: 4,
-                maxlength: 100,
+            key : {
+                required : true ,
+                rangelength:[4,100],
                 myValid01: true
-            },  
-            nodeValue : {
-            	required : false
             },
-            nodeDesc : {
-            	required : false
+            title : {
+            	required : true
             }
         }, 
         messages : {
-        	nodeKey : {
-        		required :'请输入"KEY".'  ,
-                minlength:'"KEY"不应低于4位',
-                maxlength:'"KEY"不应超过100位'
-            },  
-            nodeValue : {	},
-            nodeDesc : {	}
+            key : {
+                required : '请输入配置Key'  ,
+                rangelength : "配置Key长度限制为4~100"
+            },
+            title : {
+                required : '请输入配置描述'
+			}
         }, 
 		highlight : function(element) {  
             $(element).closest('.form-group').addClass('has-error');  
@@ -191,15 +197,27 @@ $(function(){
             element.parent('div').append(error);  
         },
         submitHandler : function(form) {
-    		$.post(base_url + "/conf/add", $("#addModal .form").serialize(), function(data, status) {
-    			if (data.code == "200") {
-    				ComAlert.show(1, "新增配置成功", function(){
-						confTable.fnDraw();
-						$('#addModal').modal('hide');
-    				});
-    			} else {
-    				ComAlert.show(2, data.msg);
-    			}
+    		$.post(base_url + "/conf/add", {
+    			'appname' 	: $("#addModal .form input[name='appname']").val() ,
+                'key' 		: ($("#addModal .form input[name='appname']").val() + '.' + $("#addModal .form input[name='key']").val() ),
+                'title' 	: $("#addModal .form input[name='title']").val() ,
+                'value' 	: $("#addModal .form textarea[name='value']").val() ,
+			}, function(data, status) {
+                if (data.code == 200) {
+                    layer.open({
+                        icon: '1',
+                        content: '新增成功' ,
+                        end: function(layero, index){
+                            confTable.fnDraw();
+                            $('#addModal').modal('hide');
+                        }
+                    });
+                } else {
+                    layer.open({
+                        icon: '2',
+                        content: (data.msg||'新增失败')
+                    });
+                }
     		});
 		}
 	});
@@ -210,12 +228,13 @@ $(function(){
 	// 更新
 	$("#conf_list").on('click', '.update',function() {
 
-		$("#updateModal .form input[name='nodeGroup']").val( $(this).parent('p').attr("nodeGroup") );
-		$("#updateModal .form input[name='nodeKey']").val( $(this).parent('p').attr("nodeKey") );
-		//$("#updateModal .form input[name='nodeValueReal']").val( $(this).parent('p').attr("nodeValueReal") );
-		//$("#updateModal .form textarea[name='nodeValue']").val( $(this).parent('p').attr("nodeValue") );
-		$("#updateModal .form textarea[name='nodeValue']").val( $(this).parent('p').find("textarea[name='nodeValue']").val() );
-		$("#updateModal .form input[name='nodeDesc']").val( $(this).parent('p').attr("nodeDesc") );
+        var key = $(this).parent('p').attr("key");
+        var row = confData[key];
+
+		$("#updateModal .form input[name='key']").val( row.key );
+		$("#updateModal .form input[name='appname']").val( row.appname );
+        $("#updateModal .form input[name='title']").val( row.title );
+		$("#updateModal .form textarea[name='value']").val( row.value );
 
 		$('#updateModal').modal('show');
 	});
@@ -223,29 +242,26 @@ $(function(){
 		errorElement : 'span',  
         errorClass : 'help-block',
         focusInvalid : true,
-		rules : {
-			nodeKey : {
-				required : true ,
-				minlength: 4,
-				maxlength: 100
-			},
-			nodeValue : {
-				required : false
-			},
-			nodeDesc : {
-				required : false
-			}
-		},
-		messages : {
-			nodeKey : {
-				required :'请输入"KEY".'  ,
-				minlength:'"KEY"不应低于4位',
-				maxlength:'"KEY"不应超过100位'
-			},
-			nodeValue : {	},
-			nodeDesc : {	}
-		},
-		highlight : function(element) {  
+        rules : {
+            key : {
+                required : true ,
+                rangelength:[4,100],
+                myValid01: true
+            },
+            title : {
+                required : true
+            }
+        },
+        messages : {
+            key : {
+                required : '请输入配置Key'  ,
+                rangelength : "配置Key长度限制为4~100"
+            },
+            title : {
+                required : '请输入配置描述'
+            }
+        },
+        highlight : function(element) {
             $(element).closest('.form-group').addClass('has-error');  
         },
         success : function(label) {  
@@ -257,14 +273,21 @@ $(function(){
         },
         submitHandler : function(form) {
     		$.post(base_url + "/conf/update", $("#updateModal .form").serialize(), function(data, status) {
-    			if (data.code == "200") {
-    				ComAlert.show(1, "更新配置成功", function(){
-						confTable.fnDraw();
-						$('#updateModal').modal('hide');
-    				});
-    			} else {
-    				ComAlert.show(2, data.msg);
-    			}
+                if (data.code == 200) {
+                    layer.open({
+                        icon: '1',
+                        content: '更新成功' ,
+                        end: function(layero, index){
+                            confTable.fnDraw();
+                            $('#updateModal').modal('hide');
+                        }
+                    });
+                } else {
+                    layer.open({
+                        icon: '2',
+                        content: (data.msg||'更新失败')
+                    });
+                }
     		});
 		}
 	});

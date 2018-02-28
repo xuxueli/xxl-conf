@@ -34,11 +34,11 @@
                 <div class="row">
                     <div class="col-xs-4">
                         <div class="input-group">
-                            <span class="input-group-addon">分组</span>
-                            <select class="form-control" id="nodeGroup" >
-                                <option value="" >全部</option>
-								<#list XxlConfNodeGroup as group>
-									<option value="${group.groupName}" >${group.groupTitle}</option>
+                            <span class="input-group-addon">项目</span>
+                            <select class="form-control" id="appname" >
+                                <#--<option value="" >全部</option>-->
+								<#list ProjectList as item>
+									<option value="${item.appname}" <#if item.appname = project.appname>selected</#if> >${item.title}</option>
 								</#list>
                             </select>
                         </div>
@@ -46,7 +46,7 @@
                     <div class="col-xs-4">
                         <div class="input-group">
                             <span class="input-group-addon">KEY</span>
-                            <input type="text" class="form-control" id="nodeKey" autocomplete="on" >
+                            <input type="text" class="form-control" id="key" autocomplete="on" >
                         </div>
                     </div>
                     <div class="col-xs-2">
@@ -63,11 +63,8 @@
 	                  	<table id="conf_list" class="table table-bordered table-hover" width="100%" >
 		                    <thead>
 		                      	<tr>
-                                    <th>GROUP</th>
                                     <th>KEY</th>
-			                        <th>GROUP_KEY</th>
 			                        <th>VALUE</th>
-			                        <th>VALUE(zk)</th>
 			                        <th>描述</th>
 			                        <th>操作</th>
 		                      	</tr>
@@ -97,28 +94,26 @@
 	         	</div>
 	         	<div class="modal-body">
 					<form class="form-horizontal form" role="form" >
-                        <div class="form-group">
-                            <label for="firstname" class="col-sm-2 control-label">分组</label>
-                            <div class="col-sm-4">
-								<select class="form-control" name="nodeGroup" >
-									<#list XxlConfNodeGroup as group>
-                                        <option value="${group.groupName}" >${group.groupTitle}</option>
-									</#list>
-								</select>
-                        	</div>
-                        </div>
 						<div class="form-group">
 							<label for="firstname" class="col-sm-2 control-label">KEY</label>
-							<div class="col-sm-10"><input type="text" class="form-control" name="nodeKey" placeholder="请输入KEY" maxlength="100" ></div>
+                            <div class="col-sm-10">
+								<div class="input-group" >
+									<span class="input-group-addon" style="background-color: #eee;" >${project.appname}.</span>
+									<input type="text" class="form-control" name="key" placeholder="请输入配置Key" maxlength="100" >
+
+                                    <input type="hidden" name="appname" value="${project.appname}" >
+
+                                </div>
+                            </div>
 						</div>
                         <div class="form-group">
                             <label for="lastname" class="col-sm-2 control-label">描述</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="nodeDesc" placeholder="请输入描述" maxlength="100" ></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" name="title" placeholder="请输入配置描述" maxlength="100" ></div>
                         </div>
 						<div class="form-group">
 							<label for="lastname" class="col-sm-2 control-label">VALUE</label>
 							<div class="col-sm-10">
-                                <textarea class="textarea" name="nodeValue" maxlength="512" placeholder="请输入VALUE" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                                <textarea class="textarea" name="value" maxlength="2000" placeholder="请输入配置Value" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
 							</div>
 						</div>
 						<div class="form-group">
@@ -143,21 +138,17 @@
 	         	<div class="modal-body">
 					<form class="form-horizontal form" role="form" >
                         <div class="form-group">
-                            <label for="firstname" class="col-sm-2 control-label">GROUP</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="nodeGroup" placeholder="请输入KEY" maxlength="100" readonly></div>
-                        </div>
-                        <div class="form-group">
                             <label for="firstname" class="col-sm-2 control-label">KEY</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="nodeKey" placeholder="请输入KEY" maxlength="100" readonly></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" name="key" placeholder="请输入配置Key" maxlength="100" readonly ></div>
                         </div>
                         <div class="form-group">
                             <label for="lastname" class="col-sm-2 control-label">描述</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="nodeDesc" placeholder="请输入描述" maxlength="100" ></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" name="title" placeholder="请输入配置描述" maxlength="100" ></div>
                         </div>
                         <div class="form-group">
                             <label for="lastname" class="col-sm-2 control-label">VALUE</label>
                             <div class="col-sm-10">
-                                <textarea class="textarea" name="nodeValue" maxlength="512" placeholder="请输入VALUE" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                                <textarea class="textarea" name="value" maxlength="2000" placeholder="请输入配置Value" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
                             </div>
                         </div>
 						<div class="form-group">

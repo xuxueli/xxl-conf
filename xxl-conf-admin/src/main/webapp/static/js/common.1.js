@@ -19,13 +19,20 @@ $(function(){
 	$("#logoutBtn").click(function(){
 		ComConfirm.show("确认注销登录?", function(){
 			$.post(base_url + "/logout", function(data, status) {
-				if (data.code == "200") {
-					ComAlert.show(1, "注销成功", function(){
-						window.location.href = base_url + "/";
-					});
-				} else {
-					ComAlert.show(1, data.msg);
-				}
+                if (data.code == 200) {
+                    layer.open({
+                        icon: '1',
+                        content: '注销成功' ,
+                        end: function(layero, index){
+                            window.location.href = base_url + "/";
+                        }
+                    });
+                } else {
+                    layer.open({
+                        icon: '2',
+                        content: (data.msg||'注销失败')
+                    });
+                }
 			});
 		});
 	});

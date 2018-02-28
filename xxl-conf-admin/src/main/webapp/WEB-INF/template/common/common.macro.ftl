@@ -52,6 +52,9 @@
 	<#-- toastr -->
 	<script src="${request.contextPath}/static/plugins/toastr/toastr.js"></script>
 
+	<#-- layer -->
+	<script src="${request.contextPath}/static/plugins/layer/layer.js"></script>
+
 	<script src="${request.contextPath}/static/js/xxl.alert.1.js"></script>
     <script src="${request.contextPath}/static/js/common.1.js"></script>
 
@@ -88,7 +91,7 @@
 			<ul class="sidebar-menu">
 				<li class="header">导航</li>
 				<li class="nav-click" ><a href="${request.contextPath}/conf"><i class="fa fa-circle-o text-red"></i> <span>配置管理</span></a></li>
-                <li class="nav-click" ><a href="${request.contextPath}/group"><i class="fa fa-circle-o text-red"></i> <span>分组管理</span></a></li>
+                <li class="nav-click" ><a href="${request.contextPath}/project"><i class="fa fa-circle-o text-red"></i> <span>项目管理</span></a></li>
 				<li class="nav-click" ><a href="${request.contextPath}/help"><i class="fa fa-circle-o text-yellow"></i><span>使用教程</span></a></li>
 			</ul>
 		</section>

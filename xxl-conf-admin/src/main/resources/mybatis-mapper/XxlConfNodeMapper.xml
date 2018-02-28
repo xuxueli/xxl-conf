@@ -1,74 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="XxlConfNodeMapper">
+<mapper namespace="com.xxl.conf.admin.dao.XxlConfNodeDao">
 	
-	<resultMap id="XxlConfNode" type="com.xxl.conf.admin.core.model.XxlConfNode" >
-		<result column="node_group" property="nodeGroup" jdbcType="VARCHAR" />
-		<result column="node_key" property="nodeKey" jdbcType="VARCHAR" />
-	    <result column="node_value" property="nodeValue" jdbcType="VARCHAR" />
-	    <result column="node_desc" property="nodeDesc" jdbcType="VARCHAR" />
+	<resultMap id="xxlConfNode" type="com.xxl.conf.admin.core.model.XxlConfNode" >
+		<result column="key" property="key" jdbcType="VARCHAR" />
+		<result column="appname" property="appname" jdbcType="VARCHAR" />
+	    <result column="title" property="title" jdbcType="VARCHAR" />
+	    <result column="value" property="value" jdbcType="VARCHAR" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		t.`node_group`,
-		t.`node_key`,
-		t.`node_value`,
-		t.`node_desc`
+		t.`key`,
+		t.`appname`,
+		t.`title`,
+		t.`value`
 	</sql>
 
-	<select id="pageList" parameterType="java.util.Map" resultMap="XxlConfNode">
+	<select id="pageList" parameterType="java.util.Map" resultMap="xxlConfNode">
 		SELECT <include refid="Base_Column_List" />
-		FROM XXL_CONF_NODE AS t
+		FROM xxl_conf_node AS t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
-			<if test="nodeGroup != null and nodeGroup != '' ">
-				t.node_group = #{nodeGroup}
+			<if test="appname != null and appname != '' ">
+				t.appname = #{appname}
 			</if>
-			<if test="nodeKey != null and nodeKey != '' ">
-				AND t.node_key like CONCAT('%',#{nodeKey},'%')
+			<if test="key != null and key != '' ">
+				AND t.key like CONCAT('%',#{key},'%')
 			</if>
 		</trim>
-		ORDER BY t.node_key
+		ORDER BY t.key
 		LIMIT #{offset}, #{pagesize}
 	</select>
 
 	<select id="pageListCount" parameterType="java.util.Map" resultType="int">
 		SELECT count(1)
-		FROM XXL_CONF_NODE AS t
+		FROM xxl_conf_node AS t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
-			<if test="nodeGroup != null and nodeGroup != '' ">
-			t.node_group = #{nodeGroup}
+			<if test="appname != null and appname != '' ">
+				t.appname = #{appname}
 			</if>
-			<if test="nodeKey != null and nodeKey != '' ">
-				AND t.node_key like CONCAT('%',#{nodeKey},'%')
+			<if test="key != null and key != '' ">
+				AND t.key like CONCAT('%',#{key},'%')
 			</if>
 		</trim>
 	</select>
 
-	<delete id="deleteByKey" parameterType="java.util.Map" >
-		DELETE FROM XXL_CONF_NODE
-		WHERE node_group = #{nodeGroup}
-			AND node_key = #{nodeKey}
+	<delete id="delete" parameterType="java.util.Map" >
+		DELETE FROM xxl_conf_node
+		WHERE `key` = #{key}
 	</delete>
 	
 	<insert id="insert" parameterType="com.xxl.conf.admin.core.model.XxlConfNode" >
-		INSERT INTO XXL_CONF_NODE(node_group, node_key, node_value, node_desc)
-		VALUES(#{nodeGroup}, #{nodeKey}, #{nodeValue}, #{nodeDesc})
+		INSERT INTO xxl_conf_node(
+			`key`,
+			`appname`,
+			`title`,
+			`value`
+		)
+		VALUES(
+			#{key},
+			#{appname},
+			#{title},
+			#{value}
+		)
 	</insert>
 	
-	<select id="selectByKey" parameterType="java.lang.String" resultMap="XxlConfNode">
+	<select id="load" parameterType="java.lang.String" resultMap="xxlConfNode">
 		SELECT <include refid="Base_Column_List" />
-		FROM XXL_CONF_NODE AS t
-		WHERE t.node_group = #{nodeGroup}
-			AND t.node_key = #{nodeKey}
+		FROM xxl_conf_node AS t
+		WHERE t.`key` = #{key}
 	</select>
 	
 	<update id="update" parameterType="com.xxl.conf.admin.core.model.XxlConfNode" >
-		UPDATE XXL_CONF_NODE 
-		SET node_value = #{nodeValue}
-			, node_desc = #{nodeDesc}
-		WHERE node_group = #{nodeGroup}
-			AND node_key = #{nodeKey}
+		UPDATE xxl_conf_node 
+		SET `title` = #{title},
+			`value` = #{value}
+		WHERE `key` = #{key}
 	</update>
 	
 </mapper>

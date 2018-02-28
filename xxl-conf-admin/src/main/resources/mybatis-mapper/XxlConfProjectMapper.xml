@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.conf.admin.dao.XxlConfProjectDao">
+	
+	<resultMap id="xxlConfProject" type="com.xxl.conf.admin.core.model.XxlConfProject" >
+		<result column="appname" property="appname" jdbcType="VARCHAR" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.`appname`,
+		t.`title`
+	</sql>
+
+	<select id="findAll" parameterType="java.util.Map" resultMap="xxlConfProject">
+		SELECT <include refid="Base_Column_List" />
+		FROM xxl_conf_project AS t
+		ORDER BY t.appname
+	</select>
+
+	<insert id="save" parameterType="com.xxl.conf.admin.core.model.XxlConfProject" >
+		INSERT INTO xxl_conf_project(appname, title)
+		VALUES(#{appname}, #{title})
+	</insert>
+
+	<update id="update" parameterType="com.xxl.conf.admin.core.model.XxlConfProject" >
+		UPDATE xxl_conf_project
+		SET title = #{title}
+		WHERE appname = #{appname}
+	</update>
+
+	<delete id="delete" parameterType="java.lang.String" >
+		DELETE FROM xxl_conf_project
+		WHERE appname = #{appname}
+	</delete>
+
+	<select id="load" parameterType="java.lang.String" resultMap="xxlConfProject">
+		SELECT <include refid="Base_Column_List" />
+		FROM xxl_conf_project AS t
+		WHERE appname = #{appname}
+	</select>
+
+</mapper>

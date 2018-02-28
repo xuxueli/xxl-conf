@@ -1,10 +1,10 @@
 package com.xxl.conf.admin.service.impl;
 
-import com.xxl.conf.admin.core.model.XxlConfGroup;
+import com.xxl.conf.admin.core.model.XxlConfProject;
 import com.xxl.conf.admin.core.model.XxlConfNode;
 import com.xxl.conf.admin.core.util.ReturnT;
-import com.xxl.conf.admin.dao.IXxlConfGroupDao;
-import com.xxl.conf.admin.dao.IXxlConfNodeDao;
+import com.xxl.conf.admin.dao.XxlConfProjectDao;
+import com.xxl.conf.admin.dao.XxlConfNodeDao;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
 import com.xxl.conf.core.core.XxlConfLocalCacheConf;
 import com.xxl.conf.core.core.XxlConfZkConf;
@@ -27,22 +27,22 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, DisposableBe
 
 
 	@Resource
-	private IXxlConfNodeDao xxlConfNodeDao;
+	private XxlConfNodeDao xxlConfNodeDao;
 	@Resource
-	private IXxlConfGroupDao xxlConfGroupDao;
+	private XxlConfProjectDao xxlConfProjectDao;
 
 	@Override
-	public Map<String,Object> pageList(int offset, int pagesize, String nodeGroup, String nodeKey) {
+	public Map<String,Object> pageList(int offset, int pagesize, String appname, String key) {
 
 		// xxlConfNode in mysql
-		List<XxlConfNode> data = xxlConfNodeDao.pageList(offset, pagesize, nodeGroup, nodeKey);
-		int list_count = xxlConfNodeDao.pageListCount(offset, pagesize, nodeGroup, nodeKey);
+		List<XxlConfNode> data = xxlConfNodeDao.pageList(offset, pagesize, appname, key);
+		int list_count = xxlConfNodeDao.pageListCount(offset, pagesize, appname, key);
 
 		// fill value in zk
 		if (CollectionUtils.isNotEmpty(data)) {
 			for (XxlConfNode node: data) {
-				String realNodeValue = XxlConfZkConf.get(node.getGroupKey());
-				node.setNodeValueReal(realNodeValue);
+				String realNodeValue = XxlConfZkConf.get(node.getKey());
+				node.setZkValue(realNodeValue);
 			}
 		}
 
@@ -56,70 +56,78 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, DisposableBe
 	}
 
 	@Override
-	public ReturnT<String> deleteByKey(String nodeGroup, String nodeKey) {
-		if (StringUtils.isBlank(nodeGroup) && StringUtils.isBlank(nodeKey)) {
+	public ReturnT<String> delete(String key) {
+		if (StringUtils.isBlank(key)) {
 			return new ReturnT<String>(500, "参数缺失");
 		}
 
-		xxlConfNodeDao.deleteByKey(nodeGroup, nodeKey);
-
-		String groupKey = XxlConfZkConf.generateGroupKey(nodeGroup, nodeKey);
-		XxlConfZkConf.delete(groupKey);
-
+		XxlConfZkConf.delete(key);
+		xxlConfNodeDao.delete(key);
 		return ReturnT.SUCCESS;
 	}
 
 	@Override
 	public ReturnT<String> add(XxlConfNode xxlConfNode) {
-		// valud
-		if (StringUtils.isBlank(xxlConfNode.getNodeGroup())) {
-			return new ReturnT<String>(500, "配置分组不可为空");
+
+		// valid
+		if (StringUtils.isBlank(xxlConfNode.getAppname())) {
+			return new ReturnT<String>(500, "AppName不可为空");
 		}
-		XxlConfGroup group = xxlConfGroupDao.load(xxlConfNode.getNodeGroup());
+		XxlConfProject group = xxlConfProjectDao.load(xxlConfNode.getAppname());
 		if (group==null) {
-			return new ReturnT<String>(500, "配置分组不存在");
+			return new ReturnT<String>(500, "AppName非法");
 		}
-		if (StringUtils.isBlank(xxlConfNode.getNodeKey())) {
+
+		if (StringUtils.isBlank(xxlConfNode.getKey())) {
 			return new ReturnT<String>(500, "配置Key不可为空");
+		}
+		XxlConfNode existNode = xxlConfNodeDao.load(xxlConfNode.getKey());
+		if (existNode != null) {
+			return new ReturnT<String>(500, "配置Key已存在，不可重复添加");
+		}
+		if (!xxlConfNode.getKey().startsWith(xxlConfNode.getAppname())) {
+			return new ReturnT<String>(500, "配置Key格式非法");
+		}
+		if (StringUtils.isBlank(xxlConfNode.getTitle())) {
+			return new ReturnT<String>(500, "配置描述不可为空");
 		}
 
 		// value force null to ""
-		if (xxlConfNode.getNodeValue() == null) {
-			xxlConfNode.setNodeValue("");
+		if (xxlConfNode.getValue() == null) {
+			xxlConfNode.setValue("");
 		}
 
-		XxlConfNode existNode = xxlConfNodeDao.selectByKey(xxlConfNode.getNodeGroup(), xxlConfNode.getNodeKey());
-		if (existNode!=null) {
-			return new ReturnT<String>(500, "Key对应的配置已经存在,不可重复添加");
-		}
-
+		XxlConfZkConf.set(xxlConfNode.getKey(), xxlConfNode.getValue());
 		xxlConfNodeDao.insert(xxlConfNode);
-
-		String groupKey = XxlConfZkConf.generateGroupKey(xxlConfNode.getNodeGroup(), xxlConfNode.getNodeKey());
-		XxlConfZkConf.set(groupKey, xxlConfNode.getNodeValue());
-
 		return ReturnT.SUCCESS;
 	}
 
 	@Override
 	public ReturnT<String> update(XxlConfNode xxlConfNode) {
-		// valud
-		if (xxlConfNode == null || StringUtils.isBlank(xxlConfNode.getNodeKey())) {
-			return new ReturnT<String>(500, "Key不可为空");
+
+		// valid
+		if (StringUtils.isBlank(xxlConfNode.getKey())) {
+			return new ReturnT<String>(500, "配置Key不可为空");
+		}
+		XxlConfNode existNode = xxlConfNodeDao.load(xxlConfNode.getKey());
+		if (existNode == null) {
+			return new ReturnT<String>(500, "配置Key非法");
+		}
+
+		if (StringUtils.isBlank(xxlConfNode.getTitle())) {
+			return new ReturnT<String>(500, "配置描述不可为空");
 		}
 
 		// value force null to ""
-		if (xxlConfNode.getNodeValue() == null) {
-			xxlConfNode.setNodeValue("");
+		if (xxlConfNode.getValue() == null) {
+			xxlConfNode.setValue("");
 		}
 
+		XxlConfZkConf.set(xxlConfNode.getKey(), xxlConfNode.getValue());
 		int ret = xxlConfNodeDao.update(xxlConfNode);
 		if (ret < 1) {
-			return new ReturnT<String>(500, "Key对应的配置不存在,请确认");
+			return ReturnT.FAIL;
 		}
-
-		String groupKey = XxlConfZkConf.generateGroupKey(xxlConfNode.getNodeGroup(), xxlConfNode.getNodeKey());
-		XxlConfZkConf.set(groupKey, xxlConfNode.getNodeValue());
 
 		return ReturnT.SUCCESS;
 	}

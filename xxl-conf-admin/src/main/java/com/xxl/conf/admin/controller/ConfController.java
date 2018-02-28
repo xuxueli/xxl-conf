@@ -1,11 +1,12 @@
 package com.xxl.conf.admin.controller;
 
 import com.xxl.conf.admin.controller.annotation.PermessionLimit;
-import com.xxl.conf.admin.core.model.XxlConfGroup;
+import com.xxl.conf.admin.core.model.XxlConfProject;
 import com.xxl.conf.admin.core.model.XxlConfNode;
 import com.xxl.conf.admin.core.util.ReturnT;
-import com.xxl.conf.admin.dao.IXxlConfGroupDao;
+import com.xxl.conf.admin.dao.XxlConfProjectDao;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,11 +14,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 /**
  * 配置管理
+ *
  * @author xuxueli
  */
 @Controller
@@ -25,17 +28,29 @@ import java.util.Map;
 public class ConfController {
 
 	@Resource
-	private IXxlConfGroupDao xxlConfGroupDao;
+	private XxlConfProjectDao xxlConfProjectDao;
 	@Resource
 	private IXxlConfNodeService xxlConfNodeService;
 	
 	@RequestMapping("")
 	@PermessionLimit
-	public String index(Model model, String znodeKey){
+	public String index(Model model, String appname){
 
-		List<XxlConfGroup> list = xxlConfGroupDao.findAll();
+		List<XxlConfProject> list = xxlConfProjectDao.findAll();
+		if (CollectionUtils.isEmpty(list)) {
+			throw new RuntimeException("系统异常，无可用项目");
+		}
 
-		model.addAttribute("XxlConfNodeGroup", list);
+		XxlConfProject project = list.get(0);
+		for (XxlConfProject item: list) {
+			if (item.getAppname().equals(appname)) {
+				project = item;
+			}
+		}
+
+		model.addAttribute("ProjectList", list);
+		model.addAttribute("project", project);
+
 		return "conf/conf.index";
 	}
 
@@ -43,9 +58,10 @@ public class ConfController {
 	@ResponseBody
 	@PermessionLimit
 	public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,
-			@RequestParam(required = false, defaultValue = "10") int length,
-			String nodeGroup, String nodeKey) {
-		return xxlConfNodeService.pageList(start, length, nodeGroup, nodeKey);
+										@RequestParam(required = false, defaultValue = "10") int length,
+										String appname,
+										String key) {
+		return xxlConfNodeService.pageList(start, length, appname, key);
 	}
 	
 	/**
@@ -55,8 +71,8 @@ public class ConfController {
 	@RequestMapping("/delete")
 	@ResponseBody
 	@PermessionLimit
-	public ReturnT<String> delete(String nodeGroup, String nodeKey){
-		return xxlConfNodeService.deleteByKey(nodeGroup, nodeKey);
+	public ReturnT<String> delete(String key){
+		return xxlConfNodeService.delete(key);
 	}
 
 	/**
