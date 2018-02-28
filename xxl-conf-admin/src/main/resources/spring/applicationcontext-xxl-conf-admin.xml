@@ -14,7 +14,7 @@
 		<property name="ignoreUnresolvablePlaceholders" value="true" />-->
 		<property name="locations">
 			<list>
-				<value>classpath*:xxl-conf.properties</value>
+				<value>classpath*:xxl-conf-admin.properties</value>
 			</list>
 		</property>
 	</bean>

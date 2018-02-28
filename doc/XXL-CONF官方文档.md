@@ -106,20 +106,15 @@ XXL-CONF 是一个分布式配置管理平台，提供统一的配置管理服�
 配置文件位置：
 
 ```
-xxl-conf/xxl-conf-admin/src/main/resources/xxl-conf.properties
+xxl-conf/xxl-conf-admin/src/main/resources/xxl-conf-admin.properties
 ```
     
 配置项目说明：
 ```
-########### xxl conf client info ###########
-
 # 配置中心zookeeper集群地址，如有多个地址用逗号分隔；
-xxl.conf.zkaddress=127.0.0.1:2181
+xxl.conf.admin.zkaddress=127.0.0.1:2181
 # 配置在zookeeper中的存储目录；
-xxl.conf.zkpath=/xxl-conf
-
-
-########### xxl conf admin info ###########
+xxl.conf.admin.zkpath=/xxl-conf
 
 # xxl-conf, jdbc        （JDBC配置）
 xxl.conf.admin.jdbc.driverClass=com.mysql.jdbc.Driver

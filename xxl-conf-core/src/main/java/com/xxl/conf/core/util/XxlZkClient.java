@@ -143,7 +143,7 @@ public class XxlZkClient {
 					}
 				}
 				// create desc node path
-				zooKeeper.create(path, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+				getClient().create(path, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 			}
 			return getClient().exists(path, true);
 		} catch (Exception e) {
@@ -184,7 +184,7 @@ public class XxlZkClient {
 				createPatnWithParent(path);
 				stat = getClient().exists(path, true);
 			}
-			return zooKeeper.setData(path, data.getBytes(),stat.getVersion());
+			return getClient().setData(path, data.getBytes(),stat.getVersion());
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new XxlConfException(e);

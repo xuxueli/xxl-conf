@@ -6,8 +6,6 @@ import com.xxl.conf.admin.core.util.ReturnT;
 import com.xxl.conf.admin.dao.XxlConfProjectDao;
 import com.xxl.conf.admin.dao.XxlConfNodeDao;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
-import com.xxl.conf.core.core.XxlConfLocalCacheConf;
-import com.xxl.conf.core.core.XxlConfZkConf;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
@@ -23,13 +21,15 @@ import java.util.Map;
  * @author xuxueli 2016-08-15 22:53
  */
 @Service
-public class XxlConfNodeServiceImpl implements IXxlConfNodeService, DisposableBean {
+public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 
 
 	@Resource
 	private XxlConfNodeDao xxlConfNodeDao;
 	@Resource
 	private XxlConfProjectDao xxlConfProjectDao;
+	@Resource
+	private XxlConfManager xxlConfManager;
 
 	@Override
 	public Map<String,Object> pageList(int offset, int pagesize, String appname, String key) {
@@ -41,7 +41,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, DisposableBe
 		// fill value in zk
 		if (CollectionUtils.isNotEmpty(data)) {
 			for (XxlConfNode node: data) {
-				String realNodeValue = XxlConfZkConf.get(node.getKey());
+				String realNodeValue = xxlConfManager.get(node.getKey());
 				node.setZkValue(realNodeValue);
 			}
 		}
@@ -61,7 +61,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, DisposableBe
 			return new ReturnT<String>(500, "参数缺失");
 		}
 
-		XxlConfZkConf.delete(key);
+		xxlConfManager.delete(key);
 		xxlConfNodeDao.delete(key);
 		return ReturnT.SUCCESS;
 	}
@@ -97,7 +97,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, DisposableBe
 			xxlConfNode.setValue("");
 		}
 
-		XxlConfZkConf.set(xxlConfNode.getKey(), xxlConfNode.getValue());
+		xxlConfManager.set(xxlConfNode.getKey(), xxlConfNode.getValue());
 		xxlConfNodeDao.insert(xxlConfNode);
 		return ReturnT.SUCCESS;
 	}
@@ -123,20 +123,13 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, DisposableBe
 			xxlConfNode.setValue("");
 		}
 
-		XxlConfZkConf.set(xxlConfNode.getKey(), xxlConfNode.getValue());
+		xxlConfManager.set(xxlConfNode.getKey(), xxlConfNode.getValue());
 		int ret = xxlConfNodeDao.update(xxlConfNode);
 		if (ret < 1) {
 			return ReturnT.FAIL;
 		}
 
 		return ReturnT.SUCCESS;
-	}
-
-
-	@Override
-	public void destroy() throws Exception {
-		XxlConfLocalCacheConf.destroy();
-		XxlConfZkConf.destroy();
 	}
 
 }
