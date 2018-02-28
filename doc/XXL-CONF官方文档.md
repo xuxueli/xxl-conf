@@ -386,7 +386,7 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 - 2、项目groupId从com.xxl迁移至com.xuxueli，为推送maven中央仓库做准备；
 - 3、v1.3.0版本开始，推送公共依赖至中央仓库；
 
-### 5.4 版本1.3.1新特性(Coding)
+### 5.4 版本1.4.0新特性(Coding)
 - 1、支持通过 "@XxlConf" 注解获取配置；
 - 2、动态推送更新：目前支持 "XML、 @XxlConf、API" 三种配置方式，均支持配置动态刷新；
 - 3、配置变更监听功能：可开发Listener逻辑，监听配置变更事件，可据此动态刷新JDBC连接池等高级功能；
@@ -401,6 +401,7 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 - 12、ZK重入锁做二次校验，防止并发冲突；
 - 13、Sample项目目录结构规范；
 - 14、新增SpringBoot类型Sample项目；
+- 15、表结构优化；
 
 
 ### TODO LIST
