@@ -94,7 +94,7 @@ XXL-CONF 是一个分布式配置管理平台，提供统一的配置管理服�
 
 - xxl-conf-admin：配置管理中心
 - xxl-conf-core：公共依赖
-- xxl-conf-sample: 接入XXl-CONF的示例项目，供用户参考学习
+- xxl-conf-samples: 接入XXl-CONF的示例项目，供用户参考学习
     - xxl-conf-sample-spring：spring版本
     - xxl-conf-sample-springboot：springboot版本
 
@@ -146,7 +146,7 @@ xxl.conf.admin.login.password=123456
 
 可参考配置文件：
 ```
-xxl-conf/xxl-conf-sample/xxl-conf-sample-spring/src/main/resources/xxl-conf.properties
+xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/xxl-conf.properties
 ```
 
 配置项说明
@@ -170,7 +170,7 @@ xxl.conf.zkpath=/xxl-conf
 
 可参考配置文件：
 ```
-xxl-conf/xxl-conf-sample/xxl-conf-sample-spring/src/main/resources/spring/applicationcontext-xxl-conf.xml
+xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/spring/applicationcontext-xxl-conf.xml
 ```
 
 配置项说明
