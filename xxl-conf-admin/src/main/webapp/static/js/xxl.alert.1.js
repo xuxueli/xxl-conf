@@ -50,7 +50,7 @@
 };*/
 
 // 通用确认弹框
-var ComConfirm = {
+/*var ComConfirm = {
     html:function(){
         var html =
             '<div class="modal fade" id="ComConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">' +
@@ -93,7 +93,8 @@ var ComConfirm = {
             return;
         });
     }
-};
+};*/
+
 // 提示-科技主题
 var ComAlertTec = {
     html:function(){

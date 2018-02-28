@@ -4,31 +4,39 @@ $(function() {
 	$('.remove').on('click', function(){
 		var appname = $(this).attr('appname');
 
-		ComConfirm.show("确认删除项目?", function(){
-			$.ajax({
-				type : 'POST',
-				url : base_url + '/project/remove',
-				data : {"appname":appname},
-				dataType : "json",
-				success : function(data){
-					if (data.code == 200) {
+        layer.confirm( "确认删除该项目?" , {
+            icon: 3,
+            title: '系统提示' ,
+            btn: [ '确定', '取消' ]
+        }, function(index){
+            layer.close(index);
+
+            $.ajax({
+                type : 'POST',
+                url : base_url + '/project/remove',
+                data : {"appname":appname},
+                dataType : "json",
+                success : function(data){
+                    if (data.code == 200) {
                         layer.open({
                             icon: '1',
-							content: '删除成功' ,
+                            content: '删除成功' ,
                             end: function(layero, index){
                                 window.location.reload();
                             }
                         });
 
-					} else {
+                    } else {
                         layer.open({
                             icon: '2',
-							content: (data.msg||'删除失败')
+                            content: (data.msg||'删除失败')
                         });
-					}
-				},
-			});
-		});
+                    }
+                },
+            });
+
+        });
+
 	});
 
 	// jquery.validate 自定义校验 “英文字母开头，只含有英文字母、数字和下划线”

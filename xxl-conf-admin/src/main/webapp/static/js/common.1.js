@@ -17,8 +17,15 @@ $(function(){
 	
 	// logout
 	$("#logoutBtn").click(function(){
-		ComConfirm.show("确认注销登录?", function(){
-			$.post(base_url + "/logout", function(data, status) {
+
+        layer.confirm( "确认注销登录?" , {
+            icon: 3,
+            title: '系统提示' ,
+            btn: [ '确定', '取消' ]
+        }, function(index){
+            layer.close(index);
+
+            $.post(base_url + "/logout", function(data, status) {
                 if (data.code == 200) {
                     layer.open({
                         icon: '1',
@@ -33,8 +40,10 @@ $(function(){
                         content: (data.msg||'注销失败')
                     });
                 }
-			});
-		});
+            });
+
+        });
+
 	});
 	
 	// 左侧菜单状态，js + 后端 + cookie方式（新）

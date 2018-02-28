@@ -126,13 +126,19 @@ $(function(){
 
         var key = $(this).parent('p').attr("key");
 
-		ComConfirm.show("确定要删除配置：" + key, function(){
-			$.post(
-				base_url + "/conf/delete",
-				{
-					"key" : key
-				},
-				function(data, status) {
+        layer.confirm( "确定要删除配置：" + key , {
+            icon: 3,
+            title: '系统提示' ,
+            btn: [ '确定', '取消' ]
+        }, function(index){
+            layer.close(index);
+
+            $.post(
+                base_url + "/conf/delete",
+                {
+                    "key" : key
+                },
+                function(data, status) {
                     if (data.code == 200) {
                         layer.open({
                             icon: '1',
@@ -147,9 +153,11 @@ $(function(){
                             content: (data.msg||'删除失败')
                         });
                     }
-				}
-			);
-		});
+                }
+            );
+
+        });
+
 	});
 
     // jquery.validate 自定义校验 “英文字母开头，只含有英文字母、数字和下划线”
