@@ -163,9 +163,6 @@
 		</div>
 	</div>
 
-	<script>
-		var base_url = '${request.contextPath}';
-	</script>
 	<@netCommon.commonScript/>
     <script src="${request.contextPath}/static/adminlte/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="${request.contextPath}/static/adminlte/plugins/datatables/dataTables.bootstrap.min.js"></script>

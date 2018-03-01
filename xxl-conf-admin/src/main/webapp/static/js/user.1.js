@@ -24,7 +24,7 @@ $(function(){
 			{ "data": 'username', 'width': '40%'},
 			{
 				"data": 'permission',
-				'width': '40%',
+				'width': '30%',
 				"visible" : true,
 				"render": function ( data, type, row ) {
 				    var tmp = '';
@@ -38,14 +38,20 @@ $(function(){
 			},
 			{
 				"data": '操作',
-				'width': '20%' ,
+				'width': '30%' ,
 				"render": function ( data, type, row ) {
 					return function(){
                         rowData[row.username] = row;
 
+                        var permissionProjects = '';
+                        if (row.permission != 1) {
+                            permissionProjects = '<button class="btn btn-warning btn-xs permissionProjects" type="button">分配项目权限</button>  ';
+                        }
+
 						// html
 						var html = '<p username="'+ row.username +'" >'+
 							'<button class="btn btn-warning btn-xs update" type="button">编辑</button>  '+
+                            permissionProjects +
 							'<button class="btn btn-danger btn-xs delete" type="button">删除</button>  '+
 							'</p>';
 
@@ -279,5 +285,50 @@ $(function(){
 	$("#updateModal").on('hide.bs.modal', function () {
 		$("#updateModal .form")[0].reset()
 	});
-	
+
+
+    // 分配项目权限
+    $("#data_list").on('click', '.permissionProjects',function() {
+        var username = $(this).parent('p').attr("username");
+        var row = rowData[username];
+
+        $("#updatePermissionProjectsModal .form input[name='username']").val( row.username );
+
+        var permissionProjectsChoose;
+        if (row.permissionProjects) {
+            permissionProjectsChoose = $(row.permissionProjects.split(","));
+        }
+        $("#updatePermissionProjectsModal .form input[name='permissionProjects']").each(function () {
+            if ( $.inArray($(this).val(), permissionProjectsChoose) > -1 ) {
+                $(this).prop("checked",true);
+            } else {
+                $(this).prop("checked",false);
+            }
+        });
+
+        $('#updatePermissionProjectsModal').modal('show');
+    });
+    $('#updatePermissionProjectsModal .ok').click(function () {
+        $.post(base_url + "/user/updatePermissionProjects", $("#updatePermissionProjectsModal .form").serialize(), function(data, status) {
+            if (data.code == 200) {
+                layer.open({
+                    icon: '1',
+                    content: '操作成功' ,
+                    end: function(layero, index){
+                        dataTable.fnDraw();
+                        $('#updatePermissionProjectsModal').modal('hide');
+                    }
+                });
+            } else {
+                layer.open({
+                    icon: '2',
+                    content: (data.msg||'操作失败')
+                });
+            }
+        });
+    });
+    $("#updatePermissionProjectsModal").on('hide.bs.modal', function () {
+        $("#updatePermissionProjectsModal .form")[0].reset()
+    });
+
 });

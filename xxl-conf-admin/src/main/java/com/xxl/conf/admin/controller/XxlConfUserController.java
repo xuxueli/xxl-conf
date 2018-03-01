@@ -1,12 +1,15 @@
 package com.xxl.conf.admin.controller;
 
 import com.xxl.conf.admin.controller.annotation.PermessionLimit;
+import com.xxl.conf.admin.core.model.XxlConfProject;
 import com.xxl.conf.admin.core.model.XxlConfUser;
 import com.xxl.conf.admin.core.util.ReturnT;
+import com.xxl.conf.admin.dao.XxlConfProjectDao;
 import com.xxl.conf.admin.dao.XxlConfUserDao;
 import com.xxl.conf.admin.service.impl.LoginService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,18 +30,23 @@ public class XxlConfUserController {
 
     @Resource
     private XxlConfUserDao xxlConfUserDao;
+    @Resource
+    private XxlConfProjectDao xxlConfProjectDao;
 
     @RequestMapping("")
     @PermessionLimit(adminuser = true)
-    public String index(HttpServletRequest request){
+    public String index(Model model){
+
+        List<XxlConfProject> projectList = xxlConfProjectDao.findAll();
+        model.addAttribute("projectList", projectList);
+
         return "user/user.index";
     }
 
     @RequestMapping("/pageList")
     @PermessionLimit(adminuser = true)
     @ResponseBody
-    public Map<String, Object> pageList(HttpServletRequest request,
-                                        @RequestParam(required = false, defaultValue = "0") int start,
+    public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,
                                         @RequestParam(required = false, defaultValue = "10") int length,
                                         String username,
                                         int permission) {
@@ -63,7 +71,7 @@ public class XxlConfUserController {
     @RequestMapping("/add")
     @PermessionLimit(adminuser = true)
     @ResponseBody
-    public ReturnT<String> add(HttpServletRequest request, XxlConfUser xxlConfUser){
+    public ReturnT<String> add(XxlConfUser xxlConfUser){
 
         // valid
         if (StringUtils.isBlank(xxlConfUser.getUsername())){
@@ -145,6 +153,24 @@ public class XxlConfUserController {
 
         int ret = xxlConfUserDao.update(existUser);
         return ret>0? ReturnT.SUCCESS: ReturnT.FAIL;
+    }
+
+    @RequestMapping("/updatePermissionProjects")
+    @PermessionLimit(adminuser = true)
+    @ResponseBody
+    public ReturnT<String> updatePermissionProjects(HttpServletRequest request,
+                                                    String username,
+                                                    @RequestParam(required = false) String[] permissionProjects){
+
+        String permissionProjectsStr = StringUtils.join(permissionProjects, ",");
+        XxlConfUser existUser = xxlConfUserDao.load(username);
+        if (existUser == null) {
+            return new ReturnT<String>(ReturnT.FAIL.getCode(), "参数非法");
+        }
+        existUser.setPermissionProjects(permissionProjectsStr);
+        xxlConfUserDao.update(existUser);
+
+        return ReturnT.SUCCESS;
     }
 
     @RequestMapping("/updatePwd")

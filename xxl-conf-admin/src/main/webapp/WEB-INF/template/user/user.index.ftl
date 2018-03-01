@@ -116,7 +116,7 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<!-- 更新.模态框 -->
 	<div class="modal fade" id="updateModal" tabindex="-1" role="dialog"  aria-hidden="true">
 		<div class="modal-dialog">
@@ -164,9 +164,42 @@
 		</div>
 	</div>
 
-	<script>
-		var base_url = '${request.contextPath}';
-	</script>
+    <!-- 分配项目权限.模态框 -->
+    <div class="modal fade" id="updatePermissionProjectsModal" tabindex="-1" role="dialog"  aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" >分配项目权限</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal form" role="form" >
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-8">
+                                <div class="form-group">
+                                <#list projectList as project>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="permissionProjects" value="${project.appname}" >${project.title}
+                                        </label>
+                                    </div>
+                                </#list>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="button" class="btn btn-primary ok" >保存</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+
+                                <input type="hidden" name="username"  >
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 	<@netCommon.commonScript/>
     <script src="${request.contextPath}/static/adminlte/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="${request.contextPath}/static/adminlte/plugins/datatables/dataTables.bootstrap.min.js"></script>
