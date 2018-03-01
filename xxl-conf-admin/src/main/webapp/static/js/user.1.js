@@ -147,8 +147,8 @@ $(function(){
                 myValid01: true
             },
             password : {
-                required : true ,
-                rangelength:[4,50]
+                //required : true ,
+                //rangelength:[4,50]
             }
         }, 
         messages : {
@@ -194,6 +194,17 @@ $(function(){
 	$("#addModal").on('hide.bs.modal', function () {
 		$("#addModal .form")[0].reset()
 	});
+
+
+    $("#updateModal .form input[name='passwordInput']").change(function () {
+        var passwordInput = $("#updateModal .form input[name='passwordInput']").prop('checked');
+        $("#updateModal .form input[name='password']").val( '' );
+        if (passwordInput) {
+            $("#updateModal .form input[name='password']").removeAttr("readonly");
+        } else {
+            $("#updateModal .form input[name='password']").attr("readonly","readonly");
+        }
+    });
 	
 	// 更新
 	$("#data_list").on('click', '.update',function() {
@@ -202,8 +213,11 @@ $(function(){
         var row = rowData[username];
 
 		$("#updateModal .form input[name='username']").val( row.username );
-		$("#updateModal .form input[name='password']").val( row.password );
         $("#updateModal .form select[name='permission']").find("option[value='"+ row.permission +"']").prop("selected", 'selected');
+
+        $("#updateModal .form input[name='passwordInput']").prop('checked', false);
+        $("#updateModal .form input[name='password']").val( '' );
+        $("#updateModal .form input[name='password']").attr("readonly","readonly");
 
 		$('#updateModal').modal('show');
 	});
@@ -218,8 +232,8 @@ $(function(){
                 myValid01: true
             },
             password : {
-                required : true ,
-                rangelength:[4,50]
+                //required : true ,
+                //rangelength:[4,50]
             }
         },
         messages : {

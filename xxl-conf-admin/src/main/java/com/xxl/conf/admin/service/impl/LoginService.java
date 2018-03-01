@@ -20,13 +20,17 @@ import java.math.BigInteger;
 @Configuration
 public class LoginService {
 
-    public static final String LOGIN_IDENTITY_KEY = "XXL_CONF_LOGIN_IDENTITY";
+    public static final String LOGIN_IDENTITY = "XXL_CONF_LOGIN_IDENTITY";
 
     @Resource
     private XxlConfUserDao xxlConfUserDao;
 
     private String makeToken(XxlConfUser xxlConfUser){
-        String token = xxlConfUser.getUsername() + "_" + xxlConfUser.getPassword();	    // username_password(md5)
+        String token = xxlConfUser.getUsername()
+                .concat("_")
+                .concat(xxlConfUser.getPassword())
+                .concat("_")
+                .concat(String.valueOf(xxlConfUser.getPermission()));	    // username_password(md5)
         String tokenHex = new BigInteger(token.getBytes()).toString(16);
         return tokenHex;
     }
@@ -35,10 +39,11 @@ public class LoginService {
         if (tokenHex != null) {
             String token = new String(new BigInteger(tokenHex, 16).toByteArray());      // username_password(md5)
             String[] tokenArr = token.split("_");
-            if (tokenArr.length == 2) {
+            if (tokenArr.length == 3) {
                 xxlConfUser = new XxlConfUser();
                 xxlConfUser.setUsername(tokenArr[0]);
                 xxlConfUser.setPassword(tokenArr[1]);
+                xxlConfUser.setPermission(Integer.valueOf(tokenArr[2]));
             }
         }
         return xxlConfUser;
@@ -59,16 +64,16 @@ public class LoginService {
         String loginToken = makeToken(xxlConfUser);
 
         // do login
-        CookieUtil.set(response, LOGIN_IDENTITY_KEY, loginToken, ifRemember);
+        CookieUtil.set(response, LOGIN_IDENTITY, loginToken, ifRemember);
         return ReturnT.SUCCESS;
     }
 
     public void logout(HttpServletRequest request, HttpServletResponse response){
-        CookieUtil.remove(request, response, LOGIN_IDENTITY_KEY);
+        CookieUtil.remove(request, response, LOGIN_IDENTITY);
     }
 
     public XxlConfUser ifLogin(HttpServletRequest request){
-        String cookieToken = CookieUtil.getValue(request, LOGIN_IDENTITY_KEY);
+        String cookieToken = CookieUtil.getValue(request, LOGIN_IDENTITY);
         if (cookieToken != null) {
             XxlConfUser cookieUser = parseToken(cookieToken);
             if (cookieUser != null) {

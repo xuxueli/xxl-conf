@@ -141,7 +141,16 @@
                         </div>
                         <div class="form-group">
                             <label for="lastname" class="col-sm-2 control-label">密码</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="password" placeholder="请输入密码" maxlength="50" ></div>
+                            <div class="col-sm-10">
+
+                                <div class="input-group">
+									<span class="input-group-addon">
+										重置密码<input type="checkbox" name="passwordInput" >
+									</span>
+                                    <input type="text" class="form-control" name="password" placeholder="为空则不更新密码" maxlength="50" readonly >
+                                </div>
+
+							</div>
                         </div>
 						<div class="form-group">
 							<div class="col-sm-offset-2 col-sm-10">

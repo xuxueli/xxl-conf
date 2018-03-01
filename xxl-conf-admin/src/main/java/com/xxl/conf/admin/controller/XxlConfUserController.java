@@ -3,15 +3,16 @@ package com.xxl.conf.admin.controller;
 import com.xxl.conf.admin.core.model.XxlConfUser;
 import com.xxl.conf.admin.core.util.ReturnT;
 import com.xxl.conf.admin.dao.XxlConfUserDao;
+import com.xxl.conf.admin.service.impl.LoginService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,16 +28,31 @@ public class XxlConfUserController {
     private XxlConfUserDao xxlConfUserDao;
 
     @RequestMapping("")
-    public String index(Model model, String appname){
+    public String index(HttpServletRequest request){
+
+        // valid permission
+        XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
+        if (loginUser.getPermission() != 1) {
+            throw new RuntimeException("权限拦截");
+        }
+
         return "user/user.index";
     }
 
     @RequestMapping("/pageList")
     @ResponseBody
-    public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,
+    public Map<String, Object> pageList(HttpServletRequest request,
+                                        @RequestParam(required = false, defaultValue = "0") int start,
                                         @RequestParam(required = false, defaultValue = "10") int length,
                                         String username,
                                         int permission) {
+
+        // valid permission
+        XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
+        if (loginUser.getPermission() != 1) {
+            throw new RuntimeException("权限拦截");
+        }
+
         // xxlConfNode in mysql
         List<XxlConfUser> data = xxlConfUserDao.pageList(start, length, username, permission);
         int list_count = xxlConfUserDao.pageListCount(start, length, username, permission);
@@ -50,25 +66,19 @@ public class XxlConfUserController {
     }
 
     /**
-     * delete
-     *
-     * @return
-     */
-    @RequestMapping("/delete")
-    @ResponseBody
-    public ReturnT<String> delete(String username){
-        xxlConfUserDao.delete(username);
-        return ReturnT.SUCCESS;
-    }
-
-    /**
      * add
      *
      * @return
      */
     @RequestMapping("/add")
     @ResponseBody
-    public ReturnT<String> add(XxlConfUser xxlConfUser){
+    public ReturnT<String> add(HttpServletRequest request, XxlConfUser xxlConfUser){
+
+        // valid permission
+        XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
+        if (loginUser.getPermission() != 1) {
+            throw new RuntimeException("权限拦截");
+        }
 
         // valid
         if (StringUtils.isBlank(xxlConfUser.getUsername())){
@@ -76,6 +86,9 @@ public class XxlConfUserController {
         }
         if (StringUtils.isBlank(xxlConfUser.getPassword())){
             return new ReturnT<String>(ReturnT.FAIL.getCode(), "密码不可为空");
+        }
+        if (!(xxlConfUser.getPassword().length()>=4 && xxlConfUser.getPassword().length()<=100)) {
+            return new ReturnT<String>(ReturnT.FAIL.getCode(), "密码长度限制为4~50");
         }
 
         // passowrd md5
@@ -87,20 +100,54 @@ public class XxlConfUserController {
     }
 
     /**
+     * delete
+     *
+     * @return
+     */
+    @RequestMapping("/delete")
+    @ResponseBody
+    public ReturnT<String> delete(HttpServletRequest request, String username){
+
+        // valid permission
+        XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
+        if (loginUser.getPermission() != 1) {
+            throw new RuntimeException("权限拦截");
+        }
+
+        if (loginUser.getUsername().equals(username)) {
+            return new ReturnT<String>(ReturnT.FAIL.getCode(), "禁止操作当前登录账号");
+        }
+
+        List<XxlConfUser> adminList = xxlConfUserDao.pageList(0, 1 , null, 1);
+        if (adminList.size()<2) {
+
+        }
+
+        xxlConfUserDao.delete(username);
+        return ReturnT.SUCCESS;
+    }
+
+    /**
      * update
      *
      * @return
      */
     @RequestMapping("/update")
     @ResponseBody
-    public ReturnT<String> update(XxlConfUser xxlConfUser){
+    public ReturnT<String> update(HttpServletRequest request, XxlConfUser xxlConfUser){
+
+        // valid permission
+        XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
+        if (loginUser.getPermission() != 1) {
+            throw new RuntimeException("权限拦截");
+        }
+        if (loginUser.getUsername().equals(xxlConfUser.getUsername())) {
+            return new ReturnT<String>(ReturnT.FAIL.getCode(), "禁止操作当前登录账号");
+        }
 
         // valid
         if (StringUtils.isBlank(xxlConfUser.getUsername())){
             return new ReturnT<String>(ReturnT.FAIL.getCode(), "用户名不可为空");
-        }
-        if (StringUtils.isBlank(xxlConfUser.getPassword())){
-            return new ReturnT<String>(ReturnT.FAIL.getCode(), "密码不可为空");
         }
 
         XxlConfUser existUser = xxlConfUserDao.load(xxlConfUser.getUsername());
@@ -109,6 +156,9 @@ public class XxlConfUserController {
         }
 
         if (StringUtils.isNotBlank(xxlConfUser.getPassword())) {
+            if (!(xxlConfUser.getPassword().length()>=4 && xxlConfUser.getPassword().length()<=100)) {
+                return new ReturnT<String>(ReturnT.FAIL.getCode(), "密码长度限制为4~50");
+            }
             // passowrd md5
             String md5Password = DigestUtils.md5DigestAsHex(xxlConfUser.getPassword().getBytes());
             existUser.setPassword(md5Password);
