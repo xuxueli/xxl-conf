@@ -1,10 +1,12 @@
 package com.xxl.conf.admin.service.impl;
 
 import com.xxl.conf.admin.core.model.XxlConfNode;
+import com.xxl.conf.admin.core.model.XxlConfNodeLog;
 import com.xxl.conf.admin.core.model.XxlConfProject;
 import com.xxl.conf.admin.core.model.XxlConfUser;
 import com.xxl.conf.admin.core.util.ReturnT;
 import com.xxl.conf.admin.dao.XxlConfNodeDao;
+import com.xxl.conf.admin.dao.XxlConfNodeLogDao;
 import com.xxl.conf.admin.dao.XxlConfProjectDao;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -32,6 +34,8 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 	private XxlConfProjectDao xxlConfProjectDao;
 	@Resource
 	private XxlConfManager xxlConfManager;
+	@Resource
+	private XxlConfNodeLogDao xxlConfNodeLogDao;
 
 	@Override
 	public Map<String,Object> pageList(int offset, int pagesize, String appname, String key, XxlConfUser loginUser) {
@@ -174,6 +178,15 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		if (ret < 1) {
 			return ReturnT.FAIL;
 		}
+
+		// node log
+		XxlConfNodeLog nodeLog = new XxlConfNodeLog();
+		nodeLog.setKey(existNode.getKey());
+		nodeLog.setTitle(existNode.getTitle());
+		nodeLog.setValue(existNode.getValue());
+		nodeLog.setOptuser(loginUser.getUsername());
+		xxlConfNodeLogDao.add(nodeLog);
+		xxlConfNodeLogDao.deleteTimeout(existNode.getKey(), 10);
 
 		return ReturnT.SUCCESS;
 	}
