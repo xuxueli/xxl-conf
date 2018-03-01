@@ -48,13 +48,10 @@ $(function(){
         submitHandler : function(form) {
 			$.post(base_url + "/login", $("#loginForm").serialize(), function(data, status) {
                 if (data.code == 200) {
-                    layer.open({
-                        icon: '1',
-                        content: '登陆成功' ,
-                        end: function(layero, index){
-                            window.location.href = base_url;
-                        }
-                    });
+                    layer.msg( '登陆成功' );
+                    setTimeout(function(){
+                        window.location.href = base_url;
+                    }, 500);
                 } else {
                     layer.open({
                         icon: '2',
