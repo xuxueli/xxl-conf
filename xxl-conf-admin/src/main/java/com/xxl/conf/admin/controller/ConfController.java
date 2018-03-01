@@ -32,7 +32,7 @@ public class ConfController {
 	private XxlConfProjectDao xxlConfProjectDao;
 	@Resource
 	private IXxlConfNodeService xxlConfNodeService;
-	
+
 	@RequestMapping("")
 	public String index(Model model, String appname){
 

@@ -1,5 +1,7 @@
 package com.xxl.conf.admin.core.model;
 
+import java.util.List;
+
 /**
  * 配置节点
  * @author xuxueli 2015-9-4 15:26:01
@@ -12,7 +14,8 @@ public class XxlConfNode {
 	private String value;		// 配置Value
 
 	// plugin
-	private String zkValue; 	// ZK中配置Value
+	private String zkValue; 				// ZK中配置Value
+	private List<XxlConfNodeLog> logList;	// 配置变更Log
 
 	public String getKey() {
 		return key;
@@ -54,4 +57,11 @@ public class XxlConfNode {
 		this.zkValue = zkValue;
 	}
 
+	public List<XxlConfNodeLog> getLogList() {
+		return logList;
+	}
+
+	public void setLogList(List<XxlConfNodeLog> logList) {
+		this.logList = logList;
+	}
 }

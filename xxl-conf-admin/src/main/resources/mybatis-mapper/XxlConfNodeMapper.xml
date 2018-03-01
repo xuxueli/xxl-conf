@@ -8,6 +8,7 @@
 		<result column="appname" property="appname" jdbcType="VARCHAR" />
 	    <result column="title" property="title" jdbcType="VARCHAR" />
 	    <result column="value" property="value" jdbcType="VARCHAR" />
+		<association column="key" property="logList"  select="com.xxl.conf.admin.dao.XxlConfNodeLogDao.findByKey"/>
 	</resultMap>
 
 	<sql id="Base_Column_List">

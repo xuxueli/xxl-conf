@@ -67,18 +67,27 @@ $(function(){
 					}
 				}
 			},
-			{ "data": 'title', 'width': '35%', "visible" : true},
+			{ "data": 'title', 'width': '30%', "visible" : true},
 			{
 				"data": '操作',
-				'width': '15%' ,
+				'width': '20%' ,
 				"render": function ( data, type, row ) {
 					return function(){
 
                         confData[row.key] = row;
 
+                        // log list
+                        var logList = '';
+                        if (row.logList && row.logList.length>0) {
+                            logList = '<button class="btn btn-warning btn-xs logList" type="button">变更历史</button>  ';
+
+                            // TODO，配置变更历史
+                        }
+
 						// html
 						var html = '<p key="'+ row.key +'" >'+
 							'<button class="btn btn-warning btn-xs update" type="button">编辑</button>  '+
+                            logList +
 							'<button class="btn btn-danger btn-xs delete" type="button">删除</button>  '+
 							'</p>';
 
