@@ -17,8 +17,7 @@ CREATE TABLE `xxl_conf_node_log` (
   `title` varchar(100) NOT NULL COMMENT '配置描述',
   `value` varchar(2000) DEFAULT NULL COMMENT '配置Value',
   `addtime` datetime NOT NULL COMMENT '操作时间',
-  `optuser` varchar(100) NOT NULL COMMENT '操作人',
-  PRIMARY KEY (`key`)
+  `optuser` varchar(100) NOT NULL COMMENT '操作人'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -37,10 +36,9 @@ CREATE TABLE `xxl_conf_user` (
   PRIMARY KEY (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-INSERT INTO `xxl_conf_node` VALUES ('default.key01', 'default', '测试配置01', '一111'), ('default.key02', 'default', '测试配置02', '二222'), ('default.key03', 'default', '测试配置03', '三333');
+INSERT INTO `xxl_conf_node` VALUES ('default.key01', 'default', '测试配置01', '一111'), ('default.key02', 'default', '测试配置02', '二222'), ('default.key03', 'default', '测试配置03', '19');
 INSERT INTO `xxl_conf_project` VALUES ('default', '示例项目');
-INSERT INTO `xxl_conf_user` VALUES ('admin', 'e10adc3949ba59abbe56e057f20f883e', '1', null), ('user', 'e10adc3949ba59abbe56e057f20f883e', '0', null);
+INSERT INTO `xxl_conf_user` VALUES ('admin', 'e10adc3949ba59abbe56e057f20f883e', '1', null), ('user', 'e10adc3949ba59abbe56e057f20f883e', '0', 'default');
 
 
 
