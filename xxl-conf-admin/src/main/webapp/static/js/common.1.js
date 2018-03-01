@@ -1,14 +1,5 @@
 $(function(){
 	
-	// 导航栏,选中样式处理，js遍历匹配url（遗弃）
-	$(".nav-click").removeClass("active");
-	$(".nav-click").each(function(){
-		if( window.location.href.indexOf( $(this).find("a").attr("href") ) > -1){
-			$(this).addClass("active");
-			$(this).parents(".nav-click").addClass("active");
-		}
-	});
-	
 	// scrollup
 	$.scrollUp({
 		animation: 'fade',	// fade/slide/none

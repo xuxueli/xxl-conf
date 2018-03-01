@@ -1,8 +1,7 @@
 package com.xxl.conf.admin.controller;
 
-import com.xxl.conf.admin.controller.annotation.PermessionLimit;
-import com.xxl.conf.admin.core.model.XxlConfProject;
 import com.xxl.conf.admin.core.model.XxlConfNode;
+import com.xxl.conf.admin.core.model.XxlConfProject;
 import com.xxl.conf.admin.core.util.ReturnT;
 import com.xxl.conf.admin.dao.XxlConfProjectDao;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +31,6 @@ public class ConfController {
 	private IXxlConfNodeService xxlConfNodeService;
 	
 	@RequestMapping("")
-	@PermessionLimit
 	public String index(Model model, String appname){
 
 		List<XxlConfProject> list = xxlConfProjectDao.findAll();
@@ -56,7 +53,6 @@ public class ConfController {
 
 	@RequestMapping("/pageList")
 	@ResponseBody
-	@PermessionLimit
 	public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,
 										@RequestParam(required = false, defaultValue = "10") int length,
 										String appname,
@@ -70,7 +66,6 @@ public class ConfController {
 	 */
 	@RequestMapping("/delete")
 	@ResponseBody
-	@PermessionLimit
 	public ReturnT<String> delete(String key){
 		return xxlConfNodeService.delete(key);
 	}
@@ -81,7 +76,6 @@ public class ConfController {
 	 */
 	@RequestMapping("/add")
 	@ResponseBody
-	@PermessionLimit
 	public ReturnT<String> add(XxlConfNode xxlConfNode){
 		return xxlConfNodeService.add(xxlConfNode);
 	}
@@ -92,7 +86,6 @@ public class ConfController {
 	 */
 	@RequestMapping("/update")
 	@ResponseBody
-	@PermessionLimit
 	public ReturnT<String> update(XxlConfNode xxlConfNode){
 		return xxlConfNodeService.update(xxlConfNode);
 	}

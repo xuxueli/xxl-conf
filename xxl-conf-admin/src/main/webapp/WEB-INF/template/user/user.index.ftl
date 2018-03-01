@@ -15,17 +15,13 @@
 		
 		<@netCommon.commonHeader />
 
-		<@netCommon.commonLeft "conf" />
+		<@netCommon.commonLeft "user" />
 
 		<!-- Content Wrapper. Contains page content -->
 		<div class="content-wrapper">
 			<!-- Content Header (Page header) -->
 			<section class="content-header">
-				<h1>配置管理 <small></small></h1>
-				<#--<ol class="breadcrumb">
-					<li><a><i class="fa fa-dashboard"></i>配置中心</a></li>
-					<li class="active">配置管理</li>
-				</ol>-->
+				<h1>用户管理 <small></small></h1>
 			</section>
 
 			<!-- Main content -->
@@ -34,39 +30,37 @@
                 <div class="row">
                     <div class="col-xs-4">
                         <div class="input-group">
-                            <span class="input-group-addon">项目</span>
-                            <select class="form-control" id="appname" >
-                                <#--<option value="" >全部</option>-->
-								<#list ProjectList as item>
-									<option value="${item.appname}" <#if item.appname = project.appname>selected</#if> >${item.title}</option>
-								</#list>
+                            <span class="input-group-addon">权限</span>
+                            <select class="form-control" id="permission" >
+                                <option value="-1" >全部</option>
+                                <option value="0" >普通用户</option>
+                                <option value="1" >管理员</option>
                             </select>
                         </div>
                     </div>
                     <div class="col-xs-4">
                         <div class="input-group">
-                            <span class="input-group-addon">KEY</span>
-                            <input type="text" class="form-control" id="key" autocomplete="on" >
+                            <span class="input-group-addon">用户名</span>
+                            <input type="text" class="form-control" id="username" autocomplete="on" >
                         </div>
                     </div>
                     <div class="col-xs-2">
                         <button class="btn btn-block btn-info" id="searchBtn">搜索</button>
                     </div>
                     <div class="col-xs-2">
-                        <button class="btn btn-block btn-success" id="add" type="button">新增配置</button>
+                        <button class="btn btn-block btn-success" id="add" type="button">新增用户</button>
                     </div>
                 </div>
 
 				<!-- 全部配置 -->
 				<div class="box box-info2">
 	                <div class="box-body">
-	                  	<table id="conf_list" class="table table-bordered table-hover" width="100%" >
+	                  	<table id="data_list" class="table table-bordered table-hover" width="100%" >
 		                    <thead>
 		                      	<tr>
-                                    <th>KEY</th>
-			                        <th>VALUE</th>
-			                        <th>描述</th>
-			                        <th>操作</th>
+                                    <th>用户名</th>
+			                        <th>权限</th>
+                                    <th>操作</th>
 		                      	</tr>
 							</thead>
 		                    <tbody></tbody>
@@ -90,32 +84,27 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-	            	<h4 class="modal-title" >新增配置</h4>
+	            	<h4 class="modal-title" >新增用户</h4>
 	         	</div>
 	         	<div class="modal-body">
 					<form class="form-horizontal form" role="form" >
 						<div class="form-group">
-							<label for="firstname" class="col-sm-2 control-label">KEY</label>
+							<label for="firstname" class="col-sm-2 control-label">权限</label>
                             <div class="col-sm-10">
-								<div class="input-group" >
-									<span class="input-group-addon" style="background-color: #eee;" >${project.appname}.</span>
-									<input type="text" class="form-control" name="key" placeholder="请输入配置Key" maxlength="100" >
-
-                                    <input type="hidden" name="appname" value="${project.appname}" >
-
-                                </div>
+                                <select class="form-control" name="permission" >
+                                    <option value="0" >普通用户</option>
+                                    <option value="1" >管理员</option>
+                                </select>
                             </div>
 						</div>
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-2 control-label">描述</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="title" placeholder="请输入配置描述" maxlength="100" ></div>
+                            <label for="lastname" class="col-sm-2 control-label">用户名</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" name="username" placeholder="请输入用户名" maxlength="50" ></div>
                         </div>
-						<div class="form-group">
-							<label for="lastname" class="col-sm-2 control-label">VALUE</label>
-							<div class="col-sm-10">
-                                <textarea class="textarea" name="value" maxlength="2000" placeholder="请输入配置Value" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
-							</div>
-						</div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-2 control-label">密码</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" name="password" value="123546" placeholder="请输入密码" maxlength="50" ></div>
+                        </div>
 						<div class="form-group">
 							<div class="col-sm-offset-2 col-sm-10">
 								<button type="submit" class="btn btn-primary"  >保存</button>
@@ -133,23 +122,26 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-	            	<h4 class="modal-title" >更新配置</h4>
+	            	<h4 class="modal-title" >更新用户</h4>
 	         	</div>
 	         	<div class="modal-body">
 					<form class="form-horizontal form" role="form" >
                         <div class="form-group">
-                            <label for="firstname" class="col-sm-2 control-label">KEY</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="key" placeholder="请输入配置Key" maxlength="100" readonly ></div>
-                        </div>
-                        <div class="form-group">
-                            <label for="lastname" class="col-sm-2 control-label">描述</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="title" placeholder="请输入配置描述" maxlength="100" ></div>
-                        </div>
-                        <div class="form-group">
-                            <label for="lastname" class="col-sm-2 control-label">VALUE</label>
+                            <label for="firstname" class="col-sm-2 control-label">权限</label>
                             <div class="col-sm-10">
-                                <textarea class="textarea" name="value" maxlength="2000" placeholder="请输入配置Value" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                                <select class="form-control" name="permission" >
+                                    <option value="0" >普通用户</option>
+                                    <option value="1" >管理员</option>
+                                </select>
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-2 control-label">用户名</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" name="username" placeholder="请输入用户名" maxlength="50" readonly ></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-2 control-label">密码</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" name="password" placeholder="请输入密码" maxlength="50" ></div>
                         </div>
 						<div class="form-group">
 							<div class="col-sm-offset-2 col-sm-10">
@@ -171,8 +163,7 @@
     <script src="${request.contextPath}/static/adminlte/plugins/datatables/dataTables.bootstrap.min.js"></script>
     <script src="${request.contextPath}/static/plugins/jquery/jquery.validate.min.js"></script>
 
-    <script src="${request.contextPath}/static/js/xxl.alert.1.js"></script>
-    <script src="${request.contextPath}/static/js/conf.1.js"></script>
+    <script src="${request.contextPath}/static/js/user.1.js"></script>
 	
 </body>
 </html>

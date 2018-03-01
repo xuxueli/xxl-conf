@@ -397,17 +397,17 @@ ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在�
 - 13、Sample项目目录结构规范；
 - 14、新增SpringBoot类型Sample项目；
 - 15、表结构优化；
+- 16、弹框插件改为使用Layui；
 
+- 17、人员权限管理：以项目为权限最小单元，只有项目的成员用户才有权限进行对应的配置操作，有权限才可查看和再次分配；【迭代中】
+- 18、记录配置变更Log，方便历史配置版本回溯；
 
 ### TODO LIST
-- 1、权限管理：以项目为权限最小单元，只有项目的成员用户才有权限进行对应的配置操作，有权限才可查看和再次分配；
-- 2、配置支持版本回溯；
-- 3、记录操作Log；
-- 4、zookeeper客户端迁移至curator；
-- 5、local cache 备份到磁盘；zk异常且local properties未配置时，从磁盘上读取配置；
-- 6、Local Cache缓存长度考虑支持自定义；
-- 7、前端UI更新，AdminLTE 和 Layui 等；
-- 8、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；
+- 1、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；
+- 2、zookeeper客户端迁移至curator；
+- 3、local cache 备份到磁盘；zk异常且local properties未配置时，从磁盘上读取配置；
+- 4、Local Cache缓存长度考虑支持自定义；
+- 5、AdminLTE升级；
 
 
 ## 六、其他

@@ -25,7 +25,7 @@ public class PermissionInterceptor extends HandlerInterceptorAdapter {
 			return super.preHandle(request, response, handler);
 		}
 
-		if (!loginService.ifLogin(request)) {
+		if (loginService.ifLogin(request) == null) {
 			HandlerMethod method = (HandlerMethod)handler;
 			PermessionLimit permission = method.getMethodAnnotation(PermessionLimit.class);
 			if (permission == null || permission.limit()) {

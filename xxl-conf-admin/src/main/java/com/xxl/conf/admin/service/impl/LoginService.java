@@ -1,10 +1,13 @@
 package com.xxl.conf.admin.service.impl;
 
+import com.xxl.conf.admin.core.model.XxlConfUser;
 import com.xxl.conf.admin.core.util.CookieUtil;
-import org.springframework.beans.factory.annotation.Value;
+import com.xxl.conf.admin.core.util.ReturnT;
+import com.xxl.conf.admin.dao.XxlConfUserDao;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.DigestUtils;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigInteger;
@@ -19,45 +22,65 @@ public class LoginService {
 
     public static final String LOGIN_IDENTITY_KEY = "XXL_CONF_LOGIN_IDENTITY";
 
-    @Value("${xxl.conf.admin.login.username}")
-    private String username;    // can not user @Value or XML in mvc inteceptor，because inteceptor work with mvc, init before service
+    @Resource
+    private XxlConfUserDao xxlConfUserDao;
 
-    @Value("${xxl.conf.admin.login.password}")
-    private String password;
-
-    private String makeToken(String username, String password){
-        String tokenTmp = DigestUtils.md5DigestAsHex(String.valueOf(username + "_" + password).getBytes());	// md5
-        tokenTmp = new BigInteger(1, tokenTmp.getBytes()).toString(16);	// md5-hex
-        return tokenTmp;
+    private String makeToken(XxlConfUser xxlConfUser){
+        String token = xxlConfUser.getUsername() + "_" + xxlConfUser.getPassword();	    // username_password(md5)
+        String tokenHex = new BigInteger(token.getBytes()).toString(16);
+        return tokenHex;
+    }
+    private XxlConfUser parseToken(String tokenHex){
+        XxlConfUser xxlConfUser = null;
+        if (tokenHex != null) {
+            String token = new String(new BigInteger(tokenHex, 16).toByteArray());      // username_password(md5)
+            String[] tokenArr = token.split("_");
+            if (tokenArr.length == 2) {
+                xxlConfUser = new XxlConfUser();
+                xxlConfUser.setUsername(tokenArr[0]);
+                xxlConfUser.setPassword(tokenArr[1]);
+            }
+        }
+        return xxlConfUser;
     }
 
-    public boolean login(HttpServletResponse response, String usernameParam, String passwordParam, boolean ifRemember){
+    public ReturnT<String> login(HttpServletResponse response, String usernameParam, String passwordParam, boolean ifRemember){
 
-        String loginTolen = makeToken(username, password);
-        String paramToken = makeToken(usernameParam, passwordParam);
-
-        if (!loginTolen.equals(paramToken)){
-            return false;
+        XxlConfUser xxlConfUser = xxlConfUserDao.load(usernameParam);
+        if (xxlConfUser == null) {
+            return new ReturnT<String>(500, "账号或密码错误");
         }
 
+        String passwordParamMd5 = DigestUtils.md5DigestAsHex(passwordParam.getBytes());
+        if (!xxlConfUser.getPassword().equals(passwordParamMd5)) {
+            return new ReturnT<String>(500, "账号或密码错误");
+        }
+
+        String loginToken = makeToken(xxlConfUser);
+
         // do login
-        CookieUtil.set(response, LOGIN_IDENTITY_KEY, loginTolen, ifRemember);
-        return true;
+        CookieUtil.set(response, LOGIN_IDENTITY_KEY, loginToken, ifRemember);
+        return ReturnT.SUCCESS;
     }
 
     public void logout(HttpServletRequest request, HttpServletResponse response){
         CookieUtil.remove(request, response, LOGIN_IDENTITY_KEY);
     }
 
-    public boolean ifLogin(HttpServletRequest request){
-
-        String loginTolen = makeToken(username, password);
-        String paramToken = CookieUtil.getValue(request, LOGIN_IDENTITY_KEY);
-
-        if (paramToken==null || !loginTolen.equals(paramToken.trim())) {
-            return false;
+    public XxlConfUser ifLogin(HttpServletRequest request){
+        String cookieToken = CookieUtil.getValue(request, LOGIN_IDENTITY_KEY);
+        if (cookieToken != null) {
+            XxlConfUser cookieUser = parseToken(cookieToken);
+            if (cookieUser != null) {
+                XxlConfUser dbUser = xxlConfUserDao.load(cookieUser.getUsername());
+                if (dbUser != null) {
+                    if (cookieUser.getPassword().equals(dbUser.getPassword())) {
+                        return cookieUser;
+                    }
+                }
+            }
         }
-        return true;
+        return null;
     }
 
 }
