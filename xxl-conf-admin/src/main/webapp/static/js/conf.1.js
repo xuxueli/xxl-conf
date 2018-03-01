@@ -7,6 +7,14 @@ $(function(){
         window.location.href = base_url + "/conf?appname=" + appname;
     });
 
+    if (!hasPermission) {
+        layer.open({
+            icon: '2',
+            content: '您没有该项目的配置权限,请联系管理员开通'
+        });
+        return;
+    }
+
 	// init date tables
 	var confTable = $("#conf_list").dataTable({
 		"deferRender": true,
@@ -59,10 +67,10 @@ $(function(){
 					}
 				}
 			},
-			{ "data": 'title', 'width': '40%', "visible" : true},
+			{ "data": 'title', 'width': '35%', "visible" : true},
 			{
 				"data": '操作',
-				'width': '10%' ,
+				'width': '15%' ,
 				"render": function ( data, type, row ) {
 					return function(){
 

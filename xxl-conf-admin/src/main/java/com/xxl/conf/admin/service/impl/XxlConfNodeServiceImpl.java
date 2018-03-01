@@ -1,17 +1,19 @@
 package com.xxl.conf.admin.service.impl;
 
-import com.xxl.conf.admin.core.model.XxlConfProject;
 import com.xxl.conf.admin.core.model.XxlConfNode;
+import com.xxl.conf.admin.core.model.XxlConfProject;
+import com.xxl.conf.admin.core.model.XxlConfUser;
 import com.xxl.conf.admin.core.util.ReturnT;
-import com.xxl.conf.admin.dao.XxlConfProjectDao;
 import com.xxl.conf.admin.dao.XxlConfNodeDao;
+import com.xxl.conf.admin.dao.XxlConfProjectDao;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +34,17 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 	private XxlConfManager xxlConfManager;
 
 	@Override
-	public Map<String,Object> pageList(int offset, int pagesize, String appname, String key) {
+	public Map<String,Object> pageList(int offset, int pagesize, String appname, String key, XxlConfUser loginUser) {
+
+		// project permission
+		if (StringUtils.isBlank(appname) || !ifHasProjectPermission(loginUser, appname)) {
+			//return new ReturnT<String>(500, "您没有该项目的配置权限,请联系管理员开通");
+			Map<String, Object> emptyMap = new HashMap<String, Object>();
+			emptyMap.put("data", new ArrayList<>());
+			emptyMap.put("recordsTotal", 0);
+			emptyMap.put("recordsFiltered", 0);
+			return emptyMap;
+		}
 
 		// xxlConfNode in mysql
 		List<XxlConfNode> data = xxlConfNodeDao.pageList(offset, pagesize, appname, key);
@@ -55,10 +67,29 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 
 	}
 
+	private boolean ifHasProjectPermission(XxlConfUser loginUser, String appname){
+		if (loginUser.getPermission() == 1) {
+			return true;
+		}
+		if (ArrayUtils.contains(StringUtils.split(loginUser.getPermissionProjects(), ","), appname)) {
+			return true;
+		}
+		return false;
+	}
+
 	@Override
-	public ReturnT<String> delete(String key) {
+	public ReturnT<String> delete(String key, XxlConfUser loginUser) {
 		if (StringUtils.isBlank(key)) {
 			return new ReturnT<String>(500, "参数缺失");
+		}
+		XxlConfNode existNode = xxlConfNodeDao.load(key);
+		if (existNode == null) {
+			return new ReturnT<String>(500, "参数非法");
+		}
+
+		// project permission
+		if (!ifHasProjectPermission(loginUser, existNode.getAppname())) {
+			return new ReturnT<String>(500, "您没有该项目的配置权限,请联系管理员开通");
 		}
 
 		xxlConfManager.delete(key);
@@ -67,12 +98,18 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 	}
 
 	@Override
-	public ReturnT<String> add(XxlConfNode xxlConfNode) {
+	public ReturnT<String> add(XxlConfNode xxlConfNode, XxlConfUser loginUser) {
 
 		// valid
 		if (StringUtils.isBlank(xxlConfNode.getAppname())) {
 			return new ReturnT<String>(500, "AppName不可为空");
 		}
+
+		// project permission
+		if (!ifHasProjectPermission(loginUser, xxlConfNode.getAppname())) {
+			return new ReturnT<String>(500, "您没有该项目的配置权限,请联系管理员开通");
+		}
+
 		XxlConfProject group = xxlConfProjectDao.load(xxlConfNode.getAppname());
 		if (group==null) {
 			return new ReturnT<String>(500, "AppName非法");
@@ -103,7 +140,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 	}
 
 	@Override
-	public ReturnT<String> update(XxlConfNode xxlConfNode) {
+	public ReturnT<String> update(XxlConfNode xxlConfNode, XxlConfUser loginUser) {
 
 		// valid
 		if (StringUtils.isBlank(xxlConfNode.getKey())) {
@@ -113,6 +150,12 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		if (existNode == null) {
 			return new ReturnT<String>(500, "配置Key非法");
 		}
+
+		// project permission
+		if (!ifHasProjectPermission(loginUser, existNode.getAppname())) {
+			return new ReturnT<String>(500, "您没有该项目的配置权限,请联系管理员开通");
+		}
+
 
 		if (StringUtils.isBlank(xxlConfNode.getTitle())) {
 			return new ReturnT<String>(500, "配置描述不可为空");
@@ -124,7 +167,10 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		}
 
 		xxlConfManager.set(xxlConfNode.getKey(), xxlConfNode.getValue());
-		int ret = xxlConfNodeDao.update(xxlConfNode);
+
+		existNode.setTitle(xxlConfNode.getTitle());
+		existNode.setValue(xxlConfNode.getValue());
+		int ret = xxlConfNodeDao.update(existNode);
 		if (ret < 1) {
 			return ReturnT.FAIL;
 		}

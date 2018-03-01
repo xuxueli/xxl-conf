@@ -164,6 +164,22 @@
 	</div>
 
 	<@netCommon.commonScript/>
+	<script>
+        var hasPermission = false;
+		<#if Request["XXL_CONF_LOGIN_IDENTITY"].permission == 1>
+        	hasPermission = true;
+		<#else>
+			<#if Request["XXL_CONF_LOGIN_IDENTITY"].permissionProjects >
+				<#list Request["XXL_CONF_LOGIN_IDENTITY"].permissionProjects?split(",") as appname >
+					<#if appname == project.appname>
+                    	hasPermission = true;
+					</#if>
+				</#list>
+			</#if>
+		</#if>
+
+	</script>
+
     <script src="${request.contextPath}/static/adminlte/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="${request.contextPath}/static/adminlte/plugins/datatables/dataTables.bootstrap.min.js"></script>
 

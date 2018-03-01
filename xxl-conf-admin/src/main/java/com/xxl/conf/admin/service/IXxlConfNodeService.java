@@ -2,6 +2,7 @@ package com.xxl.conf.admin.service;
 
 
 import com.xxl.conf.admin.core.model.XxlConfNode;
+import com.xxl.conf.admin.core.model.XxlConfUser;
 import com.xxl.conf.admin.core.util.ReturnT;
 
 import java.util.Map;
@@ -11,12 +12,12 @@ import java.util.Map;
  */
 public interface IXxlConfNodeService {
 
-	public Map<String,Object> pageList(int offset, int pagesize, String appname, String key);
+	public Map<String,Object> pageList(int offset, int pagesize, String appname, String key, XxlConfUser loginUser);
 
-	public ReturnT<String> delete(String key);
+	public ReturnT<String> delete(String key, XxlConfUser loginUser);
 
-	public ReturnT<String> add(XxlConfNode xxlConfNode);
+	public ReturnT<String> add(XxlConfNode xxlConfNode, XxlConfUser loginUser);
 
-	public ReturnT<String> update(XxlConfNode xxlConfNode);
+	public ReturnT<String> update(XxlConfNode xxlConfNode, XxlConfUser loginUser);
 
 }

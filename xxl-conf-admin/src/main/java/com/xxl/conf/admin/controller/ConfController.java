@@ -2,9 +2,11 @@ package com.xxl.conf.admin.controller;
 
 import com.xxl.conf.admin.core.model.XxlConfNode;
 import com.xxl.conf.admin.core.model.XxlConfProject;
+import com.xxl.conf.admin.core.model.XxlConfUser;
 import com.xxl.conf.admin.core.util.ReturnT;
 import com.xxl.conf.admin.dao.XxlConfProjectDao;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
+import com.xxl.conf.admin.service.impl.LoginService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -53,11 +56,13 @@ public class ConfController {
 
 	@RequestMapping("/pageList")
 	@ResponseBody
-	public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,
+	public Map<String, Object> pageList(HttpServletRequest request,
+										@RequestParam(required = false, defaultValue = "0") int start,
 										@RequestParam(required = false, defaultValue = "10") int length,
 										String appname,
 										String key) {
-		return xxlConfNodeService.pageList(start, length, appname, key);
+		XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
+		return xxlConfNodeService.pageList(start, length, appname, key, loginUser);
 	}
 	
 	/**
@@ -66,8 +71,9 @@ public class ConfController {
 	 */
 	@RequestMapping("/delete")
 	@ResponseBody
-	public ReturnT<String> delete(String key){
-		return xxlConfNodeService.delete(key);
+	public ReturnT<String> delete(HttpServletRequest request, String key){
+		XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
+		return xxlConfNodeService.delete(key, loginUser);
 	}
 
 	/**
@@ -76,8 +82,9 @@ public class ConfController {
 	 */
 	@RequestMapping("/add")
 	@ResponseBody
-	public ReturnT<String> add(XxlConfNode xxlConfNode){
-		return xxlConfNodeService.add(xxlConfNode);
+	public ReturnT<String> add(HttpServletRequest request, XxlConfNode xxlConfNode){
+		XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
+		return xxlConfNodeService.add(xxlConfNode, loginUser);
 	}
 	
 	/**
@@ -86,8 +93,9 @@ public class ConfController {
 	 */
 	@RequestMapping("/update")
 	@ResponseBody
-	public ReturnT<String> update(XxlConfNode xxlConfNode){
-		return xxlConfNodeService.update(xxlConfNode);
+	public ReturnT<String> update(HttpServletRequest request, XxlConfNode xxlConfNode){
+		XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
+		return xxlConfNodeService.update(xxlConfNode, loginUser);
 	}
 	
 }
