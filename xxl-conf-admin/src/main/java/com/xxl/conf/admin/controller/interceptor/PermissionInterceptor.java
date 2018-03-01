@@ -28,10 +28,12 @@ public class PermissionInterceptor extends HandlerInterceptorAdapter {
 
 		// if need login
 		boolean needLogin = true;
+		boolean needAdminuser = false;
 		HandlerMethod method = (HandlerMethod)handler;
 		PermessionLimit permission = method.getMethodAnnotation(PermessionLimit.class);
-		if (permission!=null && !permission.limit()) {
-			needLogin = false;
+		if (permission!=null) {
+			needLogin = permission.limit();
+			needAdminuser = permission.adminuser();
 		}
 
 		if (needLogin) {
@@ -40,6 +42,9 @@ public class PermissionInterceptor extends HandlerInterceptorAdapter {
 				response.sendRedirect(request.getContextPath() + "/toLogin");
 				//request.getRequestDispatcher("/toLogin").forward(request, response);
 				return false;
+			}
+			if (needAdminuser && loginUser.getPermission()!=1) {
+				throw new RuntimeException("权限拦截");
 			}
 			request.setAttribute(LoginService.LOGIN_IDENTITY, loginUser);
 		}

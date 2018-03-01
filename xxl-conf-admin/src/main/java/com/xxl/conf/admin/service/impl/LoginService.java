@@ -2,6 +2,7 @@ package com.xxl.conf.admin.service.impl;
 
 import com.xxl.conf.admin.core.model.XxlConfUser;
 import com.xxl.conf.admin.core.util.CookieUtil;
+import com.xxl.conf.admin.core.util.JacksonUtil;
 import com.xxl.conf.admin.core.util.ReturnT;
 import com.xxl.conf.admin.dao.XxlConfUserDao;
 import org.springframework.context.annotation.Configuration;
@@ -26,25 +27,15 @@ public class LoginService {
     private XxlConfUserDao xxlConfUserDao;
 
     private String makeToken(XxlConfUser xxlConfUser){
-        String token = xxlConfUser.getUsername()
-                .concat("_")
-                .concat(xxlConfUser.getPassword())
-                .concat("_")
-                .concat(String.valueOf(xxlConfUser.getPermission()));	    // username_password(md5)
-        String tokenHex = new BigInteger(token.getBytes()).toString(16);
+        String tokenJson = JacksonUtil.writeValueAsString(xxlConfUser);
+        String tokenHex = new BigInteger(tokenJson.getBytes()).toString(16);
         return tokenHex;
     }
     private XxlConfUser parseToken(String tokenHex){
         XxlConfUser xxlConfUser = null;
         if (tokenHex != null) {
-            String token = new String(new BigInteger(tokenHex, 16).toByteArray());      // username_password(md5)
-            String[] tokenArr = token.split("_");
-            if (tokenArr.length == 3) {
-                xxlConfUser = new XxlConfUser();
-                xxlConfUser.setUsername(tokenArr[0]);
-                xxlConfUser.setPassword(tokenArr[1]);
-                xxlConfUser.setPermission(Integer.valueOf(tokenArr[2]));
-            }
+            String tokenJson = new String(new BigInteger(tokenHex, 16).toByteArray());      // username_password(md5)
+            xxlConfUser = JacksonUtil.readValue(tokenJson, XxlConfUser.class);
         }
         return xxlConfUser;
     }

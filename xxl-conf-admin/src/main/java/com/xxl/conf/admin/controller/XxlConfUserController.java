@@ -1,5 +1,6 @@
 package com.xxl.conf.admin.controller;
 
+import com.xxl.conf.admin.controller.annotation.PermessionLimit;
 import com.xxl.conf.admin.core.model.XxlConfUser;
 import com.xxl.conf.admin.core.util.ReturnT;
 import com.xxl.conf.admin.dao.XxlConfUserDao;
@@ -28,30 +29,19 @@ public class XxlConfUserController {
     private XxlConfUserDao xxlConfUserDao;
 
     @RequestMapping("")
+    @PermessionLimit(adminuser = true)
     public String index(HttpServletRequest request){
-
-        // valid permission
-        XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
-        if (loginUser.getPermission() != 1) {
-            throw new RuntimeException("权限拦截");
-        }
-
         return "user/user.index";
     }
 
     @RequestMapping("/pageList")
+    @PermessionLimit(adminuser = true)
     @ResponseBody
     public Map<String, Object> pageList(HttpServletRequest request,
                                         @RequestParam(required = false, defaultValue = "0") int start,
                                         @RequestParam(required = false, defaultValue = "10") int length,
                                         String username,
                                         int permission) {
-
-        // valid permission
-        XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
-        if (loginUser.getPermission() != 1) {
-            throw new RuntimeException("权限拦截");
-        }
 
         // xxlConfNode in mysql
         List<XxlConfUser> data = xxlConfUserDao.pageList(start, length, username, permission);
@@ -71,14 +61,9 @@ public class XxlConfUserController {
      * @return
      */
     @RequestMapping("/add")
+    @PermessionLimit(adminuser = true)
     @ResponseBody
     public ReturnT<String> add(HttpServletRequest request, XxlConfUser xxlConfUser){
-
-        // valid permission
-        XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
-        if (loginUser.getPermission() != 1) {
-            throw new RuntimeException("权限拦截");
-        }
 
         // valid
         if (StringUtils.isBlank(xxlConfUser.getUsername())){
@@ -105,15 +90,11 @@ public class XxlConfUserController {
      * @return
      */
     @RequestMapping("/delete")
+    @PermessionLimit(adminuser = true)
     @ResponseBody
     public ReturnT<String> delete(HttpServletRequest request, String username){
 
-        // valid permission
         XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
-        if (loginUser.getPermission() != 1) {
-            throw new RuntimeException("权限拦截");
-        }
-
         if (loginUser.getUsername().equals(username)) {
             return new ReturnT<String>(ReturnT.FAIL.getCode(), "禁止操作当前登录账号");
         }
@@ -133,14 +114,11 @@ public class XxlConfUserController {
      * @return
      */
     @RequestMapping("/update")
+    @PermessionLimit(adminuser = true)
     @ResponseBody
     public ReturnT<String> update(HttpServletRequest request, XxlConfUser xxlConfUser){
 
-        // valid permission
         XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
-        if (loginUser.getPermission() != 1) {
-            throw new RuntimeException("权限拦截");
-        }
         if (loginUser.getUsername().equals(xxlConfUser.getUsername())) {
             return new ReturnT<String>(ReturnT.FAIL.getCode(), "禁止操作当前登录账号");
         }

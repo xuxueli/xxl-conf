@@ -1,5 +1,6 @@
 package com.xxl.conf.admin.controller;
 
+import com.xxl.conf.admin.controller.annotation.PermessionLimit;
 import com.xxl.conf.admin.core.model.XxlConfProject;
 import com.xxl.conf.admin.core.util.ReturnT;
 import com.xxl.conf.admin.dao.XxlConfProjectDao;
@@ -28,6 +29,7 @@ public class ProjectController {
 	private XxlConfNodeDao xxlConfNodeDao;
 
 	@RequestMapping
+	@PermessionLimit(adminuser = true)
 	public String index(Model model) {
 
 		List<XxlConfProject> list = xxlConfProjectDao.findAll();
@@ -37,6 +39,7 @@ public class ProjectController {
 	}
 
 	@RequestMapping("/save")
+	@PermessionLimit(adminuser = true)
 	@ResponseBody
 	public ReturnT<String> save(XxlConfProject xxlConfProject){
 
@@ -62,6 +65,7 @@ public class ProjectController {
 	}
 
 	@RequestMapping("/update")
+	@PermessionLimit(adminuser = true)
 	@ResponseBody
 	public ReturnT<String> update(XxlConfProject xxlConfProject){
 
@@ -78,6 +82,7 @@ public class ProjectController {
 	}
 
 	@RequestMapping("/remove")
+	@PermessionLimit(adminuser = true)
 	@ResponseBody
 	public ReturnT<String> remove(String appname){
 

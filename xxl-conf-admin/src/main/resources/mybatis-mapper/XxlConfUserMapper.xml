@@ -7,12 +7,14 @@
 		<result column="username" property="username" />
 		<result column="password" property="password" />
 	    <result column="permission" property="permission" />
+		<result column="permission_projects" property="permissionProjects" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
 		t.`username`,
 		t.`password`,
-		t.`permission`
+		t.`permission`,
+		t.`permission_projects`
 	</sql>
 
 	<select id="pageList" parameterType="java.util.Map" resultMap="xxlConfUser">
@@ -47,19 +49,22 @@
 		INSERT INTO xxl_conf_user(
 			`username`,
 			`password`,
-			`permission`
+			`permission`,
+			`permission_projects`
 		)
 		VALUES(
 			#{username},
 			#{password},
-			#{permission}
+			#{permission},
+			#{permissionProjects}
 		)
 	</insert>
 
 	<update id="update" parameterType="com.xxl.conf.admin.core.model.XxlConfUser" >
 		UPDATE xxl_conf_user
 		SET `password` = #{password},
-			`permission` = #{permission}
+			`permission` = #{permission},
+			`permission_projects` = #{permissionProjects}
 		WHERE `username` = #{username}
 	</update>
 
