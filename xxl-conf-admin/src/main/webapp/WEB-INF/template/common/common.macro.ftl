@@ -28,8 +28,6 @@
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/scrollup/image.css">
 	<!-- pace -->
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/pace/themes/pace-theme-flash.css">
-	<#-- toastr -->
-	<link rel="stylesheet" href="${request.contextPath}/static/plugins/toastr/toastr.css">
 
 </#macro>
 
@@ -49,8 +47,8 @@
     <script src="${request.contextPath}/static/plugins/pace/pace.min.js"></script>
 	<#-- jquery.cookie -->
     <script src="${request.contextPath}/static/plugins/jquery/jquery.cookie.js"></script>
-	<#-- toastr -->
-	<script src="${request.contextPath}/static/plugins/toastr/toastr.js"></script>
+    <#-- jquery.validate -->
+    <script src="${request.contextPath}/static/plugins/jquery/jquery.validate.min.js"></script>
 
 	<#-- layer -->
 	<script src="${request.contextPath}/static/plugins/layer/layer.js"></script>

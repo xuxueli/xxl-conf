@@ -169,7 +169,6 @@
 	<@netCommon.commonScript/>
     <script src="${request.contextPath}/static/adminlte/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="${request.contextPath}/static/adminlte/plugins/datatables/dataTables.bootstrap.min.js"></script>
-    <script src="${request.contextPath}/static/plugins/jquery/jquery.validate.min.js"></script>
 
     <script src="${request.contextPath}/static/js/xxl.alert.1.js"></script>
     <script src="${request.contextPath}/static/js/conf.1.js"></script>
