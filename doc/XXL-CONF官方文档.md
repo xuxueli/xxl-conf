@@ -410,6 +410,7 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 3、local cache 备份到磁盘；zk异常且local properties未配置时，从磁盘上读取配置；
 - 4、Local Cache缓存长度考虑支持自定义；
 - 5、多环境支持：移除zkpath属性。配置中心枚举预设"product、preview、beta"等多环境，客户端通过env属性选择对应环境使用。
+- 6、支持API服务接口方式操作配置数据；
 
 ## 七、其他
 
