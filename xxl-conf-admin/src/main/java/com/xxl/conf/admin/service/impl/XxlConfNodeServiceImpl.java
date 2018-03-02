@@ -98,6 +98,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 
 		xxlConfManager.delete(key);
 		xxlConfNodeDao.delete(key);
+		xxlConfNodeLogDao.deleteTimeout(key, 0);
 		return ReturnT.SUCCESS;
 	}
 
