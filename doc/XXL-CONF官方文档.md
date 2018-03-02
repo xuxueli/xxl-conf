@@ -397,6 +397,7 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 20、Sample项目目录结构规范；
 - 21、新增SpringBoot类型Sample项目；
 
+### 6.8 版本 v1.4.1 新特性[迭代中]
 
 ### TODO LIST
 - 1、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；
