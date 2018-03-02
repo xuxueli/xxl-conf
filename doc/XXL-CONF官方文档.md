@@ -308,18 +308,7 @@ callback | 配置更新时，是否需要同步刷新配置
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201609/13124946_jTID.jpg "在这里输入图片标题")
 
-### 5.2 "配置项" 设计
-
-系统配置信息以K/V的形式存在, "配置项" 属性如下:
-
-- 项目: "配置项" 的项目, 便于配置管理;
-- KEY : "配置项" 的全局唯一标识, 对应一条配置信息;
-- VALUE : "配置项" 中保存的数据信息, 仅仅支持String字符串格式; 
-- 描述 : 配置项的描述信息;
-
-每条配置,将会生成全局唯一标示GroupKey,在client端使用时,需要通过该值匹配对应的配置信息;
-
-### 5.3 "配置中心" 设计
+### 5.2 "配置中心" 设计
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201609/13165343_V4Mt.jpg "在这里输入图片标题")
 
@@ -327,80 +316,19 @@ callback | 配置更新时，是否需要同步刷新配置
 - 2、数据库备份配置信息: 配置信息在ZK中的新增、变更等操作, 将会同步备份到Mysql中, 进一步保证数据的安全性;
 - 3、配置推送: 配置推送功能在ZK的Watch机制实现。Client在加载一条配置信息时将会Watch该配置对应的ZK节点, 因此, 当对该配置项进行配置更新等操作时, 将会触发ZK的NodeDataChanged广播, Client竟会立刻得到通知并刷新本地缓存中的配置信息;
 
-> ZK之watcher普及(来源官方文档,以及网络博客)
+"配置中心" 提供Web界面供用户对配置信息进行配置查询、配置新增、配置更新和配置删除等操作;
 
-    1、可以注册watcher的方法：getData、exists、getChildren。
-    2、可以触发watcher的方法：create、delete、setData。连接断开的情况下触发的watcher会丢失。
-    3、一个Watcher实例是一个回调函数，被回调一次后就被移除了。如果还需要关注数据的变化，需要再次注册watcher。
-    4、New ZooKeeper时注册的watcher叫default watcher，它不是一次性的，只对client的连接状态变化作出反应。(推荐ZK初始化时, 主动Watcher如exists)
-    5、实现永久监听: 由于zookeeper是一次性监听，所以我们必须在wather的process方法里面再设置监听。
-    6、getChildren("/path")监视/path的子节点，如果（/path）自己删了，也会触发NodeDeleted事件。
-
-
-《操作--事件》 | event For “/path” | 	event For “/path/child”
---- | --- | ---
-create(“/path”) | EventType.NodeCreated | 无
-delete(“/path”) |   EventType.NodeDeleted | 无
-setData(“/path”) |  EventType.NodeDataChanged | 无
-create(“/path/child”) | EventType.NodeChildrenChanged（getChild） | EventType.NodeCreated
-delete(“/path/child”) | EventType.NodeChildrenChanged（getChild） | EventType.NodeDeleted
-setData(“/path/child”) | 无 | EventType.NodeDataChanged
-
-
-《事件--Watch方式》 | Default Watcher | exists(“/path”) | getData(“/path”) | 	getChildren(“/path”)
---- | --- | --- | ---
-EventType.None  | 触发 | 触发 | 触发 | 触发 
-EventType.NodeCreated  |  | 触发 | 触发 |  
-EventType.NodeDeleted  |  | 触发 | 触发 | 
-EventType.NodeDataChanged  |  | 触发 | 触发 | 
-EventType.NodeChildrenChanged  |  |  |  | 触发 
-
-> ZooKeeper的一个性能测试
-
-[测试数据来自阿里中间件团队](http://jm.taobao.org/2011/07/15/1070/)
-
-ZK集群情况: 3台ZooKeeper服务器。8核64位jdk1.6；log和snapshot放在不同磁盘;
-
-- 场景一: pub创建NODE,随后删除
-    - 操作: 同一个目录下，先create EPHEMERAL node，再delete；create和delete各计一次更新。没有订阅。一个进程开多个连接，每个连接绑定一个线程，在多个path下做上述操作；不同的连接操作的path不同
-    - 结果数据: "dataSize(字节)-TPS-响应时间(ms)" 统计结果为: 255-14723-82, 1024-7677-280, 4096-2037-1585;
-
-- 场景二: pub创建NODE, sub订阅并获取数据
-    - 操作: 一个进程开多个连接，每连接一个线程，每个连接在多个path下做下述操作；不同的连接操作的path不同。每个path有3个订阅者连接，一个修改者连接。先全部订阅好。然后每个修改者在自己的每个path下创建一个EPHEMERAL node，不删除；创建前记录时间，订阅者收到event后记录时间(eventStat)；重新get到数据后再记录时间(dataStat)。共1000个pub连接，3000个sub连接，20W条数据。收到通知后再去读取数据，五台4核client机器。
-    - 结果汇总: getAfterNotify=false（只收事件，受到通知后不去读取数据）；五台4核client机器
-    - 结果数据: "dataSize(字节)-TPS-响应时间(ms)" 统计结果为: 255-1W+-256ms, 1024-1W+-256, 2048-1W+-270, 4096-8000+-520;
-
-- 场景三: pub创建NODE,随后设置数据
-    - 一个进程开多个连接，每连接一个线程，每个连接在多个path下做下述操作；不同的连接操作的path不同。每个path有一个修改者连接，没有订阅者。每个修改者在自己的每个path下设置数据。
-    - 结果汇总: getAfterNotify=false（只收事件，受到通知后不去读取数据）；五台4核client机器
-    - 结果数据: "dataSize(字节)-TPS-响应时间(ms)" 统计结果为: 255-14723-82, 1024-7677-280, 4096-2037-1585 ;
-    
-总结: 由于一致性协议带来的额外网络交互，消息开销，以及本地log的IO开销，再加上ZK本身每1000条批量处理1次的优化策略，写入的平均响应时间总会在50-60ms之上。但是整体的TPS还是可观的。单个写入数据的体积越大，响应时间越长，TPS越低，这也是普遍规律了。压测过程中log文件对磁盘的消耗很大。实际运行中应该使用自动脚本定时删除历史log和snapshot文件。
-
-### 5.4 "配置中心" 设计
-
-"配置中心" 是 "配置中心" 的上层封装, 提供Web界面供用户对配置信息进行配置查询、配置新增、配置更新和配置删除等操作;
-
-### 5.5 "客户端" 设计
+### 5.3 "客户端" 设计
 
 ![输入图片说明](https://static.oschina.net/uploads/img/201609/14111236_q8oi.jpg "在这里输入图片标题")
 
-**API方式加载配置**: 客户端主要分为三层:
+客户端主要分为三层:
 
-- ZK-Client : 第一层为ZK远程客户端的封装, 当业务方项目初始化某一个用到的配置项时, 将会触发ZK-Client对该配置对应节点的Watch, 因此当该节点变动时将会监听到ZK的类似NodeDataChanged的广播, 可以实时获取最新配置信息; 
-- Ehcache : 第二层为客户端本地缓存, 可以大大提高系统的并发能力, 当配置初始化或者接受到ZK-Client的配置变更时, 将会把配置信息缓存只Encache中, 业务中针对配置的查询都是读缓存方式实现, 降低对ZK集群的压力;
-- Client-API : 第三层为暴露给业务方使用API, 简单易用, 一行代码获取配置信息, 同时可保证API获取到的配置信息是实时最新的配置信息;
+    - ZK-Client : 第一层为ZK远程客户端的封装, 当业务方项目初始化某一个用到的配置项时, 将会触发ZK-Client对该配置对应节点的Watch, 因此当该节点变动时将会监听到ZK的类似NodeDataChanged的广播, 可以实时获取最新配置信息; 
+    - Ehcache : 第二层为客户端本地缓存, 可以大大提高系统的并发能力, 当配置初始化或者接受到ZK-Client的配置变更时, 将会把配置信息缓存只Encache中, 业务中针对配置的查询都是读缓存方式实现, 降低对ZK集群的压力;
+    - Client-API : 第三层为暴露给业务方使用API, 简单易用, 一行代码获取配置信息, 同时可保证API获取到的配置信息是实时最新的配置信息;
 
-(API方式加载配置, 因为底层做了配置本地缓存, 因此可以放心应用在业务代码中, 不必担心并发压力。完整的支持配置实时推送更新)
-
-![输入图片说明](https://static.oschina.net/uploads/img/201609/14111248_wzwN.jpg "在这里输入图片标题")
-
-**Bean方式加载配置**: 
-
-系统会在Spring容器中追加一个"PropertyPlaceholderConfigurer"属性解析器, 内部通过自定义的"StringValueResolver"解析器解析配置占位符 "${...}", 匹配到的配置信息将调用"XXL-CFONF"的API客户端加载最新配置信息进行Bean对象的属性赋值,最终完成实例化过程。
-
-(Bean方式加载配置,仅仅在实例化时加载一次; 考虑都实例化后的对象通常为持久化对象, 如数据库连接池对象, 不建议配置的太灵活, 因此Bean类型配置更新需要重启机器)
-
+得益于LocalCache, 因此可以放心应用在业务代码中, 不必担心并发压力。
 
 
 ## 六、历史版本
