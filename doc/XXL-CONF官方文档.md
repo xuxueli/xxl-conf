@@ -126,6 +126,9 @@ xxl.conf.admin.jdbc.username=root
 xxl.conf.admin.jdbc.password=root_pwd
 ```
 
+配置中心支持集群部署，提高配置中心负载能力和可用性。  
+配置中心集群部署时，项目配置文件需保持一致。
+
 ### 2.4 “接入XXL-CONF的示例项目” 项目配置
 
     项目：xxl-conf-sample-spring
