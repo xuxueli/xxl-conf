@@ -256,32 +256,31 @@ XXL-CONF 提供多种配置方式，包括 "API、 @XxlConf、XML" 三种配置�
 
 
 ### 方式1: API方式
-
-    - 参考 "IndexController" 代码如下：
-    ```
-    String paramByApi = XxlConfClient.get("default.key01", null);
-    ```
-    - 用法：代码中直接调用API即可，示例代码 ""XxlConfClient.get("key", null)"";
-    - 优点：
-        - 配置从配置中心自动加载；
-        - 存在LocalCache，不用担心性能问题；
-        - 支持动态推送更新；
-        - 支持多数据类型；
+参考 "IndexController" 代码如下：
+```
+String paramByApi = XxlConfClient.get("default.key01", null);
+```
+- 用法：代码中直接调用API即可，示例代码 ""XxlConfClient.get("key", null)"";
+- 优点：
+    - 配置从配置中心自动加载；
+    - 存在LocalCache，不用担心性能问题；
+    - 支持动态推送更新；
+    - 支持多数据类型；
 
 
 ### 方式2: @XxlConf 注解方式
-    - 参考 "DemoConf.paramByAnno" 属性配置；示例代码 
-    ```
-    @XxlConf("default.key02")
-    public String paramByAnno;
-    ```
-    - 用法：对象Field上加注解 ""@XxlConf("default.key02")"，支持设置默认值，支持设置是否开启动态刷新；
-    - 优点：
-        - 配置从配置中心自动加载；
-        - 存在LocalCache，不用担心性能问题；
-        - 支持动态推送更新；
-        - 支持设置配置默认值；
-        - 可配置是否开启 "动态推送更新";
+参考 "DemoConf.paramByAnno" 属性配置；示例代码 
+```
+@XxlConf("default.key02")
+public String paramByAnno;
+```
+- 用法：对象Field上加注解 ""@XxlConf("key")"，支持设置默认值，支持设置是否开启动态刷新；
+- 优点：
+    - 配置从配置中心自动加载；
+    - 存在LocalCache，不用担心性能问题；
+    - 支持动态推送更新；
+    - 支持设置配置默认值；
+    - 可配置是否开启 "动态推送更新";
         
 “@XxlConf”注解属性 | 说明
 --- | ---
@@ -291,20 +290,23 @@ callback | 配置更新时，是否需要同步刷新配置
 
 
 ### 方式3: XML占位符方式
-    - 参考 "applicationcontext-xxl-conf.xml" 中 "DemoConf.paramByXml" 属性配置；示例代码如下：
-    ```
-    <bean id="demoConf" class="com.xxl.conf.sample.demo.DemoConf">
-        <property name="paramByXml" value="${default.key03}" />
-    </bean>
-    ```
-    - 用法：占位符方式 "${key}"；
-    - 优点：
-        - 配置从配置中心自动加载；
-        - 存在LocalCache，不用担心性能问题；
-        - 支持动态推送更新；
+参考 "applicationcontext-xxl-conf.xml" 中 "DemoConf.paramByXml" 属性配置；示例代码如下：
+```
+<bean id="demoConf" class="com.xxl.conf.sample.demo.DemoConf">
+    <property name="paramByXml" value="${key}" />
+</bean>
+```
+- 用法：占位符方式 "${key}"；
+- 优点：
+    - 配置从配置中心自动加载；
+    - 存在LocalCache，不用担心性能问题；
+    - 支持动态推送更新；
+
 
 ### 其他方式: 配置变更监听
 可开发Listener逻辑，监听配置变更事件；可据此实现动态刷新JDBC连接池等高级功能；
+
+参考 "IndexController" 代码如下：
 ```
 XxlConfClient.addListener("default.key01", new XxlConfListener(){
     @Override
