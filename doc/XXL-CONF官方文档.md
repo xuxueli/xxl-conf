@@ -303,7 +303,16 @@ callback | 配置更新时，是否需要同步刷新配置
         - 存在LocalCache，不用担心性能问题；
         - 支持动态推送更新；
 
-
+### 其他方式: 配置变更监听
+可开发Listener逻辑，监听配置变更事件；可据此实现动态刷新JDBC连接池等高级功能；
+```
+XxlConfClient.addListener("default.key01", new XxlConfListener(){
+    @Override
+    public void onChange(String key, String value) throws Exception {
+        logger.info("配置变更事件通知：{}={}", key, value);
+    }
+});
+```
 
 ## 五、总体设计
 
