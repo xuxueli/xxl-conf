@@ -46,7 +46,7 @@ $(function(){
 						var temp = (row.value.length > 20)? row.value.substring(0, 20)+'...' : row.value;
 						return "<span title='"+ row.value +"'>"+ temp +"</span>";;
 					} else {
-						var confDiff = '<table border=1 bordercolor="white" ' +
+						var cacheValue = '<table border=1 bordercolor="white" ' +
 							'style="border-collapse:collapse;width: 100%;table-layout:fixed;word-wrap:break-word;" >\n' +
                         '        <tbody>\n' +
                         '            <tr>\n' +
@@ -59,10 +59,9 @@ $(function(){
                         '            </tr>\n' +
                         '        </tbody>\n' +
                         '    </table>';
-                        confDiffArr[row.key] = confDiff;
+                        tecCache['diff_' + row.key] = cacheValue;
 
-						var html = "<span style='color: red'>数据未同步: <a href='javascript:;' class='tecTips' key='"+ row.key +"' >查看</a></span>";
-
+						var html = "<span style='color: red'>数据未同步: <a href='javascript:;' class='tecTips' cacheKey='diff_"+ row.key +"' >查看</a></span>";
 						return html;
 					}
 				}
@@ -77,17 +76,41 @@ $(function(){
                         confData[row.key] = row;
 
                         // log list
-                        var logList = '';
+                        var logListBtn = '';
                         if (row.logList && row.logList.length>0) {
-                            logList = '<button class="btn btn-warning btn-xs logList" type="button">变更历史</button>  ';
+                            logListBtn = '<button class="btn btn-warning btn-xs tecTips" cacheKey="log_'+ row.key +'" type="button">变更历史</button>  ';
 
-                            // TODO，配置变更历史
+                            var cacheValue = ''+
+                                '   <table border=1 bordercolor="white" ' +
+                                '       style="border-collapse:collapse;width: 100%;table-layout:fixed;word-wrap:break-word;" >\n' +
+                                '        <tbody>\n';
+
+                                cacheValue +=
+                                    '            <tr>\n' +
+                                    '                <td style="width:27%;padding: 10px;" >操作时间</td>\n' +
+                                    '                <td style="width:23%;padding: 10px;" >操作人</td>\n' +
+                                    '                <td style="width:50%;padding: 10px;" >配置Value</td>\n' +
+                                    '            </tr>\n';
+                                for (var i in row.logList) {
+                                    cacheValue +=
+                                        '            <tr>\n' +
+                                        '                <td style="width:27%;padding: 10px;" >' + moment(new Date(row.logList[i].addtime)).format("YYYY-MM-DD HH:mm:ss") + '</td>\n' +
+                                        '                <td style="width:23%;padding: 10px;" >' + row.logList[i].optuser + '</td>\n' +
+                                        '                <td style="width:50%;padding: 10px;" >' + row.logList[i].value + '</td>\n' +
+                                        '            </tr>\n';
+                                }
+
+                                cacheValue += '' +
+                                    '   </tbody>\n' +
+                                    '</table>';
+
+                            tecCache['log_' + row.key] = cacheValue;
                         }
 
 						// html
 						var html = '<p key="'+ row.key +'" >'+
 							'<button class="btn btn-warning btn-xs update" type="button">编辑</button>  '+
-                            logList +
+                            logListBtn +
 							'<button class="btn btn-danger btn-xs delete" type="button">删除</button>  '+
 							'</p>';
 
@@ -126,13 +149,12 @@ $(function(){
 		confTable.fnDraw();
 	});
 
-    var confDiffArr = {};
+	// tecTips
+    var tecCache = {};
 	$("#conf_list").on('click', '.tecTips',function() {
-		var key = $(this).attr("key");
-
-        var confDiff = confDiffArr[key];
-
-		ComAlertTec.show(confDiff);
+		var cacheKey = $(this).attr("cacheKey");
+        var cacheValue = tecCache[cacheKey];
+		ComAlertTec.show(cacheValue);
 	});
 
 

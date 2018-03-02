@@ -49,6 +49,7 @@
 			AND addtime NOT IN (
 				SELECT addtime FROM(
 					SELECT addtime FROM xxl_conf_node_log
+					WHERE `key` = #{key}
 					ORDER BY addtime DESC LIMIT #{length}
 				) t1
 			)
