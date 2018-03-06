@@ -10,6 +10,7 @@ import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -82,7 +83,9 @@ public class XxlConfLocalCacheConf {
     /**
      * local cache node
      */
-    public static class CacheNode{
+    public static class CacheNode implements Serializable{
+        private static final long serialVersionUID = 42L;
+
         private String value;
 
         public CacheNode() {

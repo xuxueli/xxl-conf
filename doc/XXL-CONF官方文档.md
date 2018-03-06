@@ -403,6 +403,7 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 21、新增SpringBoot类型Sample项目；
 
 ### 6.8 版本 v1.4.1 新特性[迭代中]
+- 1、Ehcache缓存对象序列化优化；
 
 ### TODO LIST
 - 1、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；
