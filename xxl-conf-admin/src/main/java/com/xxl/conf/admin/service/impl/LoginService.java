@@ -40,6 +40,15 @@ public class LoginService {
         return xxlConfUser;
     }
 
+    /**
+     * login
+     *
+     * @param response
+     * @param usernameParam
+     * @param passwordParam
+     * @param ifRemember
+     * @return
+     */
     public ReturnT<String> login(HttpServletResponse response, String usernameParam, String passwordParam, boolean ifRemember){
 
         XxlConfUser xxlConfUser = xxlConfUserDao.load(usernameParam);
@@ -59,10 +68,22 @@ public class LoginService {
         return ReturnT.SUCCESS;
     }
 
+    /**
+     * logout
+     *
+     * @param request
+     * @param response
+     */
     public void logout(HttpServletRequest request, HttpServletResponse response){
         CookieUtil.remove(request, response, LOGIN_IDENTITY);
     }
 
+    /**
+     * logout
+     *
+     * @param request
+     * @return
+     */
     public XxlConfUser ifLogin(HttpServletRequest request){
         String cookieToken = CookieUtil.getValue(request, LOGIN_IDENTITY);
         if (cookieToken != null) {

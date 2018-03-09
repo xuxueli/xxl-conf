@@ -39,7 +39,7 @@ $(function() {
 
 	});
 
-	// jquery.validate 自定义校验 “英文字母开头，只含有英文字母、数字和下划线”
+	// jquery.validate 自定义校验
 	jQuery.validator.addMethod("myValid01", function(value, element) {
 		var length = value.length;
 		var valid = /^[a-z][a-zA-Z0-9-]*$/;

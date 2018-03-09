@@ -107,10 +107,10 @@ public class UserController {
             return new ReturnT<String>(ReturnT.FAIL.getCode(), "禁止操作当前登录账号");
         }
 
-        List<XxlConfUser> adminList = xxlConfUserDao.pageList(0, 1 , null, 1);
+        /*List<XxlConfUser> adminList = xxlConfUserDao.pageList(0, 1 , null, 1);
         if (adminList.size()<2) {
 
-        }
+        }*/
 
         xxlConfUserDao.delete(username);
         return ReturnT.SUCCESS;
@@ -142,7 +142,7 @@ public class UserController {
         }
 
         if (StringUtils.isNotBlank(xxlConfUser.getPassword())) {
-            if (!(xxlConfUser.getPassword().length()>=4 && xxlConfUser.getPassword().length()<=100)) {
+            if (!(xxlConfUser.getPassword().length()>=4 && xxlConfUser.getPassword().length()<=50)) {
                 return new ReturnT<String>(ReturnT.FAIL.getCode(), "密码长度限制为4~50");
             }
             // passowrd md5
