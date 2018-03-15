@@ -52,6 +52,18 @@ XXL-CONF 是一个分布式配置管理平台，提供统一的配置管理服�
 - 15、配置权限控制；以项目为维度进行配置权限控制，管理员拥有全部项目权限，普通用户只有分配才拥有项目下配置的查看和管理权限；
 - 16、历史版本回滚：记录配置变更历史，方便历史配置版本回溯，默认记录10个历史版本；
 
+## Development
+于2015年，我在github上创建XXL-CONF项目仓库并提交第一个commit，随之进行系统结构设计，UI选型，交互设计……
+
+至今，XXL-CONF已接入多家公司的线上产品线，接入场景如电商业务，O2O业务和核心中间件配置动态化等，截止2018-03-15为止，XXL-CONF已接入的公司包括不限于：
+
+    - 1、深圳市绽放工场科技有限公司
+	- 2、深圳双猴科技有限公司
+	- ……
+
+> 更多接入的公司，欢迎在 [登记地址](https://github.com/xuxueli/xxl-conf/issues/2 ) 登记，登记仅仅为了产品推广。
+
+欢迎大家的关注和使用，XXL-CONF也将拥抱变化，持续发展。
 
 ## Communication
 
@@ -59,18 +71,21 @@ XXL-CONF 是一个分布式配置管理平台，提供统一的配置管理服�
 
 
 ## Contributing
-欢迎参与项目贡献！比如提交PR修一个bug，或者新建 [Issue](https://github.com/xuxueli/xxl-conf/issues/) 讨论新特性或者变更。
+Contributions are welcome! Open a pull request to fix a bug, or open an [Issue](https://github.com/xuxueli/xxl-conf/issues/) to discuss a new feature or change.
 
-## 接入登记
-更多接入的公司，欢迎在 [登记地址](https://github.com/xuxueli/xxl-conf/issues/2 ) 登记，登记仅仅为了产品推广。
+欢迎参与项目贡献！比如提交PR修复一个bug，或者新建 [Issue](https://github.com/xuxueli/xxl-conf/issues/) 讨论新特性或者变更。
+
 
 ## Copyright and License
-产品开源免费，并且将持续提供免费的社区技术支持。个人或企业内部可自由的接入和使用。
+This product is open source and free, and will continue to provide free community technical support. Individual or enterprise users are free to access and use.
 
 - Licensed under the GNU General Public License (GPL) v3.
 - Copyright (c) 2015-present, xuxueli.
 
----
-## Donate
-无论捐赠金额多少都足够表达您这份心意，非常感谢 ：）      [前往捐赠](http://www.xuxueli.com/page/donate.html )
+产品开源免费，并且将持续提供免费的社区技术支持。个人或企业内部可自由的接入和使用。
 
+
+## Donate
+No matter how much the donation amount is enough to express your thought, thank you very much ：）     [To donate](http://www.xuxueli.com/page/donate.html )
+
+无论捐赠金额多少都足够表达您这份心意，非常感谢 ：）      [前往捐赠](http://www.xuxueli.com/page/donate.html )
