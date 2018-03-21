@@ -194,7 +194,7 @@ xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/spring/appli
 ### 3.1、用户（权限）管理
 
 进入 "用户管理" 界面，可查看配置中心中所有用户信息。
-![输入图片说明](https://static.oschina.net/uploads/img/201803/02113507_wNCR.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_wNCR.png "在这里输入图片标题")
 
 新增用户：点击 "新增用户" 按钮，可添加新用户，用户属性说明如下：
 
@@ -206,16 +206,16 @@ xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/spring/appli
     
 系统默认提供了一个管理员用户和一个普通用户。
     
-![输入图片说明](https://static.oschina.net/uploads/img/201803/02113403_E0cT.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_E0cT.png "在这里输入图片标题")
 
 分配项目权限：选中普通用户，点击右侧 "分配项目权限" 按钮，可为用户分配项目权限。拥有项目权限后，该用户可以查看和操作该项目下全部配置数据。
 
-![输入图片说明](https://static.oschina.net/uploads/img/201803/02120028_GaLm.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_GaLm.png "在这里输入图片标题")
 
 修改用户密码：配置中心右上角下拉框，点击 "修改密码" 按钮，可修改当前登录用户的登录密码
 （除此之外，管理员用户，可通过编辑用户信息功能来修改其他用户的登录密码）；
     
-![输入图片说明](https://static.oschina.net/uploads/img/201803/02120524_syzc.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_syzc.png "在这里输入图片标题")
 
 
 ### 3.1、项目管理
@@ -227,14 +227,14 @@ xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/spring/appli
 
 系统默认提供了一个示例项目。
 
-![输入图片说明](https://static.oschina.net/uploads/img/201803/02120951_FVt6.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_FVt6.png "在这里输入图片标题")
 
 
 ### 3.2 配置管理
 
 进入"配置管理" 界面, 选择项目，然后可查看和操作该项目下配置数据。
 
-![输入图片说明](https://static.oschina.net/uploads/img/201803/02121553_K68b.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_K68b.png "在这里输入图片标题")
 
 
 新增配置：点击 "新增配置" 按钮可添加配置数据，配置属性说明如下：
@@ -243,7 +243,7 @@ xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/spring/appli
     - 描述：该配置的描述信息；
     - VALUE：配置的值；
 
-![输入图片说明](https://static.oschina.net/uploads/img/201803/02121602_d5ak.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_d5ak.png "在这里输入图片标题")
 
 至此, 一条配置信息已经添加完成；       
 通过客户端可以获取该配置, 并且支持动态推送更新。 
@@ -251,7 +251,7 @@ xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/spring/appli
 历史版本回滚：配置存在历史变更操作时，点击右侧的 "变更历史" 按钮，可查看该配置的历史变更记录。
 包括操作时间、操作人，设置的配置值等历史数据，因此可以根据历史数据，重新编辑配置并回滚到历史版本；
 
-![输入图片说明](https://static.oschina.net/uploads/img/201803/02175944_Whz5.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_Whz5.png "在这里输入图片标题")
 
 
 ## 四、客户端配置获取
@@ -325,11 +325,11 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 
 ### 5.1 架构图
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/13124946_jTID.jpg "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_jTID.jpg "在这里输入图片标题")
 
 ### 5.2 "配置中心" 设计
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/13165343_V4Mt.jpg "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_V4Mt.jpg "在这里输入图片标题")
 
 - 1、ZK设计: 系统在ZK集群中占用一个根目录 "/xxl-conf", 每新增一条配置项, 将会在该目录下新增一个子节点。结构如下图, 当配置变更时将会触发ZK节点的变更, 将会触发对应类型的ZK广播。
 - 2、数据库备份配置信息: 配置信息在ZK中的新增、变更等操作, 将会同步备份到Mysql中, 进一步保证数据的安全性;
@@ -339,7 +339,7 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 
 ### 5.3 "客户端" 设计
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/14111236_q8oi.jpg "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_q8oi.jpg "在这里输入图片标题")
 
 客户端主要分为三层:
 
