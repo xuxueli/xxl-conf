@@ -110,6 +110,22 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, ConfigurablePropertyResolver propertyResolver) throws BeansException {
 		//super.processProperties(beanFactoryToProcess, propertyResolver);
 
+		// BeanDefinitionVisitor
+		/*BeanDefinitionVisitor beanDefinitionVisitor = new BeanDefinitionVisitor(new StringValueResolver() {
+			@Override
+			public String resolveStringValue(String strVal) {
+				if (xmlKeyValid(strVal)) {
+					// object + property
+					String confKey = xmlKeyParse(strVal);
+					String confValue = XxlConfClient.get(confKey, "");
+
+					return confValue;
+				}
+				return strVal;
+			}
+		});
+		beanDefinitionVisitor.visitBeanDefinition(beanDefinition);*/
+
 		// visit bean definition
 		String[] beanNames = beanFactoryToProcess.getBeanDefinitionNames();
 		if (beanNames != null && beanNames.length > 0) {
@@ -118,28 +134,28 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 
 					// 1、XML('${...}')：resolves placeholders + watch
 					BeanDefinition beanDefinition = beanFactoryToProcess.getBeanDefinition(beanName);
-					MutablePropertyValues pvs = beanDefinition.getPropertyValues();
-					PropertyValue[] pvArray = pvs.getPropertyValues();
+
+                    MutablePropertyValues pvs = beanDefinition.getPropertyValues();
+                    PropertyValue[] pvArray = pvs.getPropertyValues();
 					for (PropertyValue pv : pvArray) {
 						if (pv.getValue() instanceof TypedStringValue) {
 							String propertyName = pv.getName();
 							String typeStringVal = ((TypedStringValue) pv.getValue()).getValue();
 							if (xmlKeyValid(typeStringVal)) {
+
 								// object + property
 								String confKey = xmlKeyParse(typeStringVal);
 								String confValue = XxlConfClient.get(confKey, "");
 
 								// resolves placeholders
-								BeanRefreshXxlConfListener.BeanField beanField = new BeanRefreshXxlConfListener.BeanField(beanName, propertyName);
-								refreshBeanField(beanField, confValue);
+								pvs.add(pv.getName(), confValue);
 
 								// watch
+								BeanRefreshXxlConfListener.BeanField beanField = new BeanRefreshXxlConfListener.BeanField(beanName, propertyName);
 								BeanRefreshXxlConfListener.addBeanField(confKey, beanField);
 							}
 						}
 					}
-					/*new BeanDefinitionVisitor(new StringValueResolver()).visitBeanDefinition(beanDefinition);*/
-
 
 					// 2、Annotation('@XxlConf')：resolves conf + watch
 					if (beanDefinition.getBeanClassName() == null) {
