@@ -1,10 +1,10 @@
 package com.xxl.conf.core.listener;
 
-import com.xxl.conf.core.spring.XxlConfFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,26 +19,32 @@ public class XxlConfListenerFactory {
     /**
      * xxl conf listener repository
      */
-    private static ConcurrentHashMap<String, List<XxlConfListener>> xxlConfListenerRepository = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<String, List<XxlConfListener>> keyListenerRepository = new ConcurrentHashMap<>();
+    private static List<XxlConfListener> noKeyConfListener = Collections.synchronizedList(new ArrayList<XxlConfListener>());
 
     /**
      * add listener with xxl conf change
      *
-     * @param key
+     * @param key   empty will listener all key
      * @param xxlConfListener
      * @return
      */
     public static boolean addListener(String key, XxlConfListener xxlConfListener){
-        if (key==null || key.trim().length()==0 || xxlConfListener==null) {
+        if (xxlConfListener == null) {
             return false;
         }
-        List<XxlConfListener> listeners = xxlConfListenerRepository.get(key);
-        if (listeners == null) {
-            listeners = new ArrayList<>();
+        if (key==null || key.trim().length()==0) {
+            noKeyConfListener.add(xxlConfListener);
+            return true;
+        } else {
+            List<XxlConfListener> listeners = keyListenerRepository.get(key);
+            if (listeners == null) {
+                listeners = new ArrayList<>();
+                keyListenerRepository.put(key, listeners);
+            }
+            listeners.add(xxlConfListener);
+            return true;
         }
-        listeners.add(xxlConfListener);
-        xxlConfListenerRepository.put(key, listeners);
-        return true;
     }
 
     /**
@@ -46,19 +52,27 @@ public class XxlConfListenerFactory {
      *
      * @param key
      */
-    public static void onChange(String key){
+    public static void onChange(String key, String value){
         if (key==null || key.trim().length()==0) {
             return;
         }
-        List<XxlConfListener> listeners = xxlConfListenerRepository.get(key);
-        if (listeners==null || listeners.size()<1) {
-            return;
+        List<XxlConfListener> keyListeners = keyListenerRepository.get(key);
+        if (keyListeners!=null && keyListeners.size()>0) {
+            for (XxlConfListener listener : keyListeners) {
+                try {
+                    listener.onChange(key, value);
+                } catch (Exception e) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
         }
-        for (XxlConfListener listener:listeners) {
-            try {
-                listener.onChange(key);
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+        if (noKeyConfListener.size() > 0) {
+            for (XxlConfListener confListener: noKeyConfListener) {
+                try {
+                    confListener.onChange(key, value);
+                } catch (Exception e) {
+                    logger.error(e.getMessage(), e);
+                }
             }
         }
     }

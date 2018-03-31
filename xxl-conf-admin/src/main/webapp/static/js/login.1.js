@@ -14,25 +14,25 @@ $(function(){
         rules : {  
         	userName : {  
         		required : true ,
-                minlength: 5,
-                maxlength: 18
+                minlength: 4,
+                maxlength: 50
             },  
             password : {  
             	required : true ,
-                minlength: 5,
-                maxlength: 18
+                minlength: 4,
+                maxlength: 50
             } 
         }, 
         messages : {  
         	userName : {  
                 required :"请输入登陆账号."  ,
-                minlength:"登陆账号不应低于5位",
-                maxlength:"登陆账号不应超过18位"
+                minlength:"登陆账号不应低于4位",
+                maxlength:"登陆账号不应超过50位"
             },  
             password : {
             	required :"请输入登陆密码."  ,
-                minlength:"登陆密码不应低于5位",
-                maxlength:"登陆密码不应超过18位"
+                minlength:"登陆密码不应低于4位",
+                maxlength:"登陆密码不应超过50位"
             }
         }, 
 		highlight : function(element) {  
@@ -47,13 +47,17 @@ $(function(){
         },
         submitHandler : function(form) {
 			$.post(base_url + "/login", $("#loginForm").serialize(), function(data, status) {
-				if (data.code == "200") {
-					ComAlert.show(1, "登陆成功", function(){
-						window.location.href = base_url;
-					});
-				} else {
-					ComAlert.show(2, data.msg);
-				}
+                if (data.code == 200) {
+                    layer.msg( '登陆成功' );
+                    setTimeout(function(){
+                        window.location.href = base_url;
+                    }, 500);
+                } else {
+                    layer.open({
+                        icon: '2',
+                        content: (data.msg||'登陆失败')
+                    });
+                }
 			});
 		}
 	});

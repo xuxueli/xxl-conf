@@ -34,6 +34,7 @@ public class XxlConfZkConf {
 						xxlZkClient.destroy();
 						xxlZkClient.getClient();
 						XxlConfLocalCacheConf.reloadAll();
+						logger.info(">>>>>>>>>> xxl-conf, zk re-connect reloadAll success.");
 					}
 
 					String path = watchedEvent.getPath();
@@ -127,17 +128,6 @@ public class XxlConfZkConf {
 	 */
 	public static String keyToPath(String nodeKey){
 		return Environment.ZK_PATH + "/" + nodeKey;
-	}
-
-	/**
-	 * generate group key
-	 *
-	 * @param nodeGroup
-	 * @param nodeKey
-	 * @return
-	 */
-	public static String generateGroupKey(String nodeGroup, String nodeKey){
-		return nodeGroup + "." + nodeKey;
 	}
 
 }

@@ -1,6 +1,6 @@
 package com.xxl.conf.admin.core.model;
 
-import com.xxl.conf.core.core.XxlConfZkConf;
+import java.util.List;
 
 /**
  * 配置节点
@@ -8,56 +8,60 @@ import com.xxl.conf.core.core.XxlConfZkConf;
  */
 public class XxlConfNode {
 
-	private String nodeGroup;		// group of prop
-	private String nodeKey; 		// key of prop
-	private String nodeValue; 		// value of prop
-	private String nodeDesc;		// description of prop
+	private String key;			// 配置Key
+	private String appname; 	// 所属项目AppName
+	private String title; 		// 配置描述
+	private String value;		// 配置Value
 
-	private String groupKey;		// key of prop [in zk]
-	private String nodeValueReal; 	// value of prop [in zk]
+	// plugin
+	private String zkValue; 				// ZK中配置Value
+	private List<XxlConfNodeLog> logList;	// 配置变更Log
 
-	public String getNodeGroup() {
-		return nodeGroup;
+	public String getKey() {
+		return key;
 	}
 
-	public void setNodeGroup(String nodeGroup) {
-		this.nodeGroup = nodeGroup;
+	public void setKey(String key) {
+		this.key = key;
 	}
 
-	public String getNodeKey() {
-		return nodeKey;
+	public String getAppname() {
+		return appname;
 	}
 
-	public void setNodeKey(String nodeKey) {
-		this.nodeKey = nodeKey;
+	public void setAppname(String appname) {
+		this.appname = appname;
 	}
 
-	public String getNodeValue() {
-		return nodeValue;
+	public String getTitle() {
+		return title;
 	}
 
-	public void setNodeValue(String nodeValue) {
-		this.nodeValue = nodeValue;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
-	public String getNodeDesc() {
-		return nodeDesc;
+	public String getValue() {
+		return value;
 	}
 
-	public void setNodeDesc(String nodeDesc) {
-		this.nodeDesc = nodeDesc;
+	public void setValue(String value) {
+		this.value = value;
 	}
 
-	public String getGroupKey() {
-		return XxlConfZkConf.generateGroupKey(nodeGroup, nodeKey);
+	public String getZkValue() {
+		return zkValue;
 	}
 
-	public String getNodeValueReal() {
-		return nodeValueReal;
+	public void setZkValue(String zkValue) {
+		this.zkValue = zkValue;
 	}
 
-	public void setNodeValueReal(String nodeValueReal) {
-		this.nodeValueReal = nodeValueReal;
+	public List<XxlConfNodeLog> getLogList() {
+		return logList;
 	}
 
+	public void setLogList(List<XxlConfNodeLog> logList) {
+		this.logList = logList;
+	}
 }

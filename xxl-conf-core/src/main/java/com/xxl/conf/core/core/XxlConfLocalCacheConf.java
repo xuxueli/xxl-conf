@@ -10,6 +10,7 @@ import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -48,10 +49,13 @@ public class XxlConfLocalCacheConf {
                     try {
                         TimeUnit.SECONDS.sleep(60);
                         reloadAll();
-                    } catch (InterruptedException e) {
+                        logger.info(">>>>>>>>>> xxl-conf, refresh thread reloadAll success.");
+                    } catch (Exception e) {
+                        logger.error(">>>>>>>>>> xxl-conf, refresh thread error.");
                         logger.error(e.getMessage(), e);
                     }
                 }
+                logger.info(">>>>>>>>>> xxl-conf, refresh thread stoped.");
             }
         });
         refreshThread.setDaemon(true);
@@ -79,7 +83,9 @@ public class XxlConfLocalCacheConf {
     /**
      * local cache node
      */
-    public static class CacheNode{
+    public static class CacheNode implements Serializable{
+        private static final long serialVersionUID = 42L;
+
         private String value;
 
         public CacheNode() {
@@ -124,7 +130,6 @@ public class XxlConfLocalCacheConf {
 
             }
         }
-        logger.info(">>>>>>>>>> xxl-conf: RELOAD finish.");
     }
 
     /**
@@ -138,7 +143,7 @@ public class XxlConfLocalCacheConf {
         xxlConfLocalCache.put(key, new CacheNode(value));
         logger.info(">>>>>>>>>> xxl-conf: {}: [{}={}]", optType, key, value);
 
-        XxlConfListenerFactory.onChange(key);
+        XxlConfListenerFactory.onChange(key, value);
     }
 
     /**

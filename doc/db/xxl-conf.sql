@@ -1,22 +1,47 @@
 CREATE database if NOT EXISTS `xxl-conf` default character set utf8 collate utf8_general_ci;
 use `xxl-conf`;
 
-CREATE TABLE `XXL_CONF_GROUP` (
-  `group_name` varchar(100) NOT NULL,
-  `group_title` varchar(100) NOT NULL COMMENT '描述',
-  PRIMARY KEY (`group_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-INSERT INTO `XXL_CONF_GROUP` VALUES ('default', '默认分组');
 
-CREATE TABLE `XXL_CONF_NODE` (
-  `node_group` varchar(100) NOT NULL COMMENT '分组',
-  `node_key` varchar(100) NOT NULL COMMENT '配置Key',
-  `node_value` varchar(512) DEFAULT NULL COMMENT '配置Value',
-  `node_desc` varchar(100) DEFAULT NULL COMMENT '配置简介',
-  UNIQUE KEY `u_group_key` (`node_group`,`node_key`)
+
+CREATE TABLE `xxl_conf_node` (
+  `key` varchar(200) NOT NULL COMMENT '配置Key',
+  `appname` varchar(100) NOT NULL COMMENT '所属项目AppName',
+  `title` varchar(100) NOT NULL COMMENT '配置描述',
+  `value` varchar(2000) DEFAULT NULL COMMENT '配置Value',
+  PRIMARY KEY (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `XXL_CONF_NODE` VALUES ('default', 'key01', '168', '测试配置01'), ('default', 'key02', '127.0.0.1:3307', '测试配置02'), ('default', 'key03', 'true', '测试配置03');
+
+CREATE TABLE `xxl_conf_node_log` (
+  `key` varchar(200) NOT NULL COMMENT '配置Key',
+  `title` varchar(100) NOT NULL COMMENT '配置描述',
+  `value` varchar(2000) DEFAULT NULL COMMENT '配置Value',
+  `addtime` datetime NOT NULL COMMENT '操作时间',
+  `optuser` varchar(100) NOT NULL COMMENT '操作人'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `xxl_conf_project` (
+  `appname` varchar(100) NOT NULL COMMENT 'AppName',
+  `title` varchar(100) NOT NULL COMMENT '项目名称',
+  PRIMARY KEY (`appname`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `xxl_conf_user` (
+  `username` varchar(100) NOT NULL COMMENT '账号',
+  `password` varchar(100) NOT NULL COMMENT '密码',
+  `permission` tinyint(4) NOT NULL DEFAULT '0' COMMENT '权限：0-普通用户、1-管理员',
+  `permission_projects` varchar(1000) DEFAULT NULL COMMENT '权限项目列表，多个逗号分隔',
+  PRIMARY KEY (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+INSERT INTO `xxl_conf_node` VALUES ('default.key01', 'default', '测试配置01', '1'), ('default.key02', 'default', '测试配置02', '2'), ('default.key03', 'default', '测试配置03', '3');
+INSERT INTO `xxl_conf_project` VALUES ('default', '示例项目');
+INSERT INTO `xxl_conf_user` VALUES ('admin', 'e10adc3949ba59abbe56e057f20f883e', '1', null), ('user', 'e10adc3949ba59abbe56e057f20f883e', '0', 'default');
+
+
 
 COMMIT;
-

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>分布式配置管理平台</title>
+<title>配置管理中心</title>
 
 <#import "/common/common.macro.ftl" as netCommon>
 <@netCommon.commonStyle />
@@ -15,7 +15,7 @@
 		
 		<@netCommon.commonHeader />
 
-		<@netCommon.commonLeft />
+		<@netCommon.commonLeft "conf" />
 
 		<!-- Content Wrapper. Contains page content -->
 		<div class="content-wrapper">
@@ -34,11 +34,11 @@
                 <div class="row">
                     <div class="col-xs-4">
                         <div class="input-group">
-                            <span class="input-group-addon">分组</span>
-                            <select class="form-control" id="nodeGroup" >
-                                <option value="" >全部</option>
-								<#list XxlConfNodeGroup as group>
-									<option value="${group.groupName}" >${group.groupTitle}</option>
+                            <span class="input-group-addon">项目</span>
+                            <select class="form-control" id="appname" >
+                                <#--<option value="" >全部</option>-->
+								<#list ProjectList as item>
+									<option value="${item.appname}" <#if item.appname = project.appname>selected</#if> >${item.title}</option>
 								</#list>
                             </select>
                         </div>
@@ -46,7 +46,7 @@
                     <div class="col-xs-4">
                         <div class="input-group">
                             <span class="input-group-addon">KEY</span>
-                            <input type="text" class="form-control" id="nodeKey" value="${nodeKey}" autocomplete="on" >
+                            <input type="text" class="form-control" id="key" autocomplete="on" >
                         </div>
                     </div>
                     <div class="col-xs-2">
@@ -60,36 +60,16 @@
 				<!-- 全部配置 -->
 				<div class="box box-info2">
 	                <div class="box-body">
-	                  	<table id="conf_list" class="table table-bordered table-hover">
+	                  	<table id="conf_list" class="table table-bordered table-hover" width="100%" >
 		                    <thead>
 		                      	<tr>
-                                    <th>GROUP</th>
                                     <th>KEY</th>
-			                        <th>GROUP_KEY</th>
 			                        <th>VALUE</th>
-			                        <th>VALUE(zk)</th>
 			                        <th>描述</th>
 			                        <th>操作</th>
 		                      	</tr>
 							</thead>
-		                    <tbody>
-		                    	<#if fileterData?exists>
-		                    		<#list fileterData as item>
-		                    			<tr>
-					                        <td>${item.nodeKey}</td>
-					                        <td <#if item.znodeValue != item.znodeValueReal>style="color:red;font: italic bold"</#if> >${item.znodeValue}</td>
-					                        <td <#if item.znodeValue != item.znodeValueReal>style="color:red;font: italic bold"</#if> >${item.znodeValueReal}</td>
-					                        <td>${item.znodeDesc}</td>
-					                        <td>
-					                        	<div class="input-group">
-						                      		<button class="btn btn-primary btn-xs update" type="button" nodeKey="${item.nodeKey}" znodeValue="${item.znodeValue}" znodeDesc="${item.znodeDesc}" >更新</button>&nbsp;
-						                      		<button class="btn btn-danger btn-xs delete" type="button" nodeKey="${item.nodeKey}">删除</button>
-					                        	</div>
-					                        </td>
-				                      	</tr>
-		                    		</#list>
-		                    	</#if>
-		                    </tbody>
+		                    <tbody></tbody>
 	                  	</table>
 					</div><!-- /.box-body -->
 				</div><!-- /.box -->
@@ -114,28 +94,26 @@
 	         	</div>
 	         	<div class="modal-body">
 					<form class="form-horizontal form" role="form" >
-                        <div class="form-group">
-                            <label for="firstname" class="col-sm-2 control-label">分组</label>
-                            <div class="col-sm-4">
-								<select class="form-control" name="nodeGroup" >
-									<#list XxlConfNodeGroup as group>
-                                        <option value="${group.groupName}" >${group.groupTitle}</option>
-									</#list>
-								</select>
-                        	</div>
-                        </div>
 						<div class="form-group">
 							<label for="firstname" class="col-sm-2 control-label">KEY</label>
-							<div class="col-sm-10"><input type="text" class="form-control" name="nodeKey" placeholder="请输入KEY" maxlength="100" ></div>
+                            <div class="col-sm-10">
+								<div class="input-group" >
+									<span class="input-group-addon" style="background-color: #eee;" >${project.appname}.</span>
+									<input type="text" class="form-control" name="key" placeholder="请输入配置Key" maxlength="100" >
+
+                                    <input type="hidden" name="appname" value="${project.appname}" >
+
+                                </div>
+                            </div>
 						</div>
                         <div class="form-group">
                             <label for="lastname" class="col-sm-2 control-label">描述</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="nodeDesc" placeholder="请输入描述" maxlength="100" ></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" name="title" placeholder="请输入配置描述" maxlength="100" ></div>
                         </div>
 						<div class="form-group">
 							<label for="lastname" class="col-sm-2 control-label">VALUE</label>
 							<div class="col-sm-10">
-                                <textarea class="textarea" name="nodeValue" maxlength="512" placeholder="请输入VALUE" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                                <textarea class="textarea" name="value" maxlength="2000" placeholder="请输入配置Value" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
 							</div>
 						</div>
 						<div class="form-group">
@@ -160,21 +138,17 @@
 	         	<div class="modal-body">
 					<form class="form-horizontal form" role="form" >
                         <div class="form-group">
-                            <label for="firstname" class="col-sm-2 control-label">GROUP</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="nodeGroup" placeholder="请输入KEY" maxlength="100" readonly></div>
-                        </div>
-                        <div class="form-group">
                             <label for="firstname" class="col-sm-2 control-label">KEY</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="nodeKey" placeholder="请输入KEY" maxlength="100" readonly></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" name="key" placeholder="请输入配置Key" maxlength="100" readonly ></div>
                         </div>
                         <div class="form-group">
                             <label for="lastname" class="col-sm-2 control-label">描述</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="nodeDesc" placeholder="请输入描述" maxlength="100" ></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" name="title" placeholder="请输入配置描述" maxlength="100" ></div>
                         </div>
                         <div class="form-group">
                             <label for="lastname" class="col-sm-2 control-label">VALUE</label>
                             <div class="col-sm-10">
-                                <textarea class="textarea" name="nodeValue" maxlength="512" placeholder="请输入VALUE" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                                <textarea class="textarea" name="value" maxlength="2000" placeholder="请输入配置Value" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
                             </div>
                         </div>
 						<div class="form-group">
@@ -189,13 +163,27 @@
 		</div>
 	</div>
 
-	<script>
-		var base_url = '${request.contextPath}';
-	</script>
 	<@netCommon.commonScript/>
+	<script>
+        var hasPermission = false;
+		<#if Request["XXL_CONF_LOGIN_IDENTITY"].permission == 1>
+        	hasPermission = true;
+		<#else>
+			<#if Request["XXL_CONF_LOGIN_IDENTITY"].permissionProjects >
+				<#list Request["XXL_CONF_LOGIN_IDENTITY"].permissionProjects?split(",") as appname >
+					<#if appname == project.appname>
+                    	hasPermission = true;
+					</#if>
+				</#list>
+			</#if>
+		</#if>
+
+	</script>
+
     <script src="${request.contextPath}/static/adminlte/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="${request.contextPath}/static/adminlte/plugins/datatables/dataTables.bootstrap.min.js"></script>
-    <script src="${request.contextPath}/static/plugins/jquery/jquery.validate.min.js"></script>
+    <script src="${request.contextPath}/static/adminlte/plugins/daterangepicker/moment.min.js"></script>
+    <script src="${request.contextPath}/static/js/xxl.alert.1.js"></script>
     <script src="${request.contextPath}/static/js/conf.1.js"></script>
 	
 </body>

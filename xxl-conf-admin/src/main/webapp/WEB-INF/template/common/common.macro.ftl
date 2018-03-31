@@ -28,18 +28,16 @@
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/scrollup/image.css">
 	<!-- pace -->
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/pace/themes/pace-theme-flash.css">
-	<#-- toastr -->
-	<link rel="stylesheet" href="${request.contextPath}/static/plugins/toastr/toastr.css">
 
 </#macro>
 
 <#macro commonScript>
 	<!-- jQuery 2.1.4 -->
-	<script src="${request.contextPath}/static/adminlte/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+	<script src="${request.contextPath}/static/adminlte/plugins/jQuery/jquery-2.2.3.min.js"></script>
 	<!-- Bootstrap 3.3.5 -->
 	<script src="${request.contextPath}/static/adminlte/bootstrap/js/bootstrap.min.js"></script>
 	<!-- FastClick -->
-	<script src="${request.contextPath}/static/adminlte/plugins/fastclick/fastclick.js"></script>
+	<script src="${request.contextPath}/static/adminlte/plugins/fastclick/fastclick.min.js"></script>
 	<!-- AdminLTE App -->
 	<script src="${request.contextPath}/static/adminlte/dist/js/app.min.js"></script>
 
@@ -49,47 +47,87 @@
     <script src="${request.contextPath}/static/plugins/pace/pace.min.js"></script>
 	<#-- jquery.cookie -->
     <script src="${request.contextPath}/static/plugins/jquery/jquery.cookie.js"></script>
-	<#-- toastr -->
-	<script src="${request.contextPath}/static/plugins/toastr/toastr.js"></script>
+    <#-- jquery.validate -->
+    <script src="${request.contextPath}/static/plugins/jquery/jquery.validate.min.js"></script>
 
-	<script src="${request.contextPath}/static/js/xxl.alert.1.js"></script>
+	<#-- layer -->
+	<script src="${request.contextPath}/static/plugins/layer/layer.js"></script>
+
+	<script>var base_url = '${request.contextPath}';</script>
     <script src="${request.contextPath}/static/js/common.1.js"></script>
 
-    <script>var base_url = '${request.contextPath}';</script>
 </#macro>
 
 <#macro commonHeader>
 	<header class="main-header">
 		<a href="${request.contextPath}/" class="logo">
-			<span class="logo-mini"><b>X</b>XL</span>
-			<span class="logo-lg"><b>分布式配置管理平台</b></span>
+			<span class="logo-mini"><b>XXL</b></span>
+			<span class="logo-lg"><b>配置管理中心</b></span>
 		</a>
 		<nav class="navbar navbar-static-top" role="navigation">
 			<a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button"><span class="sr-only">切换导航</span></a>
           	<div class="navbar-custom-menu">
 				<ul class="nav navbar-nav">
-					<li class="dropdown user user-menu">
-	                    <a href=";" id="logoutBtn" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                      		<span class="hidden-xs">注销</span>
-	                    </a>
-					</li>
+
+                    <li class="dropdown">
+                        <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+							欢迎 ${Request["XXL_CONF_LOGIN_IDENTITY"].username}
+							<span class="caret"></span>
+						</a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li id="updatePwd" ><a href="javascript:">修改密码</a></li>
+                            <li id="logoutBtn" ><a href="javascript:">注销</a></li>
+                        </ul>
+                    </li>
+
+
 				</ul>
 			</div>
 		</nav>
 	</header>
+
+	<!-- 修改密码.模态框 -->
+	<div class="modal fade" id="updatePwdModal" tabindex="-1" role="dialog"  aria-hidden="true">
+		<div class="modal-dialog ">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title" >修改密码</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal form" role="form" >
+						<div class="form-group">
+							<label for="lastname" class="col-sm-2 control-label">新密码<font color="red">*</font></label>
+							<div class="col-sm-10"><input type="text" class="form-control" name="password" placeholder="请输入新密码" maxlength="100" ></div>
+						</div>
+						<hr>
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-6">
+								<button type="submit" class="btn btn-primary"  >保存</button>
+								<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
 </#macro>
 
-<#macro commonLeft>
+<#macro commonLeft pageName >
 	<!-- Left side column. contains the logo and sidebar -->
 	<aside class="main-sidebar">
 		<!-- sidebar: style can be found in sidebar.less -->
 		<section class="sidebar">
 			<!-- sidebar menu: : style can be found in sidebar.less -->
 			<ul class="sidebar-menu">
-				<li class="header">常用模块</li>
-				<li class="nav-click" ><a href="${request.contextPath}/conf"><i class="fa fa-circle-o text-red"></i> <span>配置管理</span></a></li>
-                <li class="nav-click" ><a href="${request.contextPath}/group"><i class="fa fa-circle-o text-red"></i> <span>分组管理</span></a></li>
-				<li class="nav-click" ><a href="${request.contextPath}/help"><i class="fa fa-circle-o text-yellow"></i><span>使用教程</span></a></li>
+				<li class="header">导航</li>
+				<li class="nav-click <#if pageName == "conf">active</#if>" ><a href="${request.contextPath}/conf"><i class="fa fa-circle-o text-aqua"></i><span>配置管理</span></a></li>
+				<#if Request["XXL_CONF_LOGIN_IDENTITY"].permission == 1>
+                    <li class="nav-click <#if pageName == "project">active</#if>" ><a href="${request.contextPath}/project"><i class="fa fa-circle-o text-yellow"></i><span>项目管理</span></a></li>
+                    <li class="nav-click <#if pageName == "user">active</#if>" ><a href="${request.contextPath}/user"><i class="fa fa-circle-o text-green"></i><span>用户管理</span></a></li>
+				</#if>
+                <li class="nav-click <#if pageName == "help">active</#if>" ><a href="${request.contextPath}/help"><i class="fa fa-circle-o text-gray"></i><span>使用教程</span></a></li>
 			</ul>
 		</section>
 		<!-- /.sidebar -->
@@ -98,7 +136,7 @@
 
 <#macro commonFooter >
 	<footer class="main-footer">
-		Powered by <b>XXL-CONF</b> 1.3
+		Powered by <b>XXL-CONF</b> 1.4.1(SNAPSHOT)
 		<div class="pull-right hidden-xs">
 			<strong>Copyright &copy; 2015-${.now?string('yyyy')} &nbsp;
                 <a href="http://www.xuxueli.com/" target="_blank" >xuxueli</a>

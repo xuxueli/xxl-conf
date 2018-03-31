@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+
+	<!-- ********************************* XXL-CONF 配置工厂[非必须]：仅在Spring容器中启用 "XML占位符方式" 和 "@XxlConf 注解方式" 配置时才需要，仅使用"API"方式时可忽略该配置 ********************************* -->
+	<bean id="xxlConf" class="com.xxl.conf.core.spring.XxlConfFactory" init-method="init" destroy-method="destroy"  />
+
+
+	<!-- ********************************* 测试示例（可删除） ********************************* -->
+	<bean id="demoConf" class="com.xxl.conf.sample.demo.DemoConf">
+		<property name="paramByXml" value="${default.key03}" />
+	</bean>
+
+
+</beans>

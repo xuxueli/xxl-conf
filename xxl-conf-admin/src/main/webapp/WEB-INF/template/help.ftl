@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  	<title>分布式配置管理平台</title>
+  	<title>配置管理中心</title>
   	<#import "/common/common.macro.ftl" as netCommon>
 	<@netCommon.commonStyle />
 </head>
@@ -10,7 +10,7 @@
 	<!-- header -->
 	<@netCommon.commonHeader />
 	<!-- left -->
-	<@netCommon.commonLeft />
+	<@netCommon.commonLeft "help" />
 	
 	<!-- Content Wrapper. Contains page content -->
 	<div class="content-wrapper">
@@ -28,7 +28,7 @@
 		<!-- Main content -->
 		<section class="content">
 			<div class="callout callout-info">
-				<h4>简介：XXL-CONF</h4>
+				<h4>简介：分布式配置管理平台XXL-CONF</h4>
 				<br>
 				<p>
                     <a target="_blank" href="https://github.com/xuxueli/xxl-conf">Github</a>&nbsp;&nbsp;&nbsp;&nbsp;

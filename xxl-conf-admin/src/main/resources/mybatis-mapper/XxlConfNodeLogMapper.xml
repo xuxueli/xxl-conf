@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.conf.admin.dao.XxlConfNodeLogDao">
+	
+	<resultMap id="xxlConfNodeLog" type="com.xxl.conf.admin.core.model.XxlConfNodeLog" >
+		<result column="key" property="key" />
+		<result column="title" property="title" />
+	    <result column="value" property="value" />
+	    <result column="addtime" property="addtime" />
+		<result column="optuser" property="optuser" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.`key`,
+		t.`title`,
+		t.`value`,
+		t.`addtime`,
+		t.`optuser`
+	</sql>
+
+	<select id="findByKey" parameterType="java.util.Map" resultMap="xxlConfNodeLog">
+		SELECT <include refid="Base_Column_List" />
+		FROM xxl_conf_node_log AS t
+		WHERE t.key = #{key}
+		ORDER BY t.addtime DESC
+	</select>
+
+	<insert id="add" parameterType="com.xxl.conf.admin.core.model.XxlConfNodeLog" >
+		INSERT INTO xxl_conf_node_log(
+			`key`,
+			`title`,
+			`value`,
+			`addtime`,
+			`optuser`
+		)
+		VALUES(
+			#{key},
+			#{title},
+			#{value},
+			NOW(),
+			#{optuser}
+		)
+	</insert>
+
+	<delete id="deleteTimeout" parameterType="java.util.Map" >
+		DELETE FROM xxl_conf_node_log
+		WHERE `key` = #{key}
+			AND addtime NOT IN (
+				SELECT addtime FROM(
+					SELECT addtime FROM xxl_conf_node_log
+					WHERE `key` = #{key}
+					ORDER BY addtime DESC LIMIT #{length}
+				) t1
+			)
+	</delete>
+	
+	
+</mapper>

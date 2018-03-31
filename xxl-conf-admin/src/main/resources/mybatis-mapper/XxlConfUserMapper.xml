@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.conf.admin.dao.XxlConfUserDao">
+	
+	<resultMap id="xxlConfUser" type="com.xxl.conf.admin.core.model.XxlConfUser" >
+		<result column="username" property="username" />
+		<result column="password" property="password" />
+	    <result column="permission" property="permission" />
+		<result column="permission_projects" property="permissionProjects" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.`username`,
+		t.`password`,
+		t.`permission`,
+		t.`permission_projects`
+	</sql>
+
+	<select id="pageList" parameterType="java.util.Map" resultMap="xxlConfUser">
+		SELECT <include refid="Base_Column_List" />
+		FROM xxl_conf_user AS t
+		<trim prefix="WHERE" prefixOverrides="AND | OR" >
+			<if test="username != null and username != '' ">
+				AND t.username like CONCAT('%',#{username},'%')
+			</if>
+			<if test="permission gt -1">
+				t.permission = #{permission}
+			</if>
+		</trim>
+		ORDER BY t.username
+		LIMIT #{offset}, #{pagesize}
+	</select>
+
+	<select id="pageListCount" parameterType="java.util.Map" resultType="int">
+		SELECT count(1)
+		FROM xxl_conf_user AS t
+		<trim prefix="WHERE" prefixOverrides="AND | OR" >
+			<if test="username != null and username != '' ">
+				AND t.username like CONCAT('%',#{username},'%')
+			</if>
+			<if test="permission gt -1">
+				t.permission = #{permission}
+			</if>
+		</trim>
+	</select>
+
+	<insert id="add" parameterType="com.xxl.conf.admin.core.model.XxlConfUser" >
+		INSERT INTO xxl_conf_user(
+			`username`,
+			`password`,
+			`permission`,
+			`permission_projects`
+		)
+		VALUES(
+			#{username},
+			#{password},
+			#{permission},
+			#{permissionProjects}
+		)
+	</insert>
+
+	<update id="update" parameterType="com.xxl.conf.admin.core.model.XxlConfUser" >
+		UPDATE xxl_conf_user
+		SET `password` = #{password},
+			`permission` = #{permission},
+			`permission_projects` = #{permissionProjects}
+		WHERE `username` = #{username}
+	</update>
+
+	<delete id="delete" parameterType="java.util.Map" >
+		DELETE FROM xxl_conf_user
+		WHERE `username` = #{username}
+	</delete>
+
+	<select id="load" parameterType="java.lang.String" resultMap="xxlConfUser">
+		SELECT <include refid="Base_Column_List" />
+		FROM xxl_conf_user AS t
+		WHERE `username` = #{username}
+	</select>
+
+</mapper>

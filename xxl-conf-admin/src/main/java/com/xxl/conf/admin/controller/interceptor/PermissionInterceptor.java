@@ -1,6 +1,7 @@
 package com.xxl.conf.admin.controller.interceptor;
 
 import com.xxl.conf.admin.controller.annotation.PermessionLimit;
+import com.xxl.conf.admin.core.model.XxlConfUser;
 import com.xxl.conf.admin.service.impl.LoginService;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -25,14 +26,27 @@ public class PermissionInterceptor extends HandlerInterceptorAdapter {
 			return super.preHandle(request, response, handler);
 		}
 
-		if (!loginService.ifLogin(request)) {
-			HandlerMethod method = (HandlerMethod)handler;
-			PermessionLimit permission = method.getMethodAnnotation(PermessionLimit.class);
-			if (permission == null || permission.limit()) {
+		// if need login
+		boolean needLogin = true;
+		boolean needAdminuser = false;
+		HandlerMethod method = (HandlerMethod)handler;
+		PermessionLimit permission = method.getMethodAnnotation(PermessionLimit.class);
+		if (permission!=null) {
+			needLogin = permission.limit();
+			needAdminuser = permission.adminuser();
+		}
+
+		if (needLogin) {
+			XxlConfUser loginUser = loginService.ifLogin(request);
+			if (loginUser == null) {
 				response.sendRedirect(request.getContextPath() + "/toLogin");
 				//request.getRequestDispatcher("/toLogin").forward(request, response);
 				return false;
 			}
+			if (needAdminuser && loginUser.getPermission()!=1) {
+				throw new RuntimeException("权限拦截");
+			}
+			request.setAttribute(LoginService.LOGIN_IDENTITY, loginUser);
 		}
 
 		return super.preHandle(request, response, handler);
