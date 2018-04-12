@@ -407,6 +407,10 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 2、XML配置方式，Bean初始化时配置加载逻辑优化；
 - 3、升级多项依赖至较新版本：spring、spring-boot、jackson、freemarker、mybatis等；
 
+### 6.9 版本 v1.4.2 新特性[迭代中]
+- 1、配置中心，迁移为spring boot项目；
+- 2、配置中心，提供官方docker镜像；
+
 ### TODO LIST
 - 1、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；
 - 2、zookeeper客户端迁移至curator；
@@ -414,6 +418,8 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 4、Local Cache缓存长度考虑支持自定义；
 - 5、多环境支持：移除zkpath属性。配置中心枚举预设"product、preview、beta"等多环境，客户端通过env属性选择对应环境使用。
 - 6、支持API服务接口方式操作配置数据；
+- 7、异构语言支持：提供API服务，支持批量获取配置数据；
+
 
 ## 七、其他
 
