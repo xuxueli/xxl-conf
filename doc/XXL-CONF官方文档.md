@@ -402,8 +402,8 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 20、Sample项目目录结构规范；
 - 21、新增SpringBoot类型Sample项目；
 
-### 6.8 版本 v1.4.1 新特性[迭代中]
-- 1、Ehcache缓存对象序列化优化；
+### 6.8 版本 v1.4.1 新特性[2018-04-12]
+- 1、Ehcache缓存对象CacheNode序列化优化；
 - 2、XML配置方式，Bean初始化时配置加载逻辑优化；
 
 ### TODO LIST

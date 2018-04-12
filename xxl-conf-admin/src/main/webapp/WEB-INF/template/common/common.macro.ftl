@@ -136,7 +136,7 @@
 
 <#macro commonFooter >
 	<footer class="main-footer">
-		Powered by <b>XXL-CONF</b> 1.4.1(SNAPSHOT)
+		Powered by <b>XXL-CONF</b> 1.4.1
 		<div class="pull-right hidden-xs">
 			<strong>Copyright &copy; 2015-${.now?string('yyyy')} &nbsp;
                 <a href="http://www.xuxueli.com/" target="_blank" >xuxueli</a>
