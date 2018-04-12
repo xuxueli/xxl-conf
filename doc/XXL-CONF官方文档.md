@@ -81,9 +81,9 @@ XXL-CONF 是一个分布式配置管理平台，提供统一的配置管理服�
 ### 1.5 环境
 - Maven3+
 - Jdk1.7+
-- Tomcat7+
+- Tomcat8.5+
 - Zookeeper3.4+
-- Mysql5.5+
+- Mysql5.6+
 
 ## 二、快速入门
 
@@ -405,6 +405,7 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 ### 6.8 版本 v1.4.1 新特性[2018-04-12]
 - 1、Ehcache缓存对象CacheNode序列化优化；
 - 2、XML配置方式，Bean初始化时配置加载逻辑优化；
+- 3、升级多项依赖至较新版本：spring、spring-boot、jackson、freemarker、mybatis等；
 
 ### TODO LIST
 - 1、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；
