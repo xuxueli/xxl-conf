@@ -1,98 +1,110 @@
 package com.xxl.conf.core;
 
-import com.xxl.conf.core.util.Environment;
-import com.xxl.conf.core.util.PropertiesUtil;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import com.xxl.conf.core.core.XxlConfLocalCacheConf;
+import com.xxl.conf.core.core.XxlConfPropConf;
+import com.xxl.conf.core.core.XxlConfZkConf;
+import com.xxl.conf.core.exception.XxlConfException;
+import com.xxl.conf.core.listener.XxlConfListener;
+import com.xxl.conf.core.listener.XxlConfListenerFactory;
 
 /**
- * local cache
+ * xxl conf client
+ *
  * @author xuxueli 2015-8-28 15:35:20
  */
 public class XxlConfClient {
-	private static Logger logger = LoggerFactory.getLogger(XxlConfClient.class);
 
-	public static Properties localProp = PropertiesUtil.loadProperties("xxl-conf.properties");
-	//一个节点可以被多个bean所使用
-	public static Map<String,Set<Field>> pathFieldCache = new ConcurrentHashMap<>();
-	public static Map<Field,Object> fieldObjectCache = new ConcurrentHashMap<>();
-	private static Cache cache;
-	static {
-		CacheManager manager = CacheManager.create();	// default use ehcche.xml under src
-		cache = new Cache(Environment.CONF_DATA_PATH, 10000, false, true, 1800, 1800);
-		manager.addCache(cache);
-	}
-
-	public static void set(String key, String value) {
-		if (cache != null) {
-			logger.info(">>>>>>>>>> xxl-conf: 初始化配置: [{}:{}]", new Object[]{key, value});
-			cache.put(new Element(key, value));
-		}
-	}
-
-	public static void update(String key, String value) {
-		if (cache != null) {
-			if (cache.get(key)!=null) {
-				logger.info(">>>>>>>>>> xxl-conf: 更新配置: [{}:{}]", new Object[]{key, value});
-				cache.put(new Element(key, value));
-			}
-		}
-	}
-
+	/**
+	 * get conf
+	 *
+	 * @param key
+	 * @param defaultVal
+	 * @return
+	 */
 	public static String get(String key, String defaultVal) {
-		if (localProp!=null && localProp.containsKey(key)) {
-			return localProp.getProperty(key);
+		// level 1: prop conf
+		String propConf = XxlConfPropConf.get(key);
+		if (propConf != null) {
+			return propConf;
 		}
-		if (cache != null) {
-			Element element = cache.get(key);
-			if (element != null) {
-				return (String) element.getObjectValue();
-			}
+
+		// level 2: local cache
+		XxlConfLocalCacheConf.CacheNode cacheNode = XxlConfLocalCacheConf.get(key);
+		if (cacheNode != null) {
+			return cacheNode.getValue();
 		}
-		String zkData = XxlConfZkClient.getPathDataByKey(key);
-		if (zkData!=null) {
-			set(key, zkData);
+
+		// level 3	(get-and-watch, add-local-cache)
+		String zkData = XxlConfZkConf.get(key);
+		XxlConfLocalCacheConf.set(key, zkData, "SET");		// support cache null value
+		if (zkData != null) {
 			return zkData;
 		}
 
 		return defaultVal;
 	}
 
-	public static boolean remove(String key) {
-		if (cache != null) {
-			logger.info(">>>>>>>>>> xxl-conf: 删除配置：key ", key);
-			return cache.remove(key);
-		}
-		return false;
+	/**
+	 * get conf (string)
+	 *
+	 * @param key
+	 * @return
+	 */
+	public static String get(String key) {
+		return get(key, null);
 	}
-	public static boolean addCallBack(String path,Field field,Object object) {
-		Set<Field> fieldSet = pathFieldCache.get(path);
-		if (fieldSet == null) {
-			fieldSet = new HashSet<>();
-			fieldSet.add(field);
-		}else {
-			fieldSet.add(field);
+
+	/**
+	 * get conf (int)
+	 *
+	 * @param key
+	 * @return
+	 */
+	public static int getInt(String key) {
+		String value = get(key, null);
+		if (value == null) {
+			throw new XxlConfException("config key [" + key + "] does not exist");
 		}
-		logger.info("ValueAnnotationProcessor->handler addCallback");
-		fieldObjectCache.put(field,object);
-		pathFieldCache.put(path,fieldSet);
-		return true;
+		return Integer.valueOf(value);
 	}
-	public static void main(String[] args) {
-		String key = "key";
-		String value = "hello";
-		set(key, value);
-		System.out.println(get(key, "-1"));
+
+	/**
+	 * get conf (long)
+	 *
+	 * @param key
+	 * @return
+	 */
+	public static long getLong(String key) {
+		String value = get(key, null);
+		if (value == null) {
+			throw new XxlConfException("config key [" + key + "] does not exist");
+		}
+		return Long.valueOf(value);
+	}
+
+	/**
+	 * get conf (boolean)
+	 *
+	 * @param key
+	 * @return
+	 */
+	public static boolean getBoolean(String key) {
+		String value = get(key, null);
+		if (value == null) {
+			throw new XxlConfException("config key [" + key + "] does not exist");
+		}
+		return Boolean.valueOf(value);
+	}
+
+	/**
+	 * add listener with xxl conf change
+	 *
+	 * @param key
+	 * @param xxlConfListener
+	 * @return
+	 */
+	public static boolean addListener(String key, XxlConfListener xxlConfListener){
+		return XxlConfListenerFactory.addListener(key, xxlConfListener);
 	}
 	
 }
