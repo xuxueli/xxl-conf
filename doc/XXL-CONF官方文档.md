@@ -408,8 +408,9 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 3、升级多项依赖至较新版本：spring、spring-boot、jackson、freemarker、mybatis等；
 
 ### 6.9 版本 v1.4.2 新特性[迭代中]
-- 1、配置中心，迁移为spring boot项目；
-- 2、配置中心，提供官方docker镜像；
+- 1、[迭代中]配置中心，迁移为spring boot项目；
+- 2、[迭代中]配置中心，提供官方docker镜像；
+- 3、[迭代中]容器组件初始化顺序调整，修复@PostConstruct无法识别问题；
 
 ### TODO LIST
 - 1、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；

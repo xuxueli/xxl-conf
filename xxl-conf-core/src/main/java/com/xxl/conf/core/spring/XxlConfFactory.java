@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.*;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -27,7 +28,7 @@ import java.lang.reflect.Field;
  *
  * @author xuxueli 2015-9-12 19:42:49
  */
-public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
+public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer implements BeanPostProcessor {
 	private static Logger logger = LoggerFactory.getLogger(XxlConfFactory.class);
 
 	// ---------------------- init/destroy ----------------------
@@ -201,6 +202,21 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer {
 
 		logger.info(">>>>>>>>>>> xxl-conf, XxlConfFactory process success");
 	}
+
+	// ---------------------- post process ----------------------
+
+	@Override
+	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+		return bean;
+	}
+
+	@Override
+	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+		return bean;
+	}
+
+
+	// ---------------------- other ----------------------
 
 	@Override
 	public int getOrder() {
