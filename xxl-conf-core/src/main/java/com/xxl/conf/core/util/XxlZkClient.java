@@ -6,7 +6,6 @@ import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +85,12 @@ public class XxlZkClient {
 				if (INSTANCE_INIT_LOCK.tryLock(2, TimeUnit.SECONDS)) {
 					if (zooKeeper==null) {		// 二次校验，防止并发创建client
 						try {
-							zooKeeper = new ZooKeeper(zkServer, 10000, watcher);
+							zooKeeper = new ZooKeeper(zkServer, 10000, watcher);		// TODO，本地变量方式，成功才会赋值
+							//zooKeeper.addAuthInfo("digest", (account + ":" + password).getBytes());		// TODO，支持登陆校验
+
+							// zooKeeper.exists("/", false);	// TODO，阻塞
+						} catch (Exception e) {
+							logger.error(e.getMessage(), e);
 						} finally {
 							INSTANCE_INIT_LOCK.unlock();
 						}
@@ -94,8 +98,6 @@ public class XxlZkClient {
 					}
 				}
 			} catch (InterruptedException e) {
-				logger.error(e.getMessage(), e);
-			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
 			}
 		}
@@ -184,7 +186,7 @@ public class XxlZkClient {
 				createPatnWithParent(path);
 				stat = getClient().exists(path, true);
 			}
-			return getClient().setData(path, data.getBytes(),stat.getVersion());
+			return getClient().setData(path, data.getBytes(),stat.getVersion());	// TODO，utd-8
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new XxlConfException(e);
