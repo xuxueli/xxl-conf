@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.*;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -28,19 +30,33 @@ import java.lang.reflect.Field;
  *
  * @author xuxueli 2015-9-12 19:42:49
  */
-public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer implements BeanPostProcessor {
+public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer implements InitializingBean, DisposableBean, BeanPostProcessor {
 	private static Logger logger = LoggerFactory.getLogger(XxlConfFactory.class);
 
 	// ---------------------- init/destroy ----------------------
 
-	public void init(){
+	@Override
+	public void afterPropertiesSet() throws Exception {
 		XxlConfListenerFactory.addListener(null, new BeanRefreshXxlConfListener());    // listener all key change
 	}
-	public void destroy(){
+
+	@Override
+	public void destroy() throws Exception {
 		XxlConfLocalCacheConf.destroy();	// destroy ehcache
 		XxlConfZkConf.destroy();			// destroy zk client
 	}
 
+	// ---------------------- post process ----------------------
+
+	@Override
+	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+		return bean;
+	}
+
+	@Override
+	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+		return bean;
+	}
 
 	// ---------------------- spring xml/annotation conf ----------------------
 
@@ -202,19 +218,6 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer impleme
 
 		logger.info(">>>>>>>>>>> xxl-conf, XxlConfFactory process success");
 	}
-
-	// ---------------------- post process ----------------------
-
-	@Override
-	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-		return bean;
-	}
-
-	@Override
-	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		return bean;
-	}
-
 
 	// ---------------------- other ----------------------
 

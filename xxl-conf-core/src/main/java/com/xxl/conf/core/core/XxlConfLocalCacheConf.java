@@ -51,8 +51,10 @@ public class XxlConfLocalCacheConf {
                         reloadAll();
                         logger.info(">>>>>>>>>> xxl-conf, refresh thread reloadAll success.");
                     } catch (Exception e) {
-                        logger.error(">>>>>>>>>> xxl-conf, refresh thread error.");
-                        logger.error(e.getMessage(), e);
+                        if (!refreshThreadStop) {
+                            logger.error(">>>>>>>>>> xxl-conf, refresh thread error.");
+                            logger.error(e.getMessage(), e);
+                        }
                     }
                 }
                 logger.info(">>>>>>>>>> xxl-conf, refresh thread stoped.");

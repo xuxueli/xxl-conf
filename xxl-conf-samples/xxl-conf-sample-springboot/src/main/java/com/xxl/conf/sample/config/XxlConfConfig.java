@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 public class XxlConfConfig {
     private Logger logger = LoggerFactory.getLogger(XxlConfConfig.class);
 
-    @Bean(initMethod = "init", destroyMethod = "destroy")
+    @Bean
     public XxlConfFactory xxlConfFactory() {
         XxlConfFactory xxlConf = new XxlConfFactory();
         logger.info(">>>>>>>>>>> xxl-conf config init.");
