@@ -194,7 +194,7 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer impleme
 			for (final String beanName : beanNames) {
 				if (!(beanName.equals(this.beanName) && beanFactoryToProcess.equals(this.beanFactory))) {
 
-					// 1、XML('${...}')：resolves placeholders + watch
+					// 1、XML('$XxlConf{...}')：resolves placeholders + watch
 					BeanDefinition beanDefinition = beanFactoryToProcess.getBeanDefinition(beanName);
 
                     MutablePropertyValues pvs = beanDefinition.getPropertyValues();

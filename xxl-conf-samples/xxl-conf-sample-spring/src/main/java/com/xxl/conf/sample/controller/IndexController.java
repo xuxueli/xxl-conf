@@ -71,8 +71,8 @@ public class IndexController {
 		/**
 		 * 方式3: XML占位符方式
 		 *
-		 * 		- 参考 "applicationcontext-xxl-conf.xml" 中 "DemoConf.paramByXml" 属性配置；示例代码 "<property name="paramByXml" value="${key}" />"；
-		 * 		- 用法：占位符方式 "${key}"；
+		 * 		- 参考 "applicationcontext-xxl-conf.xml" 中 "DemoConf.paramByXml" 属性配置；示例代码 "<property name="paramByXml" value="$XxlConf{key}" />"；
+		 * 		- 用法：占位符方式 "$XxlConf{key}"；
 		 * 		- 优点：
 		 * 			- 配置从配置中心自动加载；
 		 * 			- 存在LocalCache，不用担心性能问题；

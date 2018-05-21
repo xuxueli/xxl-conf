@@ -118,6 +118,8 @@ xxl-conf/xxl-conf-admin/src/main/resources/xxl-conf-admin.properties
 xxl.conf.admin.zkaddress=127.0.0.1:2181
 # 配置在zookeeper中的存储目录；
 xxl.conf.admin.zkpath=/xxl-conf
+# 配置zookeeper的digest权限信息；
+xxl.conf.admin.zkdigest
 
 # xxl-conf, jdbc        （JDBC配置）
 xxl.conf.admin.jdbc.driverClass=com.mysql.jdbc.Driver
@@ -153,15 +155,12 @@ xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/xxl-conf.pro
 
 配置项说明
 ```
-# 环境配置文件地址，默认加载当前文件（默认为 "xxl-conf.properties"），也可指定为其他文件如 "xxl-conf02.properties" 或 "file:/data/webapps/xxl-conf.properties"
-xxl.conf.envprop.location=
-# 本地配置：优先加载该 "本地配置文件"（默认为"xxl-conf-local.properties"） 中的配置数据，其次加载配置中心中配置数据。可以将一些希望存放本地的配置存放在该文件。
-xxl.conf.localprop.location=
-
 # 配置中心zookeeper集群地址，如有多个地址用逗号分隔；
 xxl.conf.zkaddress=127.0.0.1:2181
 # 配置在zookeeper中的存储目录；
 xxl.conf.zkpath=/xxl-conf
+# 配置zookeeper的digest权限信息；
+xxl.conf.zkdigest=
 ```
 
 #### C、XXL-CONF 配置工厂初始化[非必须]
@@ -177,8 +176,11 @@ xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/spring/appli
 
 配置项说明
 ```
-<!-- ********************************* XXL-CONF 配置工厂[非必须]：仅在Spring容器中启用 "XML占位符方式" 和 "@XxlConf 注解方式" 配置时才需要，仅使用"API"方式时可忽略该配置 ********************************* -->
-<bean id="xxlConf" class="com.xxl.conf.core.spring.XxlConfFactory" init-method="init" destroy-method="destroy"  />
+<!-- ********************************* XXL-CONF 配置工厂 ********************************* -->
+<bean id="xxlConf" class="com.xxl.conf.core.spring.XxlConfFactory"  >
+    <!-- 环境配置文件地址，如 "xxl-conf.properties" 或 "file:/data/webapps/xxl-conf.properties" -->
+    <property name="envprop" value="xxl-conf.properties" />
+</bean>
 ```
 
 
@@ -298,10 +300,10 @@ callback | 配置更新时，是否需要同步刷新配置
 参考 "applicationcontext-xxl-conf.xml" 中 "DemoConf.paramByXml" 属性配置；示例代码如下：
 ```
 <bean id="demoConf" class="com.xxl.conf.sample.demo.DemoConf">
-    <property name="paramByXml" value="${key}" />
+    <property name="paramByXml" value="$XxlConf{default.key03}" />
 </bean>
 ```
-- 用法：占位符方式 "${key}"；
+- 用法：占位符方式 "$XxlConf{key}"；
 - 优点：
     - 配置从配置中心自动加载；
     - 存在LocalCache，不用担心性能问题；
