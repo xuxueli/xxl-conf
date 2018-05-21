@@ -17,7 +17,10 @@ public class XxlConfConfig {
 
     @Bean
     public XxlConfFactory xxlConfFactory() {
+
         XxlConfFactory xxlConf = new XxlConfFactory();
+        xxlConf.setEnvprop("xxl-conf.properties");
+
         logger.info(">>>>>>>>>>> xxl-conf config init.");
         return xxlConf;
     }

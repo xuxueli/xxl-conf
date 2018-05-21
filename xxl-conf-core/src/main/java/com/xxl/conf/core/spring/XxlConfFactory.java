@@ -7,6 +7,7 @@ import com.xxl.conf.core.core.XxlConfZkConf;
 import com.xxl.conf.core.exception.XxlConfException;
 import com.xxl.conf.core.listener.XxlConfListenerFactory;
 import com.xxl.conf.core.listener.impl.BeanRefreshXxlConfListener;
+import com.xxl.conf.core.util.PropUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.*;
@@ -24,6 +25,7 @@ import org.springframework.util.ReflectionUtils;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.util.Properties;
 
 /**
  * rewrite PropertyPlaceholderConfigurer
@@ -33,10 +35,53 @@ import java.lang.reflect.Field;
 public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer implements InitializingBean, DisposableBean, BeanPostProcessor {
 	private static Logger logger = LoggerFactory.getLogger(XxlConfFactory.class);
 
-	// ---------------------- init/destroy ----------------------
+	// ---------------------- env config ----------------------
+
+	private String envprop;
+	private String zkaddress;
+	private String zkpath;
+	private String zkdigest;
+
+	public void setEnvprop(String envprop) {
+		this.envprop = envprop;
+	}
+
+	public void setZkaddress(String zkaddress) {
+		this.zkaddress = zkaddress;
+	}
+
+	public void setZkpath(String zkpath) {
+		this.zkpath = zkpath;
+	}
+
+    public void setZkdigest(String zkdigest) {
+        this.zkdigest = zkdigest;
+    }
+
+    // ---------------------- init/destroy ----------------------
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
+
+		// env prop
+		if (envprop!=null && envprop.trim().length()>0) {
+			Properties envPropFile = PropUtil.loadProp(envprop);
+			if (envPropFile!=null && envPropFile.stringPropertyNames()!=null && envPropFile.stringPropertyNames().size()>0) {
+				for (String key: envPropFile.stringPropertyNames()) {
+					if ("xxl.conf.zkaddress".equals(key)) {
+						zkaddress = envPropFile.getProperty(key);	// replace if envprop not exist
+					} else if ("xxl.conf.zkpath".equals(key)) {
+						zkpath = envPropFile.getProperty(key);
+					} else if ("xxl.conf.zkdigest".equals(key)) {
+						zkdigest = envPropFile.getProperty(key);
+                    }
+				}
+			}
+		}
+
+		// init
+		XxlConfZkConf.init(zkaddress, zkpath, zkdigest);									// init zk client
+        XxlConfLocalCacheConf.init();
 		XxlConfListenerFactory.addListener(null, new BeanRefreshXxlConfListener());    // listener all key change
 	}
 
@@ -60,7 +105,7 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer impleme
 
 	// ---------------------- spring xml/annotation conf ----------------------
 
-	private static final String placeholderPrefix = "${";
+	private static final String placeholderPrefix = "$XxlConf{";
 	private static final String placeholderSuffix = "}";
 	private static boolean xmlKeyValid(String originKey){
 		boolean start = originKey.startsWith(placeholderPrefix);
@@ -125,7 +170,7 @@ public class XxlConfFactory extends PropertySourcesPlaceholderConfigurer impleme
 
 	@Override
 	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, ConfigurablePropertyResolver propertyResolver) throws BeansException {
-		//super.processProperties(beanFactoryToProcess, propertyResolver);
+		super.processProperties(beanFactoryToProcess, propertyResolver);
 
 		// BeanDefinitionVisitor
 		/*BeanDefinitionVisitor beanDefinitionVisitor = new BeanDefinitionVisitor(new StringValueResolver() {

@@ -31,14 +31,14 @@ public class XxlConfLocalCacheConf {
     private static Cache<String, CacheNode> xxlConfLocalCache = null;
     private static Thread refreshThread;
     private static boolean refreshThreadStop = false;
-    private static void init(){
+    public static void init(){
         // cacheManager
         cacheManager = CacheManagerBuilder.newCacheManagerBuilder().build(true);		// default use ehcche.xml under src
 
         // xxlConfLocalCache
         xxlConfLocalCache = cacheManager.createCache("xxlConfLocalCache",
                 CacheConfigurationBuilder
-                        .newCacheConfigurationBuilder(String.class, CacheNode.class, ResourcePoolsBuilder.heap(1000))	// .withExpiry、.withEvictionAdvisor （default lru）
+                        .newCacheConfigurationBuilder(String.class, CacheNode.class, ResourcePoolsBuilder.heap(3000))	// .withExpiry、.withEvictionAdvisor （default lru）
         );
 
         // refresh thread
@@ -64,9 +64,6 @@ public class XxlConfLocalCacheConf {
         refreshThread.start();
 
         logger.info(">>>>>>>>>> xxl-conf, XxlConfLocalCacheConf init success.");
-    }
-    static {
-        init();
     }
 
     /**

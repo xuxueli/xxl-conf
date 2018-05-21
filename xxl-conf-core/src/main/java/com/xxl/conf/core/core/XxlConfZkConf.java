@@ -1,6 +1,6 @@
 package com.xxl.conf.core.core;
 
-import com.xxl.conf.core.env.Environment;
+import com.xxl.conf.core.exception.XxlConfException;
 import com.xxl.conf.core.util.XxlZkClient;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
@@ -20,49 +20,57 @@ public class XxlConfZkConf {
 
 	// ------------------------------ zookeeper client ------------------------------
 
+	private static String zkpath;
+
 	private static XxlZkClient xxlZkClient = null;
-	private static void init() {
+	public static void init(String zkaddress, String zkpath, String zkdigest) {
 
-		Watcher watcher = new Watcher() {
-			@Override
-			public void process(WatchedEvent watchedEvent) {
-				try {
-					logger.info(">>>>>>>>>> xxl-conf: watcher:{}", watchedEvent);
+		// valid
+		if (zkaddress==null || zkaddress.trim().length()==0) {
+			throw new XxlConfException("xxl-conf zkaddress can not be empty");
+		}
+		if (zkpath==null || zkpath.trim().length()==0) {
+			throw new XxlConfException("xxl-conf zkpath can not be empty");
+		}
 
-					// session expire, close old and create new
-					if (watchedEvent.getState() == Event.KeeperState.Expired) {
-						xxlZkClient.destroy();
-						xxlZkClient.getClient();
-						XxlConfLocalCacheConf.reloadAll();
-						logger.info(">>>>>>>>>> xxl-conf, zk re-connect reloadAll success.");
-					}
+        XxlConfZkConf.zkpath = zkpath;
 
-					String path = watchedEvent.getPath();
-					String key = pathToKey(path);
-					if (key != null) {
-						// keep watch conf key：add One-time trigger
-						xxlZkClient.getClient().exists(path, true);
-						if (watchedEvent.getType() == Event.EventType.NodeDeleted) {
-							// conf deleted
-						} else if (watchedEvent.getType() == Event.EventType.NodeDataChanged) {
-							// conf updated
-							String data = get(key);
-							XxlConfLocalCacheConf.update(key, data);
-						}
-					}
-				} catch (KeeperException e) {
-					logger.error(e.getMessage(), e);
-				} catch (InterruptedException e) {
-					logger.error(e.getMessage(), e);
-				}
-			}
-		};
+		// init
+		xxlZkClient = new XxlZkClient(zkaddress, zkpath, zkdigest, new Watcher() {
+            @Override
+            public void process(WatchedEvent watchedEvent) {
+                try {
+                    logger.info(">>>>>>>>>> xxl-conf: watcher:{}", watchedEvent);
 
-		xxlZkClient = new XxlZkClient(Environment.ZK_ADDRESS, watcher);
+                    // session expire, close old and create new
+                    if (watchedEvent.getState() == Event.KeeperState.Expired) {
+                        xxlZkClient.destroy();
+                        xxlZkClient.getClient();
+                        XxlConfLocalCacheConf.reloadAll();
+                        logger.info(">>>>>>>>>> xxl-conf, zk re-connect reloadAll success.");
+                    }
+
+                    String path = watchedEvent.getPath();
+                    String key = pathToKey(path);
+                    if (key != null) {
+                        // keep watch conf key：add One-time trigger
+                        xxlZkClient.getClient().exists(path, true);
+                        if (watchedEvent.getType() == Event.EventType.NodeDeleted) {
+                            // conf deleted
+                        } else if (watchedEvent.getType() == Event.EventType.NodeDataChanged) {
+                            // conf updated
+                            String data = get(key);
+                            XxlConfLocalCacheConf.update(key, data);
+                        }
+                    }
+                } catch (KeeperException e) {
+                    logger.error(e.getMessage(), e);
+                } catch (InterruptedException e) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        });
 		logger.info(">>>>>>>>>> xxl-conf, XxlConfZkConf init success.");
-	}
-	static {
-		init();
 	}
 
 	public static void destroy(){
@@ -115,10 +123,10 @@ public class XxlConfZkConf {
 	 * @return ZnodeKey
 	 */
 	public static String pathToKey(String nodePath){
-		if (nodePath==null || nodePath.length() <= Environment.ZK_PATH.length() || !nodePath.startsWith(Environment.ZK_PATH)) {
+		if (nodePath==null || nodePath.length() <= zkpath.length() || !nodePath.startsWith(zkpath)) {
 			return null;
 		}
-		return nodePath.substring(Environment.ZK_PATH.length()+1, nodePath.length());
+		return nodePath.substring(zkpath.length()+1, nodePath.length());
 	}
 
 	/**
@@ -127,7 +135,7 @@ public class XxlConfZkConf {
 	 * @return znodePath
 	 */
 	public static String keyToPath(String nodeKey){
-		return Environment.ZK_PATH + "/" + nodeKey;
+		return zkpath + "/" + nodeKey;
 	}
 
 }

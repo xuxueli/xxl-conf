@@ -27,12 +27,15 @@ public class XxlConfManager implements InitializingBean, DisposableBean {
 	@Value("${xxl.conf.admin.zkpath}")
 	private String zkpath;
 
+	@Value("${xxl.conf.admin.zkdigest}")
+	private String zkdigest;
+
 
 	// ------------------------------ zookeeper client ------------------------------
 	private static XxlZkClient xxlZkClient = null;
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		Watcher watcher = new Watcher() {
+		xxlZkClient = new XxlZkClient(zkaddress, zkpath, zkdigest, new Watcher() {
 			@Override
 			public void process(WatchedEvent watchedEvent) {
 				logger.info(">>>>>>>>>> xxl-conf: XxlConfManager watcher:{}", watchedEvent);
@@ -44,9 +47,7 @@ public class XxlConfManager implements InitializingBean, DisposableBean {
 					logger.info(">>>>>>>>>> xxl-conf, XxlConfManager re-connect success.");
 				}
 			}
-		};
-
-		xxlZkClient = new XxlZkClient(zkaddress, watcher);
+		});
 		logger.info(">>>>>>>>>> xxl-conf, XxlConfManager init success.");
 	}
 	@Override

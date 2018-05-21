@@ -1,7 +1,6 @@
 package com.xxl.conf.core;
 
 import com.xxl.conf.core.core.XxlConfLocalCacheConf;
-import com.xxl.conf.core.core.XxlConfPropConf;
 import com.xxl.conf.core.core.XxlConfZkConf;
 import com.xxl.conf.core.exception.XxlConfException;
 import com.xxl.conf.core.listener.XxlConfListener;
@@ -22,19 +21,14 @@ public class XxlConfClient {
 	 * @return
 	 */
 	public static String get(String key, String defaultVal) {
-		// level 1: prop conf
-		String propConf = XxlConfPropConf.get(key);
-		if (propConf != null) {
-			return propConf;
-		}
 
-		// level 2: local cache
+		// level 1: local cache
 		XxlConfLocalCacheConf.CacheNode cacheNode = XxlConfLocalCacheConf.get(key);
 		if (cacheNode != null) {
 			return cacheNode.getValue();
 		}
 
-		// level 3	(get-and-watch, add-local-cache)
+		// level 2	(get-and-watch, add-local-cache)
 		String zkData = XxlConfZkConf.get(key);
 		XxlConfLocalCacheConf.set(key, zkData, "SET");		// support cache null value
 		if (zkData != null) {

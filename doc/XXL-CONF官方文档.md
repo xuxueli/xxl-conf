@@ -411,6 +411,9 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 1、[迭代中]配置中心，迁移为spring boot项目；
 - 2、[迭代中]配置中心，提供官方docker镜像；
 - 3、[迭代中]容器组件初始化顺序调整，修复@PostConstruct无法识别问题；
+- 4、Local Cache缓存长度扩充为3000，采用LRU策略。
+- 5、配置优化，移除冗余配置项；
+- 6、支持ZK鉴权信息配置；
 
 ### TODO LIST
 - 1、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；

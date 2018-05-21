@@ -50,17 +50,23 @@ public class XxlZkClient {
 	private static Logger logger = LoggerFactory.getLogger(XxlZkClient.class);
 
 
-	private String zkServer;
+	private String zkaddress;
+	private String zkpath;
+	private String zkdigest;
 	private Watcher watcher;	// watcher(One-time trigger)
 
-	public XxlZkClient(String zkServer, Watcher watcher) {
-		this.zkServer = zkServer;
+
+	public XxlZkClient(String zkaddress, String zkpath, String zkdigest, Watcher watcher) {
+
+		this.zkaddress = zkaddress;
+		this.zkpath = zkpath;
+		this.zkdigest = zkdigest;
 		this.watcher = watcher;
 
 		// reconnect when expire
-		if (watcher == null) {
+		if (this.watcher == null) {
 			// watcher(One-time trigger)
-			watcher = new Watcher() {
+			this.watcher = new Watcher() {
 				@Override
 				public void process(WatchedEvent watchedEvent) {
 					logger.info(">>>>>>>>>> xxl-conf: watcher:{}", watchedEvent);
@@ -74,6 +80,7 @@ public class XxlZkClient {
 			};
 		}
 
+		getClient();
 	}
 
 	// ------------------------------ zookeeper client ------------------------------
@@ -85,10 +92,12 @@ public class XxlZkClient {
 				if (INSTANCE_INIT_LOCK.tryLock(2, TimeUnit.SECONDS)) {
 					if (zooKeeper==null) {		// 二次校验，防止并发创建client
 						try {
-							zooKeeper = new ZooKeeper(zkServer, 10000, watcher);		// TODO，本地变量方式，成功才会赋值
-							//zooKeeper.addAuthInfo("digest", (account + ":" + password).getBytes());		// TODO，支持登陆校验
+							zooKeeper = new ZooKeeper(zkaddress, 10000, watcher);		// TODO，本地变量方式，成功才会赋值
+							if (zkdigest!=null && zkdigest.trim().length()>0) {
+								zooKeeper.addAuthInfo("digest",zkdigest.getBytes());		// like "account:password"
+							}
 
-							// zooKeeper.exists("/", false);	// TODO，阻塞
+							zooKeeper.exists(zkpath, false);	// sync
 						} catch (Exception e) {
 							logger.error(e.getMessage(), e);
 						} finally {
