@@ -418,6 +418,7 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 6、支持ZK鉴权信息配置；
 - 7、XxlConf与原生配置加载方式( "@Value"、"${...}" )兼容，相互隔离，互不影响；
 - 8、maven依赖优化，移除冗余强制依赖；
+- 9、[迭代中] "zkpath" 参数移除，新增参数 "env"，区分配置环境；
 
 ### TODO LIST
 - 1、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；
