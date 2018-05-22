@@ -416,6 +416,8 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 4、Local Cache缓存长度扩充为3000，采用LRU策略。
 - 5、配置优化，移除冗余配置项；
 - 6、支持ZK鉴权信息配置；
+- 7、[迭代中]XxlConf与原生配置加载方式( "@Value"、"${...}" )兼容，相互隔离，互不影响；
+- 8、maven依赖优化，移除冗余强制依赖；
 
 ### TODO LIST
 - 1、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；
