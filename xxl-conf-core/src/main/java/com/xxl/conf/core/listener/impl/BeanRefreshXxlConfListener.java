@@ -71,7 +71,7 @@ public class BeanRefreshXxlConfListener implements XxlConfListener {
         List<BeanField> beanFieldList = key2BeanField.get(key);
         if (beanFieldList!=null && beanFieldList.size()>0) {
             for (BeanField beanField: beanFieldList) {
-                XxlConfFactory.refreshBeanField(beanField, value);
+                XxlConfFactory.refreshBeanField(beanField, value, null);
             }
         }
     }
