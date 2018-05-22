@@ -146,7 +146,6 @@ public class XxlConfFactory implements InitializingBean, DisposableBean, BeanDef
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		// TODO
-		System.out.println(111);
 	}
 
 	public static class XxlConfAnnotationProcessor implements BeanPostProcessor, PriorityOrdered {
@@ -177,7 +176,6 @@ public class XxlConfFactory implements InitializingBean, DisposableBean, BeanDef
 					}
 				}
 			});
-			logger.info(">>>>>>>>>>> xxl-conf, XxlConfFactory annotation process success");
 
 			return bean;
 		}
