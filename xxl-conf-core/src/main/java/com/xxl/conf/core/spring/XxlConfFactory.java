@@ -83,10 +83,8 @@ public class XxlConfFactory implements InitializingBean, DisposableBean, BeanDef
 			}
 		}
 
-		// init zkpath
-
 		// init
-		XxlConfZkConf.init(zkaddress, zkdigest, env);									// init zk client
+		XxlConfZkConf.init(zkaddress, zkdigest, env, true);									// init zk client
         XxlConfLocalCacheConf.init();
 		XxlConfListenerFactory.addListener(null, new BeanRefreshXxlConfListener());    // listener all key change
 	}

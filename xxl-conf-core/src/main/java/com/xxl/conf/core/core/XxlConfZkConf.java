@@ -23,7 +23,7 @@ public class XxlConfZkConf {
 	private static String zkpath;
 
 	private static XxlZkClient xxlZkClient = null;
-	public static void init(String zkaddress, String zkdigest, String env) {
+	public static void init(String zkaddress, String zkdigest, String env, final boolean isClient) {
 
 		// valid
 		if (zkaddress==null || zkaddress.trim().length()==0) {
@@ -50,23 +50,29 @@ public class XxlConfZkConf {
                     if (watchedEvent.getState() == Event.KeeperState.Expired) {
                         xxlZkClient.destroy();
                         xxlZkClient.getClient();
-                        XxlConfLocalCacheConf.reloadAll();
+
+                        if (isClient) {
+							XxlConfLocalCacheConf.reloadAll();
+						}
                         logger.info(">>>>>>>>>> xxl-conf, zk re-connect reloadAll success.");
                     }
 
-                    String path = watchedEvent.getPath();
-                    String key = pathToKey(path);
-                    if (key != null) {
-                        // keep watch conf key：add One-time trigger
-                        xxlZkClient.getClient().exists(path, true);
-                        if (watchedEvent.getType() == Event.EventType.NodeDeleted) {
-                            // conf deleted
-                        } else if (watchedEvent.getType() == Event.EventType.NodeDataChanged) {
-                            // conf updated
-                            String data = get(key);
-                            XxlConfLocalCacheConf.update(key, data);
-                        }
-                    }
+                    if (isClient) {
+						String path = watchedEvent.getPath();
+						String key = pathToKey(path);
+						if (key != null) {
+							// keep watch conf key：add One-time trigger
+							xxlZkClient.getClient().exists(path, true);
+							if (watchedEvent.getType() == Event.EventType.NodeDeleted) {
+								// conf deleted
+							} else if (watchedEvent.getType() == Event.EventType.NodeDataChanged) {
+								// conf updated
+								String data = get(key);
+								XxlConfLocalCacheConf.update(key, data);
+							}
+						}
+					}
+
                 } catch (KeeperException e) {
                     logger.error(e.getMessage(), e);
                 } catch (InterruptedException e) {

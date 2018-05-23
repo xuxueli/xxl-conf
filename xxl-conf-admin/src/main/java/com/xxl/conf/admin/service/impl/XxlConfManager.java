@@ -1,8 +1,6 @@
 package com.xxl.conf.admin.service.impl;
 
-import com.xxl.conf.core.util.XxlZkClient;
-import org.apache.zookeeper.WatchedEvent;
-import org.apache.zookeeper.Watcher;
+import com.xxl.conf.core.core.XxlConfZkConf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -29,41 +27,16 @@ public class XxlConfManager implements InitializingBean, DisposableBean {
 	@Value("${xxl.conf.env}")
 	private String env;
 
-	private String zkpath;
-
 	// ------------------------------ zookeeper client ------------------------------
-	private static XxlZkClient xxlZkClient = null;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
-
-		// init zkpath
-		if (env==null || env.trim().length()==0) {
-			env = "default";
-		}
-		zkpath = "/xxl-conf/" + env;
-
-		// init zk client
-		xxlZkClient = new XxlZkClient(zkaddress, zkpath, zkdigest, new Watcher() {
-			@Override
-			public void process(WatchedEvent watchedEvent) {
-				logger.info(">>>>>>>>>> xxl-conf: XxlConfManager watcher:{}", watchedEvent);
-
-				// session expire, close old and create new
-				if (watchedEvent.getState() == Event.KeeperState.Expired) {
-					xxlZkClient.destroy();
-					xxlZkClient.getClient();
-					logger.info(">>>>>>>>>> xxl-conf, XxlConfManager re-connect success.");
-				}
-			}
-		});
-
-		logger.info(">>>>>>>>>> xxl-conf, XxlConfManager init success.");
+		XxlConfZkConf.init(zkaddress, zkdigest, env, false);
 	}
+
 	@Override
 	public void destroy() throws Exception {
-		if (xxlZkClient!=null) {
-			xxlZkClient.destroy();
-		}
+		XxlConfZkConf.destroy();
 	}
 
 
@@ -77,8 +50,7 @@ public class XxlConfManager implements InitializingBean, DisposableBean {
 	 * @return
 	 */
 	public void set(String key, String data) {
-		String path = keyToPath(key);
-		xxlZkClient.setPathData(path, data);
+		XxlConfZkConf.set(key, data);
 	}
 
 	/**
@@ -87,8 +59,7 @@ public class XxlConfManager implements InitializingBean, DisposableBean {
 	 * @param key
 	 */
 	public void delete(String key){
-		String path = keyToPath(key);
-		xxlZkClient.deletePath(path);
+		XxlConfZkConf.delete(key);
 	}
 
 	/**
@@ -98,33 +69,7 @@ public class XxlConfManager implements InitializingBean, DisposableBean {
 	 * @return
 	 */
 	public String get(String key){
-		String path = keyToPath(key);
-		return xxlZkClient.getPathData(path);
+		return XxlConfZkConf.get(key);
 	}
-
-
-	// ------------------------------ key 2 path / genarate key ------------------------------
-
-	/**
-	 * path 2 key
-	 * @param nodePath
-	 * @return ZnodeKey
-	 */
-	public String pathToKey(String nodePath){
-		if (nodePath==null || nodePath.length() <= zkpath.length() || !nodePath.startsWith(zkpath)) {
-			return null;
-		}
-		return nodePath.substring(zkpath.length()+1, nodePath.length());
-	}
-
-	/**
-	 * key 2 path
-	 * @param nodeKey
-	 * @return znodePath
-	 */
-	public String keyToPath(String nodeKey){
-		return zkpath + "/" + nodeKey;
-	}
-
 
 }
