@@ -23,15 +23,19 @@ public class XxlConfZkConf {
 	private static String zkpath;
 
 	private static XxlZkClient xxlZkClient = null;
-	public static void init(String zkaddress, String zkpath, String zkdigest) {
+	public static void init(String zkaddress, String zkdigest, String env) {
 
 		// valid
 		if (zkaddress==null || zkaddress.trim().length()==0) {
 			throw new XxlConfException("xxl-conf zkaddress can not be empty");
 		}
-		if (zkpath==null || zkpath.trim().length()==0) {
-			throw new XxlConfException("xxl-conf zkpath can not be empty");
+
+		// init zkpath
+		if (env==null || env.trim().length()==0) {
+			env = "default";
 		}
+		zkpath = "/xxl-conf/" + env;
+
 
         XxlConfZkConf.zkpath = zkpath;
 

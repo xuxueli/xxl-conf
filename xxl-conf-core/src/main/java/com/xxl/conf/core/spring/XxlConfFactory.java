@@ -43,8 +43,8 @@ public class XxlConfFactory implements InitializingBean, DisposableBean, BeanDef
 
 	private String envprop;
 	private String zkaddress;
-	private String zkpath;
 	private String zkdigest;
+	private String env;
 
 	public void setEnvprop(String envprop) {
 		this.envprop = envprop;
@@ -54,16 +54,15 @@ public class XxlConfFactory implements InitializingBean, DisposableBean, BeanDef
 		this.zkaddress = zkaddress;
 	}
 
-	public void setZkpath(String zkpath) {
-		this.zkpath = zkpath;
-	}
-
     public void setZkdigest(String zkdigest) {
         this.zkdigest = zkdigest;
     }
 
+	public void setEnv(String env) {
+		this.env = env;
+	}
 
-    // ---------------------- init/destroy ----------------------
+	// ---------------------- init/destroy ----------------------
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -75,17 +74,19 @@ public class XxlConfFactory implements InitializingBean, DisposableBean, BeanDef
 				for (String key: envPropFile.stringPropertyNames()) {
 					if ("xxl.conf.zkaddress".equals(key)) {
 						zkaddress = envPropFile.getProperty(key);	// replace if envprop not exist
-					} else if ("xxl.conf.zkpath".equals(key)) {
-						zkpath = envPropFile.getProperty(key);
 					} else if ("xxl.conf.zkdigest".equals(key)) {
 						zkdigest = envPropFile.getProperty(key);
-                    }
+                    } else if ("xxl.conf.env".equals(key)) {
+						env = envPropFile.getProperty(key);
+					}
 				}
 			}
 		}
 
+		// init zkpath
+
 		// init
-		XxlConfZkConf.init(zkaddress, zkpath, zkdigest);									// init zk client
+		XxlConfZkConf.init(zkaddress, zkdigest, env);									// init zk client
         XxlConfLocalCacheConf.init();
 		XxlConfListenerFactory.addListener(null, new BeanRefreshXxlConfListener());    // listener all key change
 	}

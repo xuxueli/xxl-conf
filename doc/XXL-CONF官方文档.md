@@ -115,11 +115,12 @@ xxl-conf/xxl-conf-admin/src/main/resources/xxl-conf-admin.properties
 配置项目说明：
 ```
 # 配置中心zookeeper集群地址，如有多个地址用逗号分隔；
-xxl.conf.admin.zkaddress=127.0.0.1:2181
-# 配置在zookeeper中的存储目录；
-xxl.conf.admin.zkpath=/xxl-conf
+xxl.conf.zkaddress=127.0.0.1:2181
 # 配置zookeeper的digest权限信息；
-xxl.conf.admin.zkdigest
+xxl.conf.zkdigest=
+# 环境配置，如"test、ppe、product"等；
+xxl.conf.env=default
+
 
 # xxl-conf, jdbc        （JDBC配置）
 xxl.conf.admin.jdbc.driverClass=com.mysql.jdbc.Driver
@@ -157,10 +158,10 @@ xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/xxl-conf.pro
 ```
 # 配置中心zookeeper集群地址，如有多个地址用逗号分隔；
 xxl.conf.zkaddress=127.0.0.1:2181
-# 配置在zookeeper中的存储目录；
-xxl.conf.zkpath=/xxl-conf
 # 配置zookeeper的digest权限信息；
 xxl.conf.zkdigest=
+# 环境配置，如"test、ppe、product"等；
+xxl.conf.env=default
 ```
 
 #### C、XXL-CONF 配置工厂初始化[非必须]
@@ -418,7 +419,7 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 6、支持ZK鉴权信息配置；
 - 7、XxlConf与原生配置加载方式( "@Value"、"${...}" )兼容，相互隔离，互不影响；
 - 8、maven依赖优化，移除冗余强制依赖；
-- 9、[迭代中] "zkpath" 参数移除，新增参数 "env"，区分配置环境；
+- 9、"xxl.conf.zkpath" 参数移除，新增参数 "xxl.conf.env"，区分配置环境；
 
 ### TODO LIST
 - 1、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；

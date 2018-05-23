@@ -20,21 +20,29 @@ import org.springframework.stereotype.Component;
 public class XxlConfManager implements InitializingBean, DisposableBean {
 	private static Logger logger = LoggerFactory.getLogger(XxlConfManager.class);
 
-
-	@Value("${xxl.conf.admin.zkaddress}")
+	@Value("${xxl.conf.zkaddress}")
 	private String zkaddress;
 
-	@Value("${xxl.conf.admin.zkpath}")
-	private String zkpath;
-
-	@Value("${xxl.conf.admin.zkdigest}")
+	@Value("${xxl.conf.zkdigest}")
 	private String zkdigest;
 
+	@Value("${xxl.conf.env}")
+	private String env;
+
+	private String zkpath;
 
 	// ------------------------------ zookeeper client ------------------------------
 	private static XxlZkClient xxlZkClient = null;
 	@Override
 	public void afterPropertiesSet() throws Exception {
+
+		// init zkpath
+		if (env==null || env.trim().length()==0) {
+			env = "default";
+		}
+		zkpath = "/xxl-conf/" + env;
+
+		// init zk client
 		xxlZkClient = new XxlZkClient(zkaddress, zkpath, zkdigest, new Watcher() {
 			@Override
 			public void process(WatchedEvent watchedEvent) {
@@ -48,6 +56,7 @@ public class XxlConfManager implements InitializingBean, DisposableBean {
 				}
 			}
 		});
+
 		logger.info(">>>>>>>>>> xxl-conf, XxlConfManager init success.");
 	}
 	@Override
