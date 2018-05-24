@@ -409,28 +409,28 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 3、升级多项依赖至较新版本：spring、spring-boot、jackson、freemarker、mybatis等；
 
 ### 6.9 版本 v1.4.2 新特性[迭代中]
-- 1、[迭代中]配置中心，迁移为spring boot项目；
-- 2、[迭代中]配置中心，提供官方docker镜像；
-- 3、容器组件初始化顺序调整，修复@PostConstruct无法识别问题；
-- 4、Local Cache缓存长度扩充为3000，采用LRU策略。
-- 5、配置优化，移除冗余配置项；
-- 6、支持ZK鉴权信息配置；
-- 7、XxlConf与原生配置加载方式( "@Value"、"${...}" )兼容，相互隔离，互不影响；替代原LocalConf层；
-- 8、maven依赖优化，移除冗余强制依赖；
-- 9、"xxl.conf.zkpath" 参数移除，新增参数 "xxl.conf.env"，区分配置环境；
-- 10、新增Jfinal类型Sample项目；
-- 11、新增Nutz类型Sample项目；
+- 1、支持多种数据类型配置，如：String、Boolean、Short、Integer、Long、Float、Double 等；
+- 2、多环境支持：移除 "xxl.conf.zkpath" 属性，新增参数 "xxl.conf.env"，客户端通过该属性，隔离应用环境。
+- 3、新增Jfinal类型Sample项目；
+- 4、新增Nutz类型Sample项目；
+- 5、[迭代中]配置中心，迁移为spring boot项目；
+- 6、[迭代中]配置中心，提供官方docker镜像；
+- 7、支持ZK鉴权信息配置；
+- 8、Local Cache缓存长度扩充为10000，采用LRU策略。
+- 9、容器组件初始化顺序调整，修复@PostConstruct无法识别问题；
+- 10、配置优化，移除冗余配置项；
+- 11、XxlConf与原生配置加载方式( "@Value"、"${...}" )兼容，相互隔离，互不影响；替代原LocalConf层；
+- 12、Maven依赖优化，移除冗余强制依赖；
+
 
 
 ### TODO LIST
-- 1、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；
+- 1、本地优先配置：优先加载该配置中数据，常用于本地调试。早期版本功能用处不大，现已移除，考虑是否完全移除；
 - 2、zookeeper客户端迁移至curator；
 - 3、local cache 备份到磁盘；zk异常且local properties未配置时，从磁盘上读取配置；
 - 4、Local Cache缓存长度考虑支持自定义；
-- 5、多环境支持：移除zkpath属性。配置中心枚举预设"product、preview、beta"等多环境，客户端通过env属性选择对应环境使用。
-- 6、支持API服务接口方式操作配置数据；
-- 7、异构语言支持：提供API服务，支持批量获取配置数据；
-- 8、本地优先配置：优先加载该配置中数据，常用于本地调试。早期版本功能用处不大，现已移除，考虑是否完全移除；
+- 5、支持API服务接口方式操作配置数据；
+- 6、异构语言支持：提供API服务，支持批量获取配置数据；
 
 
 ## 七、其他

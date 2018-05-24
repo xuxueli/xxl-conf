@@ -5,6 +5,7 @@ import com.xxl.conf.core.annotation.XxlConf;
 import com.xxl.conf.core.exception.XxlConfException;
 import com.xxl.conf.core.factory.XxlConfBaseFactory;
 import com.xxl.conf.core.listener.impl.BeanRefreshXxlConfListener;
+import com.xxl.conf.core.util.FieldReflectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.*;
@@ -107,7 +108,7 @@ public class XxlConfFactory implements InitializingBean, DisposableBean, BeanDef
 								String confValue = XxlConfClient.get(confKey, "");
 
 								// resolves placeholders
-								pvs.add(pv.getName(), confValue);
+								pvs.add(pv.getName(), confValue);	// support mult data types
 
 								// watch
 								BeanRefreshXxlConfListener.BeanField beanField = new BeanRefreshXxlConfListener.BeanField(beanName, propertyName);
@@ -201,7 +202,7 @@ public class XxlConfFactory implements InitializingBean, DisposableBean, BeanDef
 
 		// refresh field: set or field
 		if (propertyDescriptor!=null && propertyDescriptor.getWriteMethod() != null) {
-			beanWrapper.setPropertyValue(beanField.getProperty(), value);
+			beanWrapper.setPropertyValue(beanField.getProperty(), value);	// support mult data types
 			logger.info(">>>>>>>>>>> xxl-conf, refreshBeanField[set] success, {}#{}:{}",
 					beanField.getBeanName(), beanField.getProperty(), value);
 		} else {
@@ -209,9 +210,12 @@ public class XxlConfFactory implements InitializingBean, DisposableBean, BeanDef
 			if (beanFields!=null && beanFields.length>0) {
 				for (Field fieldItem: beanFields) {
 					if (beanField.getProperty().equals(fieldItem.getName())) {
-						fieldItem.setAccessible(true);
 						try {
-							fieldItem.set(bean, value);
+							Object valueObj = FieldReflectionUtil.parseValue(fieldItem, value);
+
+							fieldItem.setAccessible(true);
+							fieldItem.set(bean, valueObj);		// support mult data types
+
 							logger.info(">>>>>>>>>>> xxl-conf, refreshBeanField[field] success, {}#{}:{}",
 									beanField.getBeanName(), beanField.getProperty(), value);
 						} catch (IllegalAccessException e) {
