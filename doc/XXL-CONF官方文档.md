@@ -100,6 +100,7 @@ XXL-CONF 是一个分布式配置管理平台，提供统一的配置管理服�
     - xxl-conf-samples: 接入XXl-CONF的示例项目，供用户参考学习
         - xxl-conf-sample-spring：spring版本
         - xxl-conf-sample-springboot：springboot版本
+        - xxl-conf-sample-jfinal：jfinal版本
 
 ### 2.3 “配置中心” 项目配置
 
@@ -413,13 +414,14 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 ### 6.9 版本 v1.4.2 新特性[迭代中]
 - 1、[迭代中]配置中心，迁移为spring boot项目；
 - 2、[迭代中]配置中心，提供官方docker镜像；
-- 3、[迭代中]容器组件初始化顺序调整，修复@PostConstruct无法识别问题；
+- 3、容器组件初始化顺序调整，修复@PostConstruct无法识别问题；
 - 4、Local Cache缓存长度扩充为3000，采用LRU策略。
 - 5、配置优化，移除冗余配置项；
 - 6、支持ZK鉴权信息配置；
 - 7、XxlConf与原生配置加载方式( "@Value"、"${...}" )兼容，相互隔离，互不影响；
 - 8、maven依赖优化，移除冗余强制依赖；
 - 9、"xxl.conf.zkpath" 参数移除，新增参数 "xxl.conf.env"，区分配置环境；
+- 10、新增Jfinal类型Sample项目；
 
 ### TODO LIST
 - 1、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；

@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xmlns:context="http://www.springframework.org/schema/context"
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans
-           	http://www.springframework.org/schema/beans/spring-beans.xsd
-			http://www.springframework.org/schema/context
-			http://www.springframework.org/schema/context/spring-context.xsd">
+           	http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 
 	<!-- ********************************* XXL-CONF 配置工厂 ********************************* -->
-	<bean id="xxlConf" class="com.xxl.conf.core.spring.XxlConfFactory"  >
+	<bean id="xxlConfFactory" class="com.xxl.conf.core.spring.XxlConfFactory"  >
 		<!-- 环境配置文件地址，如 "xxl-conf.properties" 或 "file:/data/webapps/xxl-conf.properties" -->
 		<property name="envprop" value="xxl-conf.properties" />
 	</bean>

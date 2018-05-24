@@ -2,12 +2,9 @@ package com.xxl.conf.core.spring;
 
 import com.xxl.conf.core.XxlConfClient;
 import com.xxl.conf.core.annotation.XxlConf;
-import com.xxl.conf.core.core.XxlConfLocalCacheConf;
-import com.xxl.conf.core.core.XxlConfZkConf;
 import com.xxl.conf.core.exception.XxlConfException;
-import com.xxl.conf.core.listener.XxlConfListenerFactory;
+import com.xxl.conf.core.factory.XxlConfBaseFactory;
 import com.xxl.conf.core.listener.impl.BeanRefreshXxlConfListener;
-import com.xxl.conf.core.util.PropUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.*;
@@ -26,10 +23,9 @@ import org.springframework.util.ReflectionUtils;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.util.Objects;
-import java.util.Properties;
 
 /**
- * rewrite PropertyPlaceholderConfigurer
+ * XxlConf Factory
  *
  * @author xuxueli 2015-9-12 19:42:49
  */
@@ -67,32 +63,17 @@ public class XxlConfFactory implements InitializingBean, DisposableBean, BeanDef
 	@Override
 	public void afterPropertiesSet() throws Exception {
 
-		// env prop
 		if (envprop!=null && envprop.trim().length()>0) {
-			Properties envPropFile = PropUtil.loadProp(envprop);
-			if (envPropFile!=null && envPropFile.stringPropertyNames()!=null && envPropFile.stringPropertyNames().size()>0) {
-				for (String key: envPropFile.stringPropertyNames()) {
-					if ("xxl.conf.zkaddress".equals(key)) {
-						zkaddress = envPropFile.getProperty(key);	// replace if envprop not exist
-					} else if ("xxl.conf.zkdigest".equals(key)) {
-						zkdigest = envPropFile.getProperty(key);
-                    } else if ("xxl.conf.env".equals(key)) {
-						env = envPropFile.getProperty(key);
-					}
-				}
-			}
+			XxlConfBaseFactory.init(envprop);
+		} else {
+			XxlConfBaseFactory.init(zkaddress, zkdigest, env);
 		}
 
-		// init
-		XxlConfZkConf.init(zkaddress, zkdigest, env, true);									// init zk client
-        XxlConfLocalCacheConf.init();
-		XxlConfListenerFactory.addListener(null, new BeanRefreshXxlConfListener());    // listener all key change
 	}
 
 	@Override
 	public void destroy() throws Exception {
-		XxlConfLocalCacheConf.destroy();	// destroy ehcache
-		XxlConfZkConf.destroy();			// destroy zk client
+		XxlConfBaseFactory.destroy();
 	}
 
 
