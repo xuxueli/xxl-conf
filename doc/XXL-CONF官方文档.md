@@ -101,6 +101,7 @@ XXL-CONF 是一个分布式配置管理平台，提供统一的配置管理服�
         - xxl-conf-sample-spring：spring版本
         - xxl-conf-sample-springboot：springboot版本
         - xxl-conf-sample-jfinal：jfinal版本
+        - xxl-conf-sample-nutz：nutz版本
 
 ### 2.3 “配置中心” 项目配置
 
@@ -418,6 +419,8 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 8、maven依赖优化，移除冗余强制依赖；
 - 9、"xxl.conf.zkpath" 参数移除，新增参数 "xxl.conf.env"，区分配置环境；
 - 10、新增Jfinal类型Sample项目；
+- 11、新增Nutz类型Sample项目；
+
 
 ### TODO LIST
 - 1、@XxlConf方式配置，除默认String数据类型之外，支持多种数据类型；
