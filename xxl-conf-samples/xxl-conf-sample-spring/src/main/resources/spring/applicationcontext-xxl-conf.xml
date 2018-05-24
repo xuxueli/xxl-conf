@@ -16,14 +16,8 @@
 
 
 	<!-- ********************************* 测试示例（可删除） ********************************* -->
-
-	<context:property-placeholder location="classpath:local.properties" />
-	<context:component-scan base-package="com.xxl.conf.sample.demo" />
-
 	<bean id="demoConf" class="com.xxl.conf.sample.demo.DemoConf">
 		<property name="paramByXml" value="$XxlConf{default.key03}" />
-		<property name="localByXml" value="${local.xml}" />
 	</bean>
-
 
 </beans>
