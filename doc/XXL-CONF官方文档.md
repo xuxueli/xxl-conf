@@ -413,15 +413,13 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 2、多环境支持：移除 "xxl.conf.zkpath" 属性，新增参数 "xxl.conf.env"，客户端通过该属性，隔离应用环境。
 - 3、新增Jfinal类型Sample项目；
 - 4、新增Nutz类型Sample项目；
-- 5、[迭代中]配置中心，迁移为spring boot项目；
-- 6、[迭代中]配置中心，提供官方docker镜像；
-- 7、支持ZK鉴权信息配置；
-- 8、Local Cache缓存长度扩充为10000，采用LRU策略。
-- 9、容器组件初始化顺序调整，修复@PostConstruct无法识别问题；
-- 10、配置优化，移除冗余配置项；
-- 11、XxlConf与原生配置加载方式( "@Value"、"${...}" )兼容，相互隔离，互不影响；替代原LocalConf层；
-- 12、Maven依赖优化，移除冗余强制依赖；
-
+- 5、支持ZK鉴权信息配置；
+- 6、Local Cache缓存长度扩充为10000，采用LRU策略。
+- 7、容器组件初始化顺序调整，修复@PostConstruct无法识别问题；
+- 8、配置优化，移除冗余配置项；
+- 9、XxlConf与原生配置加载方式( "@Value"、"${...}" )兼容，相互隔离，互不影响；替代原LocalConf层；
+- 10、移除Spring强制依赖。在保持对Spring良好支持情况下，提高对非Spring环境的兼容性；
+- 11、升级pom依赖至较新版本，如Spring、Zookeeper等；
 
 
 ### TODO LIST
@@ -431,7 +429,8 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 4、Local Cache缓存长度考虑支持自定义；
 - 5、支持API服务接口方式操作配置数据；
 - 6、异构语言支持：提供API服务，支持批量获取配置数据；
-
+- 7、配置中心，迁移为spring boot项目；
+- 8、配置中心，提供官方docker镜像；
 
 ## 七、其他
 
