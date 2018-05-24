@@ -333,13 +333,9 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 
 ### 5.2 "配置中心" 设计
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_V4Mt.jpg "在这里输入图片标题")
-
-- 1、ZK设计: 系统在ZK集群中占用一个根目录 "/xxl-conf", 每新增一条配置项, 将会在该目录下新增一个子节点。结构如下图, 当配置变更时将会触发ZK节点的变更, 将会触发对应类型的ZK广播。
+- 1、ZK设计: 系统在ZK集群中占用一个根目录 每新增一条配置项, 将会在该目录下新增一个子节点。当配置变更时将会触发ZK节点的变更, 将会触发对应类型的ZK广播。
 - 2、数据库备份配置信息: 配置信息在ZK中的新增、变更等操作, 将会同步备份到Mysql中, 进一步保证数据的安全性;
 - 3、配置推送: 配置推送功能在ZK的Watch机制实现。Client在加载一条配置信息时将会Watch该配置对应的ZK节点, 因此, 当对该配置项进行配置更新等操作时, 将会触发ZK的NodeDataChanged广播, Client竟会立刻得到通知并刷新本地缓存中的配置信息;
-
-"配置中心" 提供Web界面供用户对配置信息进行配置查询、配置新增、配置更新和配置删除等操作;
 
 ### 5.3 "客户端" 设计
 
@@ -418,7 +414,7 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 4、Local Cache缓存长度扩充为3000，采用LRU策略。
 - 5、配置优化，移除冗余配置项；
 - 6、支持ZK鉴权信息配置；
-- 7、XxlConf与原生配置加载方式( "@Value"、"${...}" )兼容，相互隔离，互不影响；
+- 7、XxlConf与原生配置加载方式( "@Value"、"${...}" )兼容，相互隔离，互不影响；替代原LocalConf层；
 - 8、maven依赖优化，移除冗余强制依赖；
 - 9、"xxl.conf.zkpath" 参数移除，新增参数 "xxl.conf.env"，区分配置环境；
 - 10、新增Jfinal类型Sample项目；
