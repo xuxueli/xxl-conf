@@ -133,8 +133,14 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
 						BeanRefreshXxlConfListener.BeanField beanField = new BeanRefreshXxlConfListener.BeanField(beanName, propertyName);
 						//refreshBeanField(beanField, confValue, bean);
 
-						pv.setConvertedValue(confValue);
-
+						Class propClass = String.class;
+						for (PropertyDescriptor item: pds) {
+							if (beanField.getProperty().equals(item.getName())) {
+								propClass = item.getPropertyType();
+							}
+						}
+						Object valueObj = FieldReflectionUtil.parseValue(propClass, confValue);
+						pv.setConvertedValue(valueObj);
 
 						// watch
 						BeanRefreshXxlConfListener.addBeanField(confKey, beanField);
@@ -185,7 +191,7 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
 				for (Field fieldItem: beanFields) {
 					if (beanField.getProperty().equals(fieldItem.getName())) {
 						try {
-							Object valueObj = FieldReflectionUtil.parseValue(fieldItem, value);
+							Object valueObj = FieldReflectionUtil.parseValue(fieldItem.getType(), value);
 
 							fieldItem.setAccessible(true);
 							fieldItem.set(bean, valueObj);		// support mult data types

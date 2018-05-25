@@ -3,8 +3,6 @@ package com.xxl.conf.core.util;
 
 import com.xxl.conf.core.exception.XxlConfException;
 
-import java.lang.reflect.Field;
-
 /**
  * data type parse
  *
@@ -83,12 +81,12 @@ public final class FieldReflectionUtil {
 	/**
 	 * 参数解析 （支持：Byte、Boolean、String、Short、Integer、Long、Float、Double、Date）
 	 *
-	 * @param field
+	 * @param fieldType
 	 * @param value
 	 * @return
 	 */
-	public static Object parseValue(Field field, String value) {
-		Class<?> fieldType = field.getType();
+	public static Object parseValue(Class<?> fieldType, String value) {
+		// Class<?> fieldType = field.getType();	// Field field
 
 		if(value==null || value.trim().length()==0)
 			return null;
