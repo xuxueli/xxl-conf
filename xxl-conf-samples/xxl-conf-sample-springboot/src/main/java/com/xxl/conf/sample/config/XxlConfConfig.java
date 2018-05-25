@@ -3,6 +3,7 @@ package com.xxl.conf.sample.config;
 import com.xxl.conf.core.spring.XxlConfFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,11 +16,24 @@ import org.springframework.context.annotation.Configuration;
 public class XxlConfConfig {
     private Logger logger = LoggerFactory.getLogger(XxlConfConfig.class);
 
+
+    @Value("${xxl.conf.zkaddress}")
+    private String zkaddress;
+
+    @Value("${xxl.conf.zkdigest}")
+    private String zkdigest;
+
+    @Value("${xxl.conf.env}")
+    private String env;
+
+
     @Bean
     public XxlConfFactory xxlConfFactory() {
 
         XxlConfFactory xxlConf = new XxlConfFactory();
-        xxlConf.setEnvprop("xxl-conf.properties");
+        xxlConf.setZkaddress(zkaddress);
+        xxlConf.setZkdigest(zkdigest);
+        xxlConf.setEnv(env);
 
         logger.info(">>>>>>>>>>> xxl-conf config init.");
         return xxlConf;

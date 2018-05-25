@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans
-           	http://www.springframework.org/schema/beans/spring-beans.xsd">
+           	http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/context
+			http://www.springframework.org/schema/context/spring-context.xsd">
 
+
+	<context:property-placeholder location="classpath:xxl-conf.properties" />
 
 	<!-- ********************************* XXL-CONF 配置工厂 ********************************* -->
 	<bean id="xxlConfFactory" class="com.xxl.conf.core.spring.XxlConfFactory"  >
 		<!-- 环境配置文件地址，如 "xxl-conf.properties" 或 "file:/data/webapps/xxl-conf.properties" -->
-		<property name="envprop" value="xxl-conf.properties" />
+		<property name="zkaddress" value="${xxl.conf.zkaddress}" />
+		<property name="zkdigest" value="${xxl.conf.zkdigest}" />
+		<property name="env" value="${xxl.conf.env}" />
 	</bean>
-
 
 	<!-- ********************************* 测试示例（可删除） ********************************* -->
 	<bean id="demoConf" class="com.xxl.conf.sample.demo.DemoConf">

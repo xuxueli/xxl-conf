@@ -11,14 +11,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.*;
 import org.springframework.beans.factory.*;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
-import org.springframework.core.Ordered;
-import org.springframework.core.PriorityOrdered;
 import org.springframework.util.ReflectionUtils;
 
 import java.beans.PropertyDescriptor;
@@ -30,15 +26,16 @@ import java.util.Objects;
  *
  * @author xuxueli 2015-9-12 19:42:49
  */
-public class XxlConfFactory implements InitializingBean, DisposableBean, BeanDefinitionRegistryPostProcessor,
-		PriorityOrdered, BeanNameAware, BeanFactoryAware {
+public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
+		implements InitializingBean, DisposableBean, BeanNameAware, BeanFactoryAware {
 
 	private static Logger logger = LoggerFactory.getLogger(XxlConfFactory.class);
 
 
 	// ---------------------- env config ----------------------
 
-	private String envprop;
+	private String envprop;		// like "xxl-conf.properties" or "file:/data/webapps/xxl-conf.properties", include the following env config
+
 	private String zkaddress;
 	private String zkdigest;
 	private String env;
@@ -62,7 +59,7 @@ public class XxlConfFactory implements InitializingBean, DisposableBean, BeanDef
 	// ---------------------- init/destroy ----------------------
 
 	@Override
-	public void afterPropertiesSet() throws Exception {
+	public void afterPropertiesSet() {
 
 		if (envprop!=null && envprop.trim().length()>0) {
 			XxlConfBaseFactory.init(envprop);
@@ -73,7 +70,7 @@ public class XxlConfFactory implements InitializingBean, DisposableBean, BeanDef
 	}
 
 	@Override
-	public void destroy() throws Exception {
+	public void destroy() {
 		XxlConfBaseFactory.destroy();
 	}
 
@@ -81,58 +78,11 @@ public class XxlConfFactory implements InitializingBean, DisposableBean, BeanDef
 	// ---------------------- post process / xml、annotation ----------------------
 
 	@Override
-	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
+	public boolean postProcessAfterInstantiation(final Object bean, final String beanName) throws BeansException {
+
 
 		// 1、Annotation('@XxlConf')：resolves conf + watch
-		//registerBeanDefinitionIfNotExists(registry, PropertySourcesPlaceholderConfigurer.class, null);
-		registerBeanDefinitionIfNotExists(registry,  XxlConfAnnotationProcessor.class, null);
-
-		// 2、XML('$XxlConf{...}')：resolves placeholders + watch
-		String[] beanNames = registry.getBeanDefinitionNames();
-		if (beanNames != null && beanNames.length > 0) {
-			for (final String beanName : beanNames) {
-				if (!(beanName.equals(this.beanName) && registry.equals(XxlConfFactory.beanFactory))) {
-
-					BeanDefinition beanDefinition = registry.getBeanDefinition(beanName);
-
-					MutablePropertyValues pvs = beanDefinition.getPropertyValues();
-					PropertyValue[] pvArray = pvs.getPropertyValues();
-					for (PropertyValue pv : pvArray) {
-						if (pv.getValue() instanceof TypedStringValue) {
-							String propertyName = pv.getName();
-							String typeStringVal = ((TypedStringValue) pv.getValue()).getValue();
-							if (xmlKeyValid(typeStringVal)) {
-
-								// object + property
-								String confKey = xmlKeyParse(typeStringVal);
-								String confValue = XxlConfClient.get(confKey, "");
-
-								// resolves placeholders
-								pvs.add(pv.getName(), confValue);	// support mult data types
-
-								// watch
-								BeanRefreshXxlConfListener.BeanField beanField = new BeanRefreshXxlConfListener.BeanField(beanName, propertyName);
-								BeanRefreshXxlConfListener.addBeanField(confKey, beanField);
-							}
-						}
-					}
-
-				}
-			}
-		}
-
-		logger.info(">>>>>>>>>>> xxl-conf, XxlConfFactory process success");
-	}
-
-	@Override
-	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-		// TODO
-	}
-
-	public static class XxlConfAnnotationProcessor implements BeanPostProcessor, PriorityOrdered {
-
-		@Override
-		public Object postProcessBeforeInitialization(final Object bean, final String beanName) throws BeansException {
+		if (!beanName.equals(this.beanName)) {
 
 			ReflectionUtils.doWithFields(bean.getClass(), new ReflectionUtils.FieldCallback() {
 				@Override
@@ -157,22 +107,46 @@ public class XxlConfFactory implements InitializingBean, DisposableBean, BeanDef
 					}
 				}
 			});
-
-			return bean;
 		}
 
-		@Override
-		public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-			return bean;
-		}
-
-		@Override
-		public int getOrder() {
-			return Ordered.LOWEST_PRECEDENCE;
-		}
-
+		return super.postProcessAfterInstantiation(bean, beanName);
 	}
 
+	@Override
+	public PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeansException {
+
+		// 2、XML('$XxlConf{...}')：resolves placeholders + watch
+		if (!beanName.equals(this.beanName)) {
+
+			PropertyValue[] pvArray = pvs.getPropertyValues();
+			for (PropertyValue pv : pvArray) {
+				if (pv.getValue() instanceof TypedStringValue) {
+					String propertyName = pv.getName();
+					String typeStringVal = ((TypedStringValue) pv.getValue()).getValue();
+					if (xmlKeyValid(typeStringVal)) {
+
+						// object + property
+						String confKey = xmlKeyParse(typeStringVal);
+						String confValue = XxlConfClient.get(confKey, "");
+
+						// resolves placeholders
+						BeanRefreshXxlConfListener.BeanField beanField = new BeanRefreshXxlConfListener.BeanField(beanName, propertyName);
+						//refreshBeanField(beanField, confValue, bean);
+
+						pv.setConvertedValue(confValue);
+
+
+						// watch
+						BeanRefreshXxlConfListener.addBeanField(confKey, beanField);
+
+					}
+				}
+			}
+
+		}
+
+		return super.postProcessPropertyValues(pvs, pds, bean, beanName);
+	}
 
 	// ---------------------- refresh bean with xxl conf  ----------------------
 
@@ -181,7 +155,7 @@ public class XxlConfFactory implements InitializingBean, DisposableBean, BeanDef
 	 */
 	public static void refreshBeanField(BeanRefreshXxlConfListener.BeanField beanField, String value, Object bean){
 		if (bean == null) {
-			bean = XxlConfFactory.beanFactory.getBean(beanField.getBeanName());		// TODO，springboot环境下，通过该方法 "getBean" 获取获取部分Bean，如Spring和Jackson等组件的Bean 会报错。原因未知；
+			bean = XxlConfFactory.beanFactory.getBean(beanField.getBeanName());		// getBean 会导致Bean提前初始化，风险较大；
 		}
 		if (bean == null) {
 			return;
@@ -300,11 +274,6 @@ public class XxlConfFactory implements InitializingBean, DisposableBean, BeanDef
 
 	// ---------------------- other ----------------------
 
-	@Override
-	public int getOrder() {
-		return Ordered.LOWEST_PRECEDENCE;
-	}
-
 	private String beanName;
 	@Override
 	public void setBeanName(String name) {
@@ -316,6 +285,5 @@ public class XxlConfFactory implements InitializingBean, DisposableBean, BeanDef
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		this.beanFactory = beanFactory;
 	}
-
 
 }
