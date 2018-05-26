@@ -195,7 +195,7 @@ public class XxlZkClient {
 				createPatnWithParent(path);
 				stat = getClient().exists(path, true);
 			}
-			return getClient().setData(path, data.getBytes(),stat.getVersion());	// TODO，utd-8
+			return getClient().setData(path, data.getBytes("UTF-8"), stat.getVersion());
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new XxlConfException(e);
@@ -215,7 +215,7 @@ public class XxlZkClient {
 			if (stat != null) {
 				byte[] resultData = getClient().getData(path, true, null);
 				if (resultData != null) {
-					znodeValue = new String(resultData);
+					znodeValue = new String(resultData, "UTF-8");
 				}
 			} else {
 				logger.info(">>>>>>>>>> xxl-conf, path[{}] not found.", path);

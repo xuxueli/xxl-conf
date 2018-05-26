@@ -426,6 +426,7 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 11、升级pom依赖至较新版本，如Spring、Zookeeper等；
 - 12、[迭代中]多语言支持：提供配置加载API服务，存在Ehcache缓存，可通过服务集群横向扩展, 不必担心性能压力。
 - 13、小概率情况下BeanRefresh重复刷新问题修复；
+- 14、配置数据强制编码 UTF-8，解决因操作系统编码格式不一致导致的配置乱码问题；
 
 ### TODO LIST
 - 1、本地优先配置：优先加载该配置中数据，常用于本地调试。早期版本功能用处不大，现已移除，考虑是否完全移除；
