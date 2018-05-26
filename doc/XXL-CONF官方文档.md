@@ -107,7 +107,7 @@ XXL-CONF 是一个分布式配置管理平台，提供统一的配置管理服�
         - xxl-conf-sample-jfinal：jfinal版本
         - xxl-conf-sample-nutz：nutz版本
 
-### 2.3 “配置中心” 项目配置
+### 2.3 “配置中心” 项目配置（支持集群）
 
     项目：xxl-conf-admin
     作用：管理配置数据，配置变更时实时推送配置信息至客户端接入项目中；
@@ -135,13 +135,15 @@ xxl.conf.admin.jdbc.username=root
 xxl.conf.admin.jdbc.password=root_pwd
 ```
 
+配置中心集群：
+
 配置中心支持集群部署，提高配置中心负载能力和可用性。  
-配置中心集群部署时，项目配置文件需保持一致。
+配置中心集群部署时，项目配置文件保持一致即可。
 
 ### 2.4 “接入XXL-CONF的示例项目” 项目配置
 
     项目：xxl-conf-sample-spring
-    作用：接入XXl-CONF的示例项目，供用户参考学习
+    作用：接入XXl-CONF的示例项目，供用户参考学习。这里以 spring 版本进行介绍，其他版本可参考各自sample项目。
 
 #### A、引入maven依赖
 ```
@@ -153,7 +155,7 @@ xxl.conf.admin.jdbc.password=root_pwd
 </dependency>
 ```
 
-#### B、添加 XXL-CONF 配置文件
+#### B、添加“XXL-CONF 配置文件”
 
 可参考配置文件：
 ```
@@ -170,11 +172,7 @@ xxl.conf.zkdigest=
 xxl.conf.env=default
 ```
 
-#### C、XXL-CONF 配置工厂初始化[非必须]
-
-说明：该配置为可选项。XXL-CONF 提供多种配置方式，包括 "API、 @XxlConf、XML" 三种配置方式。
-仅在Spring容器中启用 "XML占位符方式" 和 "@XxlConf 注解方式" 配置时才需要，仅使用"API"方式时可忽略该配置；
-
+#### C、设置“XXL-CONF 配置工厂”
 
 可参考配置文件：
 ```
@@ -191,10 +189,12 @@ xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/spring/appli
 ```
 
 
-### 2.5 添加和更新配置
+### 2.5 功能测试
+
+#### a、添加和更新配置
 参考章节 "3.2 配置管理" 添加或更新配置信息； 
 
-### 2.6 “接入XXL-CONF的示例项目” 中获取配置，并接受动态推送
+#### b、获取配置并接受动态推送更新
 参考章节 "四、客户端配置获取" 获取配置并接受动态推送更新；
 
 
