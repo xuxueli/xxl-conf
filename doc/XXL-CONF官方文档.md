@@ -424,7 +424,7 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 9、XxlConf与原生配置加载方式( "@Value"、"${...}" )兼容，相互隔离，互不影响；替代原LocalConf层；
 - 10、移除Spring强制依赖。在保持对Spring良好支持情况下，提高对非Spring环境的兼容性；
 - 11、升级pom依赖至较新版本，如Spring、Zookeeper等；
-- 12、[迭代中]多语言支持：提供配置加载API服务，存在Ehcache缓存，可通过服务集群横向扩展, 不必担心性能压力。
+- 12、多语言支持：提供配置加载API服务，存在Ehcache缓存，可通过服务集群横向扩展, 不必担心性能压力。
 - 13、小概率情况下BeanRefresh重复刷新问题修复；
 - 14、配置数据强制编码 UTF-8，解决因操作系统编码格式不一致导致的配置乱码问题；
 
