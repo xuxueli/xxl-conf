@@ -12,16 +12,16 @@ import java.util.Map;
 
 /**
  * XxlConf Agent, support multilingual applications.
- * （配置中心 Agent 服务，实现配置数据多语言支持；）
+ * （配置中心Agent服务，实现配置数据多语言支持；）
  *
- * Java应用可通过依赖Client端，方便的获取配置中心的数据；
- * 其他，非Java语言应用可通过该 Agent 的方式获取配置中心配置：可通过部署该 XxlConf Agent 应用，以 Http 接口方式获取配置中心中的配置；从而实现配置中心的多语言支持；
+ * Java应用可通过 "Client方式" 方便的获取配置中心的数据；非Java语言应用，可通过该 "配置中心Agent服务" 获取配置中心配置；从而实现配置数据多语言支持；
+ * "配置中心Agent服务" 本质上是一个获取配置中心中配置数据的Http接口。
  *
- * 	优点：
+ * 	特点：
  * 		1、跨语言：支持通过Http方式获取多个配置数据，无语言限制；
- * 		2、动态更新：配置变更时，Conf Agent 将会实时感知并更新Local Cache中配置数据，降低配置Agent服务的配置延迟；
+ * 		2、动态更新：配置变更时，Agent将会实时感知并更新Local Cache中配置数据，保证实时性；第三方应用内部配置实时性，可通过 "周期性轮训" 或者 "long-polling" 实现；
  * 		3、高性能：得益于 XxlConf 底层实现的 Local Cache，因此该 Agent 服务性能非常高；单机可承担大量配置请求；
- * 		4、集群部署：XxlConf Agent 支持集群部署，提高配置服务的可用性；；
+ * 		4、集群部署：XxlConf Agent 支持集群部署，提高配置服务的可用性；
  *
  * @author xuxueli 2018-05-29 20:43:17
  */

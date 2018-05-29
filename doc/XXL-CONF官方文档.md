@@ -32,7 +32,7 @@ XXL-CONF 是一个分布式配置管理平台，提供统一的配置管理服�
 - 17、历史版本回滚：记录配置变更历史，方便历史配置版本回溯，默认记录10个历史版本；
 - 18、多环境支持：支持通过 "env" 属性隔离配置数据，从而隔离应用环境；
 - 19、多数据类型配置：支持多种数据类型配置，如：String、Boolean、Short、Integer、Long、Float、Double 等；
-
+- 20、多语言支持：提供配置Agent服务，可据此通过Http获取配置数据，从而实现多语言支持。Agent存在Ehcache缓存性能极高，并且支持集群横向扩展；
 
 
 ### 1.3 背景
@@ -354,6 +354,56 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 
 得益于LocalCache, 因此可以放心应用在业务代码中, 不必担心并发压力。
 
+### 5.4 配置中心接入方式
+
+#### a、Client方式：
+应用通过内嵌和依赖Client端的方式，直连配置中心；此时系统结构分层如下：
+
+- 应用（内嵌Client端）：直连配合中心ZK，获取配置，动态watch配置变更；
+- 配置中心（ZK集群）：托管配置，配置同步至ZK集群；
+
+优点：
+- 实时性：配置变更实时推送；
+
+缺点：
+- 语言限制：目前仅提供Java语言Client端；
+
+#### b、Agent方式：
+在配置中心上层，部署配置Agent服务，应用通过Agent获取配置；此时系统结构分层如下：
+
+- 应用：以Http方式从 "配合Agent" 获取配置。通过 "周期性轮训" 或者 "long-polling" 方式感知配置变更；
+- 配置Agent：直连配合中心ZK，获取配置，动态watch配置变更；
+- 配置中心（ZK集群）：托管配置，配置同步至ZK集群；
+
+优点：
+- 多语言支持：支持通过Http方式获取多个配置数据，无语言限制；
+
+缺点：
+- 实时性：配置变更依赖 "周期性轮训" 或者 "long-polling"；
+
+### 5.4 多语言支持
+
+Java应用可通过 "Client方式" 方便的获取配置中心的数据；非Java语言应用，可通过该 "配置中心Agent服务" 获取配置中心配置；从而实现配置数据多语言支持；
+"配置中心Agent服务" 本质上是一个获取配置中心中配置数据的Http接口。
+
+"Agent服务" 可参考以下代码：
+```
+/xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/java/com/xxl/conf/sample/controller/XxlConfAgentController.java
+``` 
+
+第三方从Agent获取配置URL格式如下：
+
+```
+// 支持批量获取配置，多个配置Key逗号分隔；
+http://{Agent部署路径}/confagent?confKeys=key01,key02
+
+// Agent响应格式如下：
+{
+    "key01": "value01",
+    "key02": "value02"
+}
+```
+
 
 ## 六、历史版本
 ### 6.1 版本 v1.0.0 特性[2015-11-13]
@@ -415,16 +465,16 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 ### 6.9 版本 v1.4.2 新特性[迭代中]
 - 1、支持多种数据类型配置，如：String、Boolean、Short、Integer、Long、Float、Double 等；
 - 2、多环境支持：移除 "xxl.conf.zkpath" 属性，新增参数 "xxl.conf.env"，客户端通过该属性，隔离应用环境。
-- 3、新增Jfinal类型Sample项目；
-- 4、新增Nutz类型Sample项目；
-- 5、支持ZK鉴权信息配置；
-- 6、Local Cache缓存长度扩充为10000，采用LRU策略。
-- 7、容器组件初始化顺序调整，修复@PostConstruct无法识别问题；
-- 8、配置优化，移除冗余配置项；
-- 9、XxlConf与原生配置加载方式( "@Value"、"${...}" )兼容，相互隔离，互不影响；替代原LocalConf层；
-- 10、移除Spring强制依赖。在保持对Spring良好支持情况下，提高对非Spring环境的兼容性；
-- 11、升级pom依赖至较新版本，如Spring、Zookeeper等；
-- 12、多语言支持：提供配置加载API服务，存在Ehcache缓存，可通过服务集群横向扩展, 不必担心性能压力。
+- 3、多语言支持：提供配置Agent服务，可据此通过Http获取配置数据，从而实现多语言支持。Agent存在Ehcache缓存性能极高，并且支持集群横向扩展；
+- 4、新增Jfinal类型Sample项目；
+- 5、新增Nutz类型Sample项目；
+- 6、支持ZK鉴权信息配置；
+- 7、Local Cache缓存长度扩充为10000，采用LRU策略。
+- 8、容器组件初始化顺序调整，修复@PostConstruct无法识别问题；
+- 9、配置优化，移除冗余配置项；
+- 10、XxlConf与原生配置加载方式( "@Value"、"${...}" )兼容，相互隔离，互不影响；替代原LocalConf层；
+- 11、移除Spring强制依赖。在保持对Spring良好支持情况下，提高对非Spring环境的兼容性；
+- 12、升级pom依赖至较新版本，如Spring、Zookeeper等；
 - 13、小概率情况下BeanRefresh重复刷新问题修复；
 - 14、配置数据强制编码 UTF-8，解决因操作系统编码格式不一致导致的配置乱码问题；
 
