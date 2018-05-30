@@ -475,7 +475,7 @@ http://{Agent部署路径}/confagent?confKeys=key01,key02
 - 2、XML配置方式，Bean初始化时配置加载逻辑优化；
 - 3、升级多项依赖至较新版本：spring、spring-boot、jackson、freemarker、mybatis等；
 
-### 6.9 版本 v1.4.2 新特性[迭代中]
+### 6.9 版本 v1.4.2 新特性[2018-05-30]
 - 1、多环境支持：单个调度中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
 - 2、多数据类型配置：支持多种数据类型配置，如：String、Boolean、Short、Integer、Long、Float、Double 等；
 - 3、多语言支持：提供配置Agent服务，可据此通过Http获取配置数据，从而实现多语言支持。Agent存在Ehcache缓存性能极高，并且支持集群横向扩展；
@@ -490,7 +490,6 @@ http://{Agent部署路径}/confagent?confKeys=key01,key02
 - 12、配置优化，移除冗余配置项；
 - 13、小概率情况下BeanRefresh重复刷新问题修复；
 - 14、升级pom依赖至较新版本，如Spring、Zookeeper等；
-
 
 
 ### TODO LIST
