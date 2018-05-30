@@ -4,6 +4,7 @@ import com.xxl.conf.admin.controller.annotation.PermessionLimit;
 import com.xxl.conf.admin.core.model.XxlConfEnv;
 import com.xxl.conf.admin.core.util.ReturnT;
 import com.xxl.conf.admin.dao.XxlConfEnvDao;
+import com.xxl.conf.admin.dao.XxlConfNodeDao;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +25,9 @@ public class EnvController {
 	
 	@Resource
 	private XxlConfEnvDao xxlConfEnvDao;
+    @Resource
+    private XxlConfNodeDao xxlConfNodeDao;
+
 
 	@RequestMapping
 	@PermessionLimit(adminuser = true)
@@ -87,7 +91,11 @@ public class EnvController {
 			return new ReturnT<String>(500, "参数Env非法");
 		}
 
-		// valid, TODO , conf not use
+        // valid
+        int list_count = xxlConfNodeDao.pageListCount(0, 10, env, null, null);
+        if (list_count > 0) {
+            return new ReturnT<String>(500, "拒绝删除，该Env下存在配置数据");
+        }
 
 		// valid can not be empty
 		List<XxlConfEnv> allList = xxlConfEnvDao.findAll();
