@@ -69,6 +69,18 @@
           	<div class="navbar-custom-menu">
 				<ul class="nav navbar-nav">
 
+					<#-- env -->
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">当前环境：${XXL_CONF_CURRENT_ENV.title} <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+							<#list envList as item>
+								<li class="changeEnv" env="${item.env}" ><a href="javascript:;">${item.title}</a></li>
+							</#list>
+                            <#--<li class="divider"></li>-->
+                        </ul>
+                    </li>
+
+					<#-- login user -->
                     <li class="dropdown">
                         <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 							欢迎 ${Request["XXL_CONF_LOGIN_IDENTITY"].username}
@@ -126,6 +138,7 @@
 				<#if Request["XXL_CONF_LOGIN_IDENTITY"].permission == 1>
                     <li class="nav-click <#if pageName == "project">active</#if>" ><a href="${request.contextPath}/project"><i class="fa fa-circle-o text-yellow"></i><span>项目管理</span></a></li>
                     <li class="nav-click <#if pageName == "user">active</#if>" ><a href="${request.contextPath}/user"><i class="fa fa-circle-o text-green"></i><span>用户管理</span></a></li>
+					<li class="nav-click <#if pageName == "env">active</#if>" ><a href="${request.contextPath}/env"><i class="fa fa-circle-o text-blue"></i><span>环境管理</span></a></li>
 				</#if>
                 <li class="nav-click <#if pageName == "help">active</#if>" ><a href="${request.contextPath}/help"><i class="fa fa-circle-o text-gray"></i><span>使用教程</span></a></li>
 			</ul>

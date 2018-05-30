@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.conf.admin.dao.XxlConfEnvDao">
+	
+	<resultMap id="xxlConfEnv" type="com.xxl.conf.admin.core.model.XxlConfEnv" >
+		<result column="env" property="env" jdbcType="VARCHAR" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="order" property="order" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.`env`,
+		t.`title`,
+		t.`order`
+	</sql>
+
+	<select id="findAll" parameterType="java.util.Map" resultMap="xxlConfEnv">
+		SELECT <include refid="Base_Column_List" />
+		FROM xxl_conf_env AS t
+		ORDER BY t.`order` ASC
+	</select>
+
+	<insert id="save" parameterType="com.xxl.conf.admin.core.model.XxlConfProject" >
+		INSERT INTO xxl_conf_env(env, title, `order`)
+		VALUES(#{env}, #{title}, #{order})
+	</insert>
+
+	<update id="update" parameterType="com.xxl.conf.admin.core.model.XxlConfProject" >
+		UPDATE xxl_conf_env
+		SET title = #{title},
+			`order` = #{order}
+		WHERE env = #{env}
+	</update>
+
+	<delete id="delete" parameterType="java.lang.String" >
+		DELETE FROM xxl_conf_env
+		WHERE env = #{env}
+	</delete>
+
+	<select id="load" parameterType="java.lang.String" resultMap="xxlConfEnv">
+		SELECT <include refid="Base_Column_List" />
+		FROM xxl_conf_env AS t
+		WHERE env = #{env}
+	</select>
+
+</mapper>

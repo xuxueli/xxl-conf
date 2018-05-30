@@ -43,6 +43,10 @@
 			<mvc:mapping path="/**"/>
 			<bean class="com.xxl.conf.admin.controller.interceptor.CookieInterceptor"/>
 		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean class="com.xxl.conf.admin.controller.interceptor.EnvInterceptor"/>
+		</mvc:interceptor>
 	</mvc:interceptors>
 	<bean id="exceptionResolver" class="com.xxl.conf.admin.controller.resolver.WebExceptionResolver" />
 

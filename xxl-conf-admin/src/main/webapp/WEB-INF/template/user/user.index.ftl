@@ -179,7 +179,7 @@
                                 <#list projectList as project>
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox" name="permissionProjects" value="${project.appname}" >${project.title}
+                                            <input type="checkbox" name="permissionProjects" value="${project.appname}" >${project.title}(${project.appname})
                                         </label>
                                     </div>
                                 </#list>

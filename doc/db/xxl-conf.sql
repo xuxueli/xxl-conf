@@ -36,8 +36,15 @@ CREATE TABLE `xxl_conf_user` (
   PRIMARY KEY (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `xxl_conf_env` (
+  `env` varchar(100) NOT NULL COMMENT 'Env',
+  `title` varchar(100) NOT NULL COMMENT '环境名称',
+  `order` tinyint(4) NOT NULL DEFAULT '0' COMMENT '显示排序',
+  PRIMARY KEY (`env`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+INSERT INTO `xxl_conf_env` VALUES ( 'test', '测试环境', '1');
 INSERT INTO `xxl_conf_node` VALUES ('default.key01', 'default', '测试配置01', '1'), ('default.key02', 'default', '测试配置02', '2'), ('default.key03', 'default', '测试配置03', '3');
 INSERT INTO `xxl_conf_project` VALUES ('default', '示例项目');
 INSERT INTO `xxl_conf_user` VALUES ('admin', 'e10adc3949ba59abbe56e057f20f883e', '1', null), ('user', 'e10adc3949ba59abbe56e057f20f883e', '0', 'default');

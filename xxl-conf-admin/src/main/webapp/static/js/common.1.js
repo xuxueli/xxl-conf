@@ -115,5 +115,13 @@ $(function(){
         updatePwdModalValidate.resetForm();
         $("#updatePwdModal .form .form-group").removeClass("has-error");
     });
+
+    // 切换Env
+    $('.changeEnv').click(function(){
+        var env = $(this).attr('env');
+        $.cookie('XXL_CONF_CURRENT_ENV', env, { expires: 7 });	//$.cookie('the_cookie', '', { expires: -1 });
+
+        window.location.reload();
+    });
 	
 });
