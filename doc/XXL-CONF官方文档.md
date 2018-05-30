@@ -476,20 +476,22 @@ http://{Agent部署路径}/confagent?confKeys=key01,key02
 - 3、升级多项依赖至较新版本：spring、spring-boot、jackson、freemarker、mybatis等；
 
 ### 6.9 版本 v1.4.2 新特性[迭代中]
-- 1、支持多种数据类型配置，如：String、Boolean、Short、Integer、Long、Float、Double 等；
-- 2、多环境支持：移除 "xxl.conf.zkpath" 属性，新增参数 "xxl.conf.env"，客户端通过该属性，隔离应用环境。
+- 1、多环境支持：单个调度中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
+- 2、多数据类型配置：支持多种数据类型配置，如：String、Boolean、Short、Integer、Long、Float、Double 等；
 - 3、多语言支持：提供配置Agent服务，可据此通过Http获取配置数据，从而实现多语言支持。Agent存在Ehcache缓存性能极高，并且支持集群横向扩展；
-- 4、新增Jfinal类型Sample项目；
-- 5、新增Nutz类型Sample项目；
+- 4、新增 "Jfinal" 类型Sample项目；
+- 5、新增 "Nutz" 类型Sample项目；
 - 6、支持ZK鉴权信息配置；
-- 7、Local Cache缓存长度扩充为10000，采用LRU策略。
-- 8、容器组件初始化顺序调整，修复@PostConstruct无法识别问题；
-- 9、配置优化，移除冗余配置项；
-- 10、XxlConf与原生配置加载方式( "@Value"、"${...}" )兼容，相互隔离，互不影响；替代原LocalConf层；
-- 11、移除Spring强制依赖。在保持对Spring良好支持情况下，提高对非Spring环境的兼容性；
-- 12、升级pom依赖至较新版本，如Spring、Zookeeper等；
+- 7、Local Cache缓存长度扩充为100000，采用LRU过期策略。
+- 8、配置数据强制编码 UTF-8，解决因操作系统编码格式不一致导致的配置乱码问题；
+- 9、XxlConf与原生配置加载方式( "@Value"、"${...}" )兼容，相互隔离，互不影响；替代原LocalConf层；
+- 10、移除Spring强制依赖。在保持对Spring良好支持情况下，提高对非Spring环境的兼容性；
+- 11、容器组件初始化顺序调整，修复@PostConstruct无法识别问题；
+- 12、配置优化，移除冗余配置项；
 - 13、小概率情况下BeanRefresh重复刷新问题修复；
-- 14、配置数据强制编码 UTF-8，解决因操作系统编码格式不一致导致的配置乱码问题；
+- 14、升级pom依赖至较新版本，如Spring、Zookeeper等；
+
+
 
 ### TODO LIST
 - 1、本地优先配置：优先加载该配置中数据，常用于本地调试。早期版本功能用处不大，现已移除，考虑是否完全移除；

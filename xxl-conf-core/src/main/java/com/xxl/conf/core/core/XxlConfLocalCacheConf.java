@@ -38,7 +38,7 @@ public class XxlConfLocalCacheConf {
         // xxlConfLocalCache
         xxlConfLocalCache = cacheManager.createCache("xxlConfLocalCache",
                 CacheConfigurationBuilder
-                        .newCacheConfigurationBuilder(String.class, CacheNode.class, ResourcePoolsBuilder.heap(10000))	// .withExpiry、.withEvictionAdvisor （default lru）
+                        .newCacheConfigurationBuilder(String.class, CacheNode.class, ResourcePoolsBuilder.heap(100000))	// .withExpiry、.withEvictionAdvisor （default lru）
         );
 
         // refresh thread
