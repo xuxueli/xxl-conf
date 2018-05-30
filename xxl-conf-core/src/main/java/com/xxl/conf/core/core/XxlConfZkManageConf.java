@@ -19,9 +19,9 @@ public class XxlConfZkManageConf {
 
 	// ------------------------------ zookeeper client ------------------------------
 
-	private static final String zkBasePath = "/xxl-conf/";
+	private static final String zkBasePath = "/xxl-conf";
 	private static String getZkEnvPath(String env){
-		return zkBasePath.concat(env);
+		return zkBasePath.concat("/").concat(env);
 	}
 
 	private static XxlZkClient xxlZkClient = null;

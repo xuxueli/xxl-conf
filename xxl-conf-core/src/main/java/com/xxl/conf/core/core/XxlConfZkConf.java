@@ -20,7 +20,7 @@ public class XxlConfZkConf {
 
 	// ------------------------------ zookeeper client ------------------------------
 
-	private static final String zkBasePath = "/xxl-conf/";
+	private static final String zkBasePath = "/xxl-conf";
 	private static String zkEnvPath;
 
 	private static XxlZkClient xxlZkClient = null;
@@ -36,7 +36,7 @@ public class XxlConfZkConf {
 			throw new XxlConfException("xxl-conf env can not be empty");
 		}
 
-        XxlConfZkConf.zkEnvPath = zkBasePath.concat(env);
+        XxlConfZkConf.zkEnvPath = zkBasePath.concat("/").concat(env);
 
 		// init
 		xxlZkClient = new XxlZkClient(zkaddress, zkEnvPath, zkdigest, new Watcher() {
@@ -76,7 +76,7 @@ public class XxlConfZkConf {
                 }
             }
         });
-		logger.info(">>>>>>>>>> xxl-conf, XxlConfZkConf init success.");
+		logger.info(">>>>>>>>>> xxl-conf, XxlConfZkConf init success. [env={}]", env);
 	}
 
 	public static void destroy(){
