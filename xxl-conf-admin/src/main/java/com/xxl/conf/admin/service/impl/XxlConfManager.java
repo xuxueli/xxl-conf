@@ -1,6 +1,6 @@
 package com.xxl.conf.admin.service.impl;
 
-import com.xxl.conf.core.core.XxlConfZkConf;
+import com.xxl.conf.core.core.XxlConfZkManageConf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -24,19 +24,16 @@ public class XxlConfManager implements InitializingBean, DisposableBean {
 	@Value("${xxl.conf.zkdigest}")
 	private String zkdigest;
 
-	@Value("${xxl.conf.env}")
-	private String env;
-
 	// ------------------------------ zookeeper client ------------------------------
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		XxlConfZkConf.init(zkaddress, zkdigest, env, false);
+		XxlConfZkManageConf.init(zkaddress, zkdigest);
 	}
 
 	@Override
 	public void destroy() throws Exception {
-		XxlConfZkConf.destroy();
+		XxlConfZkManageConf.destroy();
 	}
 
 
@@ -49,17 +46,18 @@ public class XxlConfManager implements InitializingBean, DisposableBean {
 	 * @param data
 	 * @return
 	 */
-	public void set(String key, String data) {
-		XxlConfZkConf.set(key, data);
+	public void set(String env, String key, String data) {
+		XxlConfZkManageConf.set(env, key, data);
 	}
 
 	/**
 	 * delete zk conf
 	 *
+	 * @param env
 	 * @param key
 	 */
-	public void delete(String key){
-		XxlConfZkConf.delete(key);
+	public void delete(String env, String key){
+		XxlConfZkManageConf.delete(env, key);
 	}
 
 	/**
@@ -68,8 +66,8 @@ public class XxlConfManager implements InitializingBean, DisposableBean {
 	 * @param key
 	 * @return
 	 */
-	public String get(String key){
-		return XxlConfZkConf.get(key);
+	public String get(String env, String key){
+		return XxlConfZkManageConf.get(env, key);
 	}
 
 }

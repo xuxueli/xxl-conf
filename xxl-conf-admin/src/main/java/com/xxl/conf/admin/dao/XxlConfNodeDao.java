@@ -14,18 +14,20 @@ public interface XxlConfNodeDao {
 
 	public List<XxlConfNode> pageList(@Param("offset") int offset,
 									  @Param("pagesize") int pagesize,
+									  @Param("env") String env,
 									  @Param("appname") String appname,
 									  @Param("key") String key);
 	public int pageListCount(@Param("offset") int offset,
 							 @Param("pagesize") int pagesize,
+							 @Param("env") String env,
 							 @Param("appname") String appname,
 							 @Param("key") String key);
 
-	public int delete(@Param("key") String key);
+	public int delete(@Param("env") String env, @Param("key") String key);
 
 	public void insert(XxlConfNode xxlConfNode);
 
-	public XxlConfNode load(@Param("key") String key);
+	public XxlConfNode load(@Param("env") String env, @Param("key") String key);
 
 	public int update(XxlConfNode xxlConfNode);
 	

@@ -4,6 +4,7 @@
 <mapper namespace="com.xxl.conf.admin.dao.XxlConfNodeLogDao">
 	
 	<resultMap id="xxlConfNodeLog" type="com.xxl.conf.admin.core.model.XxlConfNodeLog" >
+		<result column="env" property="env" />
 		<result column="key" property="key" />
 		<result column="title" property="title" />
 	    <result column="value" property="value" />
@@ -12,6 +13,7 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
+		t.`env`,
 		t.`key`,
 		t.`title`,
 		t.`value`,
@@ -22,12 +24,13 @@
 	<select id="findByKey" parameterType="java.util.Map" resultMap="xxlConfNodeLog">
 		SELECT <include refid="Base_Column_List" />
 		FROM xxl_conf_node_log AS t
-		WHERE t.key = #{key}
+		WHERE t.env = #{env} AND t.key = #{key}
 		ORDER BY t.addtime DESC
 	</select>
 
 	<insert id="add" parameterType="com.xxl.conf.admin.core.model.XxlConfNodeLog" >
 		INSERT INTO xxl_conf_node_log(
+			`env`,
 			`key`,
 			`title`,
 			`value`,
@@ -35,6 +38,7 @@
 			`optuser`
 		)
 		VALUES(
+			#{env},
 			#{key},
 			#{title},
 			#{value},
@@ -45,11 +49,13 @@
 
 	<delete id="deleteTimeout" parameterType="java.util.Map" >
 		DELETE FROM xxl_conf_node_log
-		WHERE `key` = #{key}
+		WHERE `env` = #{env}
+			AND `key` = #{key}
 			AND addtime NOT IN (
 				SELECT addtime FROM(
 					SELECT addtime FROM xxl_conf_node_log
-					WHERE `key` = #{key}
+					WHERE `env` = #{env}
+						AND `key` = #{key}
 					ORDER BY addtime DESC LIMIT #{length}
 				) t1
 			)

@@ -55,7 +55,7 @@ public class XxlConfBaseFactory {
 	 */
 	public static void init(String zkaddress, String zkdigest, String env) {
 		// init
-		XxlConfZkConf.init(zkaddress, zkdigest, env, true);									// init zk client
+		XxlConfZkConf.init(zkaddress, zkdigest, env);									// init zk client
 		XxlConfLocalCacheConf.init();
 		XxlConfListenerFactory.addListener(null, new BeanRefreshXxlConfListener());    // listener all key change
 

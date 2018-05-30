@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class XxlConfNode {
 
+	private String env;
 	private String key;			// 配置Key
 	private String appname; 	// 所属项目AppName
 	private String title; 		// 配置描述
@@ -16,6 +17,14 @@ public class XxlConfNode {
 	// plugin
 	private String zkValue; 				// ZK中配置Value
 	private List<XxlConfNodeLog> logList;	// 配置变更Log
+
+	public String getEnv() {
+		return env;
+	}
+
+	public void setEnv(String env) {
+		this.env = env;
+	}
 
 	public String getKey() {
 		return key;

@@ -94,6 +94,12 @@
 	         	</div>
 	         	<div class="modal-body">
 					<form class="form-horizontal form" role="form" >
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-2 control-label">环境</label>
+                            <div class="col-sm-10">
+								<input type="text" class="form-control" name="env" value="${XXL_CONF_CURRENT_ENV.env}" readonly >
+							</div>
+                        </div>
 						<div class="form-group">
 							<label for="firstname" class="col-sm-2 control-label">KEY</label>
                             <div class="col-sm-10">
@@ -138,6 +144,12 @@
 	         	<div class="modal-body">
 					<form class="form-horizontal form" role="form" >
                         <div class="form-group">
+                            <label for="lastname" class="col-sm-2 control-label">环境</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="env" value="${XXL_CONF_CURRENT_ENV.env}" readonly >
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label for="firstname" class="col-sm-2 control-label">KEY</label>
                             <div class="col-sm-10"><input type="text" class="form-control" name="key" placeholder="请输入配置Key" maxlength="100" readonly ></div>
                         </div>
@@ -177,6 +189,8 @@
 				</#list>
 			</#if>
 		</#if>
+
+		var env = '${XXL_CONF_CURRENT_ENV.env}';
 
 	</script>
 

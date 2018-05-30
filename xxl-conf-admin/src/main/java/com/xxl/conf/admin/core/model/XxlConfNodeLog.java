@@ -7,11 +7,21 @@ import java.util.Date;
  */
 public class XxlConfNodeLog {
 
+	private String env;
 	private String key;			// 配置Key
 	private String title;		// 配置描述
 	private String value;		// 配置Value
 	private Date addtime;		// 操作时间
 	private String optuser;		// 操作人
+
+
+	public String getEnv() {
+		return env;
+	}
+
+	public void setEnv(String env) {
+		this.env = env;
+	}
 
 	public String getKey() {
 		return key;

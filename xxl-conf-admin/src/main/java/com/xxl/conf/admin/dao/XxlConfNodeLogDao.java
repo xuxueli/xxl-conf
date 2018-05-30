@@ -12,11 +12,12 @@ import java.util.List;
 @Component
 public interface XxlConfNodeLogDao {
 
-	public List<XxlConfNodeLog> findByKey(@Param("key") String key);
+	public List<XxlConfNodeLog> findByKey(@Param("env") String env, @Param("key") String key);
 
 	public void add(XxlConfNodeLog xxlConfNode);
 
-	public int deleteTimeout(@Param("key") String key,
+	public int deleteTimeout(@Param("env") String env,
+							 @Param("key") String key,
 							 @Param("length") int length);
 
 }

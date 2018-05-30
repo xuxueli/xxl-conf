@@ -25,6 +25,7 @@ $(function(){
 			type:"post",
 			data : function ( d ) {
 				var obj = {};
+				obj.env = env;
 				obj.appname = $('#appname').val();
 				obj.key = $('#key').val();
 				obj.start = d.start;
@@ -175,6 +176,7 @@ $(function(){
             $.post(
                 base_url + "/conf/delete",
                 {
+                    "env" : env,
                     "key" : key
                 },
                 function(data, status) {
@@ -245,6 +247,7 @@ $(function(){
         },
         submitHandler : function(form) {
     		$.post(base_url + "/conf/add", {
+    		    'env'       : env,
     			'appname' 	: $("#addModal .form input[name='appname']").val() ,
                 'key' 		: ($("#addModal .form input[name='appname']").val() + '.' + $("#addModal .form input[name='key']").val() ),
                 'title' 	: $("#addModal .form input[name='title']").val() ,
@@ -278,6 +281,7 @@ $(function(){
         var key = $(this).parent('p').attr("key");
         var row = confData[key];
 
+        $("#updateModal .form input[name='env']").val( row.env );
 		$("#updateModal .form input[name='key']").val( row.key );
 		$("#updateModal .form input[name='appname']").val( row.appname );
         $("#updateModal .form input[name='title']").val( row.title );

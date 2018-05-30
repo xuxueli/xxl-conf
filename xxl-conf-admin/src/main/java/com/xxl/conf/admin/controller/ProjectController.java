@@ -3,8 +3,8 @@ package com.xxl.conf.admin.controller;
 import com.xxl.conf.admin.controller.annotation.PermessionLimit;
 import com.xxl.conf.admin.core.model.XxlConfProject;
 import com.xxl.conf.admin.core.util.ReturnT;
-import com.xxl.conf.admin.dao.XxlConfProjectDao;
 import com.xxl.conf.admin.dao.XxlConfNodeDao;
+import com.xxl.conf.admin.dao.XxlConfProjectDao;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -91,7 +91,7 @@ public class ProjectController {
 		}
 
 		// valid
-		int list_count = xxlConfNodeDao.pageListCount(0, 10, appname, null);
+		int list_count = xxlConfNodeDao.pageListCount(0, 10, null, appname, null);
 		if (list_count > 0) {
 			return new ReturnT<String>(500, "拒绝删除，该项目下存在配置数据");
 		}

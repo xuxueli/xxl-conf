@@ -2,7 +2,6 @@ package com.xxl.conf.core.core;
 
 import com.xxl.conf.core.exception.XxlConfException;
 import com.xxl.conf.core.util.XxlZkClient;
-import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.slf4j.Logger;
@@ -14,32 +13,27 @@ import org.slf4j.LoggerFactory;
  *
  * @author xuxueli 2015年8月26日21:36:43
  */
-public class XxlConfZkConf {
-	private static Logger logger = LoggerFactory.getLogger(XxlConfZkConf.class);
+public class XxlConfZkManageConf {
+	private static Logger logger = LoggerFactory.getLogger(XxlConfZkManageConf.class);
 
 
 	// ------------------------------ zookeeper client ------------------------------
 
 	private static final String zkBasePath = "/xxl-conf/";
-	private static String zkEnvPath;
+	private static String getZkEnvPath(String env){
+		return zkBasePath.concat(env);
+	}
 
 	private static XxlZkClient xxlZkClient = null;
-	public static void init(String zkaddress, String zkdigest, String env) {
+	public static void init(String zkaddress, String zkdigest) {
 
 		// valid
 		if (zkaddress==null || zkaddress.trim().length()==0) {
 			throw new XxlConfException("xxl-conf zkaddress can not be empty");
 		}
 
-		// init zkpath
-		if (env==null || env.trim().length()==0) {
-			throw new XxlConfException("xxl-conf env can not be empty");
-		}
-
-        XxlConfZkConf.zkEnvPath = zkBasePath.concat(env);
-
 		// init
-		xxlZkClient = new XxlZkClient(zkaddress, zkEnvPath, zkdigest, new Watcher() {
+		xxlZkClient = new XxlZkClient(zkaddress, zkBasePath, zkdigest, new Watcher() {
             @Override
             public void process(WatchedEvent watchedEvent) {
                 try {
@@ -51,27 +45,10 @@ public class XxlConfZkConf {
                         xxlZkClient.getClient();
 
 
-						XxlConfLocalCacheConf.reloadAll();
                         logger.info(">>>>>>>>>> xxl-conf, zk re-connect reloadAll success.");
                     }
 
-					String path = watchedEvent.getPath();
-					String key = pathToKey(path);
-					if (key != null) {
-						// keep watch conf key：add One-time trigger
-						xxlZkClient.getClient().exists(path, true);
-						if (watchedEvent.getType() == Event.EventType.NodeDeleted) {
-							// conf deleted
-						} else if (watchedEvent.getType() == Event.EventType.NodeDataChanged) {
-							// conf updated
-							String data = get(key);
-							XxlConfLocalCacheConf.update(key, data);
-						}
-					}
-
-                } catch (KeeperException e) {
-                    logger.error(e.getMessage(), e);
-                } catch (InterruptedException e) {
+                } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                 }
             }
@@ -94,8 +71,8 @@ public class XxlConfZkConf {
 	 * @param data
 	 * @return
 	 */
-	public static void set(String key, String data) {
-		String path = keyToPath(key);
+	public static void set(String env, String key, String data) {
+		String path = keyToPath(env, key);
 		xxlZkClient.setPathData(path, data);
 	}
 
@@ -104,8 +81,8 @@ public class XxlConfZkConf {
 	 *
 	 * @param key
 	 */
-	public static void delete(String key){
-		String path = keyToPath(key);
+	public static void delete(String env, String key){
+		String path = keyToPath(env, key);
 		xxlZkClient.deletePath(path);
 	}
 
@@ -115,8 +92,8 @@ public class XxlConfZkConf {
 	 * @param key
 	 * @return
 	 */
-	public static String get(String key){
-		String path = keyToPath(key);
+	public static String get(String env, String key){
+		String path = keyToPath(env, key);
 		return xxlZkClient.getPathData(path);
 	}
 
@@ -128,7 +105,9 @@ public class XxlConfZkConf {
 	 * @param nodePath
 	 * @return ZnodeKey
 	 */
-	public static String pathToKey(String nodePath){
+	public static String pathToKey(String env, String nodePath){
+		String zkEnvPath = getZkEnvPath(env);
+
 		if (nodePath==null || nodePath.length() <= zkEnvPath.length() || !nodePath.startsWith(zkEnvPath)) {
 			return null;
 		}
@@ -140,7 +119,9 @@ public class XxlConfZkConf {
 	 * @param nodeKey
 	 * @return znodePath
 	 */
-	public static String keyToPath(String nodeKey){
+	public static String keyToPath(String env, String nodeKey){
+		String zkEnvPath = getZkEnvPath(env);
+
 		return zkEnvPath + "/" + nodeKey;
 	}
 

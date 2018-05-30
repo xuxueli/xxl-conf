@@ -71,10 +71,10 @@
 
 					<#-- env -->
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">当前环境：${XXL_CONF_CURRENT_ENV.title} <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">当前环境：${XXL_CONF_CURRENT_ENV.title}(${XXL_CONF_CURRENT_ENV.env}) <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
 							<#list envList as item>
-								<li class="changeEnv" env="${item.env}" ><a href="javascript:;">${item.title}</a></li>
+								<li class="changeEnv" env="${item.env}" ><a href="javascript:;">${item.title}(${item.env})</a></li>
 							</#list>
                             <#--<li class="divider"></li>-->
                         </ul>

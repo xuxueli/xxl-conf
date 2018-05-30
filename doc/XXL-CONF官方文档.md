@@ -124,8 +124,6 @@ xxl-conf/xxl-conf-admin/src/main/resources/xxl-conf-admin.properties
 xxl.conf.zkaddress=127.0.0.1:2181
 # 配置zookeeper的digest权限信息；
 xxl.conf.zkdigest=
-# 环境配置，如"test、ppe、product"等；
-xxl.conf.env=default
 
 
 # xxl-conf, jdbc        （JDBC配置）
@@ -169,7 +167,7 @@ xxl.conf.zkaddress=127.0.0.1:2181
 # 配置zookeeper的digest权限信息；
 xxl.conf.zkdigest=
 # 环境配置，如"test、ppe、product"等；
-xxl.conf.env=default
+xxl.conf.env=test
 ```
 
 #### C、设置“XXL-CONF 配置工厂”
