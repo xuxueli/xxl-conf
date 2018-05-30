@@ -166,7 +166,7 @@ xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/xxl-conf.pro
 xxl.conf.zkaddress=127.0.0.1:2181
 # 配置zookeeper的digest权限信息；
 xxl.conf.zkdigest=
-# 环境配置，如"test、ppe、product"等；
+# 环境配置，如"test、ppe、product"等，指定配置加载环境；
 xxl.conf.env=test
 ```
 
@@ -206,7 +206,7 @@ xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/spring/appli
 新增用户：点击 "新增用户" 按钮，可添加新用户，用户属性说明如下：
 
     - 权限：
-        - 管理员：拥有配置中心所有权限，包括：用户管理、项目管理、配置管理等；
+        - 管理员：拥有配置中心所有权限，包括：用户管理、环境管理、项目管理、配置管理等；
         - 普通用户：仅允许操作自己拥有权限的项目下的配置；
     - 用户名：配置中心登陆账号
     - 密码：配置中心登陆密码
@@ -225,11 +225,26 @@ xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/spring/appli
 ![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_syzc.png "在这里输入图片标题")
 
 
-### 3.1、项目管理
+### 3.2、环境管理
+
+进入 "环境管理" 界面，可自定义和管理环境信息。   
+单个调度中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
+
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_01.png "在这里输入图片标题")
+
+新增环境：点击 "新增环境" 按钮可添加新的环境配置，环境属性说明如下：
+
+    - Env：每个环境拥有一个维护的Env，作为环境标识；
+    - 环境名称：该环境的名称；
+
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_02.png "在这里输入图片标题")
+
+
+### 3.3、项目管理
 
 系统以 "项目" 为维度进行权限控制，以及配置隔离。可进入 "配置管理界面" 操作和维护项目，项目属性说明如下：
 
-    - AppName：每个项目拥有唯一的AppName，作为项目标示，同时作为该项目下配置的统一前缀。
+    - AppName：每个项目拥有唯一的AppName，作为项目标识，同时作为该项目下配置的统一前缀；
     - 项目名称：该项目的名称；
 
 系统默认提供了一个示例项目。
@@ -237,7 +252,7 @@ xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/spring/appli
 ![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_FVt6.png "在这里输入图片标题")
 
 
-### 3.2 配置管理
+### 3.4 配置管理
 
 进入"配置管理" 界面, 选择项目，然后可查看和操作该项目下配置数据。
 
