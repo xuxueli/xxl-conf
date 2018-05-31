@@ -501,8 +501,9 @@ http://{Agent部署路径}/confagent?confKeys=key01,key02
 ### TODO LIST
 - 1、本地优先配置：优先加载该配置中数据，常用于本地调试。早期版本功能用处不大，现已移除，考虑是否完全移除；
 - 2、zookeeper客户端迁移至curator；
-- 3、local cache 备份到磁盘；zk异常且local properties未配置时，从磁盘上读取配置；
-- 4、支持API服务接口方式操作配置数据；
+- 3、考虑移除ZK，改为Server端广播 + long-polling方式实现，降低学习、部署成本；
+- 4、local cache 备份到磁盘；zk异常且local properties未配置时，从磁盘上读取配置；
+- 5、支持API服务接口方式操作配置数据；
 
 
 ## 七、其他
