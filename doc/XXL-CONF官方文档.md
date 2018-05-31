@@ -15,7 +15,7 @@ XXL-CONF 是一个分布式配置管理平台，拥有"毫秒级动态推送、�
 ### 1.2 特性
 - 1、简单: 提供简洁实用的API，多种方式灵活获取配置，上手简单；
 - 2、在线管理: 提供配置中心, 通过Web界面在线操作配置数据;
-- 3、多环境支持：单个调度中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
+- 3、多环境支持：单个配置中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
 - 4、多数据类型配置：支持多种数据类型配置，如：String、Boolean、Short、Integer、Long、Float、Double 等；
 - 5、多语言支持：提供配置Agent服务，可据此通过Http获取配置数据，从而实现多语言支持。Agent存在Ehcache缓存性能极高，并且支持集群横向扩展；
 - 6、配置变更监听功能：可开发Listener逻辑，监听配置变更事件，可据此动态刷新JDBC连接池等高级功能；
@@ -228,7 +228,7 @@ xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/spring/appli
 ### 3.2、环境管理
 
 进入 "环境管理" 界面，可自定义和管理环境信息。   
-单个调度中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
+单个配置中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
 
 ![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_01.png "在这里输入图片标题")
 
@@ -238,6 +238,8 @@ xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/spring/appli
     - 环境名称：该环境的名称；
 
 ![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_02.png "在这里输入图片标题")
+
+环境切换：配置中心顶部菜单展示当前操作的配置中心环境，可通过该菜单切换不同配置中心环境，从而管理不同环境中的配置数据；
 
 
 ### 3.3、项目管理
@@ -476,7 +478,7 @@ http://{Agent部署路径}/confagent?confKeys=key01,key02
 - 3、升级多项依赖至较新版本：spring、spring-boot、jackson、freemarker、mybatis等；
 
 ### 6.9 版本 v1.4.2 新特性[2018-05-30]
-- 1、多环境支持：单个调度中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
+- 1、多环境支持：单个配置中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
 - 2、多数据类型配置：支持多种数据类型配置，如：String、Boolean、Short、Integer、Long、Float、Double 等；
 - 3、多语言支持：提供配置Agent服务，可据此通过Http获取配置数据，从而实现多语言支持。Agent存在Ehcache缓存性能极高，并且支持集群横向扩展；
 - 4、新增 "Jfinal" 类型Sample项目；

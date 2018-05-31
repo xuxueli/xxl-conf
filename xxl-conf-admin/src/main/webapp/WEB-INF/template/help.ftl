@@ -19,7 +19,7 @@
 			<h1>使用教程<small></small></h1>
 			<!--
 			<ol class="breadcrumb">
-				<li><a><i class="fa fa-dashboard"></i>调度中心</a></li>
+				<li><a><i class="fa fa-dashboard"></i>配置中心</a></li>
 				<li class="active">使用教程</li>
 			</ol>
 			-->
