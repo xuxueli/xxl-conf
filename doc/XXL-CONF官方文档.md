@@ -337,6 +337,23 @@ callback | 配置更新时，是否需要同步刷新配置
     - 存在LocalCache，不用担心性能问题；
     - 支持动态推送更新；
 
+### 方式4: "XML + API" 混合方式
+参考如下代码：
+```
+<bean id="demoConf" class="com.xxl.conf.sample.demo.DemoConf2">
+    <constructor-arg index="0" value="#{T(com.xxl.conf.core.XxlConfClient).get('key')}" />
+    <property name="paramByXml" value="#{T(com.xxl.conf.core.XxlConfClient).get('default.key03')}" />
+</bean>
+```
+
+- 用法：占位符方式 "#{T(com.xxl.conf.core.XxlConfClient).get('key')}"；
+- 优点：
+    - 配置从配置中心自动加载；
+    - 存在LocalCache，不用担心性能问题；
+    - 简单、通用：在 "XML 构造器传参" 等场景，"方式3: XML占位符方式" 不适用（因为它实现刷新Bean属性，而此时配置项匹配不到Bean属性）此时可以使用本方案；
+- 缺点：
+    - 不支持动态推送更新；
+    
 
 ### 其他方式: 配置变更监听
 可开发Listener逻辑，监听配置变更事件；可据此实现动态刷新JDBC连接池等高级功能；
