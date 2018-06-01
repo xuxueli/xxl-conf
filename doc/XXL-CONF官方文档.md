@@ -494,8 +494,9 @@ http://{Agent部署路径}/confagent?confKeys=key01,key02
 - 14、升级pom依赖至较新版本，如Spring、Zookeeper等；
 
 ### 6.10 版本 v1.5.0 新特性[迭代中]
-- 1、配置中心，迁移为spring boot项目；
-- 2、配置中心，提供官方docker镜像；
+- 1、Cglib代理情况下，如 "@Configuration" 注解，Bean无法注入配置问题修复；
+- 2、[迭代中]配置中心，迁移为spring boot项目；
+- 3、[迭代中]配置中心，提供官方docker镜像；
 
 
 ### TODO LIST
@@ -504,6 +505,7 @@ http://{Agent部署路径}/confagent?confKeys=key01,key02
 - 3、考虑移除ZK，改为Server端广播 + long-polling方式实现，降低学习、部署成本；
 - 4、local cache 备份到磁盘；zk异常且local properties未配置时，从磁盘上读取配置；
 - 5、支持API服务接口方式操作配置数据；
+- 6、XML构造方式，占位符无法注入问题修复；
 
 
 ## 七、其他

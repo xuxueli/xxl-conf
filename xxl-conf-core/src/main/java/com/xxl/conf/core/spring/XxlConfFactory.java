@@ -159,7 +159,7 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
 	/**
 	 * refresh bean with xxl conf (fieldNames)
 	 */
-	public static void refreshBeanField(BeanRefreshXxlConfListener.BeanField beanField, String value, Object bean){
+	public static void refreshBeanField(final BeanRefreshXxlConfListener.BeanField beanField, final String value, Object bean){
 		if (bean == null) {
 			bean = XxlConfFactory.beanFactory.getBean(beanField.getBeanName());		// getBean 会导致Bean提前初始化，风险较大；
 		}
@@ -186,7 +186,28 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
 			logger.info(">>>>>>>>>>> xxl-conf, refreshBeanField[set] success, {}#{}:{}",
 					beanField.getBeanName(), beanField.getProperty(), value);
 		} else {
-			Field[] beanFields = bean.getClass().getDeclaredFields();
+
+			final Object finalBean = bean;
+			ReflectionUtils.doWithFields(bean.getClass(), new ReflectionUtils.FieldCallback() {
+				@Override
+				public void doWith(Field fieldItem) throws IllegalArgumentException, IllegalAccessException {
+					if (beanField.getProperty().equals(fieldItem.getName())) {
+						try {
+							Object valueObj = FieldReflectionUtil.parseValue(fieldItem.getType(), value);
+
+							fieldItem.setAccessible(true);
+							fieldItem.set(finalBean, valueObj);		// support mult data types
+
+							logger.info(">>>>>>>>>>> xxl-conf, refreshBeanField[field] success, {}#{}:{}",
+									beanField.getBeanName(), beanField.getProperty(), value);
+						} catch (IllegalAccessException e) {
+							throw new XxlConfException(e);
+						}
+					}
+				}
+			});
+
+			/*Field[] beanFields = bean.getClass().getDeclaredFields();
 			if (beanFields!=null && beanFields.length>0) {
 				for (Field fieldItem: beanFields) {
 					if (beanField.getProperty().equals(fieldItem.getName())) {
@@ -203,7 +224,7 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
 						}
 					}
 				}
-			}
+			}*/
 		}
 
 	}
