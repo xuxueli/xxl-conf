@@ -21,36 +21,18 @@
 
 	<!-- ********************************* part 1 :for datasource ********************************* -->
 
-	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init"
-		  destroy-method="close">
-		<property name="driverClassName" value="${xxl.conf.admin.jdbc.driverClass}" />
-		<property name="url" value="${xxl.conf.admin.jdbc.url}" />
-		<property name="username" value="${xxl.conf.admin.jdbc.username}" />
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"  destroy-method="close">
+		<property name="driverClass" value="${xxl.conf.admin.jdbc.driverClass}" />
+		<property name="jdbcUrl" value="${xxl.conf.admin.jdbc.url}" />
+		<property name="user" value="${xxl.conf.admin.jdbc.username}" />
 		<property name="password" value="${xxl.conf.admin.jdbc.password}" />
-		<property name="initialSize" value="20"/>
-		<property name="minIdle" value="20"/>
-		<property name="maxActive" value="50"/>
-		<!-- 配置获取连接等待超时的时间 -->
-		<property name="maxWait" value="60000"/>
-		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
-		<property name="timeBetweenEvictionRunsMillis" value="60000"/>
-		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
-		<property name="minEvictableIdleTimeMillis" value="300000"/>
-		<property name="validationQuery" value="SELECT 1"/>
-		<property name="testWhileIdle" value="true"/>
-		<property name="testOnBorrow" value="true"/>
-		<property name="testOnReturn" value="true"/>
-		<!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
-		<property name="poolPreparedStatements" value="false"/>
-		<property name="maxPoolPreparedStatementPerConnectionSize" value="20"/>
-		<!-- 配置监控统计拦截的filters -->
-		<!--<property name="filters" value="stat"/>-->
-		<property name="filters" value="mergeStat"/>
-		<property name="removeAbandoned" value="true"/>
-		<!-- 打开removeAbandoned功能 -->
-		<property name="removeAbandonedTimeout" value="1800"/>
-		<!-- 1800秒，也就是30分钟 -->
-		<property name="logAbandoned" value="true"/>
+		<property name="initialPoolSize" value="3" />
+		<property name="minPoolSize" value="2" />
+		<property name="maxPoolSize" value="10" />
+		<property name="maxIdleTime" value="60" />
+		<property name="acquireRetryDelay" value="1000" />
+		<property name="acquireRetryAttempts" value="10" />
+		<property name="preferredTestQuery" value="SELECT 1" />
 	</bean>
 
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">

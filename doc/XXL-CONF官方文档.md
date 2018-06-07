@@ -530,7 +530,7 @@ http://{Agent部署路径}/confagent?confKeys=key01,key02
 - 4、local cache 备份到磁盘；zk异常且local properties未配置时，从磁盘上读取配置；
 - 5、支持API服务接口方式操作配置数据；
 - 6、XML构造方式，占位符无法注入问题修复；
-
+- 7、提供 “配置同步检测” 和 “配置同步” 功能，方便全量同步配置数据。
 
 ## 七、其他
 
