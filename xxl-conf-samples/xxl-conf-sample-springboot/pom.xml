@@ -48,6 +48,14 @@
             <version>${project.parent.version}</version>
         </dependency>
 
+        <!-- devtools -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <version>${spring-boot.version}</version>
+            <optional>true</optional>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -64,6 +72,10 @@
                         </goals>
                     </execution>
                 </executions>
+                <!-- devtools -->
+                <configuration>
+                    <fork>true</fork>
+                </configuration>
             </plugin>
         </plugins>
     </build>
