@@ -289,10 +289,28 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 
 ## 四、管理中心操作指南
 
-### 4.1、用户（权限）管理
+### 4.1、环境管理
+
+进入 "环境管理" 界面，可自定义和管理环境信息。   
+单个配置中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
+
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_01.png "在这里输入图片标题")
+
+新增环境：点击 "新增环境" 按钮可添加新的环境配置，环境属性说明如下：
+
+    - Env：每个环境拥有一个维护的Env，作为环境标识；
+    - 环境名称：该环境的名称；
+
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_02.png "在这里输入图片标题")
+
+环境切换：配置中心顶部菜单展示当前操作的配置中心环境，可通过该菜单切换不同配置中心环境，从而管理不同环境中的配置数据；
+
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_03.png "在这里输入图片标题")
+
+### 4.2、用户（权限）管理
 
 进入 "用户管理" 界面，可查看配置中心中所有用户信息。
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_wNCR.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_04.png "在这里输入图片标题")
 
 新增用户：点击 "新增用户" 按钮，可添加新用户，用户属性说明如下：
 
@@ -316,23 +334,6 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 ![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_syzc.png "在这里输入图片标题")
 
 
-### 4.2、环境管理
-
-进入 "环境管理" 界面，可自定义和管理环境信息。   
-单个配置中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
-
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_01.png "在这里输入图片标题")
-
-新增环境：点击 "新增环境" 按钮可添加新的环境配置，环境属性说明如下：
-
-    - Env：每个环境拥有一个维护的Env，作为环境标识；
-    - 环境名称：该环境的名称；
-
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_02.png "在这里输入图片标题")
-
-环境切换：配置中心顶部菜单展示当前操作的配置中心环境，可通过该菜单切换不同配置中心环境，从而管理不同环境中的配置数据；
-
-
 ### 4.3、项目管理
 
 系统以 "项目" 为维度进行权限控制，以及配置隔离。可进入 "配置管理界面" 操作和维护项目，项目属性说明如下：
@@ -342,15 +343,13 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 
 系统默认提供了一个示例项目。
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_FVt6.png "在这里输入图片标题")
-
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_05.png "在这里输入图片标题")
 
 ### 4.4 配置管理
 
 进入"配置管理" 界面, 选择项目，然后可查看和操作该项目下配置数据。
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_K68b.png "在这里输入图片标题")
-
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_06.png "在这里输入图片标题")
 
 新增配置：点击 "新增配置" 按钮可添加配置数据，配置属性说明如下：
 
