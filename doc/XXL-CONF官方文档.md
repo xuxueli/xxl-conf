@@ -527,8 +527,7 @@ http://{Agent部署路径}/confagent?confKeys=key01,key02
 - 2、zookeeper客户端迁移至curator；
 - 3、考虑移除ZK，改为Server端广播 + long-polling方式实现，降低学习、部署成本；
 - 4、local cache 备份到磁盘；zk异常且local properties未配置时，从磁盘上读取配置；
-- 5、支持API服务接口方式操作配置数据；
-- 6、XML构造方式，占位符无法注入问题修复；
+- 5、配置Agent服务，支持 long-polling 方式加载配置，并进行权限校验；
 
 
 ## 七、其他
