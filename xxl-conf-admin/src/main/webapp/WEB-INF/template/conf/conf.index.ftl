@@ -32,7 +32,7 @@
 			<section class="content">
 			
                 <div class="row">
-                    <div class="col-xs-4">
+                    <div class="col-xs-3">
                         <div class="input-group">
                             <span class="input-group-addon">项目</span>
                             <select class="form-control" id="appname" >
@@ -49,11 +49,14 @@
                             <input type="text" class="form-control" id="key" autocomplete="on" >
                         </div>
                     </div>
-                    <div class="col-xs-2">
+                    <div class="col-xs-1">
                         <button class="btn btn-block btn-info" id="searchBtn">搜索</button>
                     </div>
                     <div class="col-xs-2">
                         <button class="btn btn-block btn-success" id="add" type="button">新增配置</button>
+                    </div>
+                    <div class="col-xs-2">
+                        <button class="btn btn-block btn-nomal" id="syncConf">全量同步</button>
                     </div>
                 </div>
 
