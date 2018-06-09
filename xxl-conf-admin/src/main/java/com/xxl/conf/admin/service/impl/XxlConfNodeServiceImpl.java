@@ -7,6 +7,7 @@ import com.xxl.conf.admin.dao.XxlConfNodeDao;
 import com.xxl.conf.admin.dao.XxlConfNodeLogDao;
 import com.xxl.conf.admin.dao.XxlConfProjectDao;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
+import com.xxl.conf.core.annotation.XxlConf;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -210,6 +211,27 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		xxlConfNodeLogDao.add(nodeLog);
 		xxlConfNodeLogDao.deleteTimeout(existNode.getEnv(), existNode.getKey(), 10);
 
+		return ReturnT.SUCCESS;
+	}
+
+	@Override
+	public ReturnT<String> sync(String env, String appname,XxlConfUser loginUser) {
+		List<XxlConfNode> data = xxlConfNodeDao.list(env,appname);
+		if (data==null || data.isEmpty()) {
+			return new ReturnT<String>(500, "同步的配置不能为空");
+		}
+		for (XxlConfNode xxlConfNode :data){
+			xxlConfManager.set(xxlConfNode.getEnv(), xxlConfNode.getKey(), xxlConfNode.getValue());
+			// node log
+			XxlConfNodeLog nodeLog = new XxlConfNodeLog();
+			nodeLog.setEnv(xxlConfNode.getEnv());
+			nodeLog.setKey(xxlConfNode.getKey());
+			nodeLog.setTitle(xxlConfNode.getTitle());
+			nodeLog.setValue(xxlConfNode.getValue());
+			nodeLog.setOptuser(loginUser.getUsername());
+			xxlConfNodeLogDao.add(nodeLog);
+			xxlConfNodeLogDao.deleteTimeout(xxlConfNode.getEnv(), xxlConfNode.getKey(), 10);
+		}
 		return ReturnT.SUCCESS;
 	}
 

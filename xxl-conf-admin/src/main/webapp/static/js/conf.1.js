@@ -345,5 +345,24 @@ $(function(){
 	$("#updateModal").on('hide.bs.modal', function () {
 		$("#updateModal .form")[0].reset()
 	});
-	
+
+	//同步
+	$("#sync").click(function(){
+        $.post(base_url + "/conf/sync",{}, function(data, status) {
+            if (data.code == 200) {
+                layer.open({
+                    icon: '1',
+                    content: '同步成功',
+                    end: function(layero, index){
+                        confTable.fnDraw();
+                    }
+                });
+            } else {
+                layer.open({
+                    icon: '2',
+                    content: (data.msg||'同步失败')
+                });
+            }
+        });
+    })
 });

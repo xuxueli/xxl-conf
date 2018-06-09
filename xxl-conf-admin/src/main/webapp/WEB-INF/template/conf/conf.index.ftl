@@ -32,7 +32,7 @@
 			<section class="content">
 			
                 <div class="row">
-                    <div class="col-xs-4">
+                    <div class="col-xs-2">
                         <div class="input-group">
                             <span class="input-group-addon">项目</span>
                             <select class="form-control" id="appname" >
@@ -54,6 +54,9 @@
                     </div>
                     <div class="col-xs-2">
                         <button class="btn btn-block btn-success" id="add" type="button">新增配置</button>
+                    </div>
+                    <div class="col-xs-2">
+                        <button class="btn btn-block btn-success" id="sync" type="button">一键同步</button>
                     </div>
                 </div>
 

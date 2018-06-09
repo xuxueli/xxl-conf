@@ -17,6 +17,10 @@ public interface XxlConfNodeDao {
 									  @Param("env") String env,
 									  @Param("appname") String appname,
 									  @Param("key") String key);
+
+	public List<XxlConfNode> list( @Param("env") String env,
+								   @Param("appname") String appname);
+
 	public int pageListCount(@Param("offset") int offset,
 							 @Param("pagesize") int pagesize,
 							 @Param("env") String env,

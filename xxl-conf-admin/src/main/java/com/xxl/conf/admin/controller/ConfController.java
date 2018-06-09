@@ -98,5 +98,15 @@ public class ConfController {
 		XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
 		return xxlConfNodeService.update(xxlConfNode, loginUser);
 	}
+	/**
+	 * create/update
+	 * @return
+	 */
+	@RequestMapping("/sync")
+	@ResponseBody
+	public ReturnT<String> sync(HttpServletRequest request,String env,String appname){
+		XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
+		return xxlConfNodeService.sync(env,appname,loginUser);
+	}
 	
 }
