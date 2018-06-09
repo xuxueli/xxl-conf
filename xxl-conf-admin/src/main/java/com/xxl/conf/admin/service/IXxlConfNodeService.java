@@ -25,4 +25,6 @@ public interface IXxlConfNodeService {
 
 	public ReturnT<String> update(XxlConfNode xxlConfNode, XxlConfUser loginUser);
 
+    ReturnT<String> syncConf(String env, String appname, XxlConfUser loginUser);
+
 }

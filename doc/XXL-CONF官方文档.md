@@ -10,21 +10,21 @@
 ## 一、简介
 
 ### 1.1 概述
-XXL-CONF 是一个分布式配置管理平台，拥有"强一致性、毫秒级动态推送、多环境、多语言、配置监听、权限控制、版本版本回滚"等特性。现已开放源代码，开箱即用。
+XXL-CONF 是一个分布式配置管理平台，拥有"强一致性、毫秒级动态推送、多环境、多语言、配置监听、权限控制、版本回滚"等特性。现已开放源代码，开箱即用。
 
 ### 1.2 特性
-- 1、简单: 提供简洁实用的API，多种方式灵活获取配置，上手简单；
-- 2、在线管理: 提供配置中心, 通过Web界面在线操作配置数据;
+- 1、简单: 提供简洁实用的API、多种方式灵活获取配置，一分钟上手；
+- 2、在线管理: 提供配置中心, 通过Web界面在线操作配置数据，直观高效；
 - 3、多环境支持：单个配置中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
 - 4、多数据类型配置：支持多种数据类型配置，如：String、Boolean、Short、Integer、Long、Float、Double 等；
 - 5、多语言支持：提供配置Agent服务，可据此通过Http获取配置数据，从而实现多语言支持。Agent存在Ehcache缓存性能极高，并且支持集群横向扩展；
 - 6、配置变更监听功能：可开发Listener逻辑，监听配置变更事件，可据此动态刷新JDBC连接池等高级功能；
 - 7、毫秒级动态推送: 配置更新后, 实时推送配置信息, 项目中配置数据会实时更新并生效, 不需要重启线上机器;
-- 8、强一致性：保障配置数据的强一致性，可作为注册中心使用，快速实现强一致性的注册中心；
+- 8、强一致性：保障配置数据的强一致性，提高配置时效性；
 - 9、配置中心HA：配置中心支持集群部署，提供系统可用性；
 - 10、推送服务HA: 配置服务基于ZK集群, 只要集群节点保证存活数量大于N/2N+1, 就可保证服务稳定, 避免单点风险;
 - 11、配置备份: 配置数据同时在ZK与MySQL中存储和备份， 提高配置数据的安全性;
-- 12、多种获取配置方式：支持 "API、 注解、XML占位符" 三种方式获取配置，可灵活选择使用；
+- 12、多种获取配置方式：支持 "API、 注解、XML占位符" 等多种方式获取配置，可灵活选择使用；
 - 13、兼容Spring原生配置：兼容Spring原生配置方式 "@Value"、"${}" 加载本地配置功能；与分布式配置获取方式隔离，互不干扰； 
 - 14、分布式: 支持多业务线接入并统一管理配置信息，支撑分布式业务场景;
 - 15、项目隔离: 以项目为维度管理配置, 方便隔离不同业务线配置;
@@ -197,18 +197,120 @@ xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/spring/appli
 ### 2.5 功能测试
 
 #### a、添加和更新配置
-参考章节 "3.2 配置管理" 添加或更新配置信息； 
+参考章节 "4.2 配置管理" 添加或更新配置信息； 
 
 #### b、获取配置并接受动态推送更新
-参考章节 "四、客户端配置获取" 获取配置并接受动态推送更新；
+参考章节 "三、客户端配置获取" 获取配置并接受动态推送更新；
 
 
-## 三、管理中心操作指南
+## 三、客户端配置获取
+XXL-CONF 提供多种配置方式，包括 "API、 @XxlConf、XML" 等多种配置方式，介绍如下。
 
-### 3.1、用户（权限）管理
+> 可参考项目 "xxl-conf-sample-spring"（接入XXl-CONF的示例项目，供用户参考学习），代码位置：com.xxl.conf.sample.controller.IndexController.index() 
+
+
+### 3.1 方式1: API方式
+参考 "IndexController" 代码如下：
+```
+String paramByApi = XxlConfClient.get("default.key01", null);
+```
+- 用法：代码中直接调用API即可，示例代码 ""XxlConfClient.get("key", null)"";
+- 优点：
+    - 配置从配置中心自动加载；
+    - 存在LocalCache，不用担心性能问题；
+    - 支持动态推送更新；
+    - 支持多数据类型；
+
+
+### 3.2 方式2: @XxlConf 注解方式
+参考 "DemoConf.paramByAnno" 属性配置；示例代码 
+```
+@XxlConf("default.key02")
+public String paramByAnno;
+```
+- 用法：对象Field上加注解 ""@XxlConf("key")"，支持设置默认值，支持设置是否开启动态刷新；
+- 优点：
+    - 配置从配置中心自动加载；
+    - 存在LocalCache，不用担心性能问题；
+    - 支持动态推送更新；
+    - 支持设置配置默认值；
+    - 可配置是否开启 "动态推送更新";
+        
+“@XxlConf”注解属性 | 说明
+--- | ---
+value | 配置Key
+defaultValue | 配置为空时的默认值
+callback | 配置更新时，是否需要同步刷新配置
+
+
+### 3.3 方式3: XML占位符方式
+参考 "applicationcontext-xxl-conf.xml" 中 "DemoConf.paramByXml" 属性配置；示例代码如下：
+```
+<bean id="demoConf" class="com.xxl.conf.sample.demo.DemoConf">
+    <property name="paramByXml" value="$XxlConf{default.key03}" />
+</bean>
+```
+- 用法：占位符方式 "$XxlConf{key}"；
+- 优点：
+    - 配置从配置中心自动加载；
+    - 存在LocalCache，不用担心性能问题；
+    - 支持动态推送更新；
+
+### 3.4 方式4: "XML + API" 混合方式
+参考如下代码：
+```
+<bean id="demoConf" class="com.xxl.conf.sample.demo.DemoConf2">
+    <constructor-arg index="0" value="#{T(com.xxl.conf.core.XxlConfClient).get('key')}" />
+    <property name="paramByXml" value="#{T(com.xxl.conf.core.XxlConfClient).get('default.key03')}" />
+</bean>
+```
+
+- 用法：占位符方式 "#{T(com.xxl.conf.core.XxlConfClient).get('key')}"；
+- 优点：
+    - 配置从配置中心自动加载；
+    - 存在LocalCache，不用担心性能问题；
+    - 兼容性好：在一些特殊的XML配置加载场景，如 "XML构造器传参"、"自定义spring的schema/xsd" ，上述几种方式不适用，此时可以考虑这种方式，兼容各种场景格式；
+- 缺点：
+    - 不支持动态推送更新；
+    
+
+### 3.5 其他方式: 配置变更监听
+可开发Listener逻辑，监听配置变更事件；可据此实现动态刷新JDBC连接池等高级功能；
+
+参考 "IndexController" 代码如下：
+```
+XxlConfClient.addListener("default.key01", new XxlConfListener(){
+    @Override
+    public void onChange(String key, String value) throws Exception {
+        logger.info("配置变更事件通知：{}={}", key, value);
+    }
+});
+```
+
+## 四、管理中心操作指南
+
+### 4.1、环境管理
+
+进入 "环境管理" 界面，可自定义和管理环境信息。   
+单个配置中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
+
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_01.png "在这里输入图片标题")
+
+新增环境：点击 "新增环境" 按钮可添加新的环境配置，环境属性说明如下：
+
+    - Env：每个环境拥有一个维护的Env，作为环境标识；
+    - 环境名称：该环境的名称；
+
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_02.png "在这里输入图片标题")
+
+环境切换：配置中心顶部菜单展示当前操作的配置中心环境，可通过该菜单切换不同配置中心环境，从而管理不同环境中的配置数据；
+
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_03.png "在这里输入图片标题")
+
+### 4.2、用户（权限）管理
 
 进入 "用户管理" 界面，可查看配置中心中所有用户信息。
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_wNCR.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_04.png "在这里输入图片标题")
 
 新增用户：点击 "新增用户" 按钮，可添加新用户，用户属性说明如下：
 
@@ -232,24 +334,7 @@ xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/spring/appli
 ![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_syzc.png "在这里输入图片标题")
 
 
-### 3.2、环境管理
-
-进入 "环境管理" 界面，可自定义和管理环境信息。   
-单个配置中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
-
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_01.png "在这里输入图片标题")
-
-新增环境：点击 "新增环境" 按钮可添加新的环境配置，环境属性说明如下：
-
-    - Env：每个环境拥有一个维护的Env，作为环境标识；
-    - 环境名称：该环境的名称；
-
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_02.png "在这里输入图片标题")
-
-环境切换：配置中心顶部菜单展示当前操作的配置中心环境，可通过该菜单切换不同配置中心环境，从而管理不同环境中的配置数据；
-
-
-### 3.3、项目管理
+### 4.3、项目管理
 
 系统以 "项目" 为维度进行权限控制，以及配置隔离。可进入 "配置管理界面" 操作和维护项目，项目属性说明如下：
 
@@ -258,15 +343,13 @@ xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/spring/appli
 
 系统默认提供了一个示例项目。
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_FVt6.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_05.png "在这里输入图片标题")
 
-
-### 3.4 配置管理
+### 4.4 配置管理
 
 进入"配置管理" 界面, 选择项目，然后可查看和操作该项目下配置数据。
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_K68b.png "在这里输入图片标题")
-
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_06.png "在这里输入图片标题")
 
 新增配置：点击 "新增配置" 按钮可添加配置数据，配置属性说明如下：
 
@@ -284,90 +367,6 @@ xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/spring/appli
 
 ![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_Whz5.png "在这里输入图片标题")
 
-
-## 四、客户端配置获取
-XXL-CONF 提供多种配置方式，包括 "API、 @XxlConf、XML" 三种配置方式，介绍如下。
-
-> 可参考项目 "xxl-conf-sample-spring"（接入XXl-CONF的示例项目，供用户参考学习），代码位置：com.xxl.conf.sample.controller.IndexController.index() 
-
-
-### 方式1: API方式
-参考 "IndexController" 代码如下：
-```
-String paramByApi = XxlConfClient.get("default.key01", null);
-```
-- 用法：代码中直接调用API即可，示例代码 ""XxlConfClient.get("key", null)"";
-- 优点：
-    - 配置从配置中心自动加载；
-    - 存在LocalCache，不用担心性能问题；
-    - 支持动态推送更新；
-    - 支持多数据类型；
-
-
-### 方式2: @XxlConf 注解方式
-参考 "DemoConf.paramByAnno" 属性配置；示例代码 
-```
-@XxlConf("default.key02")
-public String paramByAnno;
-```
-- 用法：对象Field上加注解 ""@XxlConf("key")"，支持设置默认值，支持设置是否开启动态刷新；
-- 优点：
-    - 配置从配置中心自动加载；
-    - 存在LocalCache，不用担心性能问题；
-    - 支持动态推送更新；
-    - 支持设置配置默认值；
-    - 可配置是否开启 "动态推送更新";
-        
-“@XxlConf”注解属性 | 说明
---- | ---
-value | 配置Key
-defaultValue | 配置为空时的默认值
-callback | 配置更新时，是否需要同步刷新配置
-
-
-### 方式3: XML占位符方式
-参考 "applicationcontext-xxl-conf.xml" 中 "DemoConf.paramByXml" 属性配置；示例代码如下：
-```
-<bean id="demoConf" class="com.xxl.conf.sample.demo.DemoConf">
-    <property name="paramByXml" value="$XxlConf{default.key03}" />
-</bean>
-```
-- 用法：占位符方式 "$XxlConf{key}"；
-- 优点：
-    - 配置从配置中心自动加载；
-    - 存在LocalCache，不用担心性能问题；
-    - 支持动态推送更新；
-
-### 方式4: "XML + API" 混合方式
-参考如下代码：
-```
-<bean id="demoConf" class="com.xxl.conf.sample.demo.DemoConf2">
-    <constructor-arg index="0" value="#{T(com.xxl.conf.core.XxlConfClient).get('key')}" />
-    <property name="paramByXml" value="#{T(com.xxl.conf.core.XxlConfClient).get('default.key03')}" />
-</bean>
-```
-
-- 用法：占位符方式 "#{T(com.xxl.conf.core.XxlConfClient).get('key')}"；
-- 优点：
-    - 配置从配置中心自动加载；
-    - 存在LocalCache，不用担心性能问题；
-    - 简单、通用：在 "XML 构造器传参" 等场景，"方式3: XML占位符方式" 不适用（因为它实现刷新Bean属性，而此时配置项匹配不到Bean属性）此时可以使用本方案；
-- 缺点：
-    - 不支持动态推送更新；
-    
-
-### 其他方式: 配置变更监听
-可开发Listener逻辑，监听配置变更事件；可据此实现动态刷新JDBC连接池等高级功能；
-
-参考 "IndexController" 代码如下：
-```
-XxlConfClient.addListener("default.key01", new XxlConfListener(){
-    @Override
-    public void onChange(String key, String value) throws Exception {
-        logger.info("配置变更事件通知：{}={}", key, value);
-    }
-});
-```
 
 ## 五、总体设计
 
@@ -442,6 +441,13 @@ http://{Agent部署路径}/confagent?confKeys=key01,key02
     "key02": "value02"
 }
 ```
+
+### 5.5 配置同步功能 
+进入配置管理界面，点击 "全量同步" 按钮可触发该功能。
+
+将会检测对应项目下的全部未同步配置项，使用DB中配置数据覆盖ZK中配置数据并推送更新；
+
+该功能在配置中心异常恢复、新配置中心集群初始化等场景中十分有效。
 
 
 ## 六、历史版本
@@ -521,15 +527,14 @@ http://{Agent部署路径}/confagent?confKeys=key01,key02
 - 1、Cglib代理情况下，如 "@Configuration" 注解，Bean无法注入配置问题修复；
 - 2、[迭代中]配置中心，迁移为spring boot项目；
 - 3、[迭代中]配置中心，提供官方docker镜像；
-
+- 4、配置同步功能：将会检测对应项目下的全部未同步配置项，使用DB中配置数据覆盖ZK中配置数据并推送更新；在配置中心异常恢复、新配置中心集群初始化等场景中十分有效。
 
 ### TODO LIST
 - 1、本地优先配置：优先加载该配置中数据，常用于本地调试。早期版本功能用处不大，现已移除，考虑是否完全移除；
 - 2、zookeeper客户端迁移至curator；
 - 3、考虑移除ZK，改为Server端广播 + long-polling方式实现，降低学习、部署成本；
 - 4、local cache 备份到磁盘；zk异常且local properties未配置时，从磁盘上读取配置；
-- 5、支持API服务接口方式操作配置数据；
-- 6、XML构造方式，占位符无法注入问题修复；
+- 5、配置Agent服务，支持 long-polling 方式加载配置，并进行权限校验；
 
 
 ## 七、其他
