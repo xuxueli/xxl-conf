@@ -346,23 +346,40 @@ $(function(){
 		$("#updateModal .form")[0].reset()
 	});
 
-	//同步
-	$("#sync").click(function(){
-        $.post(base_url + "/conf/sync",{}, function(data, status) {
-            if (data.code == 200) {
-                layer.open({
-                    icon: '1',
-                    content: '同步成功',
-                    end: function(layero, index){
-                        confTable.fnDraw();
+	// 全量同步
+    $('#syncConf').click(function () {
+        layer.confirm( "确定要进行全量同步操作，将会检测该项目下的全部未同步配置项，使用DB中配置数据覆盖ZK中配置数据并推送更新？" , {
+            icon: 3,
+            title: '系统提示' ,
+            btn: [ '确定', '取消' ]
+        }, function(index){
+            layer.close(index);
+
+            $.post(
+                base_url + "/conf/syncConf",
+                {
+                    "env" : env,
+                    "appname" : $('#appname').val()
+                },
+                function(data, status) {
+                    if (data.code == 200) {
+                        layer.open({
+                            icon: '1',
+                            content: (data.msg || '操作成功') ,
+                            end: function(layero, index){
+                                confTable.fnDraw();
+                            }
+                        });
+                    } else {
+                        layer.open({
+                            icon: '2',
+                            content: (data.msg||'操作失败')
+                        });
                     }
-                });
-            } else {
-                layer.open({
-                    icon: '2',
-                    content: (data.msg||'同步失败')
-                });
-            }
+                }
+            );
+
         });
-    })
+    });
+	
 });
