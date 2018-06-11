@@ -7,7 +7,6 @@ import com.xxl.conf.admin.dao.XxlConfNodeDao;
 import com.xxl.conf.admin.dao.XxlConfNodeLogDao;
 import com.xxl.conf.admin.dao.XxlConfProjectDao;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
-import com.xxl.conf.core.annotation.XxlConf;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -205,7 +204,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		XxlConfNodeLog nodeLog = new XxlConfNodeLog();
 		nodeLog.setEnv(existNode.getEnv());
 		nodeLog.setKey(existNode.getKey());
-		nodeLog.setTitle(existNode.getTitle());
+		nodeLog.setTitle(existNode.getTitle() + "(配置更新)" );
 		nodeLog.setValue(existNode.getValue());
 		nodeLog.setOptuser(loginUser.getUsername());
 		xxlConfNodeLogDao.add(nodeLog);
@@ -215,24 +214,62 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 	}
 
 	@Override
-	public ReturnT<String> sync(String env, String appname,XxlConfUser loginUser) {
-		List<XxlConfNode> data = xxlConfNodeDao.list(env,appname);
-		if (data==null || data.isEmpty()) {
-			return new ReturnT<String>(500, "同步的配置不能为空");
+	public ReturnT<String> syncConf(String env, String appname, XxlConfUser loginUser) {
+
+		// valid
+		XxlConfEnv xxlConfEnv = xxlConfEnvDao.load(env);
+		if (xxlConfEnv == null) {
+			return new ReturnT<String>(500, "配置Env非法");
 		}
-		for (XxlConfNode xxlConfNode :data){
-			xxlConfManager.set(xxlConfNode.getEnv(), xxlConfNode.getKey(), xxlConfNode.getValue());
+		XxlConfProject group = xxlConfProjectDao.load(appname);
+		if (group==null) {
+			return new ReturnT<String>(500, "AppName非法");
+		}
+
+		// project permission
+		if (!ifHasProjectPermission(loginUser, appname)) {
+			return new ReturnT<String>(500, "您没有该项目的配置权限,请联系管理员开通");
+		}
+
+		List<XxlConfNode> confNodeList = xxlConfNodeDao.pageList(0, 10000, env, appname, null);
+		if (CollectionUtils.isEmpty(confNodeList)) {
+			return new ReturnT<String>(500, "操作失败，该项目下不存在配置项");
+		}
+
+		// un sync node
+		List<XxlConfNode> unSyncConfNodeList = new ArrayList<>();
+		for (XxlConfNode node: confNodeList) {
+			String realNodeValue = xxlConfManager.get(node.getEnv(), node.getKey());
+			if (!node.getValue().equals(realNodeValue)) {
+				unSyncConfNodeList.add(node);
+			}
+		}
+
+		if (CollectionUtils.isEmpty(unSyncConfNodeList)) {
+			return new ReturnT<String>(500, "操作失败，该项目下不存未同步的配置项");
+		}
+
+		// do sync
+		String logContent = "操作成功，共计同步 " + unSyncConfNodeList.size() + " 条配置：";
+		for (XxlConfNode node: unSyncConfNodeList) {
+
+			xxlConfManager.set(node.getEnv(), node.getKey(), node.getValue());
+
 			// node log
 			XxlConfNodeLog nodeLog = new XxlConfNodeLog();
-			nodeLog.setEnv(xxlConfNode.getEnv());
-			nodeLog.setKey(xxlConfNode.getKey());
-			nodeLog.setTitle(xxlConfNode.getTitle());
-			nodeLog.setValue(xxlConfNode.getValue());
+			nodeLog.setEnv(node.getEnv());
+			nodeLog.setKey(node.getKey());
+			nodeLog.setTitle(node.getTitle() + "(全量同步)" );
+			nodeLog.setValue(node.getValue());
 			nodeLog.setOptuser(loginUser.getUsername());
 			xxlConfNodeLogDao.add(nodeLog);
-			xxlConfNodeLogDao.deleteTimeout(xxlConfNode.getEnv(), xxlConfNode.getKey(), 10);
+			xxlConfNodeLogDao.deleteTimeout(node.getEnv(), node.getKey(), 10);
+
+			logContent += "<br>" + node.getKey();
 		}
-		return ReturnT.SUCCESS;
+		logContent.substring(logContent.length() - 1);
+
+		return new ReturnT<String>(ReturnT.SUCCESS.getCode(), logContent);
 	}
 
 }
