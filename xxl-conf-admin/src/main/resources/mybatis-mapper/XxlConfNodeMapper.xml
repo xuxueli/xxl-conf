@@ -37,19 +37,7 @@
 		ORDER BY t.key
 		LIMIT #{offset}, #{pagesize}
 	</select>
-	<select id="list" parameterType="java.util.Map" resultMap="xxlConfNode">
-		SELECT <include refid="Base_Column_List" />
-		FROM xxl_conf_node AS t
-		<trim prefix="WHERE" prefixOverrides="AND | OR" >
-			<if test="env != null and env != '' ">
-				AND t.env = #{env}
-			</if>
-			<if test="appname != null and appname != '' ">
-				AND t.appname = #{appname}
-			</if>
-		</trim>
-		ORDER BY t.key
-	</select>
+
 	<select id="pageListCount" parameterType="java.util.Map" resultType="int">
 		SELECT count(1)
 		FROM xxl_conf_node AS t
