@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>配置管理中心</title>
 
-<#import "/common/common.macro.ftl" as netCommon>
+<#import "../common/common.macro.ftl" as netCommon>
 <@netCommon.commonStyle />
 <link rel="stylesheet" href="${request.contextPath}/static/adminlte/plugins/datatables/dataTables.bootstrap.css">
 
@@ -32,7 +32,7 @@
 			<section class="content">
 			
                 <div class="row">
-                    <div class="col-xs-2">
+                    <div class="col-xs-3">
                         <div class="input-group">
                             <span class="input-group-addon">项目</span>
                             <select class="form-control" id="appname" >
@@ -49,14 +49,14 @@
                             <input type="text" class="form-control" id="key" autocomplete="on" >
                         </div>
                     </div>
-                    <div class="col-xs-2">
+                    <div class="col-xs-1">
                         <button class="btn btn-block btn-info" id="searchBtn">搜索</button>
                     </div>
                     <div class="col-xs-2">
                         <button class="btn btn-block btn-success" id="add" type="button">新增配置</button>
                     </div>
                     <div class="col-xs-2">
-                        <button class="btn btn-block btn-success" id="sync" type="button">一键同步</button>
+                        <button class="btn btn-block btn-nomal" id="syncConf">全量同步</button>
                     </div>
                 </div>
 
