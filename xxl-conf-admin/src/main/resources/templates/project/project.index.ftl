@@ -2,7 +2,7 @@
 <html>
 <head>
   	<title>配置管理中心</title>
-  	<#import "/common/common.macro.ftl" as netCommon>
+  	<#import "../common/common.macro.ftl" as netCommon>
 	<@netCommon.commonStyle />
 	<!-- DataTables -->
   	<link rel="stylesheet" href="${request.contextPath}/static/adminlte/plugins/datatables/dataTables.bootstrap.css">

@@ -41,9 +41,4 @@ public class ReturnT<T> {
 		this.content = content;
 	}
 
-	@Override
-	public String toString() {
-		return "ReturnT [code=" + code + ", msg=" + msg + ", content=" + content + "]";
-	}
-
 }

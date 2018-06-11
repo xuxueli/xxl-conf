@@ -3,6 +3,7 @@ package com.xxl.conf.admin.controller.interceptor;
 import com.xxl.conf.admin.controller.annotation.PermessionLimit;
 import com.xxl.conf.admin.core.model.XxlConfUser;
 import com.xxl.conf.admin.service.impl.LoginService;
+import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  * 权限拦截, 简易版
  * @author xuxueli 2015-12-12 18:09:04
  */
+@Component
 public class PermissionInterceptor extends HandlerInterceptorAdapter {
 
 	@Resource

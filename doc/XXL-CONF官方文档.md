@@ -397,8 +397,8 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 #### a、Client方式：
 应用通过内嵌和依赖Client端的方式，直连配置中心；此时系统结构分层如下：
 
-- 应用（内嵌Client端）：直连配合中心ZK，获取配置，动态watch配置变更；
-- 配置中心（ZK集群）：托管配置，配置同步至ZK集群；
+- 接入方应用：直连配合中心ZK，获取配置，动态watch配置变更；
+- 配置中心集群：托管配置，配置同步至ZK集群；
 
 优点：
 - 实时性：配置变更实时推送；
@@ -407,11 +407,11 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 语言限制：目前仅提供Java语言Client端；
 
 #### b、Agent方式：
-在配置中心上层，部署配置Agent服务，应用通过Agent获取配置；此时系统结构分层如下：
+在配置中心上层，部署配置Agent服务（参考 "5.4 多语言支持"），应用通过Agent获取配置；此时系统结构分层如下：
 
-- 应用：以Http方式从 "配合Agent" 获取配置。通过 "周期性轮训" 或者 "long-polling" 方式感知配置变更；
-- 配置Agent：直连配合中心ZK，获取配置，动态watch配置变更；
-- 配置中心（ZK集群）：托管配置，配置同步至ZK集群；
+- 接入方应用：以Http方式从 "配置Agent服务" 获取配置。通过 "周期性轮训" 或者 "long-polling" 方式感知配置变更；
+- 配置Agent服务：直连配合中心ZK，获取配置，动态watch配置变更；
+- 配置中心集群：托管配置，配置同步至ZK集群；
 
 优点：
 - 多语言支持：支持通过Http方式获取多个配置数据，无语言限制；
@@ -424,7 +424,7 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 Java应用可通过 "Client方式" 方便的获取配置中心的数据；非Java语言应用，可通过该 "配置中心Agent服务" 获取配置中心配置；从而实现配置数据多语言支持；
 "配置中心Agent服务" 本质上是一个获取配置中心中配置数据的Http接口。
 
-"Agent服务" 可参考以下代码：
+"配置Agent服务" 可参考以下代码：
 ```
 /xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/java/com/xxl/conf/sample/controller/XxlConfAgentController.java
 ``` 
@@ -533,7 +533,7 @@ http://{Agent部署路径}/confagent?confKeys=key01,key02
 - 1、本地优先配置：优先加载该配置中数据，常用于本地调试。早期版本功能用处不大，现已移除，考虑是否完全移除；
 - 2、zookeeper客户端迁移至curator；
 - 3、考虑移除ZK，改为Server端广播 + long-polling方式实现，降低学习、部署成本；
-- 4、local cache 备份到磁盘；zk异常且local properties未配置时，从磁盘上读取配置；
+- 4、配置快照：local cache 备份到磁盘；zk异常且local properties未配置时，从磁盘上读取配置；
 - 5、配置Agent服务，支持 long-polling 方式加载配置，并进行权限校验；
 
 

@@ -2,7 +2,7 @@
 <html>
 <head>
   	<title>配置管理中心</title>
-  	<#import "/common/common.macro.ftl" as netCommon>
+  	<#import "./common/common.macro.ftl" as netCommon>
 	<@netCommon.commonStyle />
 </head>
 <body class="hold-transition skin-blue sidebar-mini <#if cookieMap?exists && "off" == cookieMap["adminlte_settings"].value >sidebar-collapse</#if> ">

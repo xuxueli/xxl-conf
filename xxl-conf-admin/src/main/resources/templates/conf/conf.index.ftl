@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>配置管理中心</title>
 
-<#import "/common/common.macro.ftl" as netCommon>
+<#import "../common/common.macro.ftl" as netCommon>
 <@netCommon.commonStyle />
 <link rel="stylesheet" href="${request.contextPath}/static/adminlte/plugins/datatables/dataTables.bootstrap.css">
 

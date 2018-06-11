@@ -1,15 +1,15 @@
 package com.xxl.conf.admin.dao;
 
 import com.xxl.conf.admin.core.model.XxlConfUser;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 /**
  * @author xuxueli 2018-03-01
  */
-@Component
+@Mapper
 public interface XxlConfUserDao {
 
     public List<XxlConfUser> pageList(@Param("offset") int offset,
