@@ -1,4 +1,4 @@
-package com.xxl.conf.admin.controller.config;
+package com.xxl.conf.admin.controller.errorpage;
 
 import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
