@@ -16,6 +16,7 @@
 		<property name="zkaddress" value="${xxl.conf.zkaddress}" />
 		<property name="zkdigest" value="${xxl.conf.zkdigest}" />
 		<property name="env" value="${xxl.conf.env}" />
+		<property name="mirrorfile" value="${xxl.conf.mirrorfile}" />
 	</bean>
 
 	<!-- ********************************* 测试示例（可删除） ********************************* -->

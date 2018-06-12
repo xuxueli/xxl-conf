@@ -87,7 +87,6 @@ XXL-CONF 是一个分布式配置管理平台，拥有"强一致性、毫秒级�
 ### 1.5 环境
 - Maven3+
 - Jdk1.7+
-- Tomcat8.5+
 - Zookeeper3.4+
 - Mysql5.6+
 
@@ -176,6 +175,8 @@ xxl.conf.zkaddress=127.0.0.1:2181
 xxl.conf.zkdigest=
 # 环境配置，如"test、ppe、product"等，指定配置加载环境；
 xxl.conf.env=test
+# 配置快照文件地址，非空时启用快照功能；会周期性缓存到本地快照文件中，当从配置中心获取配置失败时，将会使用使用本地快照文件中的配置数据；提高系统可用性；
+xxl.conf.mirrorfile=/data/applogs/xxl-conf/xxl-conf-mirror.properties
 ```
 
 #### C、设置“XXL-CONF 配置工厂”
@@ -449,6 +450,10 @@ http://{Agent部署路径}/confagent?confKeys=key01,key02
 将会检测对应项目下的全部未同步配置项，使用DB中配置数据覆盖ZK中配置数据并推送更新；
 
 该功能在配置中心异常恢复、新配置中心集群初始化等场景中十分有效。
+
+### 5.6 配置快照功能
+客户端从配置中心获取到的配置数据后，会周期性缓存到本地快照文件中，当从配置中心获取配置失败时，将会使用使用本地快照文件中的配置数据；提高系统可用性；
+
 
 
 ## 六、历史版本
