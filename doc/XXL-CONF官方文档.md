@@ -409,9 +409,9 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 语言限制：目前仅提供Java语言Client端；
 
 #### b、Agent方式：
-在配置中心上层，部署配置Agent服务（参考 "5.4 多语言支持"），应用通过Agent获取配置；此时系统结构分层如下：
+在配置中心上层，部署 "配置中心Agent服务"（参考 "5.4 多语言支持"），应用通过Agent获取配置；此时系统结构分层如下：
 
-- 接入方应用：以Http方式从 "配置Agent服务" 获取配置。通过 "周期性轮训" 或者 "long-polling" 方式感知配置变更；
+- 接入方应用：以Http方式从 "配置中心Agent服务" 获取配置。通过 "周期性轮训" 或者 "long-polling" 方式感知配置变更；
 - 配置Agent服务：直连配合中心ZK，获取配置，动态watch配置变更；
 - 配置中心集群：托管配置，配置同步至ZK集群；
 
