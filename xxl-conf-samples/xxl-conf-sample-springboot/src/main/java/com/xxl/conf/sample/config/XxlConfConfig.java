@@ -26,6 +26,9 @@ public class XxlConfConfig {
     @Value("${xxl.conf.env}")
     private String env;
 
+    @Value("${xxl.conf.mirrorfile}")
+    private String mirrorfile;
+
 
     @Bean
     public XxlConfFactory xxlConfFactory() {
@@ -34,6 +37,7 @@ public class XxlConfConfig {
         xxlConf.setZkaddress(zkaddress);
         xxlConf.setZkdigest(zkdigest);
         xxlConf.setEnv(env);
+        xxlConf.setMirrorfile(mirrorfile);
 
         logger.info(">>>>>>>>>>> xxl-conf config init.");
         return xxlConf;

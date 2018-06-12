@@ -3,10 +3,7 @@ package com.xxl.conf.core.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.util.Properties;
 
@@ -18,6 +15,12 @@ import java.util.Properties;
 public class PropUtil {
     private static Logger logger = LoggerFactory.getLogger(PropUtil.class);
 
+    /**
+     * load prop
+     *
+     * @param propertyFileName disk path when start with "file:", other classpath
+     * @return
+     */
     public static Properties loadProp(String propertyFileName) {
         Properties prop = new Properties();
         InputStream in = null;
@@ -35,7 +38,8 @@ public class PropUtil {
             if (url != null) {
                 in = new FileInputStream(url.getPath());
                 if (in != null) {
-                    prop.load(in);
+                    //prop.load(in);
+                    prop.load(new InputStreamReader(in, "utf-8"));
                 }
             }
         } catch (IOException e) {
@@ -50,6 +54,35 @@ public class PropUtil {
             }
         }
         return prop;
+    }
+
+    /**
+     * write prop to disk
+     *
+     * @param properties
+     * @param filePathName
+     * @return
+     */
+    public static boolean writeProp(Properties properties, String filePathName){
+        FileOutputStream fileOutputStream = null;
+        try {
+            //properties.store(new FileWriter(filePathName), null);
+
+            fileOutputStream = new FileOutputStream(filePathName, false);
+            properties.store(new OutputStreamWriter(fileOutputStream, "utf-8"), null);
+            return true;
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            return false;
+        } finally {
+            if (fileOutputStream != null) {
+                try {
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        }
     }
 
 }

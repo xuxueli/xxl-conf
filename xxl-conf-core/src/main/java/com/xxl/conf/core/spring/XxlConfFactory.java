@@ -39,6 +39,7 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
 	private String zkaddress;
 	private String zkdigest;
 	private String env;
+	private String mirrorfile;
 
 	public void setEnvprop(String envprop) {
 		this.envprop = envprop;
@@ -56,7 +57,11 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
 		this.env = env;
 	}
 
-	// ---------------------- init/destroy ----------------------
+    public void setMirrorfile(String mirrorfile) {
+        this.mirrorfile = mirrorfile;
+    }
+
+    // ---------------------- init/destroy ----------------------
 
 	@Override
 	public void afterPropertiesSet() {
@@ -64,7 +69,7 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
 		if (envprop!=null && envprop.trim().length()>0) {
 			XxlConfBaseFactory.init(envprop);
 		} else {
-			XxlConfBaseFactory.init(zkaddress, zkdigest, env);
+			XxlConfBaseFactory.init(zkaddress, zkdigest, env, mirrorfile);
 		}
 
 	}

@@ -11,9 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -49,7 +47,7 @@ public class XxlConfLocalCacheConf {
                     try {
                         TimeUnit.SECONDS.sleep(60);
                         reloadAll();
-                        logger.info(">>>>>>>>>> xxl-conf, refresh thread reloadAll success.");
+                        logger.info(">>>>>>>>>> xxl-conf, refresh thread reload all success.");
                     } catch (Exception e) {
                         if (!refreshThreadStop) {
                             logger.error(">>>>>>>>>> xxl-conf, refresh thread error.");
@@ -116,7 +114,7 @@ public class XxlConfLocalCacheConf {
             Cache.Entry<String, CacheNode> item = iterator.next();
             keySet.add(item.getKey());
         }
-        if (keySet.size() > 1) {
+        if (keySet.size() > 0) {
             for (String key: keySet) {
                 String zkData = XxlConfZkConf.get(key);
 
@@ -128,7 +126,18 @@ public class XxlConfLocalCacheConf {
                 }
 
             }
+
+            // write mirror
+            Map<String, String> mirrorConfData = new HashMap<>();
+            for (String key: keySet) {
+                CacheNode existNode = xxlConfLocalCache.get(key);
+                // collect mirror data
+                mirrorConfData.put(key, existNode.getValue()!=null?existNode.getValue():"");
+            }
+            XxlConfMirrorConf.writeConfMirror(mirrorConfData);
+
         }
+
     }
 
     /**

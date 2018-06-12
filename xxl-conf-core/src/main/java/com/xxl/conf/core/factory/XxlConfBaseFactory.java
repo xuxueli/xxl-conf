@@ -1,6 +1,7 @@
 package com.xxl.conf.core.factory;
 
 import com.xxl.conf.core.core.XxlConfLocalCacheConf;
+import com.xxl.conf.core.core.XxlConfMirrorConf;
 import com.xxl.conf.core.core.XxlConfZkConf;
 import com.xxl.conf.core.listener.XxlConfListenerFactory;
 import com.xxl.conf.core.listener.impl.BeanRefreshXxlConfListener;
@@ -25,6 +26,7 @@ public class XxlConfBaseFactory {
 		String zkaddress = null;
 		String zkdigest = null;
 		String env = null;
+		String mirrorfile = null;
 
 		// env prop
 		if (envprop!=null && envprop.trim().length()>0) {
@@ -37,13 +39,15 @@ public class XxlConfBaseFactory {
 						zkdigest = envPropFile.getProperty(key);
 					} else if ("xxl.conf.env".equals(key)) {
 						env = envPropFile.getProperty(key);
+					} else if ("xxl.conf.mirrorfile".equals(key)) {
+						mirrorfile = envPropFile.getProperty(key);
 					}
 				}
 			}
 		}
 
 
-		init(zkaddress, zkdigest, env);
+		init(zkaddress, zkdigest, env, mirrorfile);
 	}
 
 	/**
@@ -53,10 +57,11 @@ public class XxlConfBaseFactory {
 	 * @param zkdigest
 	 * @param env
 	 */
-	public static void init(String zkaddress, String zkdigest, String env) {
+	public static void init(String zkaddress, String zkdigest, String env, String mirrorfile) {
 		// init
-		XxlConfZkConf.init(zkaddress, zkdigest, env);									// init zk client
-		XxlConfLocalCacheConf.init();
+		XxlConfZkConf.init(zkaddress, zkdigest, env);										// init zk client
+		XxlConfMirrorConf.init(mirrorfile);													// init file mirror
+		XxlConfLocalCacheConf.init();														// init cache
 		XxlConfListenerFactory.addListener(null, new BeanRefreshXxlConfListener());    // listener all key change
 
 	}
