@@ -428,7 +428,7 @@ Java应用可通过 "Client方式" 方便的获取配置中心的数据；非Jav
 
 "配置Agent服务" 可参考以下代码：
 ```
-/xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/java/com/xxl/conf/sample/controller/XxlConfAgentController.java
+/xxl-conf/xxl-conf-samples/xxl-conf-sample-springboot/src/main/java/com/xxl/conf/sample/controller/XxlConfAgentController.java
 ``` 
 
 第三方从Agent获取配置URL格式如下：
