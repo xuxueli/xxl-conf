@@ -13,7 +13,7 @@
 XXL-CONF 是一个分布式配置管理平台，拥有"强一致性、毫秒级动态推送、多环境、多语言、配置监听、权限控制、版本回滚"等特性。现已开放源代码，开箱即用。
 
 ### 1.2 特性
-- 1、简单: 提供简洁实用的API、多种方式灵活获取配置，一分钟上手；
+- 1、简单: 部署简单、接入灵活方便，一分钟上手；
 - 2、在线管理: 提供配置中心, 通过Web界面在线操作配置数据，直观高效；
 - 3、多环境支持：单个配置中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
 - 4、多数据类型配置：支持多种数据类型配置，如：String、Boolean、Short、Integer、Long、Float、Double 等；
@@ -374,7 +374,7 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 
 ### 5.1 架构图
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_jTID.jpg "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_07.png "在这里输入图片标题")
 
 ### 5.2 "配置中心" 设计
 
@@ -384,7 +384,7 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 
 ### 5.3 "客户端" 设计
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_q8oi.jpg "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_08.png "在这里输入图片标题")
 
 客户端主要分为三层:
 
