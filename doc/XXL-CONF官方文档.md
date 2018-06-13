@@ -387,13 +387,14 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 
 ![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_08.png "在这里输入图片标题")
 
-客户端主要分为三层:
+客户端基于多层设计，核心四层设计如下:
 
-    - ZK-Client : 第一层为ZK远程客户端的封装, 当业务方项目初始化某一个用到的配置项时, 将会触发ZK-Client对该配置对应节点的Watch, 因此当该节点变动时将会监听到ZK的类似NodeDataChanged的广播, 可以实时获取最新配置信息; 
-    - Ehcache : 第二层为客户端本地缓存, 可以大大提高系统的并发能力, 当配置初始化或者接受到ZK-Client的配置变更时, 将会把配置信息缓存只Encache中, 业务中针对配置的查询都是读缓存方式实现, 降低对ZK集群的压力;
-    - Client-API : 第三层为暴露给业务方使用API, 简单易用, 一行代码获取配置信息, 同时可保证API获取到的配置信息是实时最新的配置信息;
+- 1、API层：提供业务方可直接使用的上层API, 简单易用, 一行代码获取配置信息；同时保证配置的实时性、高性能;
+- 2、Ehcache层：客户端的Local Cache，极大提升API层的性能，降低对ZK集群的压力；首次加载配置、监听配置变更、底层异步周期性同步配置时，将会写入或更新缓存；
+- 3、ZK-Client层：ZK远程客户端的封装，用于加载远程配置、通过NodeDataChanged监听配置变更，提高配置时效性；
+- 4、Mirror-File层：配置数据的本地快照文件，会周期性同步 "Ehcache层" 中的配置数据写入到 "Mirror-File" 中；当无法从配置中心获取配置，如ZK宕机时，将会使用 "Mirror-File" 中的配置数据，提高系统的可用性；
 
-得益于LocalCache, 因此可以放心应用在业务代码中, 不必担心并发压力。
+得益于客户端的多层设计，以及 LocalCache 和 Mirror-File 等特性，因此业务方可以在高QPS、高并发场景下使用XXL-CONF的客户端, 不必担心并发压力或ZK宕机导致系统问题。
 
 ### 5.4 配置中心接入方式
 
