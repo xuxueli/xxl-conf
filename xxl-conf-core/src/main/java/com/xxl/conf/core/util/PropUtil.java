@@ -27,20 +27,18 @@ public class PropUtil {
         try {
 
             // load file location, disk or resource
-            URL url = null;
             if (propertyFileName.startsWith("file:")) {
-                url = new File(propertyFileName.substring("file:".length())).toURI().toURL();
+                URL url = new File(propertyFileName.substring("file:".length())).toURI().toURL();
+                in = new FileInputStream(url.getPath());
             } else {
                 ClassLoader loder = Thread.currentThread().getContextClassLoader();
-                url = loder.getResource(propertyFileName);
+                /*URL url = loder.getResource(propertyFileName);
+                in = new FileInputStream(url.getPath());*/
+                in = loder.getResourceAsStream(propertyFileName);
             }
-
-            if (url != null) {
-                in = new FileInputStream(url.getPath());
-                if (in != null) {
-                    //prop.load(in);
-                    prop.load(new InputStreamReader(in, "utf-8"));
-                }
+            if (in != null) {
+                //prop.load(in);
+                prop.load(new InputStreamReader(in, "utf-8"));
             }
         } catch (IOException e) {
             logger.error(">>>>>>>>>> xxl-conf, PropUtil load prop fail [{}], error msg:{}", propertyFileName, e.getMessage());
