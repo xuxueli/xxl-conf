@@ -17,7 +17,7 @@ XXL-CONF 是一个分布式配置管理平台，拥有"强一致性、毫秒级�
 - 2、在线管理: 提供配置中心, 通过Web界面在线操作配置数据，直观高效；
 - 3、多环境支持：单个配置中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
 - 4、多数据类型配置：支持多种数据类型配置，如：String、Boolean、Short、Integer、Long、Float、Double 等；
-- 5、多语言支持：提供配置Agent服务，可据此通过Http获取配置数据，从而实现多语言支持。Agent存在Ehcache缓存性能极高，并且支持集群横向扩展；
+- 5、多语言支持（配置中心Agent服务）：提供配置中心Agent服务，可据此通过Http（long-polling）获取配置数据并实时感知配置变更，从而实现多语言支持。
 - 6、配置变更监听功能：可开发Listener逻辑，监听配置变更事件，可据此动态刷新JDBC连接池等高级功能；
 - 7、毫秒级动态推送: 配置更新后, 实时推送配置信息, 项目中配置数据会实时更新并生效, 不需要重启线上机器;
 - 8、强一致性：保障配置数据的强一致性，提高配置时效性；
@@ -405,7 +405,7 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 #### a、Client方式：
 应用通过内嵌和依赖Client端的方式，直连配置中心；此时系统结构分层如下：
 
-- 接入方应用：直连配合中心ZK，获取配置，动态watch配置变更；
+- 接入方应用：内嵌Client端，直连配合中心ZK，获取配置，动态watch配置变更；
 - 配置中心集群：托管配置，配置同步至ZK集群；
 
 优点：
@@ -415,10 +415,10 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 - 语言限制：目前仅提供Java语言Client端；
 
 #### b、Agent方式：
-在配置中心上层，部署 "配置中心Agent服务"（参考 "5.5 配置Agent服务（多语言支持）"），应用通过Agent获取配置；此时系统结构分层如下：
+在配置中心与接入方应用之间，部署 "配置中心Agent服务"（参考 "5.5 配置Agent服务（多语言支持）"），应用通过 "配置中心Agent服务" 获取配置；此时系统结构分层如下：
 
 - 接入方应用：以Http方式从 "配置中心Agent服务" 获取配置。通过 "周期性轮训" 或者 "long-polling" 方式感知配置变更；
-- 配置Agent服务：直连配合中心ZK，获取配置，动态watch配置变更；
+- 配置中心Agent服务：内嵌Client端，直连配合中心ZK，获取配置，动态watch配置变更；并提送配置加载的Agent服务；
 - 配置中心集群：托管配置，配置同步至ZK集群；
 
 优点：
@@ -427,27 +427,43 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 缺点：
 - 实时性：配置变更依赖 "周期性轮训" 或者 "long-polling"；
 
+
 ### 5.5 配置Agent服务（多语言支持）
 
-Java应用可通过 "Client方式" 方便的获取配置中心的数据；非Java语言应用，可通过该 "配置中心Agent服务" 获取配置中心配置；从而实现配置数据多语言支持；
-"配置中心Agent服务" 本质上是一个获取配置中心中配置数据的Http接口。
+Java应用可通过 "Client方式" 方便的获取配置中心的数据；
 
-"配置Agent服务" 可参考以下代码：
+非Java语言应用，可通过提供的 "配置中心Agent服务" 获取配置中心配置；可据此通过Http（long-polling）获取配置数据并实时感知配置变更，从而实现多语言支持。
+
+"配置中心Agent服务" 存在Ehcache缓存性能极高，并且支持集群横向扩展；
+
+"配置中心Agent服务" 本质上是一个获取配置中心中配置数据的Http接口，支持同步、异步两种Http请求方式；
+
+"配置中心Agent服务" 可参考以下代码：  
+（项目 "xxl-conf-sample-springboot" 本身提供 "配置中心Agent服务" 功能，可直接部署该项目使用；）
 ```
 /xxl-conf/xxl-conf-samples/xxl-conf-sample-springboot/src/main/java/com/xxl/conf/sample/controller/XxlConfAgentController.java
 ``` 
 
-第三方从Agent获取配置URL格式如下：
-
+"配置Agent服务" Http接口文档如下：
 ```
-// 支持批量获取配置，多个配置Key逗号分隔；
-http://{Agent部署路径}/confagent?confKeys=key01,key02
+// Http接口地址格式
+http://{Agent部署路径}/xxlconfagent
 
-// Agent响应格式如下：
+// 请求参数，get/post方式均可
+accessToken :   请求Token，进行安全严重，需要和 "配置Agent服务" 内部保持一致；
+confKeys    :	配置Key，多个逗号分隔
+async	    :	trne=同步请求，立即返回 "confKeys" 对应的配置信息；false（默认）=异步请求，监听 "confKeys" 对应的配置发生变更后，才会返回发生变更的配置信息；
+
+// 响应数据格式
 {
-    "key01": "value01",
-    "key02": "value02"
+    "code":200,     // 200 表示正常、其他失败
+    "msg":null,     // 错误提示消息
+    "content":{     // 配置信息，KV格式
+        "key01": "value01",
+        "key02": "value02"
+    }
 }
+
 ```
 
 ### 5.6 配置同步功能 
@@ -547,8 +563,9 @@ http://{Agent部署路径}/confagent?confKeys=key01,key02
 - 3、[迭代中]配置中心，提供官方docker镜像；
 - 4、配置同步功能：将会检测对应项目下的全部未同步配置项，使用DB中配置数据覆盖ZK中配置数据并推送更新；在配置中心异常恢复、新配置中心集群初始化等场景中十分有效。
 - 5、配置快照：客户端从配置中心获取到的配置数据后，会周期性缓存到本地快照文件中，当从配置中心获取配置失败时，将会使用使用本地快照文件中的配置数据；提高系统可用性；
-- 6、[迭代中]配置Agent服务，支持 long-polling 方式加载配置，并进行权限校验；
+- 6、配置中心Agent服务增强：提供同步、异步两种Http请求方式，原生支持Http（long-polling）的方式获取配置数据、并实时感知配置变更。同时，强化请求权限校验；
 - 7、springboot项目加载prop失败的问题修复；
+
 
 ### TODO LIST
 - 1、本地优先配置：优先加载该配置中数据，常用于本地调试。早期版本功能实用性低，现已移除，考虑是否完全移除；
