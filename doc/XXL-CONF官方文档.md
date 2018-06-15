@@ -159,8 +159,8 @@ java -jar xxl-conf-admin.jar --mysqladdress=127.0.0.1:3306 --zkaddress=127.0.0.1
 
 ### 2.4 “接入XXL-CONF的示例项目” 项目配置
 
-    项目：xxl-conf-sample-spring
-    作用：接入XXl-CONF的示例项目，供用户参考学习。这里以 spring 版本进行介绍，其他版本可参考各自sample项目。
+    项目：xxl-conf-sample-springboot
+    作用：接入XXl-CONF的示例项目，供用户参考学习。这里以 springboot 版本进行介绍，其他版本可参考各自sample项目。
 
 #### A、引入maven依赖
 ```
@@ -172,11 +172,11 @@ java -jar xxl-conf-admin.jar --mysqladdress=127.0.0.1:3306 --zkaddress=127.0.0.1
 </dependency>
 ```
 
-#### B、添加“XXL-CONF 配置文件”
+#### B、添加“XXL-CONF 配置信息”
 
 可参考配置文件：
 ```
-xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/xxl-conf.properties
+/xxl-conf/xxl-conf-samples/xxl-conf-sample-springboot/src/main/resources/application.properties
 ```
 
 配置项说明
@@ -195,17 +195,26 @@ xxl.conf.mirrorfile=/data/applogs/xxl-conf/xxl-conf-mirror.properties
 
 可参考配置文件：
 ```
-xxl-conf/xxl-conf-samples/xxl-conf-sample-spring/src/main/resources/spring/applicationcontext-xxl-conf.xml
+/xxl-conf/xxl-conf-samples/xxl-conf-sample-springboot/src/main/java/com/xxl/conf/sample/config/XxlConfConfig.java
 ```
 
 配置项说明
 ```
-<!-- ********************************* XXL-CONF 配置工厂 ********************************* -->
-<bean id="xxlConf" class="com.xxl.conf.core.spring.XxlConfFactory"  >
-    <!-- 环境配置文件地址，如 "xxl-conf.properties" 或 "file:/data/webapps/xxl-conf.properties" -->
-    <property name="envprop" value="xxl-conf.properties" />
-</bean>
+@Bean
+public XxlConfFactory xxlConfFactory() {
+
+    XxlConfFactory xxlConf = new XxlConfFactory();
+    xxlConf.setZkaddress(zkaddress);
+    xxlConf.setZkdigest(zkdigest);
+    xxlConf.setEnv(env);
+    xxlConf.setMirrorfile(mirrorfile);
+
+    logger.info(">>>>>>>>>>> xxl-conf config init.");
+    return xxlConf;
+}
 ```
+
+至此，配置完成。
 
 
 ### 2.5 功能测试
