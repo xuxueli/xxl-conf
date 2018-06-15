@@ -168,13 +168,13 @@ java -jar xxl-conf-admin.jar --mysqladdress=127.0.0.1:3306 --mysqlusername=root 
 - 下载镜像
 ```
 // Docker地址：https://hub.docker.com/r/xuxueli/xxl-conf-admin/
-docker pull xuxueli/xxl-conf-admin:1.5.0
+docker pull xuxueli/xxl-conf-admin
 ```
 
 - 创建容器并运行
 ```
 // 可通过 "PARAMS" 支持自定义 mysql与zk 地址；
-docker run -e PARAMS="--mysqladdress=172.17.0.2:3306 --zkaddress=172.17.0.3:2181" -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/xxl-conf-admin:1.5.0
+docker run -e PARAMS="--mysqladdress=172.17.0.2:3306 --zkaddress=172.17.0.3:2181" -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/xxl-conf-admin
 ```
 
 
@@ -607,6 +607,8 @@ async	    :	trne=同步请求，立即返回 "confKeys" 对应的配置信息；
 - 6、Cglib代理情况下，如 "@Configuration" 注解，Bean无法注入配置问题修复；
 - 7、springboot项目加载prop失败的问题修复；
 - 8、升级多项maven依赖至较新版本，如spring等；
+
+### 6.11 版本 v1.5.1 新特性[迭代中]
 
 
 ### TODO LIST
