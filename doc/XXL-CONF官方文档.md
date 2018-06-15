@@ -124,7 +124,7 @@ XXL-CONF 是一个分布式配置管理平台，拥有"强一致性、毫秒级�
     作用：提供一个完善强大的配置管理平台，包含：环境管理、用户管理、项目管理、配置管理等功能，全部操作通过Web界面在线完成；
     
 
-#### 方式一：源码编译方式搭建：
+#### 方式1：源码编译方式搭建：
     
 - 配置文件位置：
 
@@ -159,13 +159,7 @@ java -jar xxl-conf-admin.jar
 java -jar xxl-conf-admin.jar --mysqladdress=127.0.0.1:3306 --mysqlusername=root --mysqlpassword=root_pwd --zkaddress=127.0.0.1:2181
 ```
 
-- 配置中心集群：
-
-配置中心支持集群部署，提高配置中心负载能力和可用性。  
-配置中心集群部署时，项目配置文件保持一致即可。
-
-
-#### 方式一：Docker 镜像方式搭建：
+#### 方式2：Docker 镜像方式搭建：
 
 - 下载镜像
 ```
@@ -178,6 +172,11 @@ docker pull xuxueli/xxl-conf-admin
 // 可通过 "PARAMS" 支持自定义 mysql与zk 地址；
 docker run -e PARAMS="--mysqladdress=172.17.0.2:3306 --zkaddress=172.17.0.3:2181" -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/xxl-conf-admin
 ```
+
+#### "配置中心" 集群：
+
+配置中心支持集群部署，提高配置中心负载能力和可用性。  
+配置中心集群部署时，项目配置文件保持一致即可。
 
 
 ### 2.4 “接入XXL-CONF的示例项目” 项目配置
