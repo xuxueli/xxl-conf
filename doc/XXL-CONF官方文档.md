@@ -120,28 +120,39 @@ XXL-CONF 是一个分布式配置管理平台，拥有"强一致性、毫秒级�
     项目：xxl-conf-admin
     作用：管理配置数据，配置变更时实时推送配置信息至客户端接入项目中；
     
-配置文件位置：
+- 配置文件位置：
 
 ```
 xxl-conf/xxl-conf-admin/src/main/resources/xxl-conf-admin.properties
 ```
     
-配置项目说明：
+- 配置项说明：
 ```
-# 配置中心zookeeper集群地址，如有多个地址用逗号分隔；
+# xxl-conf, zookeeper 地址，如有多个地址用逗号分隔；
 xxl.conf.zkaddress=127.0.0.1:2181
-# 配置zookeeper的digest权限信息；
+# xxl-conf, zookeeper 的digest权限信息；
 xxl.conf.zkdigest=
 
-
-# xxl-conf, jdbc        （JDBC配置）
+# xxl-conf, jdbc 
 xxl.conf.admin.jdbc.driverClass=com.mysql.jdbc.Driver
 xxl.conf.admin.jdbc.url=jdbc:mysql://localhost:3306/xxl-conf?Unicode=true&amp;characterEncoding=UTF-8
 xxl.conf.admin.jdbc.username=root
 xxl.conf.admin.jdbc.password=root_pwd
 ```
 
-配置中心集群：
+- 配置中心启动：   
+
+项目编译打包后，可直接通过命令行启动；
+
+```
+// 方式1：使用默认配置，mysql与zk为本地地址；
+java -jar xxl-conf-admin.jar
+
+// 方式2：支持自定义 mysql与zk为地址；
+java -jar xxl-conf-admin.jar --mysqladdress=127.0.0.1:3306 --zkaddress=127.0.0.1:2181
+```
+
+- 配置中心集群：
 
 配置中心支持集群部署，提高配置中心负载能力和可用性。  
 配置中心集群部署时，项目配置文件保持一致即可。
