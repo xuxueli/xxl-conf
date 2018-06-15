@@ -92,9 +92,11 @@ XXL-CONF 是一个分布式配置管理平台，拥有"强一致性、毫秒级�
 - Zookeeper3.4+
 - Mysql5.6+
 
+
 ## 二、快速入门
 
 ### 2.1 环境准备
+
 #### 初始化“数据库”
 
 请下载项目源码并解压，获取 "数据库初始化SQL脚本（Mysql）" 并执行即可。脚本位置如下：
@@ -116,10 +118,12 @@ XXL-CONF 是一个分布式配置管理平台，拥有"强一致性、毫秒级�
         - xxl-conf-sample-jfinal：jfinal版本
         - xxl-conf-sample-nutz：nutz版本
 
-### 2.3 “配置中心” 项目配置（支持集群）
+### 2.3 “配置中心” 搭建（支持集群）
 
     项目：xxl-conf-admin
-    作用：管理配置数据，配置变更时实时推送配置信息至客户端接入项目中；
+    作用：提供一个完善强大的配置管理平台，包含：环境管理、用户管理、项目管理、配置管理等功能，全部操作通过Web界面在线完成；
+    
+#### A 源码编译方式搭建：
     
 - 配置文件位置：
 
@@ -146,10 +150,10 @@ spring.datasource.driver-class-name=com.mysql.jdbc.Driver
 项目编译打包后，可直接通过命令行启动；
 
 ```
-// 方式1：使用默认配置，mysql与zk为本地地址；
+// 方式1：使用默认配置，mysql与zk默认为本地地址；
 java -jar xxl-conf-admin.jar
 
-// 方式2：支持自定义 mysql与zk为地址；
+// 方式2：支持自定义 mysql与zk 地址；
 java -jar xxl-conf-admin.jar --mysqladdress=127.0.0.1:3306 --mysqlusername=root --mysqlpassword=root_pwd --zkaddress=127.0.0.1:2181
 ```
 
@@ -157,6 +161,22 @@ java -jar xxl-conf-admin.jar --mysqladdress=127.0.0.1:3306 --mysqlusername=root 
 
 配置中心支持集群部署，提高配置中心负载能力和可用性。  
 配置中心集群部署时，项目配置文件保持一致即可。
+
+
+#### B Docker 镜像方式搭建：
+
+- 下载镜像
+```
+// Docker地址：https://hub.docker.com/r/xuxueli/xxl-conf-admin/
+docker pull xuxueli/xxl-conf-admin:1.5.0
+```
+
+- 创建容器并运行
+```
+// 可通过 "PARAMS" 支持自定义 mysql与zk 地址；
+docker run -e PARAMS="--mysqladdress=172.17.0.2:3306 --zkaddress=172.17.0.3:2181" -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/xxl-conf-admin:1.5.0
+```
+
 
 ### 2.4 “接入XXL-CONF的示例项目” 项目配置
 
