@@ -10,18 +10,21 @@
         <a href="https://travis-ci.org/xuxueli/xxl-conf">
             <img src="https://travis-ci.org/xuxueli/xxl-conf.svg?branch=master" >
         </a>
+        <a href="https://hub.docker.com/r/xuxueli/xxl-conf-admin/">
+            <img src="https://img.shields.io/badge/docker-passing-brightgreen.svg" >
+        </a>
         <a href="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-conf/">
             <img src="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-conf/badge.svg" >
         </a>
-         <a href="https://github.com/xuxueli/xxl-conf/releases">
-             <img src="https://img.shields.io/github/release/xuxueli/xxl-conf.svg" >
-         </a>
-         <a href="http://www.gnu.org/licenses/gpl-3.0.html">
-             <img src="https://img.shields.io/badge/license-GPLv3-blue.svg" >
-         </a>
-         <a href="http://www.xuxueli.com/page/donate.html">
+        <a href="https://github.com/xuxueli/xxl-conf/releases">
+            <img src="https://img.shields.io/github/release/xuxueli/xxl-conf.svg" >
+        </a>
+        <a href="http://www.gnu.org/licenses/gpl-3.0.html">
+            <img src="https://img.shields.io/badge/license-GPLv3-blue.svg" >
+        </a>
+        <a href="http://www.xuxueli.com/page/donate.html">
             <img src="https://img.shields.io/badge/%24-donate-ff69b4.svg?style=flat-square" >
-         </a>
+        </a>
     </p>    
 </p>
 
