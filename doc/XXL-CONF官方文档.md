@@ -123,7 +123,7 @@ XXL-CONF 是一个分布式配置管理平台，拥有"强一致性、毫秒级�
 - 配置文件位置：
 
 ```
-xxl-conf/xxl-conf-admin/src/main/resources/xxl-conf-admin.properties
+/xxl-conf/xxl-conf-admin/src/main/resources/application.properties
 ```
     
 - 配置项说明：
@@ -134,10 +134,10 @@ xxl.conf.zkaddress=127.0.0.1:2181
 xxl.conf.zkdigest=
 
 # xxl-conf, jdbc 
-xxl.conf.admin.jdbc.driverClass=com.mysql.jdbc.Driver
-xxl.conf.admin.jdbc.url=jdbc:mysql://localhost:3306/xxl-conf?Unicode=true&amp;characterEncoding=UTF-8
-xxl.conf.admin.jdbc.username=root
-xxl.conf.admin.jdbc.password=root_pwd
+spring.datasource.url=jdbc:mysql://${mysqladdress:127.0.0.1:3306}/xxl-conf?Unicode=true&amp;characterEncoding=UTF-8
+spring.datasource.username=${mysqlusername:root}
+spring.datasource.password=${mysqlpassword:root_pwd}
+spring.datasource.driver-class-name=com.mysql.jdbc.Driver
 ```
 
 - 配置中心启动：   
@@ -149,7 +149,7 @@ xxl.conf.admin.jdbc.password=root_pwd
 java -jar xxl-conf-admin.jar
 
 // 方式2：支持自定义 mysql与zk为地址；
-java -jar xxl-conf-admin.jar --mysqladdress=127.0.0.1:3306 --zkaddress=127.0.0.1:2181
+java -jar xxl-conf-admin.jar --mysqladdress=127.0.0.1:3306 --mysqlusername=root --mysqlpassword=root_pwd --zkaddress=127.0.0.1:2181
 ```
 
 - 配置中心集群：
