@@ -20,9 +20,8 @@
 		<javax.servlet-api.version>3.1.0</javax.servlet-api.version>
 		<javax.servlet.jsp-api.version>2.3.1</javax.servlet.jsp-api.version>
 
-		<spring.version>4.3.17.RELEASE</spring.version>
+		<spring.version>4.3.18.RELEASE</spring.version>
 		<jackson.version>2.9.5</jackson.version>
-		<aspectjweaver.version>1.8.13</aspectjweaver.version>
 		<slf4j-api.version>1.7.25</slf4j-api.version>
 		<freemarker.version>2.3.28</freemarker.version>
 		<junit.version>4.12</junit.version>
@@ -33,12 +32,10 @@
 		<zookeeper.version>3.4.12</zookeeper.version>
 		<ehcache.version>3.4.0</ehcache.version>
 
-		<hikaricp.version>2.5.1</hikaricp.version>
 		<mysql-connector-java.version>5.1.46</mysql-connector-java.version>
-		<mybatis-spring.version>1.3.2</mybatis-spring.version>
-		<mybatis.version>3.4.6</mybatis.version>
 
 		<spring-boot.version>1.5.11.RELEASE</spring-boot.version>
+		<mybatis-spring-boot-starter.version>1.3.2</mybatis-spring-boot-starter.version>
 	</properties>
 
 
