@@ -136,9 +136,9 @@ XXL-CONF 是一个分布式配置管理平台，拥有"强一致性、毫秒级�
 
 ```
 # xxl-conf, zookeeper 地址，如有多个地址用逗号分隔；
-xxl.conf.zkaddress=127.0.0.1:2181
+xxl.conf.zkaddress=${zkaddress:127.0.0.1:2181}
 # xxl-conf, zookeeper 的digest权限信息；
-xxl.conf.zkdigest=
+xxl.conf.zkdigest=${zkdigest:}
 
 # xxl-conf, jdbc 
 spring.datasource.url=jdbc:mysql://${mysqladdress:127.0.0.1:3306}/xxl-conf?Unicode=true&amp;characterEncoding=UTF-8
@@ -170,7 +170,7 @@ docker pull xuxueli/xxl-conf-admin
 - 创建容器并运行
 ```
 // 可通过 "PARAMS" 支持自定义 mysql与zk 地址；
-docker run -e PARAMS="--mysqladdress=172.17.0.2:3306 --zkaddress=172.17.0.3:2181" -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/xxl-conf-admin
+docker run -e PARAMS="--mysqladdress=127.0.0.1:3306 --zkaddress=127.0.0.1:2181" -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/xxl-conf-admin
 ```
 
 #### "配置中心" 集群：
@@ -614,8 +614,10 @@ async	    :	trne=同步请求，立即返回 "confKeys" 对应的配置信息；
 
 ### TODO LIST
 - 1、本地优先配置：优先加载该配置中数据，常用于本地调试。早期版本功能实用性低，现已移除，考虑是否完全移除；
-- 2、zookeeper客户端迁移至curator；
-- 3、考虑移除ZK，改为 "Server端广播 + long-polling" 方式实现，降低学习、部署成本；
+- 2、zookeeper客户端迁移至curator；暂时不考虑，自研client更可控；
+- 3、轻量级改造：移除ZK，改为 "Server端广播 + long-polling" 方式实现，降低学习、部署成本；暂时不考虑，基于ZK实时性更高，强一致性；
+- 4、注册中心特性：原生支持注册中心功能，强一致性推送注册信息；
+- 5、分布式锁特性：原生支持分布式锁功能；
 
 
 ## 七、其他
