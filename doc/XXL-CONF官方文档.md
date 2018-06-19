@@ -474,11 +474,9 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 
 Java应用可通过 "Client方式" 方便的获取配置中心的数据；
 
-非Java语言应用，可通过提供的 "配置中心Agent服务" 获取配置中心配置；可据此通过Http（long-polling）获取配置数据并实时感知配置变更，从而实现多语言支持。
+非Java语言应用，提供 "配置中心Agent服务" 获取配置中心配置；"配置中心Agent服务" 本质是一个Http接口，支持同步、异步（long-polling）两种Http请求方式；可据此获取配置数据并实时感知配置变更，从而实现多语言支持。
 
 "配置中心Agent服务" 存在Ehcache缓存性能极高，并且支持集群横向扩展；
-
-"配置中心Agent服务" 本质上是一个获取配置中心中配置数据的Http接口，支持同步、异步两种Http请求方式；
 
 "配置中心Agent服务" 可参考以下代码：  
 （项目 "xxl-conf-sample-springboot" 本身提供 "配置中心Agent服务" 功能，可直接部署该项目使用；）
