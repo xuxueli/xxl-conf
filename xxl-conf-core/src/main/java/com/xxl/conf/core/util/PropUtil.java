@@ -42,6 +42,7 @@ public class PropUtil {
             }
         } catch (IOException e) {
             logger.error(">>>>>>>>>> xxl-conf, PropUtil load prop fail [{}], error msg:{}", propertyFileName, e.getMessage());
+            logger.error(e);
         } finally {
             if (in != null) {
                 try {
