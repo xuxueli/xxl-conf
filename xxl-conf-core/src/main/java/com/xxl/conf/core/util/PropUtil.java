@@ -41,8 +41,7 @@ public class PropUtil {
                 prop.load(new InputStreamReader(in, "utf-8"));
             }
         } catch (IOException e) {
-            logger.error(">>>>>>>>>> xxl-conf, PropUtil load prop fail [{}], error msg:{}", propertyFileName, e.getMessage());
-            logger.error(e);
+            logger.error(">>>>>>>>>> xxl-conf, PropUtil load prop fail [{}]", propertyFileName);
         } finally {
             if (in != null) {
                 try {
