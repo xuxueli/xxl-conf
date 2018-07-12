@@ -136,7 +136,7 @@ public class XxlZkClient {
 	 *
 	 * @param path
 	 */
-	private Stat createPatnWithParent(String path){
+	private Stat createPathWithParent(String path){
 		// valid
 		if (path==null || path.trim().length()==0) {
 			return null;
@@ -150,7 +150,7 @@ public class XxlZkClient {
 					String parentPath = path.substring(0, path.lastIndexOf("/"));
 					Stat parentStat = getClient().exists(parentPath, true);
 					if (parentStat == null) {
-						createPatnWithParent(parentPath);
+						createPathWithParent(parentPath);
 					}
 				}
 				// create desc node path
@@ -192,7 +192,7 @@ public class XxlZkClient {
 		try {
 			Stat stat = getClient().exists(path, true);
 			if (stat == null) {
-				createPatnWithParent(path);
+				createPathWithParent(path);
 				stat = getClient().exists(path, true);
 			}
 			return getClient().setData(path, data.getBytes("UTF-8"), stat.getVersion());
