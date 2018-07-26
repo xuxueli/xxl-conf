@@ -184,7 +184,7 @@
 		<#if Request["XXL_CONF_LOGIN_IDENTITY"].permission == 1>
         	hasPermission = true;
 		<#else>
-			<#if Request["XXL_CONF_LOGIN_IDENTITY"].permissionProjects >
+			<#if Request["XXL_CONF_LOGIN_IDENTITY"].permissionProjects?exists >
 				<#list Request["XXL_CONF_LOGIN_IDENTITY"].permissionProjects?split(",") as appname >
 					<#if appname == project.appname>
                     	hasPermission = true;
