@@ -64,10 +64,17 @@ public class PropUtil {
     public static boolean writeProp(Properties properties, String filePathName){
         FileOutputStream fileOutputStream = null;
         try {
-            //properties.store(new FileWriter(filePathName), null);
 
-            fileOutputStream = new FileOutputStream(filePathName, false);
+            // mk file
+            File file = new File(filePathName);
+            if (!file.exists()) {
+                file.getParentFile().mkdirs();
+            }
+
+            // write data
+            fileOutputStream = new FileOutputStream(file, false);
             properties.store(new OutputStreamWriter(fileOutputStream, "utf-8"), null);
+            //properties.store(new FileWriter(filePathName), null);
             return true;
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
