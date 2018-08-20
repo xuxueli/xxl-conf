@@ -6,11 +6,11 @@ import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.CountDownLatch;
 
 
 /**
@@ -70,7 +70,9 @@ public class XxlZkClient {
 				@Override
 				public void process(WatchedEvent watchedEvent) {
 					logger.info(">>>>>>>>>> xxl-conf: watcher:{}", watchedEvent);
-
+                    if (Event.KeeperState.SyncConnected == watchedEvent.getState()) {
+                        connectedSemaphore.countDown();
+                    }
 					// session expire, close old and create new
 					if (watchedEvent.getState() == Event.KeeperState.Expired) {
 						destroy();
@@ -85,32 +87,25 @@ public class XxlZkClient {
 
 	// ------------------------------ zookeeper client ------------------------------
 	private ZooKeeper zooKeeper;
-	private ReentrantLock INSTANCE_INIT_LOCK = new ReentrantLock(true);
+    private CountDownLatch connectedSemaphore = new CountDownLatch(1);
 	public ZooKeeper getClient(){
-		if (zooKeeper==null) {
-			try {
-				if (INSTANCE_INIT_LOCK.tryLock(2, TimeUnit.SECONDS)) {
-					if (zooKeeper==null) {		// 二次校验，防止并发创建client
-						try {
-							zooKeeper = new ZooKeeper(zkaddress, 10000, watcher);		// TODO，本地变量方式，成功才会赋值
-							if (zkdigest!=null && zkdigest.trim().length()>0) {
-								zooKeeper.addAuthInfo("digest",zkdigest.getBytes());		// like "account:password"
-							}
-
-							zooKeeper.exists(zkpath, false);	// sync
-						} catch (Exception e) {
-							logger.error(e.getMessage(), e);
-						} finally {
-							INSTANCE_INIT_LOCK.unlock();
-						}
-						logger.info(">>>>>>>>>> xxl-conf, XxlZkClient init success.");
-					}
-				}
-			} catch (InterruptedException e) {
-				logger.error(e.getMessage(), e);
-			}
-		}
-		if (zooKeeper == null) {
+        if (zooKeeper == null) {
+            try {
+                zooKeeper = new ZooKeeper(zkaddress, 10000, watcher);        // TODO，本地变量方式，成功才会赋值
+                if (zkdigest != null && zkdigest.trim().length() > 0) {
+                    zooKeeper.addAuthInfo("digest", zkdigest.getBytes());        // like "account:password"
+                }
+                zooKeeper.exists(zkpath, false);    // sync
+                connectedSemaphore.await();
+            } catch (InterruptedException e) {
+                logger.error(e.getMessage(), e);
+            } catch (KeeperException e) {
+                logger.error(e.getMessage(), e);
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        if (zooKeeper == null) {
 			throw new XxlConfException("XxlZkClient.zooKeeper is null.");
 		}
 		return zooKeeper;
