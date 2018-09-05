@@ -1,5 +1,6 @@
 package com.xxl.conf.admin.controller;
 
+import com.xxl.conf.admin.core.model.XxlConfBatchAddNode;
 import com.xxl.conf.admin.core.model.XxlConfNode;
 import com.xxl.conf.admin.core.model.XxlConfProject;
 import com.xxl.conf.admin.core.model.XxlConfUser;
@@ -86,6 +87,14 @@ public class ConfController {
 	public ReturnT<String> add(HttpServletRequest request, XxlConfNode xxlConfNode){
 		XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
 		return xxlConfNodeService.add(xxlConfNode, loginUser);
+	}
+
+	@RequestMapping("/batchAdd")
+	@ResponseBody
+	public ReturnT<String> batchAdd(HttpServletRequest request, XxlConfBatchAddNode xxlConfBatchAddNode) {
+		XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
+		List<XxlConfNode> xxlConfNodes = xxlConfBatchAddNode.translateToNodeList();
+		return xxlConfNodeService.batchAdd(xxlConfBatchAddNode, loginUser);
 	}
 	
 	/**

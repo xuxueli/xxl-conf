@@ -273,6 +273,46 @@ $(function(){
 	$("#addModal").on('hide.bs.modal', function () {
 		$("#addModal .form")[0].reset()
 	});
+
+	//批量新增
+    $("#batchAdd").click(function(){
+        $('#batchAddModal').modal('show');
+    });
+
+    var updateModalValidate = $("#batchAddModal .form").validate({
+        errorElement : 'span',
+        errorClass : 'help-block',
+        focusInvalid : true,
+        rules : {},
+        messages : {},
+        highlight : function(element) {},
+        success : function(label) {},
+        errorPlacement : function(error, element) {},
+        submitHandler : function(form) {
+            $.post(base_url + "/conf/batchAdd", $("#batchAddModal .form").serialize(), function(data, status) {
+                if (data.code == 200) {
+                    layer.open({
+                        icon: '1',
+                        content: '更新成功' ,
+                        end: function(layero, index){
+                            confTable.fnDraw();
+                            $('#batchAddModal').modal('hide');
+                        }
+                    });
+                } else {
+                    layer.open({
+                        icon: '2',
+                        content: (data.msg||'更新失败')
+                    });
+                }
+            });
+        }
+    });
+
+    $("#batchAddModal").on('hide.bs.modal', function () {
+        $("#batchAddModal .form")[0].reset()
+    });
+
 	
 	// 更新
 	$("#conf_list").on('click', '.update',function() {
@@ -289,7 +329,7 @@ $(function(){
 		$('#updateModal').modal('show');
 	});
 	var updateModalValidate = $("#updateModal .form").validate({
-		errorElement : 'span',  
+		errorElement : 'span',
         errorClass : 'help-block',
         focusInvalid : true,
         rules : {
@@ -312,14 +352,14 @@ $(function(){
             }
         },
         highlight : function(element) {
-            $(element).closest('.form-group').addClass('has-error');  
+            $(element).closest('.form-group').addClass('has-error');
         },
-        success : function(label) {  
-            label.closest('.form-group').removeClass('has-error');  
-            label.remove();  
+        success : function(label) {
+            label.closest('.form-group').removeClass('has-error');
+            label.remove();
         },
-        errorPlacement : function(error, element) {  
-            element.parent('div').append(error);  
+        errorPlacement : function(error, element) {
+            element.parent('div').append(error);
         },
         submitHandler : function(form) {
     		$.post(base_url + "/conf/update", $("#updateModal .form").serialize(), function(data, status) {

@@ -1,6 +1,7 @@
 package com.xxl.conf.admin.service;
 
 
+import com.xxl.conf.admin.core.model.XxlConfBatchAddNode;
 import com.xxl.conf.admin.core.model.XxlConfNode;
 import com.xxl.conf.admin.core.model.XxlConfUser;
 import com.xxl.conf.admin.core.util.ReturnT;
@@ -22,6 +23,8 @@ public interface IXxlConfNodeService {
 	public ReturnT<String> delete(String env, String key, XxlConfUser loginUser);
 
 	public ReturnT<String> add(XxlConfNode xxlConfNode, XxlConfUser loginUser);
+
+	public ReturnT<String> batchAdd(XxlConfBatchAddNode xxlConfBatchAddNode, XxlConfUser loginUser);
 
 	public ReturnT<String> update(XxlConfNode xxlConfNode, XxlConfUser loginUser);
 

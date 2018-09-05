@@ -165,6 +165,53 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 	}
 
 	@Override
+	public ReturnT<String> batchAdd(XxlConfBatchAddNode xxlConfBatchAddNode, XxlConfUser loginUser) {
+		// valid env
+		if (StringUtils.isBlank(xxlConfBatchAddNode.getEnv())) {
+			return new ReturnT<String>(500, "配置Env不可为空");
+		}
+
+		// valid
+		if (StringUtils.isBlank(xxlConfBatchAddNode.getAppname())) {
+			return new ReturnT<String>(500, "AppName不可为空");
+		}
+
+		// project permission
+		if (!ifHasProjectPermission(loginUser, xxlConfBatchAddNode.getAppname())) {
+			return new ReturnT<String>(500, "您没有该项目的配置权限,请联系管理员开通");
+		}
+
+		// valid group
+		XxlConfProject group = xxlConfProjectDao.load(xxlConfBatchAddNode.getAppname());
+		if (group==null) {
+			return new ReturnT<String>(500, "AppName非法");
+		}
+
+		XxlConfEnv xxlConfEnv = xxlConfEnvDao.load(xxlConfBatchAddNode.getEnv());
+		if (xxlConfEnv == null) {
+			return new ReturnT<String>(500, "配置Env非法");
+		}
+
+		List<XxlConfNode> xxlConfNodes = xxlConfBatchAddNode.translateToNodeList();
+		if(CollectionUtils.isEmpty(xxlConfNodes)) {
+			return new ReturnT<String>(500, "配置信息不能为空");
+		}
+
+		for (XxlConfNode xxlConfNode : xxlConfNodes) {
+			XxlConfNode existNode = xxlConfNodeDao.load(xxlConfBatchAddNode.getEnv(), xxlConfNode.getKey());
+			if (existNode != null) {
+				existNode.setValue(xxlConfNode.getValue());
+				xxlConfNodeDao.update(existNode);
+				addLog(existNode, loginUser);
+			} else {
+				xxlConfNodeDao.insert(xxlConfNode);
+			}
+			xxlConfManager.set(xxlConfNode.getEnv(), xxlConfNode.getKey(), xxlConfNode.getValue());
+		}
+		return ReturnT.SUCCESS;
+	}
+
+	@Override
 	public ReturnT<String> update(XxlConfNode xxlConfNode, XxlConfUser loginUser) {
 
 		// valid
@@ -201,14 +248,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		}
 
 		// node log
-		XxlConfNodeLog nodeLog = new XxlConfNodeLog();
-		nodeLog.setEnv(existNode.getEnv());
-		nodeLog.setKey(existNode.getKey());
-		nodeLog.setTitle(existNode.getTitle() + "(配置更新)" );
-		nodeLog.setValue(existNode.getValue());
-		nodeLog.setOptuser(loginUser.getUsername());
-		xxlConfNodeLogDao.add(nodeLog);
-		xxlConfNodeLogDao.deleteTimeout(existNode.getEnv(), existNode.getKey(), 10);
+		addLog(existNode, loginUser);
 
 		return ReturnT.SUCCESS;
 	}
@@ -272,5 +312,14 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		return new ReturnT<String>(ReturnT.SUCCESS.getCode(), logContent);
 	}
 
-
+	private void addLog(XxlConfNode existNode, XxlConfUser loginUser) {
+		XxlConfNodeLog nodeLog = new XxlConfNodeLog();
+		nodeLog.setEnv(existNode.getEnv());
+		nodeLog.setKey(existNode.getKey());
+		nodeLog.setTitle(existNode.getTitle() + "(配置更新)" );
+		nodeLog.setValue(existNode.getValue());
+		nodeLog.setOptuser(loginUser.getUsername());
+		xxlConfNodeLogDao.add(nodeLog);
+		xxlConfNodeLogDao.deleteTimeout(existNode.getEnv(), existNode.getKey(), 10);
+	}
 }

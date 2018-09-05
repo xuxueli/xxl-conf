@@ -52,8 +52,11 @@
                     <div class="col-xs-1">
                         <button class="btn btn-block btn-info" id="searchBtn">搜索</button>
                     </div>
-                    <div class="col-xs-2">
+                    <div class="col-xs-1">
                         <button class="btn btn-block btn-success" id="add" type="button">新增配置</button>
+                    </div>
+                    <div class="col-xs-1">
+                        <button class="btn btn-block btn-success" id="batchAdd" type="button">批量新增</button>
                     </div>
                     <div class="col-xs-2">
                         <button class="btn btn-block btn-nomal" id="syncConf">全量同步</button>
@@ -136,6 +139,45 @@
 			</div>
 		</div>
 	</div>
+
+    <!-- 批量新增.模态框 -->
+    <div class="modal fade" id="batchAddModal" tabindex="-1" role="dialog"  aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" >批量新增</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal form" role="form" >
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-2 control-label">环境</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="env" value="${XXL_CONF_CURRENT_ENV.env}" readonly >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-2 control-label">当前项目</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="appname" value="${project.appname}" readonly >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-2 control-label">VALUE</label>
+                            <div class="col-sm-10">
+                                <textarea class="textarea" name="configText" placeholder="请输入配置信息，格式:  key=value 换行 key=value ... " style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" class="btn btn-primary"  >保存</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 	
 	<!-- 更新.模态框 -->
 	<div class="modal fade" id="updateModal" tabindex="-1" role="dialog"  aria-hidden="true">
