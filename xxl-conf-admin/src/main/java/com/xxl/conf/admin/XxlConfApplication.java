@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * @author xuxueli 2018-06-08 20:55:06
  */
-@EnableAutoConfiguration
 @SpringBootApplication
 public class XxlConfApplication {
 

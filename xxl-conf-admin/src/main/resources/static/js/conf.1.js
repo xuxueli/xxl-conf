@@ -204,8 +204,7 @@ $(function(){
     // jquery.validate 自定义校验
     jQuery.validator.addMethod("myValid01", function(value, element) {
         var length = value.length;
-        var valid = /^[a-z][a-z0-9.]*$/;
-        return this.optional(element) || valid.test(value);
+        return true;
     }, "限制以小写字母开头，由小写字母、数字和.组成");
 
 	// 新增
