@@ -16,6 +16,7 @@ import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
@@ -39,6 +40,7 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
 	private String zkaddress;
 	private String zkdigest;
 	private String env;
+	private String projectname;
 	private String mirrorfile;
 
 	public void setEnvprop(String envprop) {
@@ -61,7 +63,11 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
         this.mirrorfile = mirrorfile;
     }
 
-    // ---------------------- init/destroy ----------------------
+	public void setProjectname(String projectname) {
+		this.projectname = projectname;
+	}
+
+	// ---------------------- init/destroy ----------------------
 
 	@Override
 	public void afterPropertiesSet() {
@@ -96,7 +102,7 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
 						String propertyName = field.getName();
 						XxlConf xxlConf = field.getAnnotation(XxlConf.class);
 
-						String confKey = xxlConf.value();
+						String confKey = getProjectKey(xxlConf.value());
 						String confValue = XxlConfClient.get(confKey, xxlConf.defaultValue());
 
 
@@ -131,7 +137,7 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
 					if (xmlKeyValid(typeStringVal)) {
 
 						// object + property
-						String confKey = xmlKeyParse(typeStringVal);
+						String confKey = getProjectKey(xmlKeyParse(typeStringVal));
 						String confValue = XxlConfClient.get(confKey, "");
 
 						// resolves placeholders
@@ -318,4 +324,12 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
 		this.beanFactory = beanFactory;
 	}
 
+
+    public String getProjectKey(String key) {
+        if (StringUtils.isEmpty(projectname)) {
+            return key;
+        } else {
+            return projectname + "." + key;
+        }
+    }
 }
