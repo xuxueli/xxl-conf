@@ -70,7 +70,7 @@ public class XxlConfBaseFactory {
 	 * destory
 	 */
 	public static void destroy() {
-		XxlConfLocalCacheConf.destroy();	// destroy ehcache
+		XxlConfLocalCacheConf.destroy();	// destroy
 		XxlConfZkConf.destroy();			// destroy zk client
 	}
 

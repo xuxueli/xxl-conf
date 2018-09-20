@@ -2,16 +2,14 @@ package com.xxl.conf.core.core;
 
 import com.xxl.conf.core.XxlConfClient;
 import com.xxl.conf.core.listener.XxlConfListenerFactory;
-import org.ehcache.Cache;
-import org.ehcache.CacheManager;
-import org.ehcache.config.builders.CacheConfigurationBuilder;
-import org.ehcache.config.builders.CacheManagerBuilder;
-import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -25,19 +23,13 @@ public class XxlConfLocalCacheConf {
 
     // ---------------------- init/destroy ----------------------
 
-    private static CacheManager cacheManager = null;
-    private static Cache<String, CacheNode> xxlConfLocalCache = null;
+    private static ConcurrentHashMap<String, CacheNode> localCacheRepository = null;
+
     private static Thread refreshThread;
     private static boolean refreshThreadStop = false;
     public static void init(){
-        // cacheManager
-        cacheManager = CacheManagerBuilder.newCacheManagerBuilder().build(true);		// default use ehcche.xml under src
 
-        // xxlConfLocalCache
-        xxlConfLocalCache = cacheManager.createCache("xxlConfLocalCache",
-                CacheConfigurationBuilder
-                        .newCacheConfigurationBuilder(String.class, CacheNode.class, ResourcePoolsBuilder.heap(100000))	// .withExpiry、.withEvictionAdvisor （default lru）
-        );
+        localCacheRepository = new ConcurrentHashMap<String, CacheNode>();
 
         // refresh thread
         refreshThread = new Thread(new Runnable() {
@@ -64,13 +56,7 @@ public class XxlConfLocalCacheConf {
         logger.info(">>>>>>>>>> xxl-conf, XxlConfLocalCacheConf init success.");
     }
 
-    /**
-     * close cache manager
-     */
     public static void destroy(){
-        if (cacheManager != null) {
-            cacheManager.close();
-        }
         if (refreshThread != null) {
             refreshThreadStop = true;
             refreshThread.interrupt();
@@ -108,17 +94,12 @@ public class XxlConfLocalCacheConf {
      * reload all conf (watch + refresh)
      */
     public static void reloadAll(){
-        Set<String> keySet = new HashSet<>();
-        Iterator<Cache.Entry<String, CacheNode>> iterator = xxlConfLocalCache.iterator();
-        while (iterator.hasNext()) {
-            Cache.Entry<String, CacheNode> item = iterator.next();
-            keySet.add(item.getKey());
-        }
+        Set<String> keySet = localCacheRepository.keySet();
         if (keySet.size() > 0) {
             for (String key: keySet) {
                 String zkData = XxlConfZkConf.get(key);
 
-                CacheNode existNode = xxlConfLocalCache.get(key);
+                CacheNode existNode = localCacheRepository.get(key);
                 if (existNode!=null && existNode.getValue()!=null && existNode.getValue().equals(zkData)) {
                     logger.debug(">>>>>>>>>> xxl-conf: RELOAD unchange-pass [{}].", key);
                 } else {
@@ -130,7 +111,7 @@ public class XxlConfLocalCacheConf {
             // write mirror
             Map<String, String> mirrorConfData = new HashMap<>();
             for (String key: keySet) {
-                CacheNode existNode = xxlConfLocalCache.get(key);
+                CacheNode existNode = localCacheRepository.get(key);
                 // collect mirror data
                 mirrorConfData.put(key, existNode.getValue()!=null?existNode.getValue():"");
             }
@@ -148,7 +129,7 @@ public class XxlConfLocalCacheConf {
      * @return
      */
     public static void set(String key, String value, String optType) {
-        xxlConfLocalCache.put(key, new CacheNode(value));
+        localCacheRepository.put(key, new CacheNode(value));
         logger.info(">>>>>>>>>> xxl-conf: {}: [{}={}]", optType, key, value);
 
         XxlConfListenerFactory.onChange(key, value);
@@ -161,7 +142,7 @@ public class XxlConfLocalCacheConf {
      * @param value
      */
     public static void update(String key, String value) {
-        if (xxlConfLocalCache!=null && xxlConfLocalCache.containsKey(key)) {
+        if (localCacheRepository.containsKey(key)) {
             set(key, value, "UPDATE");
         }
     }
@@ -173,8 +154,8 @@ public class XxlConfLocalCacheConf {
      * @return
      */
     public static void remove(String key) {
-        if (xxlConfLocalCache!=null && xxlConfLocalCache.containsKey(key)) {
-            xxlConfLocalCache.remove(key);
+        if (localCacheRepository.containsKey(key)) {
+            localCacheRepository.remove(key);
         }
         logger.info(">>>>>>>>>> xxl-conf: REMOVE: [{}]", key);
     }
@@ -186,8 +167,8 @@ public class XxlConfLocalCacheConf {
      * @return
      */
     public static CacheNode get(String key) {
-        if (xxlConfLocalCache!=null && xxlConfLocalCache.containsKey(key)) {
-            CacheNode cacheNode = xxlConfLocalCache.get(key);
+        if (localCacheRepository.containsKey(key)) {
+            CacheNode cacheNode = localCacheRepository.get(key);
             return cacheNode;
         }
         return null;
