@@ -28,9 +28,6 @@ public class XxlConfManager implements InitializingBean, DisposableBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-
-		logger.info("############ zkaddress = {}, zkdigest = {}", zkaddress, zkdigest);
-
 		XxlConfZkManageConf.init(zkaddress, zkdigest);
 	}
 
