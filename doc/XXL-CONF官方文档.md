@@ -169,8 +169,13 @@ docker pull xuxueli/xxl-conf-admin
 
 - 创建容器并运行
 ```
-// 可通过 "PARAMS" 支持自定义 mysql与zk 地址；
-docker run -e PARAMS="--mysqladdress=127.0.0.1:3306 --zkaddress=127.0.0.1:2181" -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/xxl-conf-admin
+docker run -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/xxl-conf-admin
+
+/**
+* 如需自定义 mysql 与zk 等配置，可通过 "PARAMS" 指定；
+* 配置项参考文件：/xxl-conf/xxl-conf-admin/src/main/resources/application.properties
+*/
+docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-conf?Unicode=true&characterEncoding=UTF-8 --xxl.conf.zkaddress=127.0.0.1:2181" -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/xxl-conf-admin
 ```
 
 #### "配置中心" 集群：
