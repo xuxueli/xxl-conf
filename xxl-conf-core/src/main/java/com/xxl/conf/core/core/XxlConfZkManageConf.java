@@ -73,7 +73,7 @@ public class XxlConfZkManageConf {
 	 */
 	public static void set(String env, String key, String data) {
 		String path = keyToPath(env, key);
-		xxlZkClient.setPathData(path, data);
+		xxlZkClient.setPathData(path, data, false);
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class XxlConfZkManageConf {
 	 */
 	public static void delete(String env, String key){
 		String path = keyToPath(env, key);
-		xxlZkClient.deletePath(path);
+		xxlZkClient.deletePath(path, false);
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class XxlConfZkManageConf {
 	 */
 	public static String get(String env, String key){
 		String path = keyToPath(env, key);
-		return xxlZkClient.getPathData(path);
+		return xxlZkClient.getPathData(path, false);
 	}
 
 

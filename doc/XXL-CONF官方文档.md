@@ -637,6 +637,7 @@ async	    :	trne=同步请求，立即返回 "confKeys" 对应的配置信息；
 - 5、升级多项maven依赖至较新版本，如spring等；
 
 ### 6.12 版本 v1.5.2 新特性[迭代中]
+- 1、ZK节点watch逻辑优化，配置中心取消冗余的watch操作；
 
 
 ### TODO LIST

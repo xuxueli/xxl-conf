@@ -6,9 +6,6 @@ import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -141,27 +138,27 @@ public class XxlZkClient {
 	// ------------------------------ util ------------------------------
 
 	/**
-	 * create node path with parent path (watch)
-	 *
-	 * zk limit parent must exist
+	 * create node path with parent path (PERSISTENT)
+     * 	 *
+     * 	 * zk limit parent must exist
 	 *
 	 * @param path
 	 */
-	private Stat createPathWithParent(String path){
+	private Stat createPathWithParent(String path, boolean watch){
 		// valid
 		if (path==null || path.trim().length()==0) {
 			return null;
 		}
 
 		try {
-			Stat stat = getClient().exists(path, true);
+			Stat stat = getClient().exists(path, watch);
 			if (stat == null) {
 				//  valid parent, createWithParent if not exists
 				if (path.lastIndexOf("/") > 0) {
 					String parentPath = path.substring(0, path.lastIndexOf("/"));
-					Stat parentStat = getClient().exists(parentPath, true);
+					Stat parentStat = getClient().exists(parentPath, watch);
 					if (parentStat == null) {
-						createPathWithParent(parentPath);
+						createPathWithParent(parentPath, false);
 					}
 				}
 				// create desc node path
@@ -169,7 +166,6 @@ public class XxlZkClient {
 			}
 			return getClient().exists(path, true);
 		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
 			throw new XxlConfException(e);
 		}
 	}
@@ -179,36 +175,35 @@ public class XxlZkClient {
 	 *
 	 * @param path
 	 */
-	public void deletePath(String path){
+	public void deletePath(String path, boolean watch){
 		try {
-			Stat stat = getClient().exists(path, true);
+			Stat stat = getClient().exists(path, watch);
 			if (stat != null) {
 				getClient().delete(path, stat.getVersion());
 			} else {
 				logger.info(">>>>>>>>>> zookeeper node path not found :{}", path);
 			}
 		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
 			throw new XxlConfException(e);
 		}
 	}
 
 	/**
 	 * set data to node (watch)
+     *
 	 * @param path
 	 * @param data
 	 * @return
 	 */
-	public Stat setPathData(String path, String data) {
+	public Stat setPathData(String path, String data, boolean watch) {
 		try {
-			Stat stat = getClient().exists(path, true);
+			Stat stat = getClient().exists(path, watch);
 			if (stat == null) {
-				createPathWithParent(path);
-				stat = getClient().exists(path, true);
+				createPathWithParent(path, watch);
+				stat = getClient().exists(path, watch);
 			}
 			return getClient().setData(path, data.getBytes("UTF-8"), stat.getVersion());
 		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
 			throw new XxlConfException(e);
 		}
 	}
@@ -219,12 +214,12 @@ public class XxlZkClient {
 	 * @param path
 	 * @return
 	 */
-	public String getPathData(String path){
+	public String getPathData(String path, boolean watch){
 		try {
 			String znodeValue = null;
-			Stat stat = getClient().exists(path, true);
+			Stat stat = getClient().exists(path, watch);
 			if (stat != null) {
-				byte[] resultData = getClient().getData(path, true, null);
+				byte[] resultData = getClient().getData(path, watch, null);
 				if (resultData != null) {
 					znodeValue = new String(resultData, "UTF-8");
 				}
@@ -233,31 +228,9 @@ public class XxlZkClient {
 			}
 			return znodeValue;
 		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
 			throw new XxlConfException(e);
 		}
 	}
 
-	/**
-	 * get all child path data
-	 *
-	 * @return
-	 */
-	private Map<String, String> getAllChildPathData(String parentPath){
-		Map<String, String> allData = new HashMap<String, String>();
-		try {
-			List<String> childKeys = getClient().getChildren(parentPath, true);
-			if (childKeys!=null && childKeys.size()>0) {
-				for (String key : childKeys) {
-					String data = getPathData(key);
-					allData.put(key, data);
-				}
-			}
-			return allData;
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			throw new XxlConfException(e);
-		}
-	}
 
 }
