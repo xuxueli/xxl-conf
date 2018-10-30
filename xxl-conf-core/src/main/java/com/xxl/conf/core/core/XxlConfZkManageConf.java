@@ -53,6 +53,10 @@ public class XxlConfZkManageConf {
                 }
             }
         });
+
+		// init client
+		xxlZkClient.getClient();
+
 		logger.info(">>>>>>>>>> xxl-conf, XxlConfZkConf init success.");
 	}
 

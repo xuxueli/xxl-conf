@@ -76,7 +76,15 @@ public class XxlConfZkConf {
                 }
             }
         });
-		logger.info(">>>>>>>>>> xxl-conf, XxlConfZkConf init success. [env={}]", env);
+
+		// init client
+		try {
+			xxlZkClient.getClient();
+			logger.info(">>>>>>>>>> xxl-conf, XxlConfZkConf init success. [env={}]", env);
+		} catch (Exception e) {
+			logger.info(">>>>>>>>>> xxl-conf, XxlConfZkConf init error, will retry. [env={}]", env);
+			logger.error(e.getMessage(), e);
+		}
 	}
 
 	public static void destroy(){
