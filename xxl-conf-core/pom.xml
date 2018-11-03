@@ -38,7 +38,7 @@
 		<!-- spring-beans -->
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
+			<artifactId>spring-beans</artifactId>
 			<version>${spring.version}</version>
 			<optional>true</optional>
 		</dependency>
