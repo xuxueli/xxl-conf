@@ -166,7 +166,7 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
 	 */
 	public static void refreshBeanField(final BeanRefreshXxlConfListener.BeanField beanField, final String value, Object bean){
 		if (bean == null) {
-			bean = XxlConfFactory.beanFactory.getBean(beanField.getBeanName());		// getBean 会导致Bean提前初始化，风险较大；
+			bean = XxlConfFactory.beanFactory.getBean(beanField.getBeanName());		// 已优化：启动时禁止实用，getBean 会导致Bean提前初始化，风险较大；
 		}
 		if (bean == null) {
 			return;
