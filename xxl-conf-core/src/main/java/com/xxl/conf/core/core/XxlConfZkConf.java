@@ -1,10 +1,12 @@
 package com.xxl.conf.core.core;
 
 import com.xxl.conf.core.exception.XxlConfException;
+import com.xxl.conf.core.listener.XxlConfListenerFactory;
 import com.xxl.conf.core.util.XxlZkClient;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,12 +64,17 @@ public class XxlConfZkConf {
 						xxlZkClient.getClient().exists(path, true);
 						if (watchedEvent.getType() == Event.EventType.NodeDeleted) {
 							// conf deleted
-						} else if (watchedEvent.getType() == Event.EventType.NodeDataChanged) {
-							// conf updated
-							String data = get(key);
-							XxlConfLocalCacheConf.update(key, data);
-						}
-					}
+                            XxlConfLocalCacheConf.remove(key);
+                            XxlConfListenerFactory.onChange(key, null);
+                        } else if (watchedEvent.getType() == Event.EventType.NodeDataChanged) {
+                            // conf updated
+                            String data = get(key);
+                            XxlConfLocalCacheConf.update(key, data);
+                        } else if (watchedEvent.getType() == Event.EventType.NodeCreated) {
+                            String data = get(key);
+                            XxlConfLocalCacheConf.set(key, data, "SET");
+                        }
+                    }
 
                 } catch (KeeperException e) {
                     logger.error(e.getMessage(), e);
@@ -119,6 +126,17 @@ public class XxlConfZkConf {
 		String path = keyToPath(key);
 		return xxlZkClient.getPathData(path);
 	}
+
+    /**
+     * 获取节点状态信息
+     *
+     * @param key
+     * @param watch
+     * @return
+     */
+    public static Stat stat(String key, boolean watch) {
+        return xxlZkClient.stat(keyToPath(key), watch);
+    }
 
 
 	// ------------------------------ key 2 path / genarate key ------------------------------

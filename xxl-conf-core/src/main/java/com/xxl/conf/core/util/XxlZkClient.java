@@ -227,6 +227,22 @@ public class XxlZkClient {
 		}
 	}
 
+    /**
+     * 获取节点状态信息
+     *
+     * @param path
+     * @param watch 是否设置watcher
+     * @return
+     */
+    public Stat stat(String path, boolean watch) {
+        try {
+            return getClient().exists(path, watch);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new XxlConfException(e);
+        }
+    }
+
 	/**
 	 * get all child path data
 	 *
