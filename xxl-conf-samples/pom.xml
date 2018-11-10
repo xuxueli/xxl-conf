@@ -14,6 +14,7 @@
 		<module>xxl-conf-sample-springboot</module>
         <module>xxl-conf-sample-jfinal</module>
 		<module>xxl-conf-sample-nutz</module>
+		<module>xxl-conf-sample-frameless</module>
 	</modules>
 
 </project>
