@@ -160,8 +160,19 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 			xxlConfNode.setValue("");
 		}
 
+		// add node
 		xxlConfManager.set(xxlConfNode.getEnv(), xxlConfNode.getKey(), xxlConfNode.getValue());
 		xxlConfNodeDao.insert(xxlConfNode);
+
+		// node log
+		XxlConfNodeLog nodeLog = new XxlConfNodeLog();
+		nodeLog.setEnv(existNode.getEnv());
+		nodeLog.setKey(existNode.getKey());
+		nodeLog.setTitle(existNode.getTitle() + "(配置新增)" );
+		nodeLog.setValue(existNode.getValue());
+		nodeLog.setOptuser(loginUser.getUsername());
+		xxlConfNodeLogDao.add(nodeLog);
+
 		return ReturnT.SUCCESS;
 	}
 
@@ -182,7 +193,6 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 			return new ReturnT<String>(500, "您没有该项目的配置权限,请联系管理员开通");
 		}
 
-
 		if (StringUtils.isBlank(xxlConfNode.getTitle())) {
 			return new ReturnT<String>(500, "配置描述不可为空");
 		}
@@ -192,6 +202,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 			xxlConfNode.setValue("");
 		}
 
+		// update conf
 		xxlConfManager.set(xxlConfNode.getEnv(), xxlConfNode.getKey(), xxlConfNode.getValue());
 
 		existNode.setTitle(xxlConfNode.getTitle());
