@@ -12,19 +12,21 @@ import java.util.Map;
  */
 public interface IXxlConfNodeService {
 
+	public boolean ifHasProjectPermission(XxlConfUser loginUser, String loginEnv, String appname);
+
 	public Map<String,Object> pageList(int offset,
 									   int pagesize,
-									   String env,
 									   String appname,
 									   String key,
-									   XxlConfUser loginUser);
+									   XxlConfUser loginUser,
+									   String loginEnv);
 
-	public ReturnT<String> delete(String env, String key, XxlConfUser loginUser);
+	public ReturnT<String> delete(String key, XxlConfUser loginUser, String loginEnv);
 
-	public ReturnT<String> add(XxlConfNode xxlConfNode, XxlConfUser loginUser);
+	public ReturnT<String> add(XxlConfNode xxlConfNode, XxlConfUser loginUser, String loginEnv);
 
-	public ReturnT<String> update(XxlConfNode xxlConfNode, XxlConfUser loginUser);
+	public ReturnT<String> update(XxlConfNode xxlConfNode, XxlConfUser loginUser, String loginEnv);
 
-    ReturnT<String> syncConf(String env, String appname, XxlConfUser loginUser);
+    ReturnT<String> syncConf(String appname, XxlConfUser loginUser, String loginEnv);
 
 }

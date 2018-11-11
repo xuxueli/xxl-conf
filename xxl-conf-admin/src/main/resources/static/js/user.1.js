@@ -43,15 +43,15 @@ $(function(){
 					return function(){
                         rowData[row.username] = row;
 
-                        var permissionProjects = '';
+                        var permissionData = '';
                         if (row.permission != 1) {
-                            permissionProjects = '<button class="btn btn-warning btn-xs permissionProjects" type="button">分配项目权限</button>  ';
+                            permissionData = '<button class="btn btn-warning btn-xs permissionData" type="button">分配项目权限</button>  ';
                         }
 
 						// html
 						var html = '<p username="'+ row.username +'" >'+
 							'<button class="btn btn-warning btn-xs update" type="button">编辑</button>  '+
-                            permissionProjects +
+                            permissionData +
 							'<button class="btn btn-danger btn-xs delete" type="button">删除</button>  '+
 							'</p>';
 
@@ -288,35 +288,37 @@ $(function(){
 
 
     // 分配项目权限
-    $("#data_list").on('click', '.permissionProjects',function() {
+    $("#data_list").on('click', '.permissionData',function() {
         var username = $(this).parent('p').attr("username");
         var row = rowData[username];
 
-        $("#updatePermissionProjectsModal .form input[name='username']").val( row.username );
+        // fill username
+        $("#permissionDataModal .form input[name='username']").val( row.username );
 
-        var permissionProjectsChoose;
-        if (row.permissionProjects) {
-            permissionProjectsChoose = $(row.permissionProjects.split(","));
+        // fill permission
+        var permissionDataChoose;
+        if (row.permissionData) {
+            permissionDataChoose = $(row.permissionData.split(","));
         }
-        $("#updatePermissionProjectsModal .form input[name='permissionProjects']").each(function () {
-            if ( $.inArray($(this).val(), permissionProjectsChoose) > -1 ) {
+        $("#permissionDataModal .form input[name='permissionData']").each(function () {
+            if ( $.inArray($(this).val(), permissionDataChoose) > -1 ) {
                 $(this).prop("checked",true);
             } else {
                 $(this).prop("checked",false);
             }
         });
 
-        $('#updatePermissionProjectsModal').modal('show');
+        $('#permissionDataModal').modal('show');
     });
-    $('#updatePermissionProjectsModal .ok').click(function () {
-        $.post(base_url + "/user/updatePermissionProjects", $("#updatePermissionProjectsModal .form").serialize(), function(data, status) {
+    $('#permissionDataModal .ok').click(function () {
+        $.post(base_url + "/user/updatePermissionData", $("#permissionDataModal .form").serialize(), function(data, status) {
             if (data.code == 200) {
                 layer.open({
                     icon: '1',
                     content: '操作成功' ,
                     end: function(layero, index){
                         dataTable.fnDraw();
-                        $('#updatePermissionProjectsModal').modal('hide');
+                        $('#permissionDataModal').modal('hide');
                     }
                 });
             } else {
@@ -327,8 +329,29 @@ $(function(){
             }
         });
     });
-    $("#updatePermissionProjectsModal").on('hide.bs.modal', function () {
-        $("#updatePermissionProjectsModal .form")[0].reset()
+    $("#permissionDataModal").on('hide.bs.modal', function () {
+        $("#permissionDataModal .form")[0].reset()
     });
+
+    // permission data
+    var permissionDataTable = $("#permissionData").dataTable({
+        "searching": true,
+        "ordering": false,
+        "paging": false,
+        //"scrollX": true,	// X轴滚动条，取消自适应
+        "language" : {
+            "sProcessing" : "处理中...",
+            "sLengthMenu" : "每页 _MENU_ 条记录",
+            "sZeroRecords" : "没有匹配结果",
+            "sInfo" : "",   // 第 _PAGE_ 页 ( 总共 _PAGES_ 页 )
+            "sInfoEmpty" : "无记录",
+            "sInfoFiltered" : "(由 _MAX_ 项结果过滤)",
+            "sInfoPostFix" : "",
+            "sSearch" : "搜索:",
+            "sEmptyTable" : "表中数据为空",
+            "sInfoThousands" : ","
+        }
+    });
+
 
 });

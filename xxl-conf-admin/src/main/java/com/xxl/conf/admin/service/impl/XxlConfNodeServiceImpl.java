@@ -38,15 +38,26 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 	private XxlConfEnvDao xxlConfEnvDao;
 
 	@Override
+	public boolean ifHasProjectPermission(XxlConfUser loginUser, String loginEnv, String appname){
+		if (loginUser.getPermission() == 1) {
+			return true;
+		}
+		if (ArrayUtils.contains(StringUtils.split(loginUser.getPermissionData(), ","), (appname.concat("#").concat(loginEnv)) )) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
 	public Map<String,Object> pageList(int offset,
 									   int pagesize,
-									   String env,
 									   String appname,
 									   String key,
-									   XxlConfUser loginUser) {
+									   XxlConfUser loginUser,
+									   String loginEnv) {
 
 		// project permission
-		if (StringUtils.isBlank(env) || StringUtils.isBlank(appname) || !ifHasProjectPermission(loginUser, appname)) {
+		if (StringUtils.isBlank(loginEnv) || StringUtils.isBlank(appname) || !ifHasProjectPermission(loginUser, loginEnv, appname)) {
 			//return new ReturnT<String>(500, "您没有该项目的配置权限,请联系管理员开通");
 			Map<String, Object> emptyMap = new HashMap<String, Object>();
 			emptyMap.put("data", new ArrayList<>());
@@ -56,8 +67,8 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		}
 
 		// xxlConfNode in mysql
-		List<XxlConfNode> data = xxlConfNodeDao.pageList(offset, pagesize, env, appname, key);
-		int list_count = xxlConfNodeDao.pageListCount(offset, pagesize, env, appname, key);
+		List<XxlConfNode> data = xxlConfNodeDao.pageList(offset, pagesize, loginEnv, appname, key);
+		int list_count = xxlConfNodeDao.pageListCount(offset, pagesize, loginEnv, appname, key);
 
 		// fill value in zk
 		if (CollectionUtils.isNotEmpty(data)) {
@@ -76,39 +87,29 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 
 	}
 
-	private boolean ifHasProjectPermission(XxlConfUser loginUser, String appname){
-		if (loginUser.getPermission() == 1) {
-			return true;
-		}
-		if (ArrayUtils.contains(StringUtils.split(loginUser.getPermissionProjects(), ","), appname)) {
-			return true;
-		}
-		return false;
-	}
-
 	@Override
-	public ReturnT<String> delete(String env, String key, XxlConfUser loginUser) {
+	public ReturnT<String> delete(String key, XxlConfUser loginUser, String loginEnv) {
 		if (StringUtils.isBlank(key)) {
 			return new ReturnT<String>(500, "参数缺失");
 		}
-		XxlConfNode existNode = xxlConfNodeDao.load(env, key);
+		XxlConfNode existNode = xxlConfNodeDao.load(loginEnv, key);
 		if (existNode == null) {
 			return new ReturnT<String>(500, "参数非法");
 		}
 
 		// project permission
-		if (!ifHasProjectPermission(loginUser, existNode.getAppname())) {
+		if (!ifHasProjectPermission(loginUser, loginEnv, existNode.getAppname())) {
 			return new ReturnT<String>(500, "您没有该项目的配置权限,请联系管理员开通");
 		}
 
-		xxlConfManager.delete(env, key);
-		xxlConfNodeDao.delete(env, key);
-		xxlConfNodeLogDao.deleteTimeout(env, key, 0);
+		xxlConfManager.delete(loginEnv, key);
+		xxlConfNodeDao.delete(loginEnv, key);
+		xxlConfNodeLogDao.deleteTimeout(loginEnv, key, 0);
 		return ReturnT.SUCCESS;
 	}
 
 	@Override
-	public ReturnT<String> add(XxlConfNode xxlConfNode, XxlConfUser loginUser) {
+	public ReturnT<String> add(XxlConfNode xxlConfNode, XxlConfUser loginUser, String loginEnv) {
 
 		// valid
 		if (StringUtils.isBlank(xxlConfNode.getAppname())) {
@@ -116,7 +117,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		}
 
 		// project permission
-		if (!ifHasProjectPermission(loginUser, xxlConfNode.getAppname())) {
+		if (!ifHasProjectPermission(loginUser, loginEnv, xxlConfNode.getAppname())) {
 			return new ReturnT<String>(500, "您没有该项目的配置权限,请联系管理员开通");
 		}
 
@@ -165,7 +166,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 	}
 
 	@Override
-	public ReturnT<String> update(XxlConfNode xxlConfNode, XxlConfUser loginUser) {
+	public ReturnT<String> update(XxlConfNode xxlConfNode, XxlConfUser loginUser, String loginEnv) {
 
 		// valid
 		if (StringUtils.isBlank(xxlConfNode.getKey())) {
@@ -177,7 +178,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		}
 
 		// project permission
-		if (!ifHasProjectPermission(loginUser, existNode.getAppname())) {
+		if (!ifHasProjectPermission(loginUser, loginEnv, existNode.getAppname())) {
 			return new ReturnT<String>(500, "您没有该项目的配置权限,请联系管理员开通");
 		}
 
@@ -214,10 +215,10 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 	}
 
 	@Override
-	public ReturnT<String> syncConf(String env, String appname, XxlConfUser loginUser) {
+	public ReturnT<String> syncConf(String appname, XxlConfUser loginUser, String loginEnv) {
 
 		// valid
-		XxlConfEnv xxlConfEnv = xxlConfEnvDao.load(env);
+		XxlConfEnv xxlConfEnv = xxlConfEnvDao.load(loginEnv);
 		if (xxlConfEnv == null) {
 			return new ReturnT<String>(500, "配置Env非法");
 		}
@@ -227,11 +228,11 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		}
 
 		// project permission
-		if (!ifHasProjectPermission(loginUser, appname)) {
+		if (!ifHasProjectPermission(loginUser, loginEnv, appname)) {
 			return new ReturnT<String>(500, "您没有该项目的配置权限,请联系管理员开通");
 		}
 
-		List<XxlConfNode> confNodeList = xxlConfNodeDao.pageList(0, 10000, env, appname, null);
+		List<XxlConfNode> confNodeList = xxlConfNodeDao.pageList(0, 10000, loginEnv, appname, null);
 		if (CollectionUtils.isEmpty(confNodeList)) {
 			return new ReturnT<String>(500, "操作失败，该项目下不存在配置项");
 		}

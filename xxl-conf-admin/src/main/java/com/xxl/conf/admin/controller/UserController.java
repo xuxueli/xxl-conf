@@ -1,9 +1,12 @@
 package com.xxl.conf.admin.controller;
 
 import com.xxl.conf.admin.controller.annotation.PermessionLimit;
+import com.xxl.conf.admin.core.model.XxlConfEnv;
 import com.xxl.conf.admin.core.model.XxlConfProject;
 import com.xxl.conf.admin.core.model.XxlConfUser;
+import com.xxl.conf.admin.core.util.JacksonUtil;
 import com.xxl.conf.admin.core.util.ReturnT;
+import com.xxl.conf.admin.dao.XxlConfEnvDao;
 import com.xxl.conf.admin.dao.XxlConfProjectDao;
 import com.xxl.conf.admin.dao.XxlConfUserDao;
 import com.xxl.conf.admin.service.impl.LoginService;
@@ -32,6 +35,8 @@ public class UserController {
     private XxlConfUserDao xxlConfUserDao;
     @Resource
     private XxlConfProjectDao xxlConfProjectDao;
+    @Resource
+    private XxlConfEnvDao xxlConfEnvDao;
 
     @RequestMapping("")
     @PermessionLimit(adminuser = true)
@@ -39,6 +44,9 @@ public class UserController {
 
         List<XxlConfProject> projectList = xxlConfProjectDao.findAll();
         model.addAttribute("projectList", projectList);
+
+        List<XxlConfEnv> envList = xxlConfEnvDao.findAll();
+        model.addAttribute("envList", envList);
 
         return "user/user.index";
     }
@@ -155,19 +163,20 @@ public class UserController {
         return ret>0? ReturnT.SUCCESS: ReturnT.FAIL;
     }
 
-    @RequestMapping("/updatePermissionProjects")
+    @RequestMapping("/updatePermissionData")
     @PermessionLimit(adminuser = true)
     @ResponseBody
-    public ReturnT<String> updatePermissionProjects(HttpServletRequest request,
+    public ReturnT<String> updatePermissionData(HttpServletRequest request,
                                                     String username,
-                                                    @RequestParam(required = false) String[] permissionProjects){
+                                                    @RequestParam(required = false) String[] permissionData){
 
-        String permissionProjectsStr = StringUtils.join(permissionProjects, ",");
         XxlConfUser existUser = xxlConfUserDao.load(username);
         if (existUser == null) {
             return new ReturnT<String>(ReturnT.FAIL.getCode(), "参数非法");
         }
-        existUser.setPermissionProjects(permissionProjectsStr);
+
+        String permissionDataArrStr = permissionData!=null?StringUtils.join(permissionData, ","):"";
+        existUser.setPermissionData(permissionDataArrStr);
         xxlConfUserDao.update(existUser);
 
         return ReturnT.SUCCESS;

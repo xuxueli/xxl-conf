@@ -33,13 +33,12 @@ public class EnvInterceptor extends HandlerInterceptorAdapter {
 		}
 
 		// current env
-		XxlConfEnv currentEnv = envList.get(0);
-
+		String currentEnv = envList.get(0).getEnv();
 		String currentEnvCookie = CookieUtil.getValue(request, CURRENT_ENV);
 		if (currentEnvCookie!=null && currentEnvCookie.trim().length()>0) {
 			for (XxlConfEnv envItem: envList) {
 				if (currentEnvCookie.equals(envItem.getEnv())) {
-					currentEnv = envItem;
+					currentEnv = envItem.getEnv();
 				}
 			}
 		}

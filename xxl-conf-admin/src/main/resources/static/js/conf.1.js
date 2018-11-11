@@ -25,7 +25,6 @@ $(function(){
 			type:"post",
 			data : function ( d ) {
 				var obj = {};
-				obj.env = env;
 				obj.appname = $('#appname').val();
 				obj.key = $('#key').val();
 				obj.start = d.start;
@@ -176,7 +175,6 @@ $(function(){
             $.post(
                 base_url + "/conf/delete",
                 {
-                    "env" : env,
                     "key" : key
                 },
                 function(data, status) {
@@ -247,7 +245,6 @@ $(function(){
         },
         submitHandler : function(form) {
     		$.post(base_url + "/conf/add", {
-    		    'env'       : env,
     			'appname' 	: $("#addModal .form input[name='appname']").val() ,
                 'key' 		: ($("#addModal .form input[name='appname']").val() + '.' + $("#addModal .form input[name='key']").val() ),
                 'title' 	: $("#addModal .form input[name='title']").val() ,
@@ -358,7 +355,6 @@ $(function(){
             $.post(
                 base_url + "/conf/syncConf",
                 {
-                    "env" : env,
                     "appname" : $('#appname').val()
                 },
                 function(data, status) {

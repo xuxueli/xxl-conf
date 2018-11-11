@@ -92,7 +92,7 @@ public class LoginService {
                 XxlConfUser dbUser = xxlConfUserDao.load(cookieUser.getUsername());
                 if (dbUser != null) {
                     if (cookieUser.getPassword().equals(dbUser.getPassword())) {
-                        return cookieUser;
+                        return dbUser;
                     }
                 }
             }

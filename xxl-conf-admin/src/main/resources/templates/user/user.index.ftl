@@ -165,29 +165,49 @@
 	</div>
 
     <!-- 分配项目权限.模态框 -->
-    <div class="modal fade" id="updatePermissionProjectsModal" tabindex="-1" role="dialog"  aria-hidden="true">
-        <div class="modal-dialog">
+    <div class="modal fade" id="permissionDataModal" tabindex="-1" role="dialog"  aria-hidden="true">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" >分配项目权限</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal form" role="form" >
-                        <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-8">
-                                <div class="form-group">
-                                <#list projectList as project>
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" name="permissionProjects" value="${project.appname}" >${project.title}(${project.appname})
-                                        </label>
-                                    </div>
-                                </#list>
-                                </div>
-                            </div>
+
+                        <!-- permission start -->
+                        <div class="table-responsive">
+                            <table id="permissionData" class="table table-bordered" width="100%" >
+                                <thead>
+                                    <tr>
+                                        <th>项目</th>
+                                        <#if envList?exists>
+                                            <#list envList as env>
+                                                <th>${env.title}(${env.env})</th>
+                                            </#list>
+                                        </#if>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <#if projectList?exists>
+                                        <#list projectList as project>
+                                            <tr>
+                                                <td>${project.title}(${project.appname})</td>
+                                                <#list envList as env>
+                                                    <td>
+                                                        <input type="checkbox" name="permissionData" value="${project.appname}#${env.env}" >
+                                                    </td>
+                                                </#list>
+                                            </tr>
+                                        </#list>
+                                    </#if>
+                                </tbody>
+
+                            </table>
                         </div>
+                        <!-- permission end -->
+
                         <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-10">
+                            <div class="pull-center">
                                 <button type="button" class="btn btn-primary ok" >保存</button>
                                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 

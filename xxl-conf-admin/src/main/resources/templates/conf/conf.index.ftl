@@ -100,7 +100,7 @@
                         <div class="form-group">
                             <label for="lastname" class="col-sm-2 control-label">环境</label>
                             <div class="col-sm-10">
-								<input type="text" class="form-control" name="env" value="${XXL_CONF_CURRENT_ENV.env}" readonly >
+								<input type="text" class="form-control" name="env" value="${XXL_CONF_CURRENT_ENV}" readonly >
 							</div>
                         </div>
 						<div class="form-group">
@@ -149,7 +149,7 @@
                         <div class="form-group">
                             <label for="lastname" class="col-sm-2 control-label">环境</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" name="env" value="${XXL_CONF_CURRENT_ENV.env}" readonly >
+                                <input type="text" class="form-control" name="env" value="${XXL_CONF_CURRENT_ENV}" readonly >
                             </div>
                         </div>
                         <div class="form-group">
@@ -180,21 +180,7 @@
 
 	<@netCommon.commonScript/>
 	<script>
-        var hasPermission = false;
-		<#if Request["XXL_CONF_LOGIN_IDENTITY"].permission == 1>
-        	hasPermission = true;
-		<#else>
-			<#if Request["XXL_CONF_LOGIN_IDENTITY"].permissionProjects?exists >
-				<#list Request["XXL_CONF_LOGIN_IDENTITY"].permissionProjects?split(",") as appname >
-					<#if appname == project.appname>
-                    	hasPermission = true;
-					</#if>
-				</#list>
-			</#if>
-		</#if>
-
-		var env = '${XXL_CONF_CURRENT_ENV.env}';
-
+        var hasPermission = '${ifHasProjectPermission?string}';
 	</script>
 
     <script src="${request.contextPath}/static/adminlte/plugins/datatables/jquery.dataTables.min.js"></script>

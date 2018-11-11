@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
+import static com.xxl.conf.admin.controller.interceptor.EnvInterceptor.CURRENT_ENV;
+
 /**
  * 配置管理
  *
@@ -34,7 +36,7 @@ public class ConfController {
 	private IXxlConfNodeService xxlConfNodeService;
 
 	@RequestMapping("")
-	public String index(Model model, String appname){
+	public String index(HttpServletRequest request, Model model, String appname){
 
 		List<XxlConfProject> list = xxlConfProjectDao.findAll();
 		if (CollectionUtils.isEmpty(list)) {
@@ -48,8 +50,14 @@ public class ConfController {
 			}
 		}
 
+		boolean ifHasProjectPermission = xxlConfNodeService.ifHasProjectPermission(
+				(XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY),
+				(String) request.getAttribute(CURRENT_ENV),
+				project.getAppname());
+
 		model.addAttribute("ProjectList", list);
 		model.addAttribute("project", project);
+		model.addAttribute("ifHasProjectPermission", ifHasProjectPermission);
 
 		return "conf/conf.index";
 	}
@@ -59,22 +67,27 @@ public class ConfController {
 	public Map<String, Object> pageList(HttpServletRequest request,
 										@RequestParam(required = false, defaultValue = "0") int start,
 										@RequestParam(required = false, defaultValue = "10") int length,
-										String env,
 										String appname,
 										String key) {
-		XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
-		return xxlConfNodeService.pageList(start, length, env, appname, key, loginUser);
+
+		XxlConfUser xxlConfUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
+		String loginEnv = (String) request.getAttribute(CURRENT_ENV);
+
+		return xxlConfNodeService.pageList(start, length, appname, key, xxlConfUser, loginEnv);
 	}
-	
+
 	/**
 	 * get
 	 * @return
 	 */
 	@RequestMapping("/delete")
 	@ResponseBody
-	public ReturnT<String> delete(HttpServletRequest request, String env, String key){
-		XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
-		return xxlConfNodeService.delete(env, key, loginUser);
+	public ReturnT<String> delete(HttpServletRequest request, String key){
+
+		XxlConfUser xxlConfUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
+		String loginEnv = (String) request.getAttribute(CURRENT_ENV);
+
+		return xxlConfNodeService.delete(key, xxlConfUser, loginEnv);
 	}
 
 	/**
@@ -84,8 +97,14 @@ public class ConfController {
 	@RequestMapping("/add")
 	@ResponseBody
 	public ReturnT<String> add(HttpServletRequest request, XxlConfNode xxlConfNode){
-		XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
-		return xxlConfNodeService.add(xxlConfNode, loginUser);
+
+		XxlConfUser xxlConfUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
+		String loginEnv = (String) request.getAttribute(CURRENT_ENV);
+
+		// fill env
+		xxlConfNode.setEnv(loginEnv);
+
+		return xxlConfNodeService.add(xxlConfNode, xxlConfUser, loginEnv);
 	}
 	
 	/**
@@ -95,17 +114,25 @@ public class ConfController {
 	@RequestMapping("/update")
 	@ResponseBody
 	public ReturnT<String> update(HttpServletRequest request, XxlConfNode xxlConfNode){
-		XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
-		return xxlConfNodeService.update(xxlConfNode, loginUser);
+
+		XxlConfUser xxlConfUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
+		String loginEnv = (String) request.getAttribute(CURRENT_ENV);
+
+		// fill env
+		xxlConfNode.setEnv(loginEnv);
+
+		return xxlConfNodeService.update(xxlConfNode, xxlConfUser, loginEnv);
 	}
 
 	@RequestMapping("/syncConf")
 	@ResponseBody
 	public ReturnT<String> syncConf(HttpServletRequest request,
-										String env,
 										String appname) {
-		XxlConfUser loginUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
-		return xxlConfNodeService.syncConf(env, appname, loginUser);
+
+		XxlConfUser xxlConfUser = (XxlConfUser) request.getAttribute(LoginService.LOGIN_IDENTITY);
+		String loginEnv = (String) request.getAttribute(CURRENT_ENV);
+
+		return xxlConfNodeService.syncConf(appname, xxlConfUser, loginEnv);
 	}
 
 }

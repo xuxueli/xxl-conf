@@ -8,7 +8,7 @@ public class XxlConfUser {
     private String username;
     private String password;
     private int permission;             // 权限：0-普通用户、1-管理员
-    private String permissionProjects; // 权限项目列表，多个逗号分隔
+    private String permissionData;      // 权限配置数据, 格式 "appname#env,appname#env02"
 
     public String getUsername() {
         return username;
@@ -34,11 +34,12 @@ public class XxlConfUser {
         this.permission = permission;
     }
 
-    public String getPermissionProjects() {
-        return permissionProjects;
+    public String getPermissionData() {
+        return permissionData;
     }
 
-    public void setPermissionProjects(String permissionProjects) {
-        this.permissionProjects = permissionProjects;
+    public void setPermissionData(String permissionData) {
+        this.permissionData = permissionData;
     }
+
 }
