@@ -1,12 +1,10 @@
 package com.xxl.conf.core.core;
 
 import com.xxl.conf.core.exception.XxlConfException;
-import com.xxl.conf.core.listener.XxlConfListenerFactory;
 import com.xxl.conf.core.util.XxlZkClient;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,17 +62,12 @@ public class XxlConfZkConf {
 						xxlZkClient.getClient().exists(path, true);
 						if (watchedEvent.getType() == Event.EventType.NodeDeleted) {
 							// conf deleted
-                            XxlConfLocalCacheConf.remove(key);
-                            XxlConfListenerFactory.onChange(key, null);
-                        } else if (watchedEvent.getType() == Event.EventType.NodeDataChanged) {
-                            // conf updated
-                            String data = get(key);
-                            XxlConfLocalCacheConf.update(key, data);
-                        } else if (watchedEvent.getType() == Event.EventType.NodeCreated) {
-                            String data = get(key);
-                            XxlConfLocalCacheConf.set(key, data, "SET");
-                        }
-                    }
+						} else if (watchedEvent.getType() == Event.EventType.NodeDataChanged) {
+							// conf updated
+							String data = get(key);
+							XxlConfLocalCacheConf.update(key, data);
+						}
+					}
 
                 } catch (KeeperException e) {
                     logger.error(e.getMessage(), e);
@@ -83,7 +76,15 @@ public class XxlConfZkConf {
                 }
             }
         });
-		logger.info(">>>>>>>>>> xxl-conf, XxlConfZkConf init success. [env={}]", env);
+
+		// init client
+		try {
+			xxlZkClient.getClient();
+			logger.info(">>>>>>>>>> xxl-conf, XxlConfZkConf init success. [env={}]", env);
+		} catch (Exception e) {
+			logger.info(">>>>>>>>>> xxl-conf, XxlConfZkConf init error, will retry. [env={}]", env);
+			logger.error(e.getMessage(), e);
+		}
 	}
 
 	public static void destroy(){
@@ -103,7 +104,7 @@ public class XxlConfZkConf {
 	 */
 	public static void set(String key, String data) {
 		String path = keyToPath(key);
-		xxlZkClient.setPathData(path, data);
+		xxlZkClient.setPathData(path, data, false);
 	}
 
 	/**
@@ -113,7 +114,7 @@ public class XxlConfZkConf {
 	 */
 	public static void delete(String key){
 		String path = keyToPath(key);
-		xxlZkClient.deletePath(path);
+		xxlZkClient.deletePath(path, false);
 	}
 
 	/**
@@ -124,19 +125,8 @@ public class XxlConfZkConf {
 	 */
 	public static String get(String key){
 		String path = keyToPath(key);
-		return xxlZkClient.getPathData(path);
+		return xxlZkClient.getPathData(path, true);
 	}
-
-    /**
-     * 获取节点状态信息
-     *
-     * @param key
-     * @param watch
-     * @return
-     */
-    public static Stat stat(String key, boolean watch) {
-        return xxlZkClient.stat(keyToPath(key), watch);
-    }
 
 
 	// ------------------------------ key 2 path / genarate key ------------------------------
