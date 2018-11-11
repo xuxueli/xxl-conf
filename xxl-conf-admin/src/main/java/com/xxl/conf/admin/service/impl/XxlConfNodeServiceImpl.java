@@ -166,10 +166,10 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 
 		// node log
 		XxlConfNodeLog nodeLog = new XxlConfNodeLog();
-		nodeLog.setEnv(existNode.getEnv());
-		nodeLog.setKey(existNode.getKey());
-		nodeLog.setTitle(existNode.getTitle() + "(配置新增)" );
-		nodeLog.setValue(existNode.getValue());
+		nodeLog.setEnv(xxlConfNode.getEnv());
+		nodeLog.setKey(xxlConfNode.getKey());
+		nodeLog.setTitle(xxlConfNode.getTitle() + "(配置新增)" );
+		nodeLog.setValue(xxlConfNode.getValue());
 		nodeLog.setOptuser(loginUser.getUsername());
 		xxlConfNodeLogDao.add(nodeLog);
 
