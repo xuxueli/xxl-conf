@@ -207,7 +207,7 @@
                         <!-- permission end -->
 
                         <div class="form-group">
-                            <div class="pull-center">
+                            <div class="text-center">
                                 <button type="button" class="btn btn-primary ok" >保存</button>
                                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 
