@@ -130,10 +130,11 @@ XXL-CONF 是一个分布式配置管理平台，拥有"强一致性、毫秒级�
     - xxl-conf-admin：配置中心
     - xxl-conf-core：公共依赖
     - xxl-conf-samples: 接入XXl-CONF的示例项目，供用户参考学习
-        - xxl-conf-sample-spring：spring版本
-        - xxl-conf-sample-springboot：springboot版本
-        - xxl-conf-sample-jfinal：jfinal版本
-        - xxl-conf-sample-nutz：nutz版本
+        - xxl-conf-sample-frameless：    无框架版本，main方法直接启动运行
+        - xxl-conf-sample-spring：       spring版本
+        - xxl-conf-sample-springboot：   springboot版本
+        - xxl-conf-sample-jfinal：       jfinal版本
+        - xxl-conf-sample-nutz：         nutz版本
 
 ### 2.3 “配置中心” 搭建（支持集群）
 
@@ -549,6 +550,20 @@ async	    :	trne=同步请求，立即返回 "confKeys" 对应的配置信息；
 在配置所属对象存在代理(JDK、CGLib)的特殊情况下，推荐使用以下方式获取配置：（非代理情况下，可以忽略本章节）
 - 1、采用“API方式”获取配置：最稳定的配置获取方式，API方式底层存在Local Cache不必担心性能问题；
 - 2、为配置属性添加 get、set 方法，不要直接访问配置属性，而是通过配置属性相应的 get 方法获取；
+
+### 5.10 容灾性
+XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可分为以下几层：
+- DB：完整的配置数据存储在数据库中，极大的方便配置数据的备份与迁移；
+- ZK：配置数据在ZK中，可通过ZK集群保证数据安全；
+- Client-镜像文件：接入配置中心的客户端应用会自动对使用的配置生成镜像文件，远程配置中心故障时降级实用镜像文件；
+- Client-LocalCache：接入配置中心的客户端引用，优先使用LocalCache内存中的配置数据，提高性能的同时，降低对底层配置服务的压力；
+- Client-Api：最后暴露给业务的API，用户可具体加载配置数据，完成业务；
+
+鉴于以上基础，在配置服务故障时，可以快速进行配置服务降级与恢复：
+- 配置中心宕机时：对业务系统无影响，业务系统从ZK与Client端镜像文件中获取配置数据；
+- DB宕机：对业务系统无影响，业务系统从ZK与Client端镜像文件中获取配置数据；
+- ZK宕机：对业务系统无影响，业务系统从Client端镜像文件中获取配置数据；
+- 配置中心宕机 + DB宕机 + ZK宕机 + Client端镜像文件被删除：此时，只需要手动创建一份配置镜像文件，上传到Client端应用指定位置即可，业务无影响；
 
 
 ## 六、历史版本
