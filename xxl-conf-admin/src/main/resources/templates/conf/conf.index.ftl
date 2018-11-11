@@ -180,7 +180,7 @@
 
 	<@netCommon.commonScript/>
 	<script>
-        var hasPermission = '${ifHasProjectPermission?string}';
+        var hasPermission = ${ifHasProjectPermission?string};
 	</script>
 
     <script src="${request.contextPath}/static/adminlte/plugins/datatables/jquery.dataTables.min.js"></script>
