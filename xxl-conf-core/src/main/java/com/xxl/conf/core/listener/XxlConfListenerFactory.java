@@ -1,6 +1,5 @@
 package com.xxl.conf.core.listener;
 
-import com.xxl.conf.core.core.XxlConfZkConf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +33,6 @@ public class XxlConfListenerFactory {
         if (xxlConfListener == null) {
             return false;
         }
-        XxlConfZkConf.stat(key,true);
         if (key==null || key.trim().length()==0) {
             noKeyConfListener.add(xxlConfListener);
             return true;
