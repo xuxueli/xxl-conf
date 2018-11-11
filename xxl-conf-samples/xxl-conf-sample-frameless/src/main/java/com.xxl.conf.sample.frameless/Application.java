@@ -26,6 +26,8 @@ public class Application {
                     logger.info("配置变更事件通知：{}={}", key, value);
                 }
             });
+            String key02Val = XxlConfClient.get("default.key02");
+            logger.info("配置获取：default.key02={}", key02Val);
 
 
             while (true) {
