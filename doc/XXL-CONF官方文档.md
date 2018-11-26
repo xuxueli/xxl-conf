@@ -180,12 +180,14 @@ java -jar xxl-conf-admin.jar --mysqladdress=127.0.0.1:3306 --mysqlusername=root 
 #### 方式2：Docker 镜像方式搭建：
 
 - 下载镜像
+
 ```
 // Docker地址：https://hub.docker.com/r/xuxueli/xxl-conf-admin/
 docker pull xuxueli/xxl-conf-admin
 ```
 
 - 创建容器并运行
+
 ```
 docker run -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/xxl-conf-admin
 
