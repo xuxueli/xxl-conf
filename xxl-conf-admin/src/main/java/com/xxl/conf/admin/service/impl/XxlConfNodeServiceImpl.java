@@ -2,28 +2,35 @@ package com.xxl.conf.admin.service.impl;
 
 import com.xxl.conf.admin.core.model.*;
 import com.xxl.conf.admin.core.util.ReturnT;
-import com.xxl.conf.admin.dao.XxlConfEnvDao;
-import com.xxl.conf.admin.dao.XxlConfNodeDao;
-import com.xxl.conf.admin.dao.XxlConfNodeLogDao;
-import com.xxl.conf.admin.dao.XxlConfProjectDao;
+import com.xxl.conf.admin.dao.*;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
+import com.xxl.conf.core.util.PropUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.async.DeferredResult;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 配置
  * @author xuxueli 2016-08-15 22:53
  */
 @Service
-public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
+public class XxlConfNodeServiceImpl implements IXxlConfNodeService, InitializingBean, DisposableBean {
+	private static Logger logger = LoggerFactory.getLogger(XxlConfNodeServiceImpl.class);
 
 
 	@Resource
@@ -31,11 +38,20 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 	@Resource
 	private XxlConfProjectDao xxlConfProjectDao;
 	@Resource
-	private XxlConfManager xxlConfManager;
+	private XxlConfZKManager xxlConfZKManager;
 	@Resource
 	private XxlConfNodeLogDao xxlConfNodeLogDao;
 	@Resource
 	private XxlConfEnvDao xxlConfEnvDao;
+	@Resource
+	private XxlConfNodeMsgDao xxlConfNodeMsgDao;
+
+
+	@Value("${xxl.conf.confdata.filepath}")
+	private String confDataFilePath;
+
+	private int confBeatTime = 30;
+
 
 	@Override
 	public boolean ifHasProjectPermission(XxlConfUser loginUser, String loginEnv, String appname){
@@ -73,7 +89,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		// fill value in zk
 		if (CollectionUtils.isNotEmpty(data)) {
 			for (XxlConfNode node: data) {
-				String realNodeValue = xxlConfManager.get(node.getEnv(), node.getKey());
+				String realNodeValue = xxlConfZKManager.get(node.getEnv(), node.getKey());
 				node.setZkValue(realNodeValue);
 			}
 		}
@@ -102,7 +118,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 			return new ReturnT<String>(500, "您没有该项目的配置权限,请联系管理员开通");
 		}
 
-		xxlConfManager.delete(loginEnv, key);
+		xxlConfZKManager.delete(loginEnv, key);
 		xxlConfNodeDao.delete(loginEnv, key);
 		xxlConfNodeLogDao.deleteTimeout(loginEnv, key, 0);
 		return ReturnT.SUCCESS;
@@ -161,7 +177,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		}
 
 		// add node
-		xxlConfManager.set(xxlConfNode.getEnv(), xxlConfNode.getKey(), xxlConfNode.getValue());
+		xxlConfZKManager.set(xxlConfNode.getEnv(), xxlConfNode.getKey(), xxlConfNode.getValue());
 		xxlConfNodeDao.insert(xxlConfNode);
 
 		// node log
@@ -203,7 +219,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		}
 
 		// update conf
-		xxlConfManager.set(xxlConfNode.getEnv(), xxlConfNode.getKey(), xxlConfNode.getValue());
+		xxlConfZKManager.set(xxlConfNode.getEnv(), xxlConfNode.getKey(), xxlConfNode.getValue());
 
 		existNode.setTitle(xxlConfNode.getTitle());
 		existNode.setValue(xxlConfNode.getValue());
@@ -251,7 +267,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		// un sync node
 		List<XxlConfNode> unSyncConfNodeList = new ArrayList<>();
 		for (XxlConfNode node: confNodeList) {
-			String realNodeValue = xxlConfManager.get(node.getEnv(), node.getKey());
+			String realNodeValue = xxlConfZKManager.get(node.getEnv(), node.getKey());
 			if (!node.getValue().equals(realNodeValue)) {
 				unSyncConfNodeList.add(node);
 			}
@@ -265,7 +281,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		String logContent = "操作成功，共计同步 " + unSyncConfNodeList.size() + " 条配置：";
 		for (XxlConfNode node: unSyncConfNodeList) {
 
-			xxlConfManager.set(node.getEnv(), node.getKey(), node.getValue());
+			xxlConfZKManager.set(node.getEnv(), node.getKey(), node.getValue());
 
 			// node log
 			XxlConfNodeLog nodeLog = new XxlConfNodeLog();
@@ -284,5 +300,251 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService {
 		return new ReturnT<String>(ReturnT.SUCCESS.getCode(), logContent);
 	}
 
+	@Override
+	public DeferredResult<ReturnT<String>> monitor(String env, List<String> keys) {
+
+		// TODO, add /update /delete ， set - file
+
+		// init		// TODO, content >> data
+		DeferredResult deferredResult = new DeferredResult(confBeatTime * 1000L, new ReturnT<>(ReturnT.FAIL.getCode(), "Monitor timeout."));
+
+		// valid
+		if (env==null || env.trim().length()==0) {
+			deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "env Invalid."));
+			return deferredResult;
+		}
+		if (keys==null || keys.size()==0) {
+			deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "keys Invalid."));
+			return deferredResult;
+		}
+		for (String key: keys) {
+			if (key==null || key.trim().length()==0) {
+				deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "Key Invalid"));
+				return deferredResult;
+			}
+		}
+
+
+		// monitor by client
+		for (String key: keys) {
+			String fileName = parseConfDataFileName(env, key);
+
+			List<DeferredResult> deferredResultList = confDeferredResultMap.get(fileName);
+			if (deferredResultList == null) {
+				deferredResultList = new ArrayList<>();
+				confDeferredResultMap.put(fileName, deferredResultList);
+			}
+
+			deferredResultList.add(deferredResult);
+		}
+
+		return deferredResult;
+	}
+
+
+	// ---------------------- start stop ----------------------
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		startThead();
+	}
+
+	@Override
+	public void destroy() throws Exception {
+		stopThread();
+	}
+
+
+	// ---------------------- thread ----------------------
+
+	private ExecutorService executorService = Executors.newCachedThreadPool();
+	private volatile boolean executorStoped = false;
+
+	private volatile List<Integer> readedMessageIds = Collections.synchronizedList(new ArrayList<Integer>());
+
+	private Map<String, List<DeferredResult>> confDeferredResultMap = new ConcurrentHashMap<>();
+
+	public void startThead() throws Exception {
+
+		/**
+		 * brocast conf-data msg, sync to file, for "add、update、delete"
+		 */
+		executorService.execute(new Runnable() {
+			@Override
+			public void run() {
+				while (!executorStoped) {
+					try {
+						// new message, filter readed
+						List<XxlConfNodeMsg> messageList = xxlConfNodeMsgDao.findMsg(readedMessageIds);
+						if (messageList!=null && messageList.size()>0) {
+							for (XxlConfNodeMsg message: messageList) {
+								readedMessageIds.add(message.getId());
+
+
+								// sync file
+								setFileConfData(message.getEnv(), message.getKey(), message.getValue());
+							}
+						}
+
+						// clean old message;
+						if (System.currentTimeMillis() % confBeatTime ==0) {
+							xxlConfNodeMsgDao.cleanMessage(confBeatTime);
+							readedMessageIds.clear();
+						}
+					} catch (Exception e) {
+						if (!executorStoped) {
+							logger.error(e.getMessage(), e);
+						}
+					}
+					try {
+						TimeUnit.SECONDS.sleep(1);
+					} catch (Exception e) {
+						if (!executorStoped) {
+							logger.error(e.getMessage(), e);
+						}
+					}
+				}
+			}
+		});
+
+
+		/**
+		 *  sync total conf-data, db + file      (1+N/30s)
+		 *
+		 *  clean deleted conf-data file
+		 */
+		executorService.execute(new Runnable() {
+			@Override
+			public void run() {
+				while (!executorStoped) {
+					try {
+
+						// sync registry-data, db + file
+						int offset = 0;
+						int pagesize = 1000;
+						List<String> confDataFileList = new ArrayList<>();
+
+						List<XxlConfNode> confNodeList = xxlConfNodeDao.pageList(offset, pagesize, null, null, null);
+						while (confNodeList!=null && confNodeList.size()>0) {
+
+							for (XxlConfNode confNoteItem: confNodeList) {
+
+								// sync file
+								String confDataFile = setFileConfData(confNoteItem.getEnv(), confNoteItem.getKey(), confNoteItem.getValue());
+
+								// collect confDataFile
+								confDataFileList.add(confDataFile);
+							}
+
+
+							offset += 1000;
+							confNodeList = xxlConfNodeDao.pageList(offset, pagesize, null, null, null);
+						}
+
+						// clean old registry-data file
+						cleanFileConfData(confDataFileList);
+
+					} catch (Exception e) {
+						if (!executorStoped) {
+							logger.error(e.getMessage(), e);
+						}
+					}
+					try {
+						TimeUnit.SECONDS.sleep(confBeatTime);
+					} catch (Exception e) {
+						if (!executorStoped) {
+							logger.error(e.getMessage(), e);
+						}
+					}
+				}
+			}
+		});
+
+
+
+	}
+
+	private void stopThread(){
+		executorStoped = true;
+		executorService.shutdownNow();
+	}
+
+
+	// ---------------------- file opt ----------------------
+
+	private String parseConfDataFileName(String env, String key){
+		// fileName
+		String fileName = confDataFilePath
+				.concat(File.separator).concat(env)
+				.concat(File.separator).concat(key)
+				.concat(".properties");
+		return fileName;
+	}
+
+	// set
+	private String setFileConfData(String env, String key, String value){
+
+		// fileName
+		String confFileName = parseConfDataFileName(env, key);
+
+		// valid repeat update
+		Properties existProp = PropUtil.loadFileProp(confFileName);
+		if (existProp != null
+				&& value!=null
+				&& value.equals(existProp.getProperty("value"))
+				) {
+			return new File(confFileName).getPath();
+		}
+
+		// write
+		Properties prop = new Properties();
+		if (value != null) {
+			prop.setProperty("value-deleted", "true");
+		} else {
+			prop.setProperty("value", value);
+		}
+
+		PropUtil.writeFileProp(prop, confFileName);
+		logger.info(">>>>>>>>>>> xxl-conf, setFileConfData: confFileName={}, value={}", confFileName, value);
+
+		// brocast monitor client
+		List<DeferredResult> deferredResultList = confDeferredResultMap.get(confFileName);
+		if (deferredResultList != null) {
+			confDeferredResultMap.remove(confFileName);
+			for (DeferredResult deferredResult: deferredResultList) {
+				deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "Monitor key update."));
+			}
+		}
+
+		return new File(confFileName).getPath();
+	}
+
+	// clean
+	public void cleanFileConfData(List<String> confDataFileList){
+		filterChildPath(new File(confDataFilePath), confDataFileList);
+	}
+
+	public void filterChildPath(File parentPath, final List<String> confDataFileList){
+		if (!parentPath.exists() || parentPath.list()==null || parentPath.list().length==0) {
+			return;
+		}
+		File[] childFileList = parentPath.listFiles();
+		for (File childFile: childFileList) {
+			if (childFile.isFile() && !confDataFileList.contains(childFile.getPath())) {
+				childFile.delete();
+
+				logger.info(">>>>>>>>>>> xxl-conf, cleanFileConfData, ConfDataFile={}", childFile.getPath());
+			}
+			if (childFile.isDirectory()) {
+				if (parentPath.listFiles()!=null && parentPath.listFiles().length>0) {
+					filterChildPath(childFile, confDataFileList);
+				} else {
+					childFile.delete();
+				}
+
+			}
+		}
+
+	}
 
 }

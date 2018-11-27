@@ -22,26 +22,35 @@ public class PropUtil {
      * @return
      */
     public static Properties loadProp(String propertyFileName) {
-        Properties prop = new Properties();
+
+        // disk path
+        if (propertyFileName.startsWith("file:")) {
+            propertyFileName = propertyFileName.substring("file:".length());
+            return loadFileProp(propertyFileName);
+        } else {
+            return loadClassPathProp(propertyFileName);
+        }
+    }
+
+    public static Properties loadClassPathProp(String propertyFileName) {
+
         InputStream in = null;
         try {
+            File file = new File(propertyFileName);
+            if (!file.exists()) {
+                return null;
+            }
 
-            // load file location, disk or resource
-            if (propertyFileName.startsWith("file:")) {
-                URL url = new File(propertyFileName.substring("file:".length())).toURI().toURL();
-                in = new FileInputStream(url.getPath());
-            } else {
-                ClassLoader loder = Thread.currentThread().getContextClassLoader();
-                /*URL url = loder.getResource(propertyFileName);
-                in = new FileInputStream(url.getPath());*/
-                in = loder.getResourceAsStream(propertyFileName);
+            in = Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyFileName);
+            if (in == null) {
+                return null;
             }
-            if (in != null) {
-                //prop.load(in);
-                prop.load(new InputStreamReader(in, "utf-8"));
-            }
+
+            Properties prop = new Properties();
+            prop.load(new InputStreamReader(in, "utf-8"));
+            return prop;
         } catch (IOException e) {
-            logger.error(">>>>>>>>>> xxl-conf, PropUtil load prop fail [{}]", propertyFileName);
+            logger.error(e.getMessage(), e);
         } finally {
             if (in != null) {
                 try {
@@ -51,8 +60,42 @@ public class PropUtil {
                 }
             }
         }
-        return prop;
+        return null;
     }
+
+
+    public static Properties loadFileProp(String propertyFileName) {
+        InputStream in = null;
+        try {
+            // load file location, disk
+            File file = new File(propertyFileName);
+            if (!file.exists()) {
+                return null;
+            }
+
+            URL url = new File(propertyFileName).toURI().toURL();
+            in = new FileInputStream(url.getPath());
+            if (in == null) {
+                return null;
+            }
+
+            Properties prop = new Properties();
+            prop.load(new InputStreamReader(in, "utf-8"));
+            return prop;
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        }
+        return null;
+    }
+
 
     /**
      * write prop to disk
@@ -61,7 +104,7 @@ public class PropUtil {
      * @param filePathName
      * @return
      */
-    public static boolean writeProp(Properties properties, String filePathName){
+    public static boolean writeFileProp(Properties properties, String filePathName){
         FileOutputStream fileOutputStream = null;
         try {
 

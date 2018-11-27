@@ -4,7 +4,9 @@ package com.xxl.conf.admin.service;
 import com.xxl.conf.admin.core.model.XxlConfNode;
 import com.xxl.conf.admin.core.model.XxlConfUser;
 import com.xxl.conf.admin.core.util.ReturnT;
+import org.springframework.web.context.request.async.DeferredResult;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,5 +30,7 @@ public interface IXxlConfNodeService {
 	public ReturnT<String> update(XxlConfNode xxlConfNode, XxlConfUser loginUser, String loginEnv);
 
     ReturnT<String> syncConf(String appname, XxlConfUser loginUser, String loginEnv);
+
+	public DeferredResult<ReturnT<String>> monitor(String env, List<String> keys);
 
 }

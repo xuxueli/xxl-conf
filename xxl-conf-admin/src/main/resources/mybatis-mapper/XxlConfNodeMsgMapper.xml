@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.conf.admin.dao.XxlConfNodeMsgDao">
+
+	<resultMap id="xxlConfNodeMsg" type="com.xxl.conf.admin.core.model.XxlConfNodeMsg" >
+		<result column="id" property="id" />
+		<result column="addtime" property="addtime" />
+		<result column="env" property="env"/>
+		<result column="key" property="key" />
+		<result column="appname" property="appname" />
+	    <result column="value" property="value" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.`id`,
+		t.`addtime`,
+		t.`env`,
+		t.`key`,
+		t.`appname`,
+		t.`value`
+	</sql>
+
+	<insert id="add" parameterType="com.xxl.conf.admin.core.model.XxlConfNodeMsg" useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO xxl_conf_node_msg(
+			`addtime`,
+			`env`,
+			`key`,
+			`appname`,
+			`value`
+		)
+		VALUES(
+			now(),
+			#{env},
+			#{key},
+			#{appname},
+			#{value}
+		)
+	</insert>
+
+	<select id="findMsg" parameterType="java.util.Map" resultMap="xxlConfNodeMsg">
+		SELECT <include refid="Base_Column_List" />
+		FROM xxl_conf_node_msg AS t
+		<if test="readedMsgIds != null and readedMsgIds.size() > 0" >
+			where t.id not in
+			<foreach collection="readedMsgIds" item="idItem"  index="index" separator="," open="(" close=")">
+				#{idItem}
+			</foreach>
+		</if>
+		ORDER BY t.id
+	</select>
+
+
+	<delete id="cleanMessage" parameterType="java.util.Map" >
+		DELETE FROM xxl_conf_node_msg
+		WHERE NOW() <![CDATA[ > ]]> DATE_ADD(addtime, Interval #{messageTimeout} SECOND)
+	</delete>
+	
+</mapper>

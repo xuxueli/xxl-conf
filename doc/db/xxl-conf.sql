@@ -41,6 +41,16 @@ CREATE TABLE `xxl_conf_node_log` (
   `optuser` varchar(100) NOT NULL COMMENT '操作人'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `xxl_conf_node_msg` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `addtime` datetime NOT NULL,
+  `env` varchar(100) NOT NULL COMMENT 'Env',
+  `key` varchar(200) NOT NULL COMMENT '配置Key',
+  `appname` varchar(100) NOT NULL COMMENT '所属项目AppName',
+  `value` varchar(2000) DEFAULT NULL COMMENT '配置Value',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 INSERT INTO `xxl_conf_env` VALUES ('test', '测试环境', 1), ('ppe', '预发布环境', 2), ('product', '生产环境', 3);
 INSERT INTO `xxl_conf_project` VALUES ('default', '示例项目');

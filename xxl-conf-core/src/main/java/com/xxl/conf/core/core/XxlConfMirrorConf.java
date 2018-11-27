@@ -30,7 +30,7 @@ public class XxlConfMirrorConf {
 
         // load mirror data
         mirrorConfData = new ConcurrentHashMap<>();
-        Properties mirrorProp = PropUtil.loadProp( "file:" + mirrorfile );
+        Properties mirrorProp = PropUtil.loadFileProp( "file:" + mirrorfile );
         if (mirrorProp!=null && mirrorProp.stringPropertyNames()!=null && mirrorProp.stringPropertyNames().size()>0) {
             for (String key: mirrorProp.stringPropertyNames()) {
                 mirrorConfData.put(key, mirrorProp.getProperty(key));
@@ -56,7 +56,7 @@ public class XxlConfMirrorConf {
 
 
         // write mirror file
-        PropUtil.writeProp(properties, mirrorfile);
+        PropUtil.writeFileProp(properties, mirrorfile);
 
         // refresh mirror data
         mirrorConfData.clear();

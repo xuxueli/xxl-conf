@@ -15,24 +15,37 @@ import org.springframework.stereotype.Component;
  * @author xuxueli 2015年8月26日21:36:43
  */
 @Component
-public class XxlConfManager implements InitializingBean, DisposableBean {
-	private static Logger logger = LoggerFactory.getLogger(XxlConfManager.class);
+public class XxlConfZKManager implements InitializingBean, DisposableBean {
+	private static Logger logger = LoggerFactory.getLogger(XxlConfZKManager.class);
 
-	@Value("${xxl.conf.zkaddress}")
+	@Value("${xxl.conf.zkaddress:''}")
 	private String zkaddress;
 
-	@Value("${xxl.conf.zkdigest}")
+	@Value("${xxl.conf.zkdigest:''}")
 	private String zkdigest;
+
+	private static boolean open = false;	// TODO，ZK启用时，Admin 全量同步按钮才展示；
+	public static boolean isOpen() {
+		return open;
+	}
 
 	// ------------------------------ zookeeper client ------------------------------
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		if (zkaddress==null || zkaddress.trim().length()==0) {
+			open = false;
+			return;
+		}
 		XxlConfZkManageConf.init(zkaddress, zkdigest);
 	}
 
 	@Override
 	public void destroy() throws Exception {
+		if (!open) {
+			return;
+		}
+
 		XxlConfZkManageConf.destroy();
 	}
 
@@ -47,6 +60,10 @@ public class XxlConfManager implements InitializingBean, DisposableBean {
 	 * @return
 	 */
 	public void set(String env, String key, String data) {
+		if (!open) {
+			return;
+		}
+
 		XxlConfZkManageConf.set(env, key, data);
 	}
 
@@ -57,6 +74,10 @@ public class XxlConfManager implements InitializingBean, DisposableBean {
 	 * @param key
 	 */
 	public void delete(String env, String key){
+		if (!open) {
+			return;
+		}
+
 		XxlConfZkManageConf.delete(env, key);
 	}
 
@@ -67,6 +88,10 @@ public class XxlConfManager implements InitializingBean, DisposableBean {
 	 * @return
 	 */
 	public String get(String env, String key){
+		if (!open) {
+			return null;
+		}
+
 		return XxlConfZkManageConf.get(env, key);
 	}
 
