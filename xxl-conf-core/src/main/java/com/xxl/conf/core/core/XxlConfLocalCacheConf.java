@@ -62,7 +62,7 @@ public class XxlConfLocalCacheConf {
                         TimeUnit.SECONDS.sleep(3);
                         refreshCacheAndMirror();
                     } catch (Exception e) {
-                        if (!refreshThreadStop) {
+                        if (!refreshThreadStop && !(e instanceof InterruptedException)) {
                             logger.error(">>>>>>>>>> xxl-conf, refresh thread error.");
                             logger.error(e.getMessage(), e);
                         }

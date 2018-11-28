@@ -54,21 +54,10 @@ public class XxlConfRemoteConf {
      * get and valid
      *
      * @param url
-     * @param params
      * @param timeout
      * @return
      */
-    private static Map<String, Object> getAndValid(String url, Map<String, String> params, int timeout){
-
-        // param
-        boolean firstParam = true;
-        for (String key: params.keySet()) {
-            url += firstParam?"?":"&";
-            if (firstParam) {
-                firstParam = false;
-            }
-            url += key + "=" + params.get(key);
-        }
+    private static Map<String, Object> getAndValid(String url, int timeout){
 
         // resp json
         String respJson = BaseHttpUtil.get(url, timeout);
@@ -99,15 +88,14 @@ public class XxlConfRemoteConf {
             // url + param
             String url = adminAddressUrl + "/conf/find";
 
-            Map<String, String> params = new HashMap<>();
-            params.put("env", env);
-            params.put("accessToken", accessToken);
+            url += "?env=" + env;
+            url += "&accessToken=" + accessToken;
             for (String key:keys) {
-                params.put("keys", key);
+                url += "&keys=" + key;
             }
 
             // get and valid
-            Map<String, Object> respObj = getAndValid(url, params, 10);
+            Map<String, Object> respObj = getAndValid(url, 10);
 
             // parse
             if (respObj!=null && respObj.containsKey("data")) {
@@ -141,16 +129,14 @@ public class XxlConfRemoteConf {
             // url + param
             String url = adminAddressUrl + "/conf/monitor";
 
-            Map<String, String> params = new HashMap<>();
-            params.put("env", env);
-            params.put("accessToken", accessToken);
+            url += "?env=" + env;
+            url += "&accessToken=" + accessToken;
             for (String key:keys) {
-                params.put("keys", key);
+                url += "&keys=" + key;
             }
 
-
             // get and valid
-            Map<String, Object> respObj = getAndValid(url, params, 60);
+            Map<String, Object> respObj = getAndValid(url, 60);
 
             return respObj!=null?true:false;
         }
