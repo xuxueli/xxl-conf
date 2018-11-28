@@ -1,5 +1,6 @@
 package com.xxl.conf.admin.controller;
 
+import com.xxl.conf.admin.controller.annotation.PermessionLimit;
 import com.xxl.conf.admin.core.model.XxlConfNode;
 import com.xxl.conf.admin.core.model.XxlConfProject;
 import com.xxl.conf.admin.core.model.XxlConfUser;
@@ -13,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.async.DeferredResult;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -124,7 +126,7 @@ public class ConfController {
 		return xxlConfNodeService.update(xxlConfNode, xxlConfUser, loginEnv);
 	}
 
-	@RequestMapping("/syncConf")
+	/*@RequestMapping("/syncConf")
 	@ResponseBody
 	public ReturnT<String> syncConf(HttpServletRequest request,
 										String appname) {
@@ -133,6 +135,25 @@ public class ConfController {
 		String loginEnv = (String) request.getAttribute(CURRENT_ENV);
 
 		return xxlConfNodeService.syncConf(appname, xxlConfUser, loginEnv);
+	}*/
+
+
+	// ---------------------- rest api ----------------------
+
+	@RequestMapping("/find")
+	@ResponseBody
+	@PermessionLimit(limit = false)
+	public ReturnT<Map<String, String>> find(String env, @RequestParam(name = "keys", required = false) List<String> keys){
+		return xxlConfNodeService.find(env, keys);
 	}
+
+
+	@RequestMapping("/monitor")
+	@ResponseBody
+	@PermessionLimit(limit = false)
+	public DeferredResult<ReturnT<String>> monitor(String env, @RequestParam(name = "keys", required = false) List<String> keys){
+		return xxlConfNodeService.monitor(env, keys);
+	}
+
 
 }

@@ -46,7 +46,6 @@ CREATE TABLE `xxl_conf_node_msg` (
   `addtime` datetime NOT NULL,
   `env` varchar(100) NOT NULL COMMENT 'Env',
   `key` varchar(200) NOT NULL COMMENT '配置Key',
-  `appname` varchar(100) NOT NULL COMMENT '所属项目AppName',
   `value` varchar(2000) DEFAULT NULL COMMENT '配置Value',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

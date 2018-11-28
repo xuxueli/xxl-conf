@@ -11,7 +11,6 @@ public class XxlConfNodeMsg {
 	private Date addtime;
 	private String env;
 	private String key;
-	private String appname;
 	private String value;
 
 	public int getId() {
@@ -44,14 +43,6 @@ public class XxlConfNodeMsg {
 
 	public void setKey(String key) {
 		this.key = key;
-	}
-
-	public String getAppname() {
-		return appname;
-	}
-
-	public void setAppname(String appname) {
-		this.appname = appname;
 	}
 
 	public String getValue() {

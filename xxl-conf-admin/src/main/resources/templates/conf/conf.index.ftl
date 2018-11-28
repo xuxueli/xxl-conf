@@ -55,9 +55,9 @@
                     <div class="col-xs-2">
                         <button class="btn btn-block btn-success" id="add" type="button">新增配置</button>
                     </div>
-                    <div class="col-xs-2">
+                    <#--<div class="col-xs-2">
                         <button class="btn btn-block btn-nomal" id="syncConf">全量同步</button>
-                    </div>
+                    </div>-->
                 </div>
 
 				<!-- 全部配置 -->

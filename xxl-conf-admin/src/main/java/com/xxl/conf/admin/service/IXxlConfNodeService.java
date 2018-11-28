@@ -29,8 +29,13 @@ public interface IXxlConfNodeService {
 
 	public ReturnT<String> update(XxlConfNode xxlConfNode, XxlConfUser loginUser, String loginEnv);
 
-    ReturnT<String> syncConf(String appname, XxlConfUser loginUser, String loginEnv);
+    /*ReturnT<String> syncConf(String appname, XxlConfUser loginUser, String loginEnv);*/
 
-	public DeferredResult<ReturnT<String>> monitor(String env, List<String> keys);
+
+    // ---------------------- rest api ----------------------
+
+    public ReturnT<Map<String, String>> find(String env, List<String> keys);
+
+    public DeferredResult<ReturnT<String>> monitor(String env, List<String> keys);
 
 }

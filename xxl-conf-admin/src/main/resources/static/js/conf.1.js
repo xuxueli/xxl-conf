@@ -38,13 +38,16 @@ $(function(){
 		"columns": [
 			{ "data": 'key', 'width': '20%', "visible" : true},
 			{
-				"data": 'zkValue',
+				"data": 'value',
 				'width': '30%',
 				"visible" : true,
 				"render": function ( data, type, row ) {
-					if (row.value == row.zkValue) {
-						var temp = (row.value.length > 20)? row.value.substring(0, 20)+'...' : row.value;
-						return "<span title='"+ row.value +"'>"+ temp +"</span>";;
+
+                    var temp = (row.value.length > 20)? row.value.substring(0, 20)+'...' : row.value;
+                    return "<span title='"+ row.value +"'>"+ temp +"</span>";;
+
+					/*if (row.value == row.zkValue) {
+
 					} else {
 						var cacheValue = '<table border=1 bordercolor="white" ' +
 							'style="border-collapse:collapse;width: 100%;table-layout:fixed;word-wrap:break-word;" >\n' +
@@ -63,7 +66,7 @@ $(function(){
 
 						var html = "<span style='color: red'>数据未同步: <a href='javascript:;' class='tecTips' cacheKey='diff_"+ row.key +"' >查看</a></span>";
 						return html;
-					}
+					}*/
 				}
 			},
 			{ "data": 'title', 'width': '30%', "visible" : true},
@@ -344,7 +347,7 @@ $(function(){
 	});
 
 	// 全量同步
-    $('#syncConf').click(function () {
+    /*$('#syncConf').click(function () {
         layer.confirm( "确定要进行全量同步操作，将会检测该项目下的全部未同步配置项，使用DB中配置数据覆盖ZK中配置数据并推送更新？" , {
             icon: 3,
             title: '系统提示' ,
@@ -376,6 +379,6 @@ $(function(){
             );
 
         });
-    });
+    });*/
 	
 });

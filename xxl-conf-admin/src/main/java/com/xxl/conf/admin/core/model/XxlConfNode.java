@@ -15,7 +15,7 @@ public class XxlConfNode {
 	private String value;		// 配置Value
 
 	// plugin
-	private String zkValue; 				// ZK中配置Value
+	/*private String zkValue; 				// ZK中配置Value	// TODO, delete*/
 	private List<XxlConfNodeLog> logList;	// 配置变更Log
 
 	public String getEnv() {
@@ -58,13 +58,13 @@ public class XxlConfNode {
 		this.value = value;
 	}
 
-	public String getZkValue() {
+	/*public String getZkValue() {
 		return zkValue;
 	}
 
 	public void setZkValue(String zkValue) {
 		this.zkValue = zkValue;
-	}
+	}*/
 
 	public List<XxlConfNodeLog> getLogList() {
 		return logList;

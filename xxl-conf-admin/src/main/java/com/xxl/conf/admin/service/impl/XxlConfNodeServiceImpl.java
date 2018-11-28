@@ -5,7 +5,6 @@ import com.xxl.conf.admin.core.util.ReturnT;
 import com.xxl.conf.admin.dao.*;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
 import com.xxl.conf.core.util.PropUtil;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -37,8 +36,8 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 	private XxlConfNodeDao xxlConfNodeDao;
 	@Resource
 	private XxlConfProjectDao xxlConfProjectDao;
-	@Resource
-	private XxlConfZKManager xxlConfZKManager;
+	/*@Resource
+	private XxlConfZKManager xxlConfZKManager;*/
 	@Resource
 	private XxlConfNodeLogDao xxlConfNodeLogDao;
 	@Resource
@@ -87,12 +86,12 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 		int list_count = xxlConfNodeDao.pageListCount(offset, pagesize, loginEnv, appname, key);
 
 		// fill value in zk
-		if (CollectionUtils.isNotEmpty(data)) {
+		/*if (CollectionUtils.isNotEmpty(data)) {
 			for (XxlConfNode node: data) {
 				String realNodeValue = xxlConfZKManager.get(node.getEnv(), node.getKey());
 				node.setZkValue(realNodeValue);
 			}
-		}
+		}*/
 
 		// package result
 		Map<String, Object> maps = new HashMap<String, Object>();
@@ -118,10 +117,25 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 			return new ReturnT<String>(500, "您没有该项目的配置权限,请联系管理员开通");
 		}
 
-		xxlConfZKManager.delete(loginEnv, key);
+		//xxlConfZKManager.delete(loginEnv, key);
 		xxlConfNodeDao.delete(loginEnv, key);
 		xxlConfNodeLogDao.deleteTimeout(loginEnv, key, 0);
+
+		// conf msg
+		sendConfMsg(loginEnv, key, null);
+
 		return ReturnT.SUCCESS;
+	}
+
+	// conf broadcast msg
+	private void sendConfMsg(String env, String key, String value){
+
+		XxlConfNodeMsg confNodeMsg = new XxlConfNodeMsg();
+		confNodeMsg.setEnv(env);
+		confNodeMsg.setKey(key);
+		confNodeMsg.setValue(value);
+
+		xxlConfNodeMsgDao.add(confNodeMsg);
 	}
 
 	@Override
@@ -177,7 +191,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 		}
 
 		// add node
-		xxlConfZKManager.set(xxlConfNode.getEnv(), xxlConfNode.getKey(), xxlConfNode.getValue());
+		//xxlConfZKManager.set(xxlConfNode.getEnv(), xxlConfNode.getKey(), xxlConfNode.getValue());
 		xxlConfNodeDao.insert(xxlConfNode);
 
 		// node log
@@ -188,6 +202,9 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 		nodeLog.setValue(xxlConfNode.getValue());
 		nodeLog.setOptuser(loginUser.getUsername());
 		xxlConfNodeLogDao.add(nodeLog);
+
+		// conf msg
+		sendConfMsg(xxlConfNode.getEnv(), xxlConfNode.getKey(), xxlConfNode.getValue());
 
 		return ReturnT.SUCCESS;
 	}
@@ -219,7 +236,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 		}
 
 		// update conf
-		xxlConfZKManager.set(xxlConfNode.getEnv(), xxlConfNode.getKey(), xxlConfNode.getValue());
+		//xxlConfZKManager.set(xxlConfNode.getEnv(), xxlConfNode.getKey(), xxlConfNode.getValue());
 
 		existNode.setTitle(xxlConfNode.getTitle());
 		existNode.setValue(xxlConfNode.getValue());
@@ -238,10 +255,13 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 		xxlConfNodeLogDao.add(nodeLog);
 		xxlConfNodeLogDao.deleteTimeout(existNode.getEnv(), existNode.getKey(), 10);
 
+		// conf msg
+		sendConfMsg(xxlConfNode.getEnv(), xxlConfNode.getKey(), xxlConfNode.getValue());
+
 		return ReturnT.SUCCESS;
 	}
 
-	@Override
+	/*@Override
 	public ReturnT<String> syncConf(String appname, XxlConfUser loginUser, String loginEnv) {
 
 		// valid
@@ -298,14 +318,41 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 		logContent.substring(logContent.length() - 1);
 
 		return new ReturnT<String>(ReturnT.SUCCESS.getCode(), logContent);
+	}*/
+
+
+	// ---------------------- rest api ----------------------
+
+	@Override
+	public ReturnT<Map<String, String>> find(String env, List<String> keys) {
+
+		// valid
+		if (env==null || env.trim().length()==0) {
+			return new ReturnT<>(ReturnT.FAIL.getCode(), "env Invalid.");
+		}
+		if (keys==null || keys.size()==0) {
+			return new ReturnT<>(ReturnT.FAIL.getCode(), "keys Invalid.");
+		}
+		for (String key: keys) {
+			if (key==null || key.trim().length()==0) {
+				return new ReturnT<>(ReturnT.FAIL.getCode(), "Key Invalid");
+			}
+		}
+
+		// result
+		Map<String, String> result = new HashMap<String, String>();
+		for (String key: keys) {
+			String value = getFileConfData(env, key);
+			result.put(key, value);
+		}
+
+		return new ReturnT<Map<String, String>>(result);
 	}
 
 	@Override
 	public DeferredResult<ReturnT<String>> monitor(String env, List<String> keys) {
 
-		// TODO, add /update /delete ， set - file
-
-		// init		// TODO, content >> data
+		// init
 		DeferredResult deferredResult = new DeferredResult(confBeatTime * 1000L, new ReturnT<>(ReturnT.FAIL.getCode(), "Monitor timeout."));
 
 		// valid
@@ -472,6 +519,20 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 
 	// ---------------------- file opt ----------------------
 
+	// get
+	public String getFileConfData(String env, String key){
+
+		// fileName
+		String confFileName = parseConfDataFileName(env, key);
+
+		// read
+		Properties existProp = PropUtil.loadFileProp(confFileName);
+		if (existProp!=null && existProp.containsKey("value")) {
+			return existProp.getProperty("value");
+		}
+		return null;
+	}
+
 	private String parseConfDataFileName(String env, String key){
 		// fileName
 		String fileName = confDataFilePath
@@ -498,7 +559,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 
 		// write
 		Properties prop = new Properties();
-		if (value != null) {
+		if (value == null) {
 			prop.setProperty("value-deleted", "true");
 		} else {
 			prop.setProperty("value", value);
