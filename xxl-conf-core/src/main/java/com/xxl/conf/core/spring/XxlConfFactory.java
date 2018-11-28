@@ -36,8 +36,7 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
 
 	private String envprop;		// like "xxl-conf.properties" or "file:/data/webapps/xxl-conf.properties", include the following env config
 
-	private String zkaddress;
-	private String zkdigest;
+	private String adminAddress;
 	private String env;
 	private String mirrorfile;
 
@@ -45,13 +44,9 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
 		this.envprop = envprop;
 	}
 
-	public void setZkaddress(String zkaddress) {
-		this.zkaddress = zkaddress;
+	public void setAdminAddress(String adminAddress) {
+		this.adminAddress = adminAddress;
 	}
-
-    public void setZkdigest(String zkdigest) {
-        this.zkdigest = zkdigest;
-    }
 
 	public void setEnv(String env) {
 		this.env = env;
@@ -65,13 +60,7 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
 
 	@Override
 	public void afterPropertiesSet() {
-
-		if (envprop!=null && envprop.trim().length()>0) {
-			XxlConfBaseFactory.init(envprop);
-		} else {
-			XxlConfBaseFactory.init(zkaddress, zkdigest, env, mirrorfile);
-		}
-
+		XxlConfBaseFactory.init(adminAddress, env, mirrorfile);
 	}
 
 	@Override

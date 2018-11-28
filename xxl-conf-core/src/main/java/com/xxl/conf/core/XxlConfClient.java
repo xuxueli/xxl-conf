@@ -1,13 +1,9 @@
 package com.xxl.conf.core;
 
 import com.xxl.conf.core.core.XxlConfLocalCacheConf;
-import com.xxl.conf.core.core.XxlConfMirrorConf;
-import com.xxl.conf.core.core.XxlConfZkConf;
 import com.xxl.conf.core.exception.XxlConfException;
 import com.xxl.conf.core.listener.XxlConfListener;
 import com.xxl.conf.core.listener.XxlConfListenerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * xxl conf client
@@ -15,41 +11,9 @@ import org.slf4j.LoggerFactory;
  * @author xuxueli 2015-8-28 15:35:20
  */
 public class XxlConfClient {
-	private static Logger logger = LoggerFactory.getLogger(XxlConfClient.class);
 
-	/**
-	 * get conf
-	 *
-	 * @param key
-	 * @param defaultVal
-	 * @return
-	 */
 	public static String get(String key, String defaultVal) {
-
-		// level 1: local cache
-		XxlConfLocalCacheConf.CacheNode cacheNode = XxlConfLocalCacheConf.get(key);
-		if (cacheNode != null) {
-			return cacheNode.getValue();
-		}
-
-		// level 2	(get-and-watch, add-local-cache)
-		String zkData = null;
-		try {
-			zkData = XxlConfZkConf.get(key);
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-
-			// mirror then fail
-			zkData = XxlConfMirrorConf.get(key);
-		}
-
-
-		XxlConfLocalCacheConf.set(key, zkData, "SET");		// support cache null value
-		if (zkData != null) {
-			return zkData;
-		}
-
-		return defaultVal;
+		return XxlConfLocalCacheConf.get(key, defaultVal);
 	}
 
 	/**

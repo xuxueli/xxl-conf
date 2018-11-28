@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author xuxueli 2018-11-10 20:05:33
  */
-public class Application {
-    private static Logger logger = LoggerFactory.getLogger(Application.class);
+public class FramelessApplication {
+    private static Logger logger = LoggerFactory.getLogger(FramelessApplication.class);
 
     public static void main(String[] args) {
         try {

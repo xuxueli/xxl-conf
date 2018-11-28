@@ -2,9 +2,12 @@ package com.xxl.conf.sample.jfinal.config;
 
 import com.jfinal.config.*;
 import com.xxl.conf.core.factory.XxlConfBaseFactory;
+import com.xxl.conf.core.util.PropUtil;
 import com.xxl.conf.sample.jfinal.controller.IndexController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Properties;
 
 /**
  * @author xuxueli 2018-05-24
@@ -14,7 +17,12 @@ public class JFinalCoreConfig extends JFinalConfig {
 
 	// ---------------------- xxl-conf ----------------------
 	private void initXxlConfFactory() {
-		XxlConfBaseFactory.init("xxl-conf.properties");
+		Properties prop = PropUtil.loadProp("xxl-conf.properties");
+
+		XxlConfBaseFactory.init(
+				prop.getProperty("xxl.conf.admin.address"),
+				prop.getProperty("xxl.conf.env"),
+				prop.getProperty("xxl.conf.mirrorfile"));
 	}
 	private void destoryXxlConfFactory() {
 		XxlConfBaseFactory.destroy();

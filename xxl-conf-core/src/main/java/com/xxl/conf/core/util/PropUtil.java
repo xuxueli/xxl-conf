@@ -36,11 +36,6 @@ public class PropUtil {
 
         InputStream in = null;
         try {
-            File file = new File(propertyFileName);
-            if (!file.exists()) {
-                return null;
-            }
-
             in = Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyFileName);
             if (in == null) {
                 return null;

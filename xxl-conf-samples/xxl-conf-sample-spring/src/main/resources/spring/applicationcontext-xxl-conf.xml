@@ -13,8 +13,7 @@
 	<!-- ********************************* XXL-CONF 配置工厂 ********************************* -->
 	<bean id="xxlConfFactory" class="com.xxl.conf.core.spring.XxlConfFactory"  >
 		<!-- 环境配置文件地址，如 "xxl-conf.properties" 或 "file:/data/webapps/xxl-conf.properties" -->
-		<property name="zkaddress" value="${xxl.conf.zkaddress}" />
-		<property name="zkdigest" value="${xxl.conf.zkdigest}" />
+		<property name="adminAddress" value="${xxl.conf.admin.address}" />
 		<property name="env" value="${xxl.conf.env}" />
 		<property name="mirrorfile" value="${xxl.conf.mirrorfile}" />
 	</bean>

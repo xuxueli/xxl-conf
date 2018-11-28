@@ -31,15 +31,36 @@ public class XxlConfLocalCacheConf {
 
         localCacheRepository = new ConcurrentHashMap<String, CacheNode>();
 
+        // preload: mirror or remote
+        Map<String, String> preConfData = new HashMap<>();
+
+        Map<String, String> mirrorConfData = XxlConfMirrorConf.readConfMirror();
+
+        Map<String, String> remoteConfData = null;
+        if (mirrorConfData!=null && mirrorConfData.size()>0) {
+            remoteConfData = XxlConfRemoteConf.find(mirrorConfData.keySet());
+        }
+
+        if (mirrorConfData!=null && mirrorConfData.size()>0) {
+            preConfData.putAll(mirrorConfData);
+        }
+        if (remoteConfData!=null && remoteConfData.size()>0) {
+            preConfData.putAll(remoteConfData);
+        }
+        if (preConfData!=null && preConfData.size()>0) {
+            for (String preKey: preConfData.keySet()) {
+                set(preKey, preConfData.get(preKey), SET_TYPE.PRELOAD );
+            }
+        }
+
         // refresh thread
         refreshThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (!refreshThreadStop) {
                     try {
-                        TimeUnit.SECONDS.sleep(60);
-                        reloadAll();
-                        logger.info(">>>>>>>>>> xxl-conf, refresh thread reload all success.");
+                        TimeUnit.SECONDS.sleep(3);
+                        refreshCacheAndMirror();
                     } catch (Exception e) {
                         if (!refreshThreadStop) {
                             logger.error(">>>>>>>>>> xxl-conf, refresh thread error.");
@@ -91,34 +112,53 @@ public class XxlConfLocalCacheConf {
     // ---------------------- util ----------------------
 
     /**
-     * reload all conf (watch + refresh)
+     * refresh Cache And Mirror, with real-time minitor
      */
-    public static void reloadAll(){
+    private static void refreshCacheAndMirror(){
+
+        if (localCacheRepository.size()==0) {
+            return;
+        }
+
+        XxlConfRemoteConf.monitor(localCacheRepository.keySet());
+
+        // refresh cache: remote > cache
         Set<String> keySet = localCacheRepository.keySet();
         if (keySet.size() > 0) {
-            for (String key: keySet) {
-                String zkData = XxlConfZkConf.get(key);
 
-                CacheNode existNode = localCacheRepository.get(key);
-                if (existNode!=null && existNode.getValue()!=null && existNode.getValue().equals(zkData)) {
-                    logger.debug(">>>>>>>>>> xxl-conf: RELOAD unchange-pass [{}].", key);
-                } else {
-                    set(key, zkData, "RELOAD");
+            Map<String, String> remoteDataMap = XxlConfRemoteConf.find(keySet);
+            if (remoteDataMap!=null && remoteDataMap.size()>0) {
+                for (String remoteKey:remoteDataMap.keySet()) {
+                    String remoteData = remoteDataMap.get(remoteKey);
+
+                    CacheNode existNode = localCacheRepository.get(remoteKey);
+                    if (existNode!=null && existNode.getValue()!=null && existNode.getValue().equals(remoteData)) {
+                        logger.debug(">>>>>>>>>> xxl-conf: RELOAD unchange-pass [{}].", remoteKey);
+                    } else {
+                        set(remoteKey, remoteData, SET_TYPE.RELOAD );
+                    }
+
                 }
-
             }
-
-            // write mirror
-            Map<String, String> mirrorConfData = new HashMap<>();
-            for (String key: keySet) {
-                CacheNode existNode = localCacheRepository.get(key);
-                // collect mirror data
-                mirrorConfData.put(key, existNode.getValue()!=null?existNode.getValue():"");
-            }
-            XxlConfMirrorConf.writeConfMirror(mirrorConfData);
 
         }
 
+        // refresh mirror: cache > mirror
+        Map<String, String> mirrorConfData = new HashMap<>();
+        for (String key: keySet) {
+            CacheNode existNode = localCacheRepository.get(key);
+            mirrorConfData.put(key, existNode.getValue()!=null?existNode.getValue():"");
+        }
+        XxlConfMirrorConf.writeConfMirror(mirrorConfData);
+
+        logger.info(">>>>>>>>>> xxl-conf, refreshCacheAndMirror success.");
+    }
+
+
+    // ---------------------- inner api ----------------------
+
+    public enum SET_TYPE{
+        SET, RELOAD, PRELOAD
     }
 
     /**
@@ -128,36 +168,16 @@ public class XxlConfLocalCacheConf {
      * @param value
      * @return
      */
-    public static void set(String key, String value, String optType) {
+    private static void set(String key, String value, SET_TYPE optType) {
         localCacheRepository.put(key, new CacheNode(value));
         logger.info(">>>>>>>>>> xxl-conf: {}: [{}={}]", optType, key, value);
 
         XxlConfListenerFactory.onChange(key, value);
-    }
 
-    /**
-     * update conf  (only update exists key)  (invoke listener)
-     *
-     * @param key
-     * @param value
-     */
-    public static void update(String key, String value) {
-        if (localCacheRepository.containsKey(key)) {
-            set(key, value, "UPDATE");
+        // new conf, new monitor
+        if (optType == SET_TYPE.SET) {
+            refreshThread.interrupt();
         }
-    }
-
-    /**
-     * remove conf
-     *
-     * @param key
-     * @return
-     */
-    public static void remove(String key) {
-        if (localCacheRepository.containsKey(key)) {
-            localCacheRepository.remove(key);
-        }
-        logger.info(">>>>>>>>>> xxl-conf: REMOVE: [{}]", key);
     }
 
     /**
@@ -166,12 +186,71 @@ public class XxlConfLocalCacheConf {
      * @param key
      * @return
      */
-    public static CacheNode get(String key) {
+    private static CacheNode get(String key) {
         if (localCacheRepository.containsKey(key)) {
             CacheNode cacheNode = localCacheRepository.get(key);
             return cacheNode;
         }
         return null;
+    }
+
+    /**
+     * update conf  (only update exists key)  (invoke listener)
+     *
+     * @param key
+     * @param value
+     */
+    /*private static void update(String key, String value) {
+        if (localCacheRepository.containsKey(key)) {
+            set(key, value, SET_TYPE.UPDATE );
+        }
+    }*/
+
+    /**
+     * remove conf
+     *
+     * @param key
+     * @return
+     */
+    /*private static void remove(String key) {
+        if (localCacheRepository.containsKey(key)) {
+            localCacheRepository.remove(key);
+        }
+        logger.info(">>>>>>>>>> xxl-conf: REMOVE: [{}]", key);
+    }*/
+
+
+    // ---------------------- api ----------------------
+
+    /**
+     * get conf
+     *
+     * @param key
+     * @param defaultVal
+     * @return
+     */
+    public static String get(String key, String defaultVal) {
+
+        // level 1: local cache
+        XxlConfLocalCacheConf.CacheNode cacheNode = XxlConfLocalCacheConf.get(key);
+        if (cacheNode != null) {
+            return cacheNode.getValue();
+        }
+
+        // level 2	(get-and-watch, add-local-cache)
+        String remoteData = null;
+        try {
+            remoteData = XxlConfRemoteConf.find(key);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+
+        XxlConfLocalCacheConf.set(key, remoteData, SET_TYPE.SET );		// support cache null value
+        if (remoteData != null) {
+            return remoteData;
+        }
+
+        return defaultVal;
     }
 
 }
