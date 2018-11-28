@@ -9,6 +9,7 @@ import com.xxl.conf.admin.dao.XxlConfProjectDao;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
 import com.xxl.conf.admin.service.impl.LoginService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -140,10 +141,20 @@ public class ConfController {
 
 	// ---------------------- rest api ----------------------
 
+    @Value("${xxl.conf.access.token}")
+    private String accessToken;
+
+
 	@RequestMapping("/find")
 	@ResponseBody
 	@PermessionLimit(limit = false)
-	public ReturnT<Map<String, String>> find(String env, @RequestParam(name = "keys", required = false) List<String> keys){
+	public ReturnT<Map<String, String>> find(String env, @RequestParam(name = "keys", required = false) List<String> keys, String accessToken){
+
+	    // valid accessToken
+	    if (this.accessToken!=null && this.accessToken.trim().length()>0 && !this.accessToken.equals(accessToken)) {
+	        return new ReturnT<Map<String, String>>(ReturnT.FAIL.getCode(), "AccessToken Invalid.");
+        }
+
 		return xxlConfNodeService.find(env, keys);
 	}
 
@@ -152,6 +163,14 @@ public class ConfController {
 	@ResponseBody
 	@PermessionLimit(limit = false)
 	public DeferredResult<ReturnT<String>> monitor(String env, @RequestParam(name = "keys", required = false) List<String> keys){
+
+        // valid accessToken
+        if (this.accessToken!=null && this.accessToken.trim().length()>0 && !this.accessToken.equals(accessToken)) {
+            DeferredResult deferredResult = new DeferredResult();
+            deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "AccessToken Invalid."));
+            return deferredResult;
+        }
+
 		return xxlConfNodeService.monitor(env, keys);
 	}
 

@@ -17,10 +17,11 @@ public class XxlConfRemoteConf {
 
     private static String adminAddress;
     private static String env;
+    private static String accessToken;
 
     private static List<String> adminAddressArr = null;
 
-    public static void init(String adminAddress, String env) {
+    public static void init(String adminAddress, String env, String accessToken) {
 
         // valid
         if (adminAddress==null || adminAddress.trim().length()==0) {
@@ -33,6 +34,7 @@ public class XxlConfRemoteConf {
 
         XxlConfRemoteConf.adminAddress = adminAddress;
         XxlConfRemoteConf.env = env;
+        XxlConfRemoteConf.accessToken = accessToken;
 
 
         // parse
@@ -99,6 +101,7 @@ public class XxlConfRemoteConf {
 
             Map<String, String> params = new HashMap<>();
             params.put("env", env);
+            params.put("accessToken", accessToken);
             for (String key:keys) {
                 params.put("keys", key);
             }
@@ -140,6 +143,7 @@ public class XxlConfRemoteConf {
 
             Map<String, String> params = new HashMap<>();
             params.put("env", env);
+            params.put("accessToken", accessToken);
             for (String key:keys) {
                 params.put("keys", key);
             }

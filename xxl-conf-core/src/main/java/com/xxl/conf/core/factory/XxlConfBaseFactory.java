@@ -20,9 +20,9 @@ public class XxlConfBaseFactory {
 	 * @param adminAddress
 	 * @param env
 	 */
-	public static void init(String adminAddress, String env, String mirrorfile) {
+	public static void init(String adminAddress, String env, String accessToken, String mirrorfile) {
 		// init
-		XxlConfRemoteConf.init(adminAddress, env);	// init remote util
+		XxlConfRemoteConf.init(adminAddress, env, accessToken);	// init remote util
 		XxlConfMirrorConf.init(mirrorfile);			// init mirror util
 		XxlConfLocalCacheConf.init();				// init cache + thread, cycle refresh + monitor
 

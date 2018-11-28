@@ -38,11 +38,8 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
 
 	private String adminAddress;
 	private String env;
+	private String accessToken;
 	private String mirrorfile;
-
-	public void setEnvprop(String envprop) {
-		this.envprop = envprop;
-	}
 
 	public void setAdminAddress(String adminAddress) {
 		this.adminAddress = adminAddress;
@@ -52,7 +49,11 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
 		this.env = env;
 	}
 
-    public void setMirrorfile(String mirrorfile) {
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
+	}
+
+	public void setMirrorfile(String mirrorfile) {
         this.mirrorfile = mirrorfile;
     }
 
@@ -60,7 +61,7 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
 
 	@Override
 	public void afterPropertiesSet() {
-		XxlConfBaseFactory.init(adminAddress, env, mirrorfile);
+		XxlConfBaseFactory.init(adminAddress, env, accessToken, mirrorfile);
 	}
 
 	@Override

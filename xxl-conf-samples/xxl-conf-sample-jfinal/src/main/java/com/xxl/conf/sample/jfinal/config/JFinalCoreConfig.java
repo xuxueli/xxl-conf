@@ -22,6 +22,7 @@ public class JFinalCoreConfig extends JFinalConfig {
 		XxlConfBaseFactory.init(
 				prop.getProperty("xxl.conf.admin.address"),
 				prop.getProperty("xxl.conf.env"),
+				prop.getProperty("xxl.conf.access.token"),
 				prop.getProperty("xxl.conf.mirrorfile"));
 	}
 	private void destoryXxlConfFactory() {

@@ -15,6 +15,7 @@
 		<!-- 环境配置文件地址，如 "xxl-conf.properties" 或 "file:/data/webapps/xxl-conf.properties" -->
 		<property name="adminAddress" value="${xxl.conf.admin.address}" />
 		<property name="env" value="${xxl.conf.env}" />
+		<property name="accessToken" value="${xxl.conf.access.token}" />
 		<property name="mirrorfile" value="${xxl.conf.mirrorfile}" />
 	</bean>
 

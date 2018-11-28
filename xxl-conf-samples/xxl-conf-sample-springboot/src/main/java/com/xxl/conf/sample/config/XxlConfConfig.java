@@ -23,6 +23,9 @@ public class XxlConfConfig {
     @Value("${xxl.conf.env}")
     private String env;
 
+    @Value("${xxl.conf.access.token}")
+    private String accessToken;
+
     @Value("${xxl.conf.mirrorfile}")
     private String mirrorfile;
 
@@ -33,6 +36,7 @@ public class XxlConfConfig {
         XxlConfFactory xxlConf = new XxlConfFactory();
         xxlConf.setAdminAddress(adminAddress);
         xxlConf.setEnv(env);
+        xxlConf.setAccessToken(accessToken);
         xxlConf.setMirrorfile(mirrorfile);
 
         logger.info(">>>>>>>>>>> xxl-conf config init.");
