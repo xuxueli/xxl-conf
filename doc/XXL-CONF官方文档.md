@@ -11,20 +11,20 @@
 ## 一、简介
 
 ### 1.1 概述
-XXL-CONF 是一个分布式配置管理平台，拥有"强一致性、毫秒级动态推送、多环境、多语言、配置监听、权限控制、版本回滚"等特性。现已开放源代码，开箱即用。
+XXL-CONF 是一个分布式配置管理平台，拥有"轻量级、秒级动态推送、多环境、多语言、配置监听、权限控制、版本回滚"等特性。现已开放源代码，开箱即用。
 
 ### 1.2 特性
-- 1、简单: 部署简单、接入灵活方便，一分钟上手；
-- 2、在线管理: 提供配置中心, 通过Web界面在线操作配置数据，直观高效；
-- 3、多环境支持：单个配置中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
-- 4、多数据类型配置：支持多种数据类型配置，如：String、Boolean、Short、Integer、Long、Float、Double 等；
-- 5、多语言支持（配置中心Agent服务）：提供配置中心Agent服务，可据此通过Http（long-polling）获取配置数据并实时感知配置变更，从而实现多语言支持。
-- 6、配置变更监听功能：可开发Listener逻辑，监听配置变更事件，可据此动态刷新JDBC连接池等高级功能；
-- 7、毫秒级动态推送: 配置更新后, 实时推送配置信息, 项目中配置数据会实时更新并生效, 不需要重启线上机器;
-- 8、强一致性：保障配置数据的强一致性，提高配置时效性；
-- 9、配置中心HA：配置中心支持集群部署，提供系统可用性；
-- 10、推送服务HA: 配置服务基于ZK集群, 只要集群节点保证存活数量大于N/2N+1, 就可保证服务稳定, 避免单点风险;
-- 11、配置备份: 配置数据同时在ZK与MySQL中存储和备份， 提高配置数据的安全性;
+- 1、简单易用: 接入灵活方便，一分钟上手；
+- 2、轻量级: 部署简单，不依赖第三方服务，一分钟上手；
+- 3、配置中心HA：配置中心支持集群部署，提升配置中心系统容灾和可用性。
+- 4、在线管理: 提供配置中心, 通过Web界面在线操作配置数据，直观高效；
+- 5、多环境支持：单个配置中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
+- 6、多数据类型配置：支持多种数据类型配置，如：String、Boolean、Short、Integer、Long、Float、Double 等；
+- 7、多语言支持：底层通过http服务（long-polling）拉取配置数据并实时感知配置变更，从而实现多语言支持。
+- 8、配置变更监听功能：可开发Listener逻辑，监听配置变更事件，可据此动态刷新JDBC连接池等高级功能；
+- 9、秒级动态推送: 配置更新后, 实时推送配置信息, 项目中配置数据会实时更新并生效, 不需要重启线上机器;
+- 10、最终一致性：底层借助内置广播机制，保障配置数据的最终一致性，从而保证配置数据的同步；
+- 11、配置备份: 配置数据同时在磁盘与MySQL中存储和备份，并定期同步， 提高配置数据的安全性;
 - 12、多种获取配置方式：支持 "API、 注解、XML占位符" 等多种方式获取配置，可灵活选择使用；
 - 13、兼容Spring原生配置：兼容Spring原生配置方式 "@Value"、"${}" 加载本地配置功能；与分布式配置获取方式隔离，互不干扰； 
 - 14、分布式: 支持多业务线接入并统一管理配置信息，支撑分布式业务场景;
@@ -35,8 +35,7 @@ XXL-CONF 是一个分布式配置管理平台，拥有"强一致性、毫秒级�
 - 19、用户管理：支持在线添加和维护用户，包括普通用户和管理员两种类型用户；
 - 20、配置权限控制；以项目为维度进行配置权限控制，管理员拥有全部项目权限，普通用户只有分配才拥有项目下配置的查看和管理权限；
 - 21、历史版本回滚：记录配置变更历史，方便历史配置版本回溯，默认记录10个历史版本；
-- 22、配置同步：全量检测未同步配置项，使用DB中配置备份数据覆盖ZK中配置数据并推送更新；在配置中心异常恢复、新配置中心集群初始化等场景中十分有效。
-- 23、配置快照：客户端从配置中心获取到的配置数据后，会周期性缓存到本地快照文件中，当从配置中心获取配置失败时，将会使用使用本地快照文件中的配置数据；提高系统可用性；
+- 22、配置快照：客户端从配置中心获取到的配置数据后，会周期性缓存到本地快照文件中，当从配置中心获取配置失败时，将会使用使用本地快照文件中的配置数据；提高系统可用性；
 
 
 ## 1.3 发展
@@ -106,8 +105,6 @@ XXL-CONF 是一个分布式配置管理平台，拥有"强一致性、毫秒级�
 - Maven3+
 - Jdk1.7+
 - Mysql5.6+
-- Zookeeper3.4+
-
 
 
 ## 二、快速入门
@@ -120,9 +117,6 @@ XXL-CONF 是一个分布式配置管理平台，拥有"强一致性、毫秒级�
  
     xxl-conf/doc/db/xxl-conf.sql
     
-#### 初始化"ZK集群"
-配置推送基于zookeeper实现，请准备一个稳定的ZK集群。
-
 
 ### 2.2 编译源码
 解压源码,按照maven格式将源码导入IDE, 使用maven进行编译即可，源码结构如下图所示：
@@ -153,16 +147,14 @@ XXL-CONF 是一个分布式配置管理平台，拥有"强一致性、毫秒级�
 - 配置项说明：
 
 ```
-# xxl-conf, zookeeper 地址，如有多个地址用逗号分隔；
-xxl.conf.zkaddress=${zkaddress:127.0.0.1:2181}
-# xxl-conf, zookeeper 的digest权限信息；
-xxl.conf.zkdigest=${zkdigest:}
+# 配置中心数据库配置，存储配置元数据
+spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-conf?Unicode=true&characterEncoding=UTF-8
 
-# xxl-conf, jdbc 
-spring.datasource.url=jdbc:mysql://${mysqladdress:127.0.0.1:3306}/xxl-conf?Unicode=true&amp;characterEncoding=UTF-8
-spring.datasource.username=${mysqlusername:root}
-spring.datasource.password=${mysqlpassword:root_pwd}
-spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+# 配置中心配置数据磁盘路径地址，务必对该路径存在读写权限
+xxl.conf.confdata.filepath=/data/applogs/xxl-conf/confdata
+
+# 配置中心接入验证TOKEN，选填，非空时启用，进行安全严重
+xxl.conf.access.token=
 ```
 
 - 配置中心启动：   
@@ -174,7 +166,7 @@ spring.datasource.driver-class-name=com.mysql.jdbc.Driver
 java -jar xxl-conf-admin.jar
 
 // 方式2：支持自定义 mysql与zk 地址；
-java -jar xxl-conf-admin.jar --mysqladdress=127.0.0.1:3306 --mysqlusername=root --mysqlpassword=root_pwd --zkaddress=127.0.0.1:2181
+java -jar xxl-conf-admin.jar --spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-conf?Unicode=true&characterEncoding=UTF-8
 ```
 
 #### 方式2：Docker 镜像方式搭建：
@@ -228,14 +220,18 @@ docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-co
 
 配置项说明
 ```
-# 配置中心zookeeper集群地址，如有多个地址用逗号分隔；
-xxl.conf.zkaddress=127.0.0.1:2181
-# 配置zookeeper的digest权限信息；
-xxl.conf.zkdigest=
-# 环境配置，如"test、ppe、product"等，指定配置加载环境；
+# 配置中心跟地址，必填；
+xxl.conf.admin.address=http://localhost:8080/xxl-conf-admin
+
+# 环境配置，必填；如"test、ppe、product"等，指定配置加载环境；
 xxl.conf.env=test
-# 配置快照文件地址，非空时启用快照功能；会周期性缓存到本地快照文件中，当从配置中心获取配置失败时，将会使用使用本地快照文件中的配置数据；提高系统可用性；
-xxl.conf.mirrorfile=/data/applogs/xxl-conf/xxl-conf-mirror.properties
+
+# 配置中心接入验证TOKEN，选填，非空时启用，进行安全严重
+xxl.conf.access.token=
+
+# 配置快照文件地址，必填；会周期性缓存到本地快照文件中，当从配置中心获取配置失败时，将会使用使用本地快照文件中的配置数据；提高系统可用性；
+xxl.conf.mirrorfile=/data/applogs/xxl-conf/xxl-conf-mirror-sample.properties
+
 ```
 
 #### C、设置“XXL-CONF 配置工厂”
@@ -251,9 +247,9 @@ xxl.conf.mirrorfile=/data/applogs/xxl-conf/xxl-conf-mirror.properties
 public XxlConfFactory xxlConfFactory() {
 
     XxlConfFactory xxlConf = new XxlConfFactory();
-    xxlConf.setZkaddress(zkaddress);
-    xxlConf.setZkdigest(zkdigest);
+    xxlConf.setAdminAddress(adminAddress);
     xxlConf.setEnv(env);
+    xxlConf.setAccessToken(accessToken);
     xxlConf.setMirrorfile(mirrorfile);
 
     logger.info(">>>>>>>>>>> xxl-conf config init.");
@@ -394,7 +390,8 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
     
 ![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_E0cT.png "在这里输入图片标题")
 
-分配项目权限：选中普通用户，点击右侧 "分配项目权限" 按钮，可为用户分配项目权限。拥有项目权限后，该用户可以查看和操作该项目下全部配置数据。
+分配项目权限：选中普通用户，点击右侧 "分配项目权限" 按钮，可为用户分配项目权限，权限细粒度到 "环境 + 项目"。 
+拥有环境项目权限后，该用户可以查看和操作该环境项目下全部配置数据。
 
 ![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_GaLm.png "在这里输入图片标题")
 
@@ -450,9 +447,8 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 
 - 1、管理平台：提供一个完善强大的配置管理平台，包含：环境管理、用户管理、项目管理、配置管理等功能，全部操作通过Web界面在线完成；
 - 2、管理平台DB：存储配置信息备份、配置的版本变更信息等，进一步保证数据的安全性；同时也存储"管理平台"中多个模块的底层数据；
-- 3、ZK集群：配置中心在ZK集群中维护一个根目录 每新增一条配置项, 将会在该目录下新增一个子节点。当配置变更时将会触发ZK节点的变更, 并将触发对应类型的ZK广播；
+- 3、磁盘配置数据：配置中心在每个配置中心集群节点磁盘中维护一份镜像数据，当配置新增、更新等操作时，将会广播通知并实时刷新每个集群节点磁盘中的配置数据, 最终实时通知接入方客户端；
 - 4、客户端：可参考章节 "5.3 客户端 设计" ；
-- 5、配置中心Agent服务：可选部分，可参考章节 "5.5 配置Agent服务（多语言支持）"；
 
 ### 5.3 "客户端" 设计
 
@@ -461,111 +457,100 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 客户端基于多层设计，核心四层设计如下:
 
 - 1、API层：提供业务方可直接使用的上层API, 简单易用, 一行代码获取配置信息；同时保证配置的实时性、高性能;
-- 2、LocalCache层：客户端的Local Cache，极大提升API层的性能，降低对ZK集群的压力；首次加载配置、监听配置变更、底层异步周期性同步配置时，将会写入或更新缓存；
-- 3、ZK-Client层：ZK远程客户端的封装，用于加载远程配置、通过NodeDataChanged监听配置变更，提高配置时效性；
-- 4、Mirror-File层：配置数据的本地快照文件，会周期性同步 "LocalCache层" 中的配置数据写入到 "Mirror-File" 中；当无法从配置中心获取配置，如ZK宕机时，将会使用 "Mirror-File" 中的配置数据，提高系统的可用性；
+- 2、LocalCache层：客户端的Local Cache，极大提升API层的性能，降低对配置中心集群的压力；首次加载配置、监听配置变更、底层异步周期性同步配置时，将会写入或更新缓存；
+- 4、Mirror-File层：配置数据的本地快照文件，会周期性同步 "LocalCache层" 中的配置数据写入到 "Mirror-File" 中；当无法从配置中心获取配置，如配置中心宕机时，将会使用 "Mirror-File" 中的配置数据，提高系统的可用性；
+- 3、Remote层：配置中心远程客户端的封装，用于加载远程配置、实时监听配置变更，提高配置时效性；
 
-得益于客户端的多层设计，以及 LocalCache 和 Mirror-File 等特性，因此业务方可以在高QPS、高并发场景下使用XXL-CONF的客户端, 不必担心并发压力或ZK宕机导致系统问题。
+得益于客户端的多层设计，以及 LocalCache 和 Mirror-File 等特性，因此业务方可以在高QPS、高并发场景下使用XXL-CONF的客户端, 不必担心并发压力或配置中心宕机导致系统问题。
 
-### 5.4 配置中心接入方式
+### 5.4 配置中心 http 服务（多语言支持）
 
-#### a、Client方式：
-应用通过内嵌和依赖Client端的方式，直连配置中心；此时系统结构分层如下：
+Java语言应用，可以直接通过依赖提供的Client包的方式，方便快速的接入和使用配置中心；可参考章节 "二、快速入门"：
 
-- 接入方应用：内嵌Client端，直连配合中心ZK，获取配置，动态watch配置变更；
-- 配置中心集群：托管配置，配置同步至ZK集群；
+非Java语言，可借助 XXL-CONF 提供的 "配置中心http服务"，获取配置、实时感知配置更新，从而实现多语言支持。
 
-优点：
-- 实时性：配置变更实时推送；
+配置中心提供的 "配置中心http服务" 只会读磁盘配置数据，因此性能极高，而且配置中心支持通过集群无线横向扩展；
 
-缺点：
-- 语言限制：目前仅提供Java语言Client端；
+"配置中心http服务" 接口文档如下：
 
-#### b、Agent方式：
-在配置中心与接入方应用之间，部署 "配置中心Agent服务"（参考 "5.5 配置Agent服务（多语言支持）"），应用通过 "配置中心Agent服务" 获取配置；此时系统结构分层如下：
-
-- 接入方应用：以Http方式从 "配置中心Agent服务" 获取配置。通过 "周期性轮训" 或者 "long-polling" 方式感知配置变更；
-- 配置中心Agent服务：内嵌Client端，直连配合中心ZK，获取配置，动态watch配置变更；并提送配置加载的Agent服务；
-- 配置中心集群：托管配置，配置同步至ZK集群；
-
-优点：
-- 多语言支持：支持通过Http方式获取多个配置数据，无语言限制；
-
-缺点：
-- 实时性：配置变更依赖 "周期性轮训" 或者 "long-polling"；
-
-
-### 5.5 配置Agent服务（多语言支持）
-
-Java应用可通过 "Client方式" 方便的获取配置中心的数据；
-
-非Java语言应用，提供 "配置中心Agent服务" 获取配置中心配置；"配置中心Agent服务" 本质是一个Http接口，支持同步、异步（long-polling）两种Http请求方式；可据此获取配置数据并实时感知配置变更，从而实现多语言支持。
-
-"配置中心Agent服务" 存在LocalCache缓存性能极高，并且支持集群横向扩展；
-
-"配置中心Agent服务" 可参考以下代码：  
-（项目 "xxl-conf-sample-springboot" 本身提供 "配置中心Agent服务" 功能，可直接部署该项目使用；）
+#### a、配置批量获取接口：
 ```
-/xxl-conf/xxl-conf-samples/xxl-conf-sample-springboot/src/main/java/com/xxl/conf/sample/controller/XxlConfAgentController.java
-``` 
+说明：用于批量查询配置数据；
 
-"配置Agent服务" Http接口文档如下：
-```
-// Http接口地址格式
-http://{Agent部署路径}/xxlconfagent
+// 接口地址格式
+{配置中心跟地址}/conf/find?env={环境}&keys={配置Key}&keys={配置Key02}
 
-// 请求参数，get/post方式均可
-accessToken :   请求Token，进行安全严重，需要和 "配置Agent服务" 内部保持一致；
-confKeys    :	配置Key，多个逗号分隔
-async	    :	trne=同步请求，立即返回 "confKeys" 对应的配置信息；false（默认）=异步请求，监听 "confKeys" 对应的配置发生变更后，才会返回发生变更的配置信息；
+// 示例
+http://localhost:8080/xxl-conf-admin/conf/find?env=test&keys=default.key01&keys=default.key02
 
-// 响应数据格式
+// 请求参数：get/post方式均可
+accessToken :   配置中心接入验证TOKEN，选填，非空时启用，进行安全严重
+env         :	环境配置，必填；如"test、ppe、product"等，指定配置加载环境；
+keys	    :	配置Key，支持传递多个，
+
+// 响应数据格式：
 {
-    "code":200,     // 200 表示正常、其他失败
-    "msg":null,     // 错误提示消息
-    "content":{     // 配置信息，KV格式
-        "key01": "value01",
-        "key02": "value02"
-    }
+  "code": 200,      // 200 表示正常、其他失败
+  "msg": null,      // 错误提示消息
+  "data": {         // 配置信息，KV格式
+    "default.key02": "22",
+    "default.key01": "111"
+  }
 }
-
 ```
 
-### 5.6 配置同步功能 
-进入配置管理界面，点击 "全量同步" 按钮可触发该功能。
+#### b、配置实时监控接口：
+```
+说明：用于实时监控配置数据更新，为 long-polling 接口，请求后将会立即阻塞，期间如若参数中配置Key有变动则立即响应通知请求方，否则将会一直阻塞，默认阻塞30s；
 
-将会检测对应项目下的全部未同步配置项，使用DB中配置数据覆盖ZK中配置数据并推送更新；
+// 接口地址格式
+{配置中心跟地址}/conf/monitor?env={环境}&keys={配置Key}&keys={配置Key02}
 
-该功能在配置中心异常恢复、新配置中心集群初始化等场景中十分有效。
+// 示例
+http://localhost:8080/xxl-conf-admin/conf/monitor?env=test&keys=default.key01&keys=default.key02
 
-### 5.7 配置快照功能
+// 请求参数：get/post方式均可
+accessToken :   配置中心接入验证TOKEN，选填，非空时启用，进行安全严重
+env         :	环境配置，必填；如"test、ppe、product"等，指定配置加载环境；
+keys	    :	配置Key，支持传递多个，
+
+// 响应数据格式：
+{
+  "code": 501,                      // 200 表示正常，一直阻塞到结束，说明配置数据没变动；501 表示配置数据有变化；其他标示请求失败
+  "msg": "Monitor key update."      // 错误提示消息
+}
+```
+
+接入方可以借助上面两个接口，获取配置、实时感知配置更新；
+
+
+### 5.5 配置快照功能
 客户端从配置中心获取到的配置数据后，会周期性缓存到本地快照文件中，当从配置中心获取配置失败时，将会使用使用本地快照文件中的配置数据；提高系统可用性；
 
-### 5.8 多环境支持
+### 5.6 多环境支持
 单个配置中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
 
 此处给出一些多环境配置的建议：
 - 机器资源紧缺、系统规模较小时：建议部署单个配置中心集群，比如部署 "配置中心集群"，通过定义多套环境，如 "dev、test、ppe、product" 隔离不同环境配置数据；优点是，可以同享配置中心资源；
 - 机器资源充足、系统规模较大时：建议部署多个配置中心集群，比如部署 "配置中心集群A"，定义环境 "ppe、product"；部署 "配置中心集群B"，定义环境 "dev、test"等；优点是，可以避免多个集群相互影响；
 
-### 5.9 对象代理情况下配置获取
+### 5.7 对象代理情况下配置获取
 在配置所属对象存在代理(JDK、CGLib)的特殊情况下，推荐使用以下方式获取配置：（非代理情况下，可以忽略本章节）
 - 1、采用“API方式”获取配置：最稳定的配置获取方式，API方式底层存在Local Cache不必担心性能问题；
 - 2、为配置属性添加 get、set 方法，不要直接访问配置属性，而是通过配置属性相应的 get 方法获取；
 
-### 5.10 容灾性
+### 5.8 容灾性
 XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可分为以下几层：
 - DB：完整的配置数据存储在数据库中，极大的方便配置数据的备份与迁移；
-- ZK：配置数据在ZK中，可通过ZK集群保证数据安全；
+- 配置中心磁盘：配置中心在每个配置中心集群节点磁盘中维护一份镜像数据，并实时同步更新；
 - Client-镜像文件：接入配置中心的客户端应用会自动对使用的配置生成镜像文件，远程配置中心故障时降级实用镜像文件；
 - Client-LocalCache：接入配置中心的客户端引用，优先使用LocalCache内存中的配置数据，提高性能的同时，降低对底层配置服务的压力；
 - Client-Api：最后暴露给业务的API，用户可具体加载配置数据，完成业务；
 
 鉴于以上基础，在配置服务故障时，可以快速进行配置服务降级与恢复：
-- 配置中心宕机时：对业务系统无影响，业务系统从ZK与Client端镜像文件中获取配置数据；
-- DB宕机：对业务系统无影响，业务系统从ZK与Client端镜像文件中获取配置数据；
-- ZK宕机：对业务系统无影响，业务系统从Client端镜像文件中获取配置数据；
-- 配置中心宕机 + DB宕机 + ZK宕机 + Client端镜像文件被删除：此时，只需要手动创建一份配置镜像文件，上传到Client端应用指定位置即可，业务无影响；
+- 配置中心宕机时：对业务系统无影响，业务系统从配置中心磁盘与Client端镜像文件中获取配置数据；
+- DB宕机：对业务系统无影响，业务系统从配置中心磁盘与Client端镜像文件中获取配置数据；
+- 配置中心宕机 + DB宕机 + Client端镜像文件被删除：此时，只需要手动创建一份配置镜像文件，上传到Client端应用指定位置即可，业务无影响；
 
 
 ## 六、历史版本
@@ -670,24 +655,26 @@ XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可�
 - 1、Docker基础镜像切换，精简镜像；
 - 2、轻量级改造：废弃ZK，改为DB + long polling方案，部署更轻量，学习更简单；
 - 3、访问令牌（accessToken）：为提升系统安全性，配置中心和客户端进行安全性校验，双方AccessToken匹配才允许通讯；
-- 4、[迭代中]启动，优先全量加载镜像数据到registry层，避免逐个请求耗时；
-
+- 4、启动时，优先全量加载镜像数据到registry层，避免逐个请求耗时；
+    - 1、跨语言：支持通过Http方式获取多个配置数据，无语言限制；
+    - 2、动态更新：配置变更时，Agent将会实时感知并更新Local Cache中配置数据，保证实时性；第三方应用内部配置实时性，可通过 "周期性轮训" 或者 "long-polling" 实现；
+    - 3、高性能：得益于 XxlConf 底层实现的 Local Cache，因此该 Agent 服务性能非常高；单机可承担大量配置请求；
+    - 4、集群部署：XxlConf Agent 支持集群部署，提高配置服务的可用性；
+ 
 
 ### TODO LIST
-- 1、本地优先配置：优先加载该配置中数据，常用于本地调试。早期版本功能实用性低，现已移除，考虑是否完全移除；
-- 2、zookeeper客户端迁移至curator；暂时不考虑，自研client更可控；
-- 3、注册中心特性：原生支持注册中心功能，强一致性推送注册信息；
-- 4、分布式锁特性：原生支持分布式锁功能；
-- 5、支持托管配置文件，properties或yml，待考虑，不利于配置复用与细粒度管理；
-- 6、配置中心告警功能；
-- 7、灰度发布：将配置推送到指定环境上的指定ip或者指定模块进程；
-- 8、配置的发布也可以考虑增加审核功能；
-- 9、XxlConfClient 更名为 XxlConf。
-- 10、配置告警：底层DB或ZK异常时，主动推送告警信息；推送粒度为管理员还是配置影响用户，未定；
-- 11、轻量级改造：移除ZK，改为 "消息表 + Server端（广播 + 磁盘） + long-polling（监听 + 全量 + 镜像）" 方式实现，降低学习、部署成本；
-- 12、配置列表只展示有权限的项目列表，无有权限项目时限制不允许登陆；
-- 13、配置日志优化，支持一件回滚与对比：
-- 14、推送模型进一步抽象，兼容 zk 和 http两种模式，admin支持切换：
+- 本地优先配置：优先加载该配置中数据，常用于本地调试。早期版本功能实用性低，现已移除，考虑是否完全移除；
+- 注册中心特性：原生支持注册中心功能，强一致性推送注册信息；
+- 分布式锁特性：原生支持分布式锁功能；
+- 支持托管配置文件，properties或yml，待考虑，不利于配置复用与细粒度管理；
+- 配置中心告警功能；
+- 灰度发布：将配置推送到指定环境上的指定ip或者指定模块进程；
+- 配置的发布也可以考虑增加审核功能；
+- XxlConfClient 更名为 XxlConf。
+- 配置告警：底层DB异常时，主动推送告警信息；推送粒度为管理员还是配置影响用户，未定；
+- 配置列表只展示有权限的项目列表，无有权限项目时限制不允许登陆；
+- 配置日志优化，支持一件回滚与对比：
+- 推送模型进一步抽象，兼容 zk 和 http两种模式，admin支持切换：
     - admin：广播模块。
         - zk：推送zk
         - http：消息表（server变动，配置crud），1s同步，读写磁盘(查询磁盘，替代zk)
@@ -698,10 +685,10 @@ XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可�
         - zk:zkclient查询+实时监控
         - http:long-po查询+实时监控(监控同步admin磁盘)
             - client实时更新：longpolling实时监控key变更事件，60s间隔阻塞，对比md5。60s全量对比一次。
-- 15、配置锁：项目粒度，管理员锁定后，禁止普通用户直接操作；
-- 16、锁定Key变更，需要申请和审核；
-- 17、灰度发布
-- 18、配置关注：关注Key变更发送邮件通知；
+- 配置锁：项目粒度，管理员锁定后，禁止普通用户直接操作；
+- 锁定Key变更，需要申请和审核；
+- 灰度发布
+- 配置关注：关注Key变更发送邮件通知；
   
   
 ## 七、其他

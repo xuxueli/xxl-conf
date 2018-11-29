@@ -573,7 +573,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 		if (deferredResultList != null) {
 			confDeferredResultMap.remove(confFileName);
 			for (DeferredResult deferredResult: deferredResultList) {
-				deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "Monitor key update."));
+				deferredResult.setResult(new ReturnT<>(501, "Monitor key update."));
 			}
 		}
 
