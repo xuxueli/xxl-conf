@@ -8,7 +8,6 @@ import com.xxl.conf.admin.core.util.ReturnT;
 import com.xxl.conf.admin.dao.XxlConfProjectDao;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
 import com.xxl.conf.admin.service.impl.LoginService;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,7 +41,7 @@ public class ConfController {
 	public String index(HttpServletRequest request, Model model, String appname){
 
 		List<XxlConfProject> list = xxlConfProjectDao.findAll();
-		if (CollectionUtils.isEmpty(list)) {
+		if (list==null || list.size()==0) {
 			throw new RuntimeException("系统异常，无可用项目");
 		}
 
