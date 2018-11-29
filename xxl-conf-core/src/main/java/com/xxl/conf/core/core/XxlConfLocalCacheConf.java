@@ -158,7 +158,9 @@ public class XxlConfLocalCacheConf {
     // ---------------------- inner api ----------------------
 
     public enum SET_TYPE{
-        SET, RELOAD, PRELOAD
+        SET,        // first use
+        RELOAD,     // value updated
+        PRELOAD     // pre hot
     }
 
     /**
@@ -172,7 +174,10 @@ public class XxlConfLocalCacheConf {
         localCacheRepository.put(key, new CacheNode(value));
         logger.info(">>>>>>>>>> xxl-conf: {}: [{}={}]", optType, key, value);
 
-        XxlConfListenerFactory.onChange(key, value);
+        // value updated, invoke listener
+        if (optType == SET_TYPE.RELOAD) {
+            XxlConfListenerFactory.onChange(key, value);
+        }
 
         // new conf, new monitor
         if (optType == SET_TYPE.SET) {
@@ -245,7 +250,7 @@ public class XxlConfLocalCacheConf {
             logger.error(e.getMessage(), e);
         }
 
-        XxlConfLocalCacheConf.set(key, remoteData, SET_TYPE.SET );		// support cache null value
+        set(key, remoteData, SET_TYPE.SET );		// support cache null value
         if (remoteData != null) {
             return remoteData;
         }

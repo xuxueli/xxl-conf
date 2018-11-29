@@ -24,7 +24,7 @@ public class XxlConfListenerFactory {
     private static List<XxlConfListener> noKeyConfListener = Collections.synchronizedList(new ArrayList<XxlConfListener>());
 
     /**
-     * add listener with xxl conf change
+     * add listener and first invoke + watch
      *
      * @param key   empty will listener all key
      * @param xxlConfListener
@@ -39,8 +39,14 @@ public class XxlConfListenerFactory {
             noKeyConfListener.add(xxlConfListener);
             return true;
         } else {
-            // watch this key
-            XxlConfClient.get(key);
+
+            // first use, invoke and watch this key
+            try {
+                String value = XxlConfClient.get(key);
+                xxlConfListener.onChange(key, value);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
 
             // listene this key
             List<XxlConfListener> listeners = keyListenerRepository.get(key);

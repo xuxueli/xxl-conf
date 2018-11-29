@@ -8,7 +8,7 @@ package com.xxl.conf.core.listener;
 public interface XxlConfListener {
 
     /**
-     * invoke when xxl conf change
+     * invoke when first-use or conf-change
      *
      * @param key
      */
