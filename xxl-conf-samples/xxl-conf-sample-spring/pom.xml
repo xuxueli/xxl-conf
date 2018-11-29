@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.xuxueli</groupId>
 		<artifactId>xxl-conf-samples</artifactId>
-		<version>1.6.0</version>
+		<version>1.6.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>xxl-conf-sample-spring</artifactId>
 	<packaging>war</packaging>
