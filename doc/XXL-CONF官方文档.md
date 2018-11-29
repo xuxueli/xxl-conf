@@ -164,10 +164,10 @@ xxl.conf.access.token=
 项目编译打包后，可直接通过命令行启动；
 
 ```
-// 方式1：使用默认配置，mysql与zk默认为本地地址；
+// 方式1：使用默认配置，mysql默认为本地地址；
 java -jar xxl-conf-admin.jar
 
-// 方式2：支持自定义 mysql与zk 地址；
+// 方式2：支持自定义 mysql 地址；
 java -jar xxl-conf-admin.jar --spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-conf?Unicode=true&characterEncoding=UTF-8
 ```
 
@@ -186,7 +186,7 @@ docker pull xuxueli/xxl-conf-admin
 docker run -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/xxl-conf-admin
 
 /**
-* 如需自定义 mysql 与zk 等配置，可通过 "PARAMS" 指定；
+* 如需自定义 mysql 等配置，可通过 "PARAMS" 指定；
 * 配置项参考文件：/xxl-conf/xxl-conf-admin/src/main/resources/application.properties
 */
 docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-conf?Unicode=true&characterEncoding=UTF-8 " -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/xxl-conf-admin
@@ -654,8 +654,8 @@ XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可�
 - 6、权限控制增强，细粒度到环境权限校验；
 
 ### 6.12 版本 v1.6.0 Release Notes[迭代中]
-- 1、Docker基础镜像切换，精简镜像；
-- 2、轻量级改造：废弃ZK，改为 "DB + 磁盘 + long polling" 方案，部署更轻量，学习更简单；集群部署更方便，与单机一致；
+- 1、轻量级改造：废弃ZK，改为 "DB + 磁盘 + long polling" 方案，部署更轻量，学习更简单；集群部署更方便，与单机一致；
+- 2、Docker基础镜像切换，精简镜像；
 - 3、高性能：得益于配置中心的 "磁盘配置" 与客户端的 "LocalCache"，因此配置服务性能非常高；单机可承担大量配置请求；
 - 4、跨语言：底层通过http服务（long-polling）拉取配置数据并实时感知配置变更，从而实现多语言支持。
 - 5、访问令牌（accessToken）：为提升系统安全性，配置中心和客户端进行安全性校验，双方AccessToken匹配才允许通讯；
@@ -674,17 +674,6 @@ XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可�
 - 配置告警：底层DB异常时，主动推送告警信息；推送粒度为管理员还是配置影响用户，未定；
 - 配置列表只展示有权限的项目列表，无有权限项目时限制不允许登陆；
 - 配置日志优化，支持一件回滚与对比：
-- 推送模型进一步抽象，兼容 zk 和 http两种模式，admin支持切换：
-    - admin：广播模块。
-        - zk：推送zk
-        - http：消息表（server变动，配置crud），1s同步，读写磁盘(查询磁盘，替代zk)
-            - server 实时更新： 1s轮训一次消息表，同步server列表，磁盘配置镜像。60s全量同步一次。
-            - 接口：监听接口，单线程监听，60s。配置加载接口，批量加载。
-            - 提供 http 接口。httpclient，语言无关。
-    - client：
-        - zk:zkclient查询+实时监控
-        - http:long-po查询+实时监控(监控同步admin磁盘)
-            - client实时更新：longpolling实时监控key变更事件，60s间隔阻塞，对比md5。60s全量对比一次。
 - 配置锁：项目粒度，管理员锁定后，禁止普通用户直接操作；
 - 锁定Key变更，需要申请和审核；
 - 灰度发布

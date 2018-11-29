@@ -37,8 +37,6 @@
 		<commons-collections4.version>4.2</commons-collections4.version>
 		<commons-lang3.version>3.8.1</commons-lang3.version>
 
-		<zookeeper.version>3.4.13</zookeeper.version>
-
 		<mysql-connector-java.version>5.1.47</mysql-connector-java.version>
 
 		<spring-boot.version>1.5.17.RELEASE</spring-boot.version>
