@@ -491,6 +491,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 						// clean old registry-data file
 						cleanFileConfData(confDataFileList);
 
+                        logger.info(">>>>>>>>>>> xxl-conf, sync totel conf data success, sync conf count = {}", confDataFileList.size());
 					} catch (Exception e) {
 						if (!executorStoped) {
 							logger.error(e.getMessage(), e);
