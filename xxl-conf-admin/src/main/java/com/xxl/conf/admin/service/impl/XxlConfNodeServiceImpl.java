@@ -1,6 +1,7 @@
 package com.xxl.conf.admin.service.impl;
 
 import com.xxl.conf.admin.core.model.*;
+import com.xxl.conf.admin.core.util.RegexUtil;
 import com.xxl.conf.admin.core.util.ReturnT;
 import com.xxl.conf.admin.dao.*;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
@@ -334,8 +335,11 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 			return new ReturnT<>(ReturnT.FAIL.getCode(), "keys Invalid.");
 		}
 		for (String key: keys) {
-			if (key==null || key.trim().length()==0) {
-				return new ReturnT<>(ReturnT.FAIL.getCode(), "Key Invalid");
+			if (key==null || key.trim().length()<4 || key.trim().length()>100) {
+				return new ReturnT<>(ReturnT.FAIL.getCode(), "Key Invalid[4~100]");
+			}
+			if (!RegexUtil.matches(RegexUtil.abc_number_point_pattern, key)) {
+				return new ReturnT<>(ReturnT.FAIL.getCode(), "Key format Invalid");
 			}
 		}
 
@@ -365,12 +369,15 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 			return deferredResult;
 		}
 		for (String key: keys) {
-			if (key==null || key.trim().length()==0) {
-				deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "Key Invalid"));
+			if (key==null || key.trim().length()<4 || key.trim().length()>100) {
+				deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "Key Invalid[4~100]"));
+				return deferredResult;
+			}
+			if (!RegexUtil.matches(RegexUtil.abc_number_point_pattern, key)) {
+				deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "Key format Invalid"));
 				return deferredResult;
 			}
 		}
-
 
 		// monitor by client
 		for (String key: keys) {
