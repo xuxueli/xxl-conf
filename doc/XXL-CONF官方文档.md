@@ -188,7 +188,7 @@ docker pull xuxueli/xxl-conf-admin
 docker run -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/xxl-conf-admin
 
 /**
-* 如需自定义 mysql 等配置，可通过 "PARAMS" 指定；
+* 如需自定义 mysql 等配置，可通过 "PARAMS" 指定，参数格式 RAMS="--key=value  --key2=value2" ；
 * 配置项参考文件：/xxl-conf/xxl-conf-admin/src/main/resources/application.properties
 */
 docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-conf?Unicode=true&characterEncoding=UTF-8 " -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/xxl-conf-admin
@@ -680,7 +680,7 @@ XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可�
 ### 6.14 版本 v1.6.1 Release Notes[迭代中]
 - 项目名正则校验问题修复；
 - 在未设置accessToken情况下，非法请求恶意构造配置Key可遍历读取文件漏洞修复；（From：360代码卫士团队）
-
+- [迭代中]底层HTTP工具类优化；
 
 ### TODO LIST
 - 本地优先配置：优先加载该配置中数据，常用于本地调试。早期版本功能实用性低，现已移除，考虑是否完全移除；

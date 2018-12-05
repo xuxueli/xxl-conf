@@ -72,7 +72,7 @@ public class BaseHttpUtil {
     }
 
     public static void main(String[] args) {
-        String url = "http://localhost:8080/xxl-rpc-admin/registry/discovery?biz=xxl-rpc&env=test&key=service01";
+        String url = "http://localhost:8080/xxl-conf-admin/conf/find?env=test&key=service01";
         System.out.println(get(url, 3));
     }
 
