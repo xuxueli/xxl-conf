@@ -1,8 +1,8 @@
 package com.xxl.conf.core.core;
 
 import com.xxl.conf.core.exception.XxlConfException;
-import com.xxl.conf.core.util.BaseHttpUtil;
-import com.xxl.conf.core.util.BasicJsonParser;
+import com.xxl.conf.core.util.BasicHttpUtil;
+import com.xxl.conf.core.util.json.BasicJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,13 +60,13 @@ public class XxlConfRemoteConf {
     private static Map<String, Object> getAndValid(String url, int timeout){
 
         // resp json
-        String respJson = BaseHttpUtil.get(url, timeout);
+        String respJson = BasicHttpUtil.get(url, timeout);
         if (respJson == null) {
             return null;
         }
 
         // parse obj
-        Map<String, Object> respObj = new BasicJsonParser().parseMap(respJson);
+        Map<String, Object> respObj = BasicJson.parseMap(respJson);
         int code = Integer.valueOf(String.valueOf(respObj.get("code")));
         if (code != 200) {
             logger.info("request fail, msg={}", (respObj.containsKey("msg")?respObj.get("msg"):respJson) );

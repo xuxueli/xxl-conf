@@ -1,4 +1,7 @@
-package com.xxl.conf.core.util;
+package com.xxl.conf.core.util.json;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -6,17 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Really basic JSON parser for when you have nothing else available. Comes with some
- * limitations with respect to the JSON specification (e.g. only supports String values),
- * so users will probably prefer to have a library handle things instead (Jackson or Snake
- * YAML are supported).
- *
- * @author Dave Syer
- * @author Jean de Klerk
- * @author Stephane Nicoll
- * @since 1.2.0
+ * @author xuxueli 2018-11-30
  */
-public class BasicJsonParser {
+public class BasicJsonReader {
+	private static Logger logger = LoggerFactory.getLogger(BasicJsonwriter.class);
+
 
 	public Map<String, Object> parseMap(String json) {
 		if (json != null) {
@@ -70,20 +67,6 @@ public class BasicJsonParser {
 			// ignore
 		}
 		return json;
-	}
-
-	private static String trimTrailingCharacter(String string, char c) {
-		if (string.length() > 0 && string.charAt(string.length() - 1) == c) {
-			return string.substring(0, string.length() - 1);
-		}
-		return string;
-	}
-
-	private static String trimLeadingCharacter(String string, char c) {
-		if (string.length() > 0 && string.charAt(0) == c) {
-			return string.substring(1);
-		}
-		return string;
 	}
 
 	private Map<String, Object> parseMapInternal(String json) {
@@ -179,10 +162,19 @@ public class BasicJsonParser {
 		return list;
 	}
 
+	// plugin util
+	private static String trimTrailingCharacter(String string, char c) {
+		if (string.length() > 0 && string.charAt(string.length() - 1) == c) {
+			return string.substring(0, string.length() - 1);
+		}
+		return string;
+	}
 
-
-	public static void main(String[] args) {
-		System.out.println(new BasicJsonParser().parseMap("{\"code\":200}"));;
+	private static String trimLeadingCharacter(String string, char c) {
+		if (string.length() > 0 && string.charAt(0) == c) {
+			return string.substring(1);
+		}
+		return string;
 	}
 
 }
