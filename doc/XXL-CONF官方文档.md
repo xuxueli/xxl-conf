@@ -479,46 +479,62 @@ Java语言应用，可以直接通过依赖提供的Client包的方式，方便�
 
 #### a、配置批量获取接口：
 ```
-说明：用于批量查询配置数据；
+说明：查询配置数据；
 
-// 接口地址格式
-{配置中心跟地址}/conf/find?env={环境}&keys={配置Key}&keys={配置Key02}
+------
 
-// 示例
-http://localhost:8080/xxl-conf-admin/conf/find?env=test&keys=default.key01&keys=default.key02
+地址格式：{配置中心跟地址}/find
 
-// 请求参数：get/post方式均可
-accessToken :   配置中心接入验证TOKEN，选填，非空时启用，进行安全严重
-env         :	环境配置，必填；如"test、ppe、product"等，指定配置加载环境；
-keys	    :	配置Key，支持传递多个，
+请求参数说明：
+ 1、accessToken：请求令牌；
+ 2、env：环境标识
+ 3、keys：配置Key列表
+ 
+请求数据格式如下，放置在 RequestBody 中，JSON格式：
+    {
+        "accessToken" : "xx",
+        "env" : "xx",
+        "keys" : [
+            "key01",
+            "key02"
+        ]
+    }
 
 // 响应数据格式：
 {
   "code": 200,      // 200 表示正常、其他失败
   "msg": null,      // 错误提示消息
   "data": {         // 配置信息，KV格式
-    "default.key02": "22",
-    "default.key01": "111"
+    "key01": "22",
+    "key02": "111"
   }
 }
 ```
 
 #### b、配置实时监控接口：
 ```
-说明：用于实时监控配置数据更新，为 long-polling 接口，请求后将会立即阻塞，期间如若参数中配置Key有变动则立即响应通知请求方，否则将会一直阻塞，默认阻塞30s；
+说明：long-polling 接口，主动阻塞一段时间（默认30s）；直至阻塞超时或配置信息变动时响应；
 
-// 接口地址格式
-{配置中心跟地址}/conf/monitor?env={环境}&keys={配置Key}&keys={配置Key02}
+------
 
-// 示例
-http://localhost:8080/xxl-conf-admin/conf/monitor?env=test&keys=default.key01&keys=default.key02
+地址格式：{配置中心跟地址}/find
 
-// 请求参数：get/post方式均可
-accessToken :   配置中心接入验证TOKEN，选填，非空时启用，进行安全严重
-env         :	环境配置，必填；如"test、ppe、product"等，指定配置加载环境；
-keys	    :	配置Key，支持传递多个，
+请求参数说明：
+ 1、accessToken：请求令牌；
+ 2、env：环境标识
+ 3、keys：配置Key列表
+ 
+请求数据格式如下，放置在 RequestBody 中，JSON格式：
+    {
+        "accessToken" : "xx",
+        "env" : "xx",
+        "keys" : [
+            "key01",
+            "key02"
+        ]
+    }
 
-// 响应数据格式：
+响应数据格式：
 {
   "code": 501,                      // 200 表示正常，一直阻塞到结束，说明配置数据没变动；501 表示配置数据有变化；其他标示请求失败
   "msg": "Monitor key update."      // 错误提示消息
@@ -681,6 +697,7 @@ XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可�
 - 项目名正则校验问题修复；
 - 在未设置accessToken情况下，非法请求恶意构造配置Key可遍历读取文件漏洞修复；（From：360代码卫士团队）
 - 底层HTTP工具类优化；
+- RESTFUL 接口格式调整，给为POST请求，兼容大数据量配置请求；
 
 ### TODO LIST
 - 本地优先配置：优先加载该配置中数据，常用于本地调试。早期版本功能实用性低，现已移除，考虑是否完全移除；

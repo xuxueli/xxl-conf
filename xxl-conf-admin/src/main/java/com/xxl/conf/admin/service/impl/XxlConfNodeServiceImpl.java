@@ -49,6 +49,8 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 
 	@Value("${xxl.conf.confdata.filepath}")
 	private String confDataFilePath;
+	@Value("${xxl.conf.access.token}")
+	private String accessToken;
 
 	private int confBeatTime = 30;
 
@@ -325,9 +327,12 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 	// ---------------------- rest api ----------------------
 
 	@Override
-	public ReturnT<Map<String, String>> find(String env, List<String> keys) {
+	public ReturnT<Map<String, String>> find(String accessToken, String env, List<String> keys) {
 
 		// valid
+		if (this.accessToken!=null && this.accessToken.trim().length()>0 && !this.accessToken.equals(accessToken)) {
+			return new ReturnT<Map<String, String>>(ReturnT.FAIL.getCode(), "AccessToken Invalid.");
+		}
 		if (env==null || env.trim().length()==0) {
 			return new ReturnT<>(ReturnT.FAIL.getCode(), "env Invalid.");
 		}
@@ -354,12 +359,16 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 	}
 
 	@Override
-	public DeferredResult<ReturnT<String>> monitor(String env, List<String> keys) {
+	public DeferredResult<ReturnT<String>> monitor(String accessToken, String env, List<String> keys) {
 
 		// init
 		DeferredResult deferredResult = new DeferredResult(confBeatTime * 1000L, new ReturnT<>(ReturnT.FAIL.getCode(), "Monitor timeout."));
 
 		// valid
+		if (this.accessToken!=null && this.accessToken.trim().length()>0 && !this.accessToken.equals(accessToken)) {
+			deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "AccessToken Invalid."));
+			return deferredResult;
+		}
 		if (env==null || env.trim().length()==0) {
 			deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "env Invalid."));
 			return deferredResult;

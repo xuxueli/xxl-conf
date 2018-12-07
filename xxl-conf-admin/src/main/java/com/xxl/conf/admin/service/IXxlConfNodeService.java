@@ -34,8 +34,8 @@ public interface IXxlConfNodeService {
 
     // ---------------------- rest api ----------------------
 
-    public ReturnT<Map<String, String>> find(String env, List<String> keys);
+    public ReturnT<Map<String, String>> find(String accessToken, String env, List<String> keys);
 
-    public DeferredResult<ReturnT<String>> monitor(String env, List<String> keys);
+    public DeferredResult<ReturnT<String>> monitor(String accessToken, String env, List<String> keys);
 
 }

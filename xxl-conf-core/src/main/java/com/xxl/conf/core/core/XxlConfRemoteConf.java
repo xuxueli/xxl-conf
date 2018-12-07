@@ -1,6 +1,7 @@
 package com.xxl.conf.core.core;
 
 import com.xxl.conf.core.exception.XxlConfException;
+import com.xxl.conf.core.model.XxlConfParamVO;
 import com.xxl.conf.core.util.BasicHttpUtil;
 import com.xxl.conf.core.util.json.BasicJson;
 import org.slf4j.Logger;
@@ -54,13 +55,14 @@ public class XxlConfRemoteConf {
      * get and valid
      *
      * @param url
+     * @param requestBody
      * @param timeout
      * @return
      */
-    private static Map<String, Object> getAndValid(String url, int timeout){
+    private static Map<String, Object> getAndValid(String url, String requestBody, int timeout){
 
         // resp json
-        String respJson = BasicHttpUtil.get(url, timeout);
+        String respJson = BasicHttpUtil.postBody(url, requestBody, timeout);
         if (respJson == null) {
             return null;
         }
@@ -88,14 +90,15 @@ public class XxlConfRemoteConf {
             // url + param
             String url = adminAddressUrl + "/conf/find";
 
-            url += "?env=" + env;
-            url += "&accessToken=" + accessToken;
-            for (String key:keys) {
-                url += "&keys=" + key;
-            }
+            XxlConfParamVO paramVO = new XxlConfParamVO();
+            paramVO.setAccessToken(accessToken);
+            paramVO.setEnv(env);
+            paramVO.setKeys(new ArrayList<String>(keys));
+
+            String paramsJson = BasicJson.toJson(paramVO);
 
             // get and valid
-            Map<String, Object> respObj = getAndValid(url, 10);
+            Map<String, Object> respObj = getAndValid(url, paramsJson, 5);
 
             // parse
             if (respObj!=null && respObj.containsKey("data")) {
@@ -129,14 +132,15 @@ public class XxlConfRemoteConf {
             // url + param
             String url = adminAddressUrl + "/conf/monitor";
 
-            url += "?env=" + env;
-            url += "&accessToken=" + accessToken;
-            for (String key:keys) {
-                url += "&keys=" + key;
-            }
+            XxlConfParamVO paramVO = new XxlConfParamVO();
+            paramVO.setAccessToken(accessToken);
+            paramVO.setEnv(env);
+            paramVO.setKeys(new ArrayList<String>(keys));
+
+            String paramsJson = BasicJson.toJson(paramVO);
 
             // get and valid
-            Map<String, Object> respObj = getAndValid(url, 60);
+            Map<String, Object> respObj = getAndValid(url, paramsJson, 60);
 
             return respObj!=null?true:false;
         }

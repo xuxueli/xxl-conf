@@ -4,13 +4,16 @@ import com.xxl.conf.admin.controller.annotation.PermessionLimit;
 import com.xxl.conf.admin.core.model.XxlConfNode;
 import com.xxl.conf.admin.core.model.XxlConfProject;
 import com.xxl.conf.admin.core.model.XxlConfUser;
+import com.xxl.conf.admin.core.util.JacksonUtil;
 import com.xxl.conf.admin.core.util.ReturnT;
 import com.xxl.conf.admin.dao.XxlConfProjectDao;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
 import com.xxl.conf.admin.service.impl.LoginService;
+import com.xxl.conf.core.model.XxlConfParamVO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -144,33 +147,106 @@ public class ConfController {
     private String accessToken;
 
 
+	/**
+	 * 配置查询 API
+	 *
+	 * 说明：查询配置数据；
+	 *
+	 * ------
+	 * 地址格式：{配置中心跟地址}/find
+	 *
+	 * 请求参数说明：
+	 *  1、accessToken：请求令牌；
+	 *  2、env：环境标识
+	 *  3、keys：配置Key列表
+	 *
+	 * 请求数据格式如下，放置在 RequestBody 中，JSON格式：
+	 *
+	 *     {
+	 *         "accessToken" : "xx",
+	 *         "env" : "xx",
+	 *         "keys" : [
+	 *             "key01",
+	 *             "key02"
+	 *         ]
+	 *     }
+	 *
+	 * @param data
+	 * @return
+	 */
 	@RequestMapping("/find")
 	@ResponseBody
 	@PermessionLimit(limit = false)
-	public ReturnT<Map<String, String>> find(String env, @RequestParam(name = "keys", required = false) List<String> keys, String accessToken){
+	public ReturnT<Map<String, String>> find(@RequestBody(required = false) String data){
 
-	    // valid accessToken
-	    if (this.accessToken!=null && this.accessToken.trim().length()>0 && !this.accessToken.equals(accessToken)) {
-	        return new ReturnT<Map<String, String>>(ReturnT.FAIL.getCode(), "AccessToken Invalid.");
-        }
+		// parse data
+		XxlConfParamVO confParamVO = null;
+		try {
+			confParamVO = (XxlConfParamVO) JacksonUtil.readValue(data, XxlConfParamVO.class);
+		} catch (Exception e) { }
 
-		return xxlConfNodeService.find(env, keys);
+		// parse param
+		String accessToken = null;
+		String env = null;
+		List<String> keys = null;
+		if (confParamVO != null) {
+			accessToken = confParamVO.getAccessToken();
+			env = confParamVO.getEnv();
+			keys = confParamVO.getKeys();
+		}
+
+		return xxlConfNodeService.find(accessToken, env, keys);
 	}
 
-
+	/**
+	 * 配置监控 API
+	 *
+	 * 说明：long-polling 接口，主动阻塞一段时间（默认30s）；直至阻塞超时或配置信息变动时响应；
+	 *
+	 * ------
+	 * 地址格式：{配置中心跟地址}/find
+	 *
+	 * 请求参数说明：
+	 *  1、accessToken：请求令牌；
+	 *  2、env：环境标识
+	 *  3、keys：配置Key列表
+	 *
+	 * 请求数据格式如下，放置在 RequestBody 中，JSON格式：
+	 *
+	 *     {
+	 *         "accessToken" : "xx",
+	 *         "env" : "xx",
+	 *         "keys" : [
+	 *             "key01",
+	 *             "key02"
+	 *         ]
+	 *     }
+	 *
+	 * @param data
+	 * @return
+	 */
 	@RequestMapping("/monitor")
 	@ResponseBody
 	@PermessionLimit(limit = false)
-	public DeferredResult<ReturnT<String>> monitor(String env, @RequestParam(name = "keys", required = false) List<String> keys){
+	public DeferredResult<ReturnT<String>> monitor(@RequestBody(required = false) String data){
 
-        // valid accessToken
-        if (this.accessToken!=null && this.accessToken.trim().length()>0 && !this.accessToken.equals(accessToken)) {
-            DeferredResult deferredResult = new DeferredResult();
-            deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "AccessToken Invalid."));
-            return deferredResult;
-        }
+		// parse data
+		XxlConfParamVO confParamVO = null;
+		try {
+			confParamVO = (XxlConfParamVO) JacksonUtil.readValue(data, XxlConfParamVO.class);
+		} catch (Exception e) { }
 
-		return xxlConfNodeService.monitor(env, keys);
+		// parse param
+		String accessToken = null;
+		String env = null;
+		List<String> keys = null;
+		if (confParamVO != null) {
+			accessToken = confParamVO.getAccessToken();
+			env = confParamVO.getEnv();
+			keys = confParamVO.getKeys();
+		}
+
+		return xxlConfNodeService.monitor(accessToken, env, keys);
 	}
 
 
