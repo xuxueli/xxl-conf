@@ -450,7 +450,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 						}
 
 						// clean old message;
-						if (System.currentTimeMillis() % confBeatTime ==0) {
+						if ( (System.currentTimeMillis()/1000) % confBeatTime ==0) {
 							xxlConfNodeMsgDao.cleanMessage(confBeatTime);
 							readedMessageIds.clear();
 						}
