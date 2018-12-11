@@ -39,12 +39,14 @@ $(function() {
 
 	});
 
-	// jquery.validate 自定义校验
-	jQuery.validator.addMethod("myValid01", function(value, element) {
-		var length = value.length;
-		var valid = /^[a-z][a-z0-9-]*$/;
-		return this.optional(element) || valid.test(value);
-	}, "限制以小写字母开头，由小写字母、数字和中划线组成");
+
+    // jquery.validate 自定义校验
+    jQuery.validator.addMethod("myValid01", function(value, element) {
+        var length = value.length;
+        var valid = /^[a-z][a-z0-9.]*$/;
+        return this.optional(element) || valid.test(value);
+    }, "限制以小写字母开头，由小写字母、数字和.组成");
+
 
 	$('.add').on('click', function(){
 		$('#addModal').modal({backdrop: false, keyboard: false}).modal('show');
@@ -68,7 +70,7 @@ $(function() {
             appname : {
 				required :"请输入AppName",
 				rangelength:"AppName长度限制为4~100",
-				myValid01: "限制以小写字母开头，由小写字母、数字和中划线组成"
+				myValid01: "限制以小写字母开头，由小写字母、数字和.组成"
 			},
             title : {
 				required :"请输入项目名称",
@@ -138,7 +140,7 @@ $(function() {
             appname : {
                 required :"请输入AppName",
                 rangelength:"AppName长度限制为4~100",
-                myValid01: "限制以小写字母开头，由小写字母、数字和中划线组成"
+                myValid01: "限制以小写字母开头，由小写字母、数字和.组成"
             },
             title : {
                 required :"请输入项目名称",
