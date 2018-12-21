@@ -337,7 +337,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 			return new ReturnT<>(ReturnT.FAIL.getCode(), "env Invalid.");
 		}
 		if (keys==null || keys.size()==0) {
-			return new ReturnT<>(ReturnT.FAIL.getCode(), "keys Invalid.");
+			return new ReturnT<>(ReturnT.FAIL.getCode(), "keys Empty.");
 		}
 
 		// find key value
@@ -346,15 +346,21 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 
 			// valid key
 			if (key==null || key.trim().length()<4 || key.trim().length()>100
-					|| !RegexUtil.matches(RegexUtil.abc_number_point_pattern, key) ) {
+					|| !RegexUtil.matches(RegexUtil.abc_number_line_point_pattern, key) ) {
 				continue;
 			}
 
-			// find value
+			// get value
 			String value = getFileConfData(env, key);
-			if (value != null) {
-				result.put(key, value);
-			}
+			if (value == null) {
+			    continue;
+            }
+
+            // put
+            result.put(key, value);
+		}
+		if (result.size() == 0) {
+			return new ReturnT<>(ReturnT.FAIL.getCode(), "keys Invalid.");
 		}
 
 		return new ReturnT<Map<String, String>>(result);
@@ -376,22 +382,22 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 			return deferredResult;
 		}
 		if (keys==null || keys.size()==0) {
-			deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "keys Invalid."));
+			deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "keys Empty."));
 			return deferredResult;
-		}
-		for (String key: keys) {
-			if (key==null || key.trim().length()<4 || key.trim().length()>100) {
-				deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "Key Invalid[4~100]"));
-				return deferredResult;
-			}
-			if (!RegexUtil.matches(RegexUtil.abc_number_point_pattern, key)) {
-				deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "Key format Invalid"));
-				return deferredResult;
-			}
 		}
 
 		// monitor by client
+		boolean monitorKey = false;
 		for (String key: keys) {
+
+		    // valid key
+            if (key==null || key.trim().length()<4 || key.trim().length()>100
+                    || !RegexUtil.matches(RegexUtil.abc_number_line_point_pattern, key) ) {
+                continue;
+            }
+			monitorKey = true;
+
+            // monitor key
 			String fileName = parseConfDataFileName(env, key);
 
 			List<DeferredResult> deferredResultList = confDeferredResultMap.get(fileName);
@@ -401,6 +407,11 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 			}
 
 			deferredResultList.add(deferredResult);
+		}
+
+		if (!monitorKey) {
+			deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "keys Invalid."));
+			return deferredResult;
 		}
 
 		return deferredResult;

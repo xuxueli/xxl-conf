@@ -13,7 +13,7 @@ public class RegexUtil {
 	public static final String abc_ABC_number = "^[a-zA-Z0-9]+$";
 
 	// 以小写字母开头，由小写字母、数字、中划线、点组成（校验配置 = 项目名前缀+配置后缀）
-	public static final Pattern abc_number_point_pattern = Pattern.compile("^[a-z][a-z0-9-.]*$");
+	public static final Pattern abc_number_line_point_pattern = Pattern.compile("^[a-z][a-z0-9-.]*$");
 
 	/**
 	 * regex match
@@ -49,15 +49,15 @@ public class RegexUtil {
 
 
 	public static void main(String[] args) {
-		System.out.println(matches(abc_number_point_pattern, null));
-		System.out.println(matches(abc_number_point_pattern, ""));
-		System.out.println(matches(abc_number_point_pattern, "./"));
-		System.out.println(matches(abc_number_point_pattern, "EE"));
-		System.out.println(matches(abc_number_point_pattern, "demo-project.test.conf"));
+		System.out.println(matches(abc_number_line_point_pattern, null));
+		System.out.println(matches(abc_number_line_point_pattern, ""));
+		System.out.println(matches(abc_number_line_point_pattern, "./"));
+		System.out.println(matches(abc_number_line_point_pattern, "EE"));
+		System.out.println(matches(abc_number_line_point_pattern, "demo-project.test.conf"));
 
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < 10000; i++) {
-			matches(abc_number_point_pattern, "abc.123.abc"+i);
+			matches(abc_number_line_point_pattern, "abc.123.abc"+i);
 		}
 		long end = System.currentTimeMillis();
 		System.out.println("cost = " + (end-start));
