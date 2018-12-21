@@ -339,20 +339,22 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 		if (keys==null || keys.size()==0) {
 			return new ReturnT<>(ReturnT.FAIL.getCode(), "keys Invalid.");
 		}
-		for (String key: keys) {
-			if (key==null || key.trim().length()<4 || key.trim().length()>100) {
-				return new ReturnT<>(ReturnT.FAIL.getCode(), "Key Invalid[4~100]");
-			}
-			if (!RegexUtil.matches(RegexUtil.abc_number_point_pattern, key)) {
-				return new ReturnT<>(ReturnT.FAIL.getCode(), "Key format Invalid");
-			}
-		}
 
-		// result
+		// find key value
 		Map<String, String> result = new HashMap<String, String>();
 		for (String key: keys) {
+
+			// valid key
+			if (key==null || key.trim().length()<4 || key.trim().length()>100
+					|| !RegexUtil.matches(RegexUtil.abc_number_point_pattern, key) ) {
+				continue;
+			}
+
+			// find value
 			String value = getFileConfData(env, key);
-			result.put(key, value);
+			if (value != null) {
+				result.put(key, value);
+			}
 		}
 
 		return new ReturnT<Map<String, String>>(result);
