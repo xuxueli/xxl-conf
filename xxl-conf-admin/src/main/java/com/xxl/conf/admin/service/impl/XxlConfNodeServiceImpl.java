@@ -352,6 +352,11 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 		Map<String, String> result = new HashMap<String, String>();
 		for (String key: keys) {
 			String value = getFileConfData(env, key);
+
+			if (value == null) {
+				value = "";
+			}
+
 			result.put(key, value);
 		}
 
