@@ -337,30 +337,22 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 			return new ReturnT<>(ReturnT.FAIL.getCode(), "env Invalid.");
 		}
 		if (keys==null || keys.size()==0) {
-			return new ReturnT<>(ReturnT.FAIL.getCode(), "keys Empty.");
+			return new ReturnT<>(ReturnT.FAIL.getCode(), "keys Invalid.");
+		}
+		for (String key: keys) {
+			if (key==null || key.trim().length()<4 || key.trim().length()>100) {
+				return new ReturnT<>(ReturnT.FAIL.getCode(), "Key Invalid[4~100]");
+			}
+			if (!RegexUtil.matches(RegexUtil.abc_number_line_point_pattern, key)) {
+				return new ReturnT<>(ReturnT.FAIL.getCode(), "Key format Invalid");
+			}
 		}
 
-		// find key value
+		// result
 		Map<String, String> result = new HashMap<String, String>();
 		for (String key: keys) {
-
-			// valid key
-			if (key==null || key.trim().length()<4 || key.trim().length()>100
-					|| !RegexUtil.matches(RegexUtil.abc_number_line_point_pattern, key) ) {
-				continue;
-			}
-
-			// get value
 			String value = getFileConfData(env, key);
-			if (value == null) {
-			    continue;
-            }
-
-            // put
-            result.put(key, value);
-		}
-		if (result.size() == 0) {
-			return new ReturnT<>(ReturnT.FAIL.getCode(), "keys Invalid.");
+			result.put(key, value);
 		}
 
 		return new ReturnT<Map<String, String>>(result);
@@ -382,22 +374,22 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 			return deferredResult;
 		}
 		if (keys==null || keys.size()==0) {
-			deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "keys Empty."));
+			deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "keys Invalid."));
 			return deferredResult;
+		}
+		for (String key: keys) {
+			if (key==null || key.trim().length()<4 || key.trim().length()>100) {
+				deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "Key Invalid[4~100]"));
+				return deferredResult;
+			}
+			if (!RegexUtil.matches(RegexUtil.abc_number_line_point_pattern, key)) {
+				deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "Key format Invalid"));
+				return deferredResult;
+			}
 		}
 
 		// monitor by client
-		boolean monitorKey = false;
 		for (String key: keys) {
-
-		    // valid key
-            if (key==null || key.trim().length()<4 || key.trim().length()>100
-                    || !RegexUtil.matches(RegexUtil.abc_number_line_point_pattern, key) ) {
-                continue;
-            }
-			monitorKey = true;
-
-            // monitor key
 			String fileName = parseConfDataFileName(env, key);
 
 			List<DeferredResult> deferredResultList = confDeferredResultMap.get(fileName);
@@ -407,11 +399,6 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 			}
 
 			deferredResultList.add(deferredResult);
-		}
-
-		if (!monitorKey) {
-			deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "keys Invalid."));
-			return deferredResult;
 		}
 
 		return deferredResult;
