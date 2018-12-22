@@ -339,24 +339,34 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 		if (keys==null || keys.size()==0) {
 			return new ReturnT<>(ReturnT.FAIL.getCode(), "keys Invalid.");
 		}
-		for (String key: keys) {
+		/*for (String key: keys) {
 			if (key==null || key.trim().length()<4 || key.trim().length()>100) {
 				return new ReturnT<>(ReturnT.FAIL.getCode(), "Key Invalid[4~100]");
 			}
 			if (!RegexUtil.matches(RegexUtil.abc_number_line_point_pattern, key)) {
 				return new ReturnT<>(ReturnT.FAIL.getCode(), "Key format Invalid");
 			}
-		}
+		}*/
 
 		// result
 		Map<String, String> result = new HashMap<String, String>();
 		for (String key: keys) {
-			String value = getFileConfData(env, key);
 
+			// get val
+			String value = null;
+			if (key==null || key.trim().length()<4 || key.trim().length()>100
+					|| !RegexUtil.matches(RegexUtil.abc_number_line_point_pattern, key) ) {
+				// invalid key, pass
+			} else {
+				value = getFileConfData(env, key);
+			}
+
+			// parse null
 			if (value == null) {
 				value = "";
 			}
 
+			// put
 			result.put(key, value);
 		}
 
@@ -382,7 +392,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 			deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "keys Invalid."));
 			return deferredResult;
 		}
-		for (String key: keys) {
+		/*for (String key: keys) {
 			if (key==null || key.trim().length()<4 || key.trim().length()>100) {
 				deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "Key Invalid[4~100]"));
 				return deferredResult;
@@ -391,10 +401,19 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 				deferredResult.setResult(new ReturnT<>(ReturnT.FAIL.getCode(), "Key format Invalid"));
 				return deferredResult;
 			}
-		}
+		}*/
 
 		// monitor by client
 		for (String key: keys) {
+
+
+			// invalid key, pass
+			if (key==null || key.trim().length()<4 || key.trim().length()>100
+					|| !RegexUtil.matches(RegexUtil.abc_number_line_point_pattern, key) ) {
+				continue;
+			}
+
+			// monitor each key
 			String fileName = parseConfDataFileName(env, key);
 
 			List<DeferredResult> deferredResultList = confDeferredResultMap.get(fileName);
