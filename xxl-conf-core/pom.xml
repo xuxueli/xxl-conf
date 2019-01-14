@@ -36,6 +36,14 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- spring-aop -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${spring.version}</version>
+			<optional>true</optional>
+		</dependency>
+
     </dependencies>
 
 </project>

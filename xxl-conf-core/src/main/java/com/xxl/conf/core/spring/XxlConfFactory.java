@@ -5,6 +5,7 @@ import com.xxl.conf.core.annotation.XxlConf;
 import com.xxl.conf.core.exception.XxlConfException;
 import com.xxl.conf.core.factory.XxlConfBaseFactory;
 import com.xxl.conf.core.listener.impl.BeanRefreshXxlConfListener;
+import com.xxl.conf.core.util.AopTargetUtils;
 import com.xxl.conf.core.util.FieldReflectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -182,7 +183,7 @@ public class XxlConfFactory extends InstantiationAwareBeanPostProcessorAdapter
 					beanField.getBeanName(), beanField.getProperty(), value);
 		} else {
 
-			final Object finalBean = bean;
+			final Object finalBean = AopTargetUtils.getTarget(bean); // get real object
 			ReflectionUtils.doWithFields(bean.getClass(), new ReflectionUtils.FieldCallback() {
 				@Override
 				public void doWith(Field fieldItem) throws IllegalArgumentException, IllegalAccessException {
