@@ -204,7 +204,7 @@ public class ConfController {
 	 * 说明：long-polling 接口，主动阻塞一段时间（默认30s）；直至阻塞超时或配置信息变动时响应；
 	 *
 	 * ------
-	 * 地址格式：{配置中心跟地址}/find
+	 * 地址格式：{配置中心跟地址}/monitor
 	 *
 	 * 请求参数说明：
 	 *  1、accessToken：请求令牌；

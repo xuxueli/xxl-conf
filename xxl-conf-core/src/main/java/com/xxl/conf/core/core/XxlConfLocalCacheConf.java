@@ -121,12 +121,10 @@ public class XxlConfLocalCacheConf {
         }
 
         // monitor
-        long startTime = System.currentTimeMillis();
-        XxlConfRemoteConf.monitor(localCacheRepository.keySet());
-        long endTime = System.currentTimeMillis();
+        boolean monitorRet = XxlConfRemoteConf.monitor(localCacheRepository.keySet());
 
-        // avoid request too quick
-        if ((endTime-startTime)/1000 < 10){
+        // avoid fail-retry request too quick
+        if (!monitorRet){
             TimeUnit.SECONDS.sleep(10);
         }
 
