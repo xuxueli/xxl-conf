@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class XxlConfLocalCacheConf {
     private static Logger logger = LoggerFactory.getLogger(XxlConfClient.class);
-    private static final int  MONITOR_TIMEOUT = 30;
 
 
     // ---------------------- init/destroy ----------------------
@@ -60,7 +59,6 @@ public class XxlConfLocalCacheConf {
             public void run() {
                 while (!refreshThreadStop) {
                     try {
-                        TimeUnit.SECONDS.sleep(3);
                         refreshCacheAndMirror();
                     } catch (Exception e) {
                         if (!refreshThreadStop && !(e instanceof InterruptedException)) {
@@ -118,17 +116,18 @@ public class XxlConfLocalCacheConf {
     private static void refreshCacheAndMirror() throws InterruptedException{
 
         if (localCacheRepository.size()==0) {
+            TimeUnit.SECONDS.sleep(3);
             return;
         }
 
+        // monitor
         long startTime = System.currentTimeMillis();
-        boolean monitor = XxlConfRemoteConf.monitor(localCacheRepository.keySet());
+        XxlConfRemoteConf.monitor(localCacheRepository.keySet());
         long endTime = System.currentTimeMillis();
 
-        // wait 30s if monitor fail
-        long waitTime = (endTime - startTime) / 1000;
-        if (!monitor && waitTime < MONITOR_TIMEOUT) {
-            TimeUnit.SECONDS.sleep(MONITOR_TIMEOUT - waitTime);
+        // avoid request too quick
+        if ((endTime-startTime)/1000 < 10){
+            TimeUnit.SECONDS.sleep(10);
         }
 
         // refresh cache: remote > cache
