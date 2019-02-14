@@ -377,7 +377,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 	public DeferredResult<ReturnT<String>> monitor(String accessToken, String env, List<String> keys) {
 
 		// init
-		DeferredResult deferredResult = new DeferredResult(confBeatTime * 1000L, new ReturnT<>(ReturnT.FAIL.getCode(), "Monitor timeout."));
+		DeferredResult deferredResult = new DeferredResult(confBeatTime * 1000L, new ReturnT<>(ReturnT.SUCCESS_CODE, "Monitor timeout, no key updated."));
 
 		// valid
 		if (this.accessToken!=null && this.accessToken.trim().length()>0 && !this.accessToken.equals(accessToken)) {
@@ -531,7 +531,7 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 						// clean old registry-data file
 						cleanFileConfData(confDataFileList);
 
-                        logger.info(">>>>>>>>>>> xxl-conf, sync totel conf data success, sync conf count = {}", confDataFileList.size());
+                        logger.debug(">>>>>>>>>>> xxl-conf, sync totel conf data success, sync conf count = {}", confDataFileList.size());
 					} catch (Exception e) {
 						if (!executorStoped) {
 							logger.error(e.getMessage(), e);
