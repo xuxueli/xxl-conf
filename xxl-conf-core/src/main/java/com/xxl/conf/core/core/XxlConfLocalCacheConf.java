@@ -151,7 +151,7 @@ public class XxlConfLocalCacheConf {
         }
         XxlConfMirrorConf.writeConfMirror(mirrorConfData);
 
-        logger.info(">>>>>>>>>> xxl-conf, refreshCacheAndMirror success.");
+        logger.debug(">>>>>>>>>> xxl-conf, refreshCacheAndMirror success.");
     }
 
 
