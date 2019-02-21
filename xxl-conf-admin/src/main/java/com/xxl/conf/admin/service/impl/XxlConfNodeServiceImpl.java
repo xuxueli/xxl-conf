@@ -504,6 +504,19 @@ public class XxlConfNodeServiceImpl implements IXxlConfNodeService, Initializing
 			@Override
 			public void run() {
 				while (!executorStoped) {
+
+					// align to beattime
+					try {
+						long sleepSecond = confBeatTime - (System.currentTimeMillis()/1000)%confBeatTime;
+						if (sleepSecond>0 && sleepSecond<confBeatTime) {
+							TimeUnit.SECONDS.sleep(sleepSecond);
+						}
+					} catch (Exception e) {
+						if (!executorStoped) {
+							logger.error(e.getMessage(), e);
+						}
+					}
+
 					try {
 
 						// sync registry-data, db + file
