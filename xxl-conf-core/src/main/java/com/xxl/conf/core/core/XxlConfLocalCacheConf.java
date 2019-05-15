@@ -59,7 +59,6 @@ public class XxlConfLocalCacheConf {
             public void run() {
                 while (!refreshThreadStop) {
                     try {
-                        TimeUnit.SECONDS.sleep(3);
                         refreshCacheAndMirror();
                     } catch (Exception e) {
                         if (!refreshThreadStop && !(e instanceof InterruptedException)) {
@@ -114,13 +113,20 @@ public class XxlConfLocalCacheConf {
     /**
      * refresh Cache And Mirror, with real-time minitor
      */
-    private static void refreshCacheAndMirror(){
+    private static void refreshCacheAndMirror() throws InterruptedException{
 
         if (localCacheRepository.size()==0) {
+            TimeUnit.SECONDS.sleep(3);
             return;
         }
 
-        XxlConfRemoteConf.monitor(localCacheRepository.keySet());
+        // monitor
+        boolean monitorRet = XxlConfRemoteConf.monitor(localCacheRepository.keySet());
+
+        // avoid fail-retry request too quick
+        if (!monitorRet){
+            TimeUnit.SECONDS.sleep(10);
+        }
 
         // refresh cache: remote > cache
         Set<String> keySet = localCacheRepository.keySet();
@@ -151,7 +157,7 @@ public class XxlConfLocalCacheConf {
         }
         XxlConfMirrorConf.writeConfMirror(mirrorConfData);
 
-        logger.info(">>>>>>>>>> xxl-conf, refreshCacheAndMirror success.");
+        logger.debug(">>>>>>>>>> xxl-conf, refreshCacheAndMirror success.");
     }
 
 

@@ -38,6 +38,9 @@ XXL-CONF 是一个轻量级分布式配置管理平台，拥有"轻量级、秒�
 ## Documentation
 - [中文文档](http://www.xuxueli.com/xxl-conf/)
 
+## Communication    
+- [社区交流](http://www.xuxueli.com/page/community.html)
+
 ## Features
 - 1、简单易用: 接入灵活方便，一分钟上手；
 - 2、轻量级: 部署简单，不依赖第三方服务，一分钟上手；
@@ -80,10 +83,6 @@ XXL-CONF 是一个轻量级分布式配置管理平台，拥有"轻量级、秒�
 > 更多接入的公司，欢迎在 [登记地址](https://github.com/xuxueli/xxl-conf/issues/2 ) 登记，登记仅仅为了产品推广。
 
 欢迎大家的关注和使用，XXL-CONF也将拥抱变化，持续发展。
-
-## Communication
-
-- [社区交流](http://www.xuxueli.com/page/community.html)
 
 
 ## Contributing
