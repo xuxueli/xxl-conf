@@ -5,7 +5,7 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-conf/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-conf/)
 [![GitHub release](https://img.shields.io/github/release/xuxueli/xxl-conf.svg)](https://github.com/xuxueli/xxl-conf/releases)
 [![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
-[![donate](https://img.shields.io/badge/%24-donate-ff69b4.svg?style=flat-square)](http://www.xuxueli.com/page/donate.html)
+[![donate](https://img.shields.io/badge/%24-donate-ff69b4.svg?style=flat-square)](https://www.xuxueli.com/page/donate.html)
 
 
 ## 一、简介
@@ -14,7 +14,7 @@
 XXL-CONF 是一个轻量级分布式配置管理平台，拥有"轻量级、秒级动态推送、多环境、跨语言、跨机房、配置监听、权限控制、版本回滚"等特性。现已开放源代码，开箱即用。
 
 ### 1.2 社区交流    
-- [社区交流](http://www.xuxueli.com/page/community.html)
+- [社区交流](https://www.xuxueli.com/page/community.html)
 
 ### 1.3 特性
 - 1、简单易用: 接入灵活方便，一分钟上手；
@@ -85,7 +85,7 @@ XXL-CONF 是一个轻量级分布式配置管理平台，拥有"轻量级、秒�
 
 #### 文档地址
 
-- [中文文档](http://www.xuxueli.com/xxl-conf/)
+- [中文文档](https://www.xuxueli.com/xxl-conf/)
 
 #### 源码仓库地址
 
@@ -746,4 +746,4 @@ XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可�
 
 ---
 ### 捐赠
-无论捐赠金额多少都足够表达您这份心意，非常感谢 ：）      [前往捐赠](http://www.xuxueli.com/page/donate.html )
+无论捐赠金额多少都足够表达您这份心意，非常感谢 ：）      [前往捐赠](https://www.xuxueli.com/page/donate.html )

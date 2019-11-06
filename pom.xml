@@ -8,7 +8,7 @@
 
 	<name>xxl-conf</name>
 	<description>A lightweight distributed configuration management platform.</description>
-	<url>http://www.xuxueli.com/</url>
+	<url>https://www.xuxueli.com/</url>
 
 	<modules>
 		<module>xxl-conf-core</module>
