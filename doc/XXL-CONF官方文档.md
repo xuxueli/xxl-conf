@@ -364,23 +364,23 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 进入 "环境管理" 界面，可自定义和管理环境信息。   
 单个配置中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_01.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_01.png "在这里输入图片标题")
 
 新增环境：点击 "新增环境" 按钮可添加新的环境配置，环境属性说明如下：
 
     - Env：每个环境拥有一个维护的Env，作为环境标识；
     - 环境名称：该环境的名称；
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_02.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_02.png "在这里输入图片标题")
 
 环境切换：配置中心顶部菜单展示当前操作的配置中心环境，可通过该菜单切换不同配置中心环境，从而管理不同环境中的配置数据；
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_03.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_03.png "在这里输入图片标题")
 
 ### 4.2、用户（权限）管理
 
 进入 "用户管理" 界面，可查看配置中心中所有用户信息。
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_04.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_04.png "在这里输入图片标题")
 
 新增用户：点击 "新增用户" 按钮，可添加新用户，用户属性说明如下：
 
@@ -392,17 +392,17 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
     
 系统默认提供了一个管理员用户和一个普通用户。
     
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_E0cT.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_E0cT.png "在这里输入图片标题")
 
 分配项目权限：选中普通用户，点击右侧 "分配项目权限" 按钮，可为用户分配项目权限，权限细粒度到 "环境 + 项目"。 
 拥有环境项目权限后，该用户可以查看和操作该环境项目下全部配置数据。
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_GaLm.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_GaLm.png "在这里输入图片标题")
 
 修改用户密码：配置中心右上角下拉框，点击 "修改密码" 按钮，可修改当前登录用户的登录密码
 （除此之外，管理员用户，可通过编辑用户信息功能来修改其他用户的登录密码）；
     
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_syzc.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_syzc.png "在这里输入图片标题")
 
 
 ### 4.3、项目管理
@@ -414,13 +414,13 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 
 系统默认提供了一个示例项目。
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_05.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_05.png "在这里输入图片标题")
 
 ### 4.4 配置管理
 
 进入"配置管理" 界面, 选择项目，然后可查看和操作该项目下配置数据。
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_06.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_06.png "在这里输入图片标题")
 
 新增配置：点击 "新增配置" 按钮可添加配置数据，配置属性说明如下：
 
@@ -428,7 +428,7 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
     - 描述：该配置的描述信息；
     - VALUE：配置的值；
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_d5ak.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_d5ak.png "在这里输入图片标题")
 
 至此, 一条配置信息已经添加完成；       
 通过客户端可以获取该配置, 并且支持动态推送更新。 
@@ -436,14 +436,14 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 历史版本回滚：配置存在历史变更操作时，点击右侧的 "变更历史" 按钮，可查看该配置的历史变更记录。
 包括操作时间、操作人，设置的配置值等历史数据，因此可以根据历史数据，重新编辑配置并回滚到历史版本；
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_Whz5.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_Whz5.png "在这里输入图片标题")
 
 
 ## 五、总体设计
 
 ### 5.1 架构图
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_07.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_07.png "在这里输入图片标题")
 
 ### 5.2 "配置中心" 设计
 
@@ -456,7 +456,7 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 
 ### 5.3 "客户端" 设计
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-conf/master/doc/images/img_08.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_08.png "在这里输入图片标题")
 
 客户端基于多层设计，核心四层设计如下:
 
