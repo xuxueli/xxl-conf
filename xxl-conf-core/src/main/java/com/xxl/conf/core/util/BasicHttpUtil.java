@@ -47,7 +47,7 @@ public class BasicHttpUtil {
 
             // write requestBody
             DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
-            dataOutputStream.writeBytes(requestBody);
+            dataOutputStream.write(requestBody.getBytes("UTF-8"));
             dataOutputStream.flush();
             dataOutputStream.close();
 
