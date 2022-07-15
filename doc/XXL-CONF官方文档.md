@@ -132,10 +132,7 @@ XXL-CONF 是一个轻量级分布式配置管理平台，拥有"轻量级、秒�
     - xxl-conf-core：公共依赖
     - xxl-conf-samples: 接入XXl-CONF的示例项目，供用户参考学习
         - xxl-conf-sample-frameless：    无框架版本，main方法直接启动运行
-        - xxl-conf-sample-spring：       spring版本
         - xxl-conf-sample-springboot：   springboot版本
-        - xxl-conf-sample-jfinal：       jfinal版本
-        - xxl-conf-sample-nutz：         nutz版本
 
 ### 2.3 “配置中心” 搭建（支持集群）
 
@@ -711,6 +708,7 @@ XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可�
 - 3、客户端配置监控逻辑优化，避免异常情况下重试请求太频繁； 
 - 4、配置中心全量同步线程优化，对齐起始时间，避免集群节点数据不一致；
 - 5、小概率情况下底层通讯乱码问题修复；
+- 6、升级多项maven依赖至较新版本，如springboot等；
 
 ### TODO LIST
 - 本地优先配置：优先加载该配置中数据，常用于本地调试。早期版本功能实用性低，现已移除，考虑是否完全移除；
