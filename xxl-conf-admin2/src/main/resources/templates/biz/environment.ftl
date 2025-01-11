@@ -41,13 +41,13 @@
 			<div class="box" style="margin-bottom:9px;">
 				<div class="box-body">
 					<div class="row" id="data_filter" >
-						<div class="col-xs-3">
+						<div class="col-xs-4">
 							<div class="input-group">
 								<span class="input-group-addon">Env（环境标识）</span>
 								<input type="text" class="form-control env" autocomplete="on" >
 							</div>
 						</div>
-						<div class="col-xs-3">
+						<div class="col-xs-4">
 							<div class="input-group">
 								<span class="input-group-addon">环境名称</span>
 								<input type="text" class="form-control name" autocomplete="on" >

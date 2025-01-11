@@ -41,13 +41,13 @@
 			<div class="box" style="margin-bottom:9px;">
 				<div class="box-body">
 					<div class="row" id="data_filter" >
-						<div class="col-xs-3">
+						<div class="col-xs-4">
 							<div class="input-group">
 								<span class="input-group-addon">AppName</span>
 								<input type="text" class="form-control appname" autocomplete="on" >
 							</div>
 						</div>
-						<div class="col-xs-3">
+						<div class="col-xs-4">
 							<div class="input-group">
 								<span class="input-group-addon">应用名称</span>
 								<input type="text" class="form-control name" autocomplete="on" >
