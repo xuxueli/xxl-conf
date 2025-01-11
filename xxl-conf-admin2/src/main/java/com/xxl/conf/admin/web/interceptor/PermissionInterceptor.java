@@ -83,13 +83,16 @@ public class PermissionInterceptor implements AsyncHandlerInterceptor {
 
 			// default menu
 			List<ResourceDTO> resourceDTOList = Arrays.asList(
-					new ResourceDTO(1, 0, "首页",0, "", "/index", "fa fa-home", 1, 0),
-					new ResourceDTO(2, 0, "注册中心",0, "", "/instance", " fa-cubes", 2, 0),
-					new ResourceDTO(3, 0, "应用管理",0, "ADMIN", "/application", " fa-cloud", 3, 0),
-					new ResourceDTO(4, 0, "环境管理",0, "ADMIN", "/environment", "fa-cog", 4, 0),
-					new ResourceDTO(5, 0, "鉴权管理",0, "ADMIN", "/accesstoken", "fa-key", 5, 0),
-					new ResourceDTO(6, 0, "用户管理",0, "ADMIN", "/user", "fa-users", 6, 0),
-					new ResourceDTO(7, 0, "帮助中心",0, "", "/help", "fa-book", 7, 0)
+					new ResourceDTO(1, 0, "首页",1, "", "/index", "fa fa-home", 1, 0, null),
+					new ResourceDTO(2, 0, "配置中心",1, "", "/confdata", " fa-database", 2, 0, null),
+					new ResourceDTO(3, 0, "注册中心",1, "", "/instance", " fa-cubes", 3, 0, null),
+					new ResourceDTO(4, 0, "系统管理",0, "ADMIN", "/system", "fa-cog", 5, 0, Arrays.asList(
+							new ResourceDTO(5, 4, "应用管理",1, "ADMIN", "/application", " fa-cloud", 4, 0,null),
+							new ResourceDTO(6, 4, "环境管理",1, "ADMIN", "/environment", "fa-cog", 5, 0, null),
+							new ResourceDTO(7, 4, "鉴权管理",1, "ADMIN", "/accesstoken", "fa-key", 6, 0, null),
+							new ResourceDTO(8, 4, "用户管理",1, "ADMIN", "/user", "fa-users", 7, 0, null)
+					)),
+					new ResourceDTO(9, 0, "帮助中心",1, "", "/help", "fa-book", 8, 0, null)
 			);
 			// valid
 			if (!loginService.isAdmin(request)) {

@@ -28,7 +28,7 @@ public class ResourceDTO implements Serializable {
     private String name;
 
     /**
-     * 类型
+     * 类型：0-目录, 1-菜单, 2-按钮
      */
     private int type;
 
@@ -74,7 +74,7 @@ public class ResourceDTO implements Serializable {
 
     public ResourceDTO() {
     }
-    public ResourceDTO(int id, int parentId, String name, int type, String permission, String url, String icon, int order, int status) {
+    public ResourceDTO(int id, int parentId, String name, int type, String permission, String url, String icon, int order, int status, List<ResourceDTO> children) {
         this.id = id;
         this.parentId = parentId;
         this.name = name;
@@ -84,6 +84,7 @@ public class ResourceDTO implements Serializable {
         this.icon = icon;
         this.order = order;
         this.status = status;
+        this.children = children;
     }
 
     public int getId() {
@@ -174,4 +175,11 @@ public class ResourceDTO implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public List<ResourceDTO> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<ResourceDTO> children) {
+        this.children = children;
+    }
 }

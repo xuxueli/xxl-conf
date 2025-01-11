@@ -7,28 +7,35 @@ use `xxl_conf2`;
 
 SET NAMES utf8mb4;
 
-## —————————————————————— service ——————————————————
-CREATE TABLE `xxl_conf_application` (
-    `id`            int(11)         NOT NULL AUTO_INCREMENT,
-    `appname`       varchar(50)     NOT NULL COMMENT 'AppName（应用唯一标识）',
-    `name`          varchar(20)     NOT NULL COMMENT '应用名称',
-    `desc`          varchar(100)    NOT NULL COMMENT '应用描述',
-    `add_time`      datetime        NOT NULL COMMENT '新增时间',
-    `update_time`   datetime        NOT NULL COMMENT '更新时间',
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `i_appname` (`appname`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='应用';
 
-CREATE TABLE `xxl_conf_environment` (
-   `id`             int(11)         NOT NULL AUTO_INCREMENT,
-   `env`            varchar(10)     NOT NULL COMMENT 'ENV（环境唯一标识）',
-   `name`           varchar(20)     NOT NULL COMMENT '环境名称',
-   `desc`           varchar(100)    NOT NULL COMMENT '环境描述',
-   `add_time`       datetime        NOT NULL COMMENT '新增时间',
-   `update_time`    datetime        NOT NULL COMMENT '更新时间',
-   PRIMARY KEY (`id`),
-   UNIQUE KEY `i_env` (`env`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='环境';
+## —————————————————————— config data ——————————————————
+
+CREATE TABLE `xxl_conf_data` (
+    `id`                 bigint(20)      NOT NULL AUTO_INCREMENT,
+    `env`                varchar(10)     NOT NULL COMMENT 'Env（环境唯一标识）',
+    `appname`            varchar(50)     NOT NULL COMMENT 'AppName（应用唯一标识）',
+    `key`                varchar(200)    NOT NULL COMMENT '配置项Key',
+    `value`              text            NOT NULL COMMENT '配置项Value',
+    `desc`               varchar(100)    NOT NULL COMMENT '配置项描述',
+    `add_time`           datetime        NOT NULL COMMENT '新增时间',
+    `update_time`        datetime        NOT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uni_e_a_k` (`env`, `appname`, `key`) USING BTREE,
+    KEY `i_e_a` (`env`, `appname`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='应用配置数据';
+
+CREATE TABLE `xxl_conf_data_log` (
+    `id`                 bigint(20)      NOT NULL AUTO_INCREMENT,
+    `data_id`            bigint(20)      NOT NULL COMMENT '配置数据ID',
+    `value`              text            NOT NULL COMMENT '历史数据，配置项Value',
+    `opt_username`       varchar(50)     NOT NULL COMMENT '操作人，账号',
+    `add_time`           datetime        NOT NULL COMMENT '新增时间',
+    `update_time`        datetime        NOT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    KEY `i_data_id` (`data_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='应用配置数据，操作日志';
+
+## —————————————————————— registry ——————————————————
 
 CREATE TABLE `xxl_conf_instance` (
    `id`                 bigint(20)      NOT NULL AUTO_INCREMENT,
@@ -46,6 +53,8 @@ CREATE TABLE `xxl_conf_instance` (
    KEY `i_e_a` (`env`, `appname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='应用注册实例';
 
+## —————————————————————— broadcast ——————————————————
+
 CREATE TABLE `xxl_conf_message` (
     `id`            bigint(20)      NOT NULL AUTO_INCREMENT,
     `type`          tinyint(4)      NOT NULL COMMENT '消息类型：0-注册更新',
@@ -55,7 +64,30 @@ CREATE TABLE `xxl_conf_message` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='服务注册变更消息';
 
-## —————————————————————— user ——————————————————
+## —————————————————————— env and app ——————————————————
+CREATE TABLE `xxl_conf_application` (
+                                        `id`            int(11)         NOT NULL AUTO_INCREMENT,
+                                        `appname`       varchar(50)     NOT NULL COMMENT 'AppName（应用唯一标识）',
+                                        `name`          varchar(20)     NOT NULL COMMENT '应用名称',
+                                        `desc`          varchar(100)    NOT NULL COMMENT '应用描述',
+                                        `add_time`      datetime        NOT NULL COMMENT '新增时间',
+                                        `update_time`   datetime        NOT NULL COMMENT '更新时间',
+                                        PRIMARY KEY (`id`),
+                                        UNIQUE KEY `i_appname` (`appname`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='应用';
+
+CREATE TABLE `xxl_conf_environment` (
+                                        `id`             int(11)         NOT NULL AUTO_INCREMENT,
+                                        `env`            varchar(10)     NOT NULL COMMENT 'ENV（环境唯一标识）',
+                                        `name`           varchar(20)     NOT NULL COMMENT '环境名称',
+                                        `desc`           varchar(100)    NOT NULL COMMENT '环境描述',
+                                        `add_time`       datetime        NOT NULL COMMENT '新增时间',
+                                        `update_time`    datetime        NOT NULL COMMENT '更新时间',
+                                        PRIMARY KEY (`id`),
+                                        UNIQUE KEY `i_env` (`env`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='环境';
+
+## —————————————————————— user and token ——————————————————
 CREATE TABLE `xxl_conf_user` (
     `id`            int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
     `username`      varchar(50) NOT NULL COMMENT '账号',

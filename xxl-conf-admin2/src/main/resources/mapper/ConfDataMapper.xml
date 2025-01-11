@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.conf.admin.mapper.ConfDataMapper">
+
+    <resultMap id="ConfData" type="com.xxl.conf.admin.model.entity.ConfData" >
+        <result column="id" property="id" />
+        <result column="env" property="env" />
+        <result column="appname" property="appname" />
+        <result column="key" property="key" />
+        <result column="value" property="value" />
+        <result column="desc" property="desc" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`,
+        t.`env`,
+        t.`appname`,
+        t.`key`,
+        t.`value`,
+        t.`desc`,
+        t.`add_time`,
+        t.`update_time`
+    </sql>
+
+    <insert id="insert" parameterType="java.util.Map" >
+        INSERT INTO conf_data (
+            `env`,
+            `appname`,
+            `key`,
+            `value`,
+            `desc`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES(
+                  #{confData.env} ,
+                  #{confData.appname} ,
+                  #{confData.key} ,
+                  #{confData.value} ,
+                  #{confData.desc} ,
+                  NOW() ,
+                  NOW()
+              )
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map" >
+        DELETE FROM conf_data
+        WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="java.util.Map" >
+        UPDATE conf_data
+        SET
+            `env` = #{confData.env},
+            `appname` = #{confData.appname},
+            `key` = #{confData.key},
+            `value` = #{confData.value},
+            `desc` = #{confData.desc},
+            `update_time` = NOW()
+        WHERE `id` = #{confData.id}
+    </update>
+
+    <select id="load" parameterType="java.util.Map" resultMap="ConfData">
+        SELECT <include refid="Base_Column_List" />
+        FROM conf_data AS t
+        WHERE t.`id` = #{id}
+    </select>
+
+    <select id="pageList" parameterType="java.util.Map" resultMap="ConfData">
+        SELECT <include refid="Base_Column_List" />
+        FROM conf_data AS t
+        LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="pageListCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM conf_data AS t
+    </select>
+
+</mapper>
