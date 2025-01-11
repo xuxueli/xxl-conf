@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.conf.admin.mapper.InstanceMapper">
+
+    <resultMap id="Instance" type="com.xxl.conf.admin.model.entity.Instance" >
+        <result column="id" property="id" />
+        <result column="env" property="env" />
+        <result column="appname" property="appname" />
+        <result column="ip" property="ip" />
+        <result column="port" property="port" />
+        <result column="extend_info" property="extendInfo" />
+        <result column="register_model" property="registerModel" />
+        <result column="register_heartbeat" property="registerHeartbeat" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`,
+        t.`env`,
+        t.`appname`,
+        t.`ip`,
+        t.`port`,
+        t.`extend_info`,
+        t.`register_model`,
+        t.`register_heartbeat`,
+        t.`add_time`,
+        t.`update_time`
+    </sql>
+
+    <insert id="insert" parameterType="java.util.Map" >
+        INSERT INTO xxl_conf_instance (
+            `env`,
+            `appname`,
+            `ip`,
+            `port`,
+            `extend_info`,
+            `register_model`,
+            `register_heartbeat`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES(
+              #{instance.env} ,
+              #{instance.appname} ,
+              #{instance.ip} ,
+              #{instance.port} ,
+              #{instance.extendInfo} ,
+              #{instance.registerModel} ,
+              NOW() ,
+              NOW() ,
+              NOW()
+          )
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map" >
+        DELETE FROM xxl_conf_instance
+        WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="java.util.Map" >
+        UPDATE xxl_conf_instance
+        SET
+            `register_model` = #{instance.registerModel},
+            `extend_info` = #{instance.extendInfo},
+            `update_time` = NOW()
+        WHERE `id` = #{instance.id}
+    </update>
+
+    <select id="load" parameterType="java.util.Map" resultMap="Instance">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_conf_instance AS t
+        WHERE t.`id` = #{id}
+    </select>
+
+    <select id="pageList" parameterType="java.util.Map" resultMap="Instance">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_conf_instance AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="env != null and env != ''">
+                AND t.env like CONCAT(CONCAT('%', #{env}), '%')
+            </if>
+            <if test="appname != null and appname != ''">
+                AND t.appname like CONCAT(CONCAT('%', #{appname}), '%')
+            </if>
+        </trim>
+        ORDER BY t.`id` DESC
+        LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="pageListCount" parameterType="java.util.Map" resultType="int" >
+        SELECT count(1)
+        FROM xxl_conf_instance AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="env != null and env != ''">
+                AND t.env like CONCAT(CONCAT('%', #{env}), '%')
+            </if>
+            <if test="appname != null and appname != ''">
+                AND t.appname like CONCAT(CONCAT('%', #{appname}), '%')
+            </if>
+        </trim>
+    </select>
+
+    <select id="queryEnvAndAppName" parameterType="java.util.Map" resultMap="Instance">
+        SELECT DISTINCT t.env, t.appname
+        FROM xxl_conf_instance AS t
+    </select>
+
+    <select id="queryByEnvAndAppNameValid" parameterType="java.util.Map" resultMap="Instance">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_conf_instance AS t
+        WHERE t.env = #{env}
+            AND t.appname = #{appname}
+            AND (
+                t.register_model = #{persistentRegisterModel}
+                OR (
+                    t.register_model = #{autoRegisterModel}
+                    AND t.register_heartbeat IS NOT NULL
+                    AND t.register_heartbeat <![CDATA[ > ]]> #{registerHeartbeatValid}
+                )
+            )
+    </select>
+
+    <delete id="deleteAutoInstance" parameterType="java.util.Map" >
+        DELETE FROM xxl_conf_instance AS t
+        WHERE t.`env` = #{instance.env}
+            AND t.`appname` = #{instance.appname}
+            AND t.`ip` = #{instance.ip}
+            AND t.`port` = #{instance.port}
+            AND t.`register_model` = #{instance.registerModel}
+    </delete>
+
+    <insert id="addAutoInstance" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="instance.id" >
+        INSERT INTO xxl_conf_instance (
+            `env`,
+            `appname`,
+            `ip`,
+            `port`,
+            `extend_info`,
+            `register_model`,
+            `register_heartbeat`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES(
+                  #{instance.env} ,
+                  #{instance.appname} ,
+                  #{instance.ip} ,
+                  #{instance.port} ,
+                  #{instance.extendInfo} ,
+                  #{instance.registerModel} ,
+                  #{instance.registerHeartbeat} ,
+                  NOW() ,
+                  NOW()
+        )
+        ON DUPLICATE KEY UPDATE
+            `register_heartbeat` = #{instance.registerHeartbeat}
+    </insert>
+
+</mapper>

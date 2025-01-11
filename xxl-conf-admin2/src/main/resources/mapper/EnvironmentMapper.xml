@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.conf.admin.mapper.EnvironmentMapper">
+
+    <resultMap id="Environment" type="com.xxl.conf.admin.model.entity.Environment" >
+        <result column="id" property="id" />
+        <result column="env" property="env" />
+        <result column="name" property="name" />
+        <result column="desc" property="desc" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`,
+        t.`env`,
+        t.`name`,
+        t.`desc`,
+        t.`add_time`,
+        t.`update_time`
+    </sql>
+
+    <insert id="insert" parameterType="java.util.Map" >
+        INSERT INTO xxl_conf_environment (
+            `env`,
+            `name`,
+            `desc`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES(
+                  #{environment.env} ,
+                  #{environment.name} ,
+                  #{environment.desc} ,
+                  NOW() ,
+                  NOW()
+              )
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map" >
+        DELETE FROM xxl_conf_environment
+        WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="java.util.Map" >
+        UPDATE xxl_conf_environment
+        SET
+            `name` = #{environment.name},
+            `desc` = #{environment.desc},
+            `update_time` = NOW()
+        WHERE `id` = #{environment.id}
+    </update>
+
+    <select id="load" parameterType="java.util.Map" resultMap="Environment">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_conf_environment AS t
+        WHERE t.`id` = #{id}
+    </select>
+
+    <select id="loadByEnv" parameterType="java.util.Map" resultMap="Environment">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_conf_environment AS t
+        WHERE t.`env` = #{env}
+    </select>
+
+    <select id="pageList" parameterType="java.util.Map" resultMap="Environment">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_conf_environment AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="env != null and env != ''">
+                AND t.env like CONCAT(CONCAT('%', #{env}), '%')
+            </if>
+            <if test="name != null and name != ''">
+                AND t.name like CONCAT(CONCAT('%', #{name}), '%')
+            </if>
+        </trim>
+        LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="pageListCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_conf_environment AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="env != null and env != ''">
+                AND t.env like CONCAT(CONCAT('%', #{env}), '%')
+            </if>
+            <if test="name != null and name != ''">
+                AND t.name like CONCAT(CONCAT('%', #{name}), '%')
+            </if>
+        </trim>
+    </select>
+
+    <select id="findAll" parameterType="java.util.Map" resultMap="Environment">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_conf_environment AS t
+    </select>
+
+</mapper>

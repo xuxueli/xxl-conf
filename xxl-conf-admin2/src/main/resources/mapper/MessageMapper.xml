@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.conf.admin.mapper.MessageMapper">
+
+    <resultMap id="Message" type="com.xxl.conf.admin.model.entity.Message" >
+        <result column="id" property="id" />
+        <result column="type" property="type" />
+        <result column="data" property="data" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`,
+        t.`type`,
+        t.`data`,
+        t.`add_time`,
+        t.`update_time`
+    </sql>
+
+    <insert id="insert" parameterType="java.util.Map" >
+        INSERT INTO xxl_conf_message (
+            `type`,
+            `data`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES(
+                  #{message.type} ,
+                  #{message.data} ,
+                  #{message.addTime} ,
+                  #{message.updateTime}
+              )
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map" >
+        DELETE FROM xxl_conf_message
+        WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="java.util.Map" >
+        UPDATE xxl_conf_message
+        SET
+            `type` = #{message.type},
+            `data` = #{message.data},
+            update_time = NOW()
+        WHERE `id` = #{message.id}
+    </update>
+
+    <select id="load" parameterType="java.util.Map" resultMap="Message">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_conf_message AS t
+        WHERE t.`id` = #{id}
+    </select>
+
+    <select id="pageList" parameterType="java.util.Map" resultMap="Message">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_conf_message AS t
+        LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="pageListCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_conf_message AS t
+    </select>
+
+    <select id="queryValidMessage" parameterType="java.util.Map" resultMap="Message">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_conf_message AS t
+        WHERE
+        t.`add_time` BETWEEN #{msgTimeValidStart} AND #{msgTimeValidEnd}
+            <if test="excludeMsgIds!=null and excludeMsgIds.size()>0">
+                AND t.`id` NOT IN
+                <foreach collection="excludeMsgIds" item="item" open="(" close=")" separator="," >
+                    #{item}
+                </foreach>
+            </if>
+    </select>
+
+    <delete id="cleanMessageInValid" parameterType="java.util.Map" >
+        DELETE FROM xxl_conf_message AS t
+        WHERE t.`add_time` NOT BETWEEN #{msgTimeValidStart} AND #{msgTimeValidEnd}
+    </delete>
+
+</mapper>

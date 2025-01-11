@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.conf.admin.mapper.UserMapper">
+
+	<resultMap id="User" type="com.xxl.conf.admin.model.entity.User" >
+		<result column="id" property="id" />
+		<result column="username" property="username" />
+	    <result column="password" property="password" />
+	    <result column="user_token" property="userToken" />
+	    <result column="status" property="status" />
+		<result column="real_name" property="realName" />
+		<result column="role" property="role" />
+		<result column="add_time" property="addTime" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.id,
+		t.username,
+		t.password,
+		t.user_token,
+		t.status,
+		t.real_name,
+		t.role,
+		t.add_time,
+		t.update_time
+	</sql>
+
+	<insert id="insert" parameterType="com.xxl.conf.admin.model.entity.User" useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO xxl_conf_user (
+			username,
+			password,
+			user_token,
+			status,
+			real_name,
+			role,
+			add_time,
+			update_time
+		) VALUES (
+			 #{username},
+			 #{password},
+			 #{userToken},
+			 #{status},
+			 #{realName},
+			 #{role},
+			 NOW(),
+			 NOW()
+		 );
+	</insert>
+
+	<delete id="delete" parameterType="java.util.HashMap">
+		DELETE
+		FROM xxl_conf_user
+		WHERE id = #{id}
+	</delete>
+
+	<delete id="deleteByIds" parameterType="java.util.HashMap">
+		DELETE
+		FROM xxl_conf_user
+		WHERE id in
+		<foreach collection="ids" item="item" open="(" close=")" separator="," >
+			#{item}
+		</foreach>
+	</delete>
+
+	<update id="update" parameterType="com.xxl.conf.admin.model.entity.User" >
+		UPDATE xxl_conf_user
+		SET
+			<if test="password != null and password != ''">
+				password = #{password},
+			</if>
+			user_token = #{userToken},
+			status = #{status},
+			real_name = #{realName},
+			role = #{role}
+		WHERE id = #{id}
+	</update>
+
+	<select id="loadByUserName" parameterType="java.util.HashMap" resultMap="User">
+		SELECT <include refid="Base_Column_List" />
+		FROM xxl_conf_user AS t
+		WHERE t.username = #{username}
+	</select>
+
+	<select id="pageList" parameterType="java.util.HashMap" resultMap="User">
+		SELECT <include refid="Base_Column_List" />
+		FROM xxl_conf_user AS t
+		<trim prefix="WHERE" prefixOverrides="AND | OR" >
+			<if test="username != null and username != ''">
+				AND t.username like CONCAT(CONCAT('%', #{username}), '%')
+			</if>
+			<if test="status gt -1">
+				AND t.status = #{status}
+			</if>
+		</trim>
+		ORDER BY username ASC
+		LIMIT #{offset}, #{pagesize}
+	</select>
+
+	<select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
+		SELECT count(1)
+		FROM xxl_conf_user AS t
+		<trim prefix="WHERE" prefixOverrides="AND | OR" >
+			<if test="username != null and username != ''">
+				AND t.username like CONCAT(CONCAT('%', #{username}), '%')
+			</if>
+			<if test="status gt -1">
+				AND t.status = #{status}
+			</if>
+		</trim>
+	</select>
+
+</mapper>
