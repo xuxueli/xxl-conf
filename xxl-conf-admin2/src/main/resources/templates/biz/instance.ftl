@@ -89,6 +89,7 @@
 									<label for="lastname" class="col-sm-3 control-label">Env<font color="red">*</font></label>
 									<div class="col-sm-6">
 										${XXL_CONF_CURRENT_ENV}
+										<input name="env" value="${XXL_CONF_CURRENT_ENV}" hidden="hidden" >
 									</div>
 								</div>
 								<div class="form-group">
@@ -151,6 +152,7 @@
 									<label for="lastname" class="col-sm-3 control-label">Env<font color="red">*</font></label>
 									<div class="col-sm-6">
 										${XXL_CONF_CURRENT_ENV}
+										<input name="env" value="${XXL_CONF_CURRENT_ENV}" hidden="hidden" >
 									</div>
 								</div>
 								<div class="form-group">
