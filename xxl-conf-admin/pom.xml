@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.xuxueli</groupId>
 		<artifactId>xxl-conf</artifactId>
-		<version>1.6.2-SNAPSHOT</version>
+		<version>1.7.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>xxl-conf-admin</artifactId>
 	<packaging>jar</packaging>
@@ -53,16 +53,16 @@
 
 		<!-- mysql -->
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>${mysql-connector-java.version}</version>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<version>${mysql-connector-j.version}</version>
 		</dependency>
 
 		<!-- commons-lang3 -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>${commons-lang3.version}</version>
+			<version>3.12.0</version>
 		</dependency>
 
 		<!-- xxl-conf-core -->
