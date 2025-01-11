@@ -37,6 +37,7 @@ public class UserAdaptor {
         xxlUser.setStatus(user.getStatus());
         xxlUser.setRealName(user.getRealName());
         xxlUser.setRole(user.getRole());
+        xxlUser.setPermission(user.getPermission());
         xxlUser.setAddTime(user.getAddTime());
         xxlUser.setUpdateTime(user.getUpdateTime());
         return xxlUser;

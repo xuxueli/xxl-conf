@@ -349,4 +349,70 @@ $(function() {
         $("#updateModal .form .form-group").removeClass("has-error");
 	});
 
+	// ---------- ---------- ---------- grant permission ---------- ---------- ----------
+	$("#data_operation .grantPermission").click(function(){
+
+		// find select ids
+		var selectIds = $.dataTableSelect.selectIdsFind();
+		if (selectIds.length != 1) {
+			layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
+			return;
+		}
+		var row = tableData[ 'key' + selectIds[0] ];
+
+		// fill data
+		$("#grantPermissionModal .form input[name='username']").val(row.username)
+		var permissionDataChoose;
+		if (row.permission) {
+			permissionDataChoose = $(row.permission.split(","));
+		}
+		$("#grantPermissionModal .form input[name='application']").each(function () {
+			if ( $.inArray($(this).val(), permissionDataChoose) > -1 ) {
+				$(this).prop("checked",true).iCheck('update');
+			} else {
+				$(this).prop("checked",false).iCheck('update');
+			}
+		});
+
+		// show
+		$('#grantPermissionModal').modal({backdrop: false, keyboard: false}).modal('show');
+	});
+	$('#grantPermissionModal .ok').click(function () {
+
+		// find select application arr
+		var username = $("#grantPermissionModal .form input[name='username']").val();
+		var selectedApplications = [];
+		$('#grantPermissionModal .form input[name="application"]:checked').each(function () {
+			selectedApplications.push($(this).val());
+		});
+
+		// post
+		$.post(base_url + "/user/grantPermission",
+			{
+				username: username,
+				permission: selectedApplications.join(",")
+			},
+			function(data, status) {
+			if (data.code == 200) {
+				layer.open({
+					icon: '1',
+					content: '操作成功' ,
+					end: function(layero, index){
+						$('#grantPermissionModal').modal('hide');
+					}
+				});
+			} else {
+				layer.open({
+					icon: '2',
+					content: (data.msg||'操作失败')
+				});
+			}
+		});
+	});
+	$("#grantPermissionModal").on('hide.bs.modal', function () {
+		$("#grantPermissionModal .form")[0].reset();
+		$("#grantPermissionModal .form .form-group").removeClass("has-error");
+	});
+
+
 });

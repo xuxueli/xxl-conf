@@ -14,6 +14,7 @@ public class UserDTO {
 	private int status;				// 状态：0-正常、1-停用
 	private String realName;		// 真实姓名
 	private String role;			// 角色
+	private String permission;		// 权限
 	private Date addTime;
 	private Date updateTime;
 
@@ -72,6 +73,14 @@ public class UserDTO {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+	public String getPermission() {
+		return permission;
+	}
+
+	public void setPermission(String permission) {
+		this.permission = permission;
 	}
 
 	public Date getAddTime() {

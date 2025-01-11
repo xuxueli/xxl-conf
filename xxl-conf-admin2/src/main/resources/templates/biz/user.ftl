@@ -74,6 +74,7 @@
 							<button class="btn btn-sm btn-info add" type="button"><i class="fa fa-plus" ></i>${I18n.system_opt_add}</button>
 							<button class="btn btn-sm btn-warning selectOnlyOne update" type="button"><i class="fa fa-edit"></i>${I18n.system_opt_edit}</button>
 							<button class="btn btn-sm btn-danger selectAny delete" type="button"><i class="fa fa-remove "></i>${I18n.system_opt_del}</button>
+							<button class="btn btn-sm btn-primary selectOnlyOne grantPermission" type="button">应用授权</button>
 						</div>
 						<div class="box-body" >
 							<table id="data_list" class="table table-bordered table-striped" width="100%" >
@@ -191,6 +192,55 @@
 									</div>
 								</div>
 
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 应用授权.模态框 -->
+			<div class="modal fade" id="grantPermissionModal" tabindex="-1" role="dialog"  aria-hidden="true">
+				<div class="modal-dialog <#--modal-lg-->">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title" >应用授权</h4>
+						</div>
+						<div class="modal-body">
+							<form class="form-horizontal form" role="form" >
+								<div class="table-responsive">
+									<table id="permissionData" class="table table-bordered" width="100%" >
+										<thead>
+										<tr>
+											<th>AppName</th>
+											<th>应用名称</th>
+											<th>授权</th>
+										</tr>
+										</thead>
+										<tbody>
+										<#if applicationList?exists>
+											<#list applicationList as application>
+												<tr>
+													<td>${application.name}</td>
+													<td>${application.appname}</td>
+													<td>
+														<input type="checkbox" name="application" value="${application.appname}" >
+													</td>
+												</tr>
+											</#list>
+										</#if>
+										</tbody>
+
+									</table>
+								</div>
+
+								<div class="form-group">
+									<div class="text-center">
+										<button type="button" class="btn btn-primary ok" >保存</button>
+										<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+
+										<input type="hidden" name="username"  >
+									</div>
+								</div>
 							</form>
 						</div>
 					</div>

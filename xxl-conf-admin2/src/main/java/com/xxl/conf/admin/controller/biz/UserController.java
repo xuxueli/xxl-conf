@@ -6,6 +6,8 @@ import com.xxl.conf.admin.constant.enums.RoleEnum;
 import com.xxl.conf.admin.constant.enums.UserStatuEnum;
 import com.xxl.conf.admin.model.dto.LoginUserDTO;
 import com.xxl.conf.admin.model.dto.UserDTO;
+import com.xxl.conf.admin.model.entity.Application;
+import com.xxl.conf.admin.service.ApplicationService;
 import com.xxl.conf.admin.service.UserService;
 import com.xxl.conf.admin.service.impl.LoginService;
 import com.xxl.tool.response.PageModel;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,6 +36,8 @@ public class UserController {
     private UserService userService;
     @Resource
     private LoginService loginService;
+    @Resource
+    private ApplicationService applicationService;
 
     @RequestMapping
     @Permission(Consts.ADMIN_PERMISSION)
@@ -40,6 +45,11 @@ public class UserController {
 
         model.addAttribute("UserStatuEnum", UserStatuEnum.values());
         model.addAttribute("RoleEnum", RoleEnum.values());
+
+        // applicationList
+        Response<List<Application>> appResp = applicationService.findAll();
+        List<Application> applicationList = appResp!=null?appResp.getData():null;
+        model.addAttribute("applicationList", applicationList);
 
         return "biz/user";
     }
@@ -78,6 +88,14 @@ public class UserController {
                                    @RequestParam("ids[]") List<Integer> ids) {
         LoginUserDTO loginUser = loginService.getLoginUser(request);
         return userService.deleteByIds(ids, loginUser);
+    }
+
+    @RequestMapping("/grantPermission")
+    @ResponseBody
+    @Permission(Consts.ADMIN_PERMISSION)
+    public Response<String> grantPermission(@RequestParam("username") String username,
+                                            @RequestParam("permission") String permission) {
+        return userService.grantPermission(username, permission);
     }
 
     @RequestMapping("/updatePwd")

@@ -64,6 +64,7 @@ CREATE TABLE `xxl_conf_user` (
     `status`        tinyint(4)  NOT NULL COMMENT '状态：0-正常、1-禁用',
     `real_name`     varchar(50) DEFAULT NULL COMMENT '真实姓名',
     `role`          varchar(20) NOT NULL COMMENT '角色：ADMIN-管理员，NORMAL-普通用户',
+    `permission`    varchar(255) DEFAULT NULL COMMENT '权限：应用ID列表，多个逗号分割',
     `add_time`      datetime    NOT NULL COMMENT '新增时间',
     `update_time`   datetime    NOT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),

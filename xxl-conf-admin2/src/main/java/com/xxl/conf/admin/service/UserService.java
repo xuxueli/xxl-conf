@@ -46,6 +46,11 @@ public interface UserService {
     public Response<User> loadByUserName(String username);
 
     /**
+     * 授权权限
+     */
+    public Response<String> grantPermission(String username, String permission);
+
+    /**
      * 分页查询
      */
     public PageModel<UserDTO> pageList(int offset, int pagesize, String username, int status);

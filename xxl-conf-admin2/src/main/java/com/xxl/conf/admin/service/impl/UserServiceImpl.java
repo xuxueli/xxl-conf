@@ -182,6 +182,15 @@ public class UserServiceImpl implements UserService {
         return new ResponseBuilder<User>().success(record).build();
     }
 
+    @Override
+    public Response<String> grantPermission(String username, String permission) {
+        // update
+        User existUser = userMapper.loadByUserName(username);
+        existUser.setPermission(permission);
+        userMapper.update(existUser);
+        return new ResponseBuilder<String>().success().build();
+    }
+
     /**
      * 分页查询
      */
