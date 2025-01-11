@@ -3,14 +3,17 @@ package com.xxl.conf.admin.service.impl;
 import com.xxl.conf.admin.constant.enums.InstanceRegisterModelEnum;
 import com.xxl.conf.admin.mapper.InstanceMapper;
 import com.xxl.conf.admin.model.dto.InstanceDTO;
+import com.xxl.conf.admin.model.dto.LoginUserDTO;
 import com.xxl.conf.admin.model.entity.Instance;
 import com.xxl.conf.admin.service.InstanceService;
+import com.xxl.conf.admin.util.I18nUtil;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.StringTool;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +36,7 @@ public class InstanceServiceImpl implements InstanceService {
     * 新增
     */
 	@Override
-	public Response<String> insert(Instance instance) {
+	public Response<String> insert(Instance instance, LoginUserDTO loginUser, boolean isAdmin) {
 
 		// valid
 		if (instance == null
@@ -45,6 +48,13 @@ public class InstanceServiceImpl implements InstanceService {
 			return new ResponseBuilder<String>().fail("必要参数缺失").build();
         }
 
+		// valid application
+		List<String> appnameList = loginUser.getPermission()!=null? Arrays.asList(loginUser.getPermission().split(",")):new ArrayList<>();
+		if (!isAdmin && !appnameList.contains(instance.getAppname())){
+			return new ResponseBuilder<String>().fail(I18nUtil.getString("system_permission_limit")).build();
+		}
+
+		// add
 		instanceMapper.insert(instance);
 		return new ResponseBuilder<String>().success().build();
 	}
@@ -53,7 +63,8 @@ public class InstanceServiceImpl implements InstanceService {
 	* 删除
 	*/
 	@Override
-	public Response<String> delete(List<Integer> ids) {
+	public Response<String> delete(List<Integer> ids, LoginUserDTO loginUser, boolean isAdmin) {
+
 		int ret = instanceMapper.delete(ids);
 		return ret>0? new ResponseBuilder<String>().success().build()
 					: new ResponseBuilder<String>().fail().build() ;
@@ -63,7 +74,7 @@ public class InstanceServiceImpl implements InstanceService {
 	* 更新
 	*/
 	@Override
-	public Response<String> update(Instance instance) {
+	public Response<String> update(Instance instance, LoginUserDTO loginUser, boolean isAdmin) {
 
 		// valid
 		InstanceRegisterModelEnum registerModelEnum = InstanceRegisterModelEnum.match(instance.getRegisterModel());
@@ -73,6 +84,13 @@ public class InstanceServiceImpl implements InstanceService {
 			return new ResponseBuilder<String>().fail("必要参数缺失").build();
 		}
 
+		// valid application
+		List<String> appnameList = loginUser.getPermission()!=null? Arrays.asList(loginUser.getPermission().split(",")):new ArrayList<>();
+		if (!isAdmin && !appnameList.contains(instance.getAppname())){
+			return new ResponseBuilder<String>().fail(I18nUtil.getString("system_permission_limit")).build();
+		}
+
+		// update
 		int ret = instanceMapper.update(instance);
 		return ret>0? new ResponseBuilder<String>().success().build()
 					: new ResponseBuilder<String>().fail().build() ;

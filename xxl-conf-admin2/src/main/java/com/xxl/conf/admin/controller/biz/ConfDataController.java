@@ -1,20 +1,26 @@
 package com.xxl.conf.admin.controller.biz;
 
 import com.xxl.conf.admin.annotation.Permission;
+import com.xxl.conf.admin.model.dto.LoginUserDTO;
 import com.xxl.conf.admin.model.entity.Application;
 import com.xxl.conf.admin.model.entity.ConfData;
 import com.xxl.conf.admin.model.entity.Environment;
 import com.xxl.conf.admin.service.ApplicationService;
 import com.xxl.conf.admin.service.ConfDataService;
 import com.xxl.conf.admin.service.EnvironmentService;
+import com.xxl.conf.admin.service.impl.LoginService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
@@ -35,6 +41,8 @@ public class ConfDataController {
     private EnvironmentService environmentService;
     @Resource
     private ApplicationService applicationService;
+    @Resource
+    private LoginService loginService;
 
     /**
     * 页面
@@ -51,6 +59,24 @@ public class ConfDataController {
         model.addAttribute("applicationList", applicationListRet.getData());
 
         return "biz/confdata";
+    }
+
+    /**
+     * find permission application list
+     * @param request
+     * @return
+     */
+    private List<Application> findPermissionApplication(HttpServletRequest request){
+        List<Application> applicationList = applicationService.findAll().getData();
+        if (!loginService.isAdmin(request)) {
+            LoginUserDTO loginUser = loginService.getLoginUser(request);
+            List<String> appnameList = loginUser.getPermission()!=null? Arrays.asList(loginUser.getPermission().split(",")):new ArrayList<>();
+            applicationList = applicationList
+                    .stream()
+                    .filter(application -> appnameList.contains(application.getAppname()))
+                    .collect(Collectors.toList());
+        }
+        return applicationList;
     }
 
     /**

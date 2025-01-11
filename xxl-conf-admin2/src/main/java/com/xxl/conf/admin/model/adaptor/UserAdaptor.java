@@ -61,6 +61,7 @@ public class UserAdaptor {
         loginUserDTO.setUserToken(user.getUserToken());
         loginUserDTO.setRealName(user.getRealName());
         loginUserDTO.setRole(user.getRole());
+        loginUserDTO.setPermission(user.getPermission());
 
         return loginUserDTO;
     }

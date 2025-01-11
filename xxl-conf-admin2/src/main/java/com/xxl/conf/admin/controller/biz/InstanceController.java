@@ -4,12 +4,14 @@ import com.xxl.conf.admin.annotation.Permission;
 import com.xxl.conf.admin.constant.consts.Consts;
 import com.xxl.conf.admin.constant.enums.InstanceRegisterModelEnum;
 import com.xxl.conf.admin.model.dto.InstanceDTO;
+import com.xxl.conf.admin.model.dto.LoginUserDTO;
 import com.xxl.conf.admin.model.entity.Application;
 import com.xxl.conf.admin.model.entity.Environment;
 import com.xxl.conf.admin.model.entity.Instance;
 import com.xxl.conf.admin.service.ApplicationService;
 import com.xxl.conf.admin.service.EnvironmentService;
 import com.xxl.conf.admin.service.InstanceService;
+import com.xxl.conf.admin.service.impl.LoginService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
@@ -38,6 +41,8 @@ public class InstanceController {
     private EnvironmentService environmentService;
     @Resource
     private ApplicationService applicationService;
+    @Resource
+    private LoginService loginService;
 
     /**
     * 页面
@@ -49,12 +54,13 @@ public class InstanceController {
         // enum
         model.addAttribute("InstanceRegisterModelEnum", InstanceRegisterModelEnum.values());
 
-        // data
+        // env
         Response<List<Environment>> environmentListRet = environmentService.findAll();
         model.addAttribute("environmentList", environmentListRet.getData());
 
-        Response<List<Application>> applicationListRet = applicationService.findAll();
-        model.addAttribute("applicationList", applicationListRet.getData());
+        // application
+        List<Application> applicationList = applicationService.findAll().getData();
+        model.addAttribute("applicationList", applicationList);
 
         return "biz/instance";
     }
@@ -89,8 +95,9 @@ public class InstanceController {
     @RequestMapping("/insert")
     @ResponseBody
     @Permission(Consts.ADMIN_PERMISSION)
-    public Response<String> insert(Instance instance){
-        return instanceService.insert(instance);
+    public Response<String> insert(Instance instance, HttpServletRequest request){
+        LoginUserDTO loginUser = loginService.getLoginUser(request);
+        return instanceService.insert(instance,loginUser, loginService.isAdmin(request));
     }
 
     /**
@@ -99,8 +106,9 @@ public class InstanceController {
     @RequestMapping("/delete")
     @ResponseBody
     @Permission(Consts.ADMIN_PERMISSION)
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
-        return instanceService.delete(ids);
+    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids, HttpServletRequest request){
+        LoginUserDTO loginUser = loginService.getLoginUser(request);
+        return instanceService.delete(ids,loginUser, loginService.isAdmin(request));
     }
 
     /**
@@ -109,8 +117,9 @@ public class InstanceController {
     @RequestMapping("/update")
     @ResponseBody
     @Permission(Consts.ADMIN_PERMISSION)
-    public Response<String> update(Instance instance){
-        return instanceService.update(instance);
+    public Response<String> update(Instance instance, HttpServletRequest request){
+        LoginUserDTO loginUser = loginService.getLoginUser(request);
+        return instanceService.update(instance,loginUser, loginService.isAdmin(request));
     }
 
 }

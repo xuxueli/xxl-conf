@@ -13,6 +13,7 @@ public class LoginUserDTO {
 
 	// other
 	private String role;		  	// 角色
+	private String permission;
 
 
 	public int getId() {
@@ -61,5 +62,13 @@ public class LoginUserDTO {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+	public String getPermission() {
+		return permission;
+	}
+
+	public void setPermission(String permission) {
+		this.permission = permission;
 	}
 }

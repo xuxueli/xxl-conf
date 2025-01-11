@@ -47,7 +47,6 @@
 							<div class="input-group">
 								<span class="input-group-addon">Env</span>
 								<select class="form-control env" >
-									<option value="" >全部</option>
 									<#if environmentList?exists>
 										<#list environmentList as item>
 											<option value="${item.env}" >${item.env}(${item.name})</option>
