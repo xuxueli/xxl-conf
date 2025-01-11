@@ -18,7 +18,7 @@ $(function() {
 	        data : function ( d ) {
 	        	var obj = {};
                 obj.appname = $('#data_filter .appname').val();
-                obj.env = $('#data_filter .env').val();
+                obj.env = $('#currentEnv').val();
 	        	obj.start = d.start;
 	        	obj.length = d.length;
                 return obj;
@@ -265,7 +265,7 @@ $(function() {
 
 		// base data
 		$("#updateModal .form input[name='id']").val( row.id );
-		$("#updateModal .form select[name='env']").val( row.env );
+		/*$("#updateModal .form select[name='env']").val( row.env );*/
 		$("#updateModal .form select[name='appname']").val( row.appname );
 		$("#updateModal .form input[name='ip']").val( row.ip );
 		$("#updateModal .form input[name='port']").val( row.port );

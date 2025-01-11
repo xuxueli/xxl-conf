@@ -43,18 +43,6 @@
 			<div class="box" style="margin-bottom:9px;">
 				<div class="box-body">
 					<div class="row" id="data_filter" >
-						<div class="col-xs-3">
-							<div class="input-group">
-								<span class="input-group-addon">Env</span>
-								<select class="form-control env" >
-									<#if environmentList?exists>
-										<#list environmentList as item>
-											<option value="${item.env}" >${item.env}(${item.name})</option>
-										</#list>
-									</#if>
-								</select>
-							</div>
-						</div>
 						<div class="col-xs-5">
 							<div class="input-group">
 								<span class="input-group-addon">AppName</span>
@@ -100,11 +88,7 @@
 								<div class="form-group">
 									<label for="lastname" class="col-sm-3 control-label">Env<font color="red">*</font></label>
 									<div class="col-sm-6">
-										<select class="form-control" name="env" >
-											<#list environmentList as item>
-												<option value="${item.env}" >${item.env}(${item.name})</option>
-											</#list>
-										</select>
+										${XXL_CONF_CURRENT_ENV}
 									</div>
 								</div>
 								<div class="form-group">
@@ -166,11 +150,7 @@
 								<div class="form-group">
 									<label for="lastname" class="col-sm-3 control-label">Env<font color="red">*</font></label>
 									<div class="col-sm-6">
-										<select class="form-control" name="env" disabled >
-											<#list environmentList as item>
-												<option value="${item.env}" >${item.env}(${item.name})</option>
-											</#list>
-										</select>
+										${XXL_CONF_CURRENT_ENV}
 									</div>
 								</div>
 								<div class="form-group">

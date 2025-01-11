@@ -51,10 +51,7 @@ public class ConfDataController {
     @Permission
     public String index(Model model) {
 
-        // data
-        Response<List<Environment>> environmentListRet = environmentService.findAll();
-        model.addAttribute("environmentList", environmentListRet.getData());
-
+        // application
         Response<List<Application>> applicationListRet = applicationService.findAll();
         model.addAttribute("applicationList", applicationListRet.getData());
 

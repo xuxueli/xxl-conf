@@ -54,10 +54,6 @@ public class InstanceController {
         // enum
         model.addAttribute("InstanceRegisterModelEnum", InstanceRegisterModelEnum.values());
 
-        // env
-        Response<List<Environment>> environmentListRet = environmentService.findAll();
-        model.addAttribute("environmentList", environmentListRet.getData());
-
         // application
         List<Application> applicationList = applicationService.findAll().getData();
         model.addAttribute("applicationList", applicationList);

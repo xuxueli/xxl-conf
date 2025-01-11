@@ -4,11 +4,15 @@ import com.xxl.conf.admin.annotation.Permission;
 import com.xxl.conf.admin.constant.enums.RoleEnum;
 import com.xxl.conf.admin.model.dto.LoginUserDTO;
 import com.xxl.conf.admin.model.dto.ResourceDTO;
+import com.xxl.conf.admin.model.entity.Environment;
+import com.xxl.conf.admin.service.EnvironmentService;
+import com.xxl.conf.admin.util.CookieTool;
 import com.xxl.conf.admin.util.I18nUtil;
 import com.xxl.conf.admin.service.impl.LoginService;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.exception.BizException;
 import com.xxl.tool.freemarker.FreemarkerTool;
+import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
@@ -32,6 +36,8 @@ public class PermissionInterceptor implements AsyncHandlerInterceptor {
 
 	@Resource
 	private LoginService loginService;
+	@Resource
+	private EnvironmentService environmentService;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -81,31 +87,70 @@ public class PermissionInterceptor implements AsyncHandlerInterceptor {
 			// i18n, static method
 			modelAndView.addObject("I18nUtil", FreemarkerTool.generateStaticModel(I18nUtil.class.getName()));
 
-			// default menu
-			List<ResourceDTO> resourceDTOList = Arrays.asList(
-					new ResourceDTO(1, 0, "首页",1, "", "/index", "fa fa-home", 1, 0, null),
-					new ResourceDTO(2, 0, "配置中心",1, "", "/confdata", " fa-database", 2, 0, null),
-					new ResourceDTO(3, 0, "注册中心",1, "", "/instance", " fa-cubes", 3, 0, null),
-					new ResourceDTO(4, 0, "系统管理",0, "ADMIN", "/system", "fa-cog", 5, 0, Arrays.asList(
-							new ResourceDTO(5, 4, "应用管理",1, "ADMIN", "/application", " fa-cloud", 4, 0,null),
-							new ResourceDTO(6, 4, "环境管理",1, "ADMIN", "/environment", "fa-cog", 5, 0, null),
-							new ResourceDTO(7, 4, "鉴权管理",1, "ADMIN", "/accesstoken", "fa-key", 6, 0, null),
-							new ResourceDTO(8, 4, "用户管理",1, "ADMIN", "/user", "fa-users", 7, 0, null)
-					)),
-					new ResourceDTO(9, 0, "帮助中心",1, "", "/help", "fa-book", 8, 0, null)
-			);
-			// valid
-			if (!loginService.isAdmin(request)) {
-				resourceDTOList = resourceDTOList.stream()
-						.filter(resourceDTO -> StringTool.isBlank(resourceDTO.getPermission() ))	// normal user had no permission
-						.collect(Collectors.toList());
-			}
-			resourceDTOList.stream().sorted(Comparator.comparing(ResourceDTO::getOrder)).collect(Collectors.toList());
+			// fill menu data
+			fillMenuData(request, modelAndView);
 
-			modelAndView.addObject("resourceList", resourceDTOList);
-
+			// fild env data
+			fillEnvData(request, modelAndView);
 		}
+	}
 
+	/**
+	 * fill menu data
+	 *
+	 * @param request
+	 * @param modelAndView
+	 */
+	private void fillMenuData(HttpServletRequest request, ModelAndView modelAndView){
+		// fill menu-list
+		List<ResourceDTO> resourceDTOList = Arrays.asList(
+				new ResourceDTO(1, 0, "首页",1, "", "/index", "fa fa-home", 1, 0, null),
+				new ResourceDTO(2, 0, "配置中心",1, "", "/confdata", " fa-database", 2, 0, null),
+				new ResourceDTO(3, 0, "注册中心",1, "", "/instance", " fa-cubes", 3, 0, null),
+				new ResourceDTO(4, 0, "系统管理",0, "ADMIN", "/system", "fa-cog", 5, 0, Arrays.asList(
+						new ResourceDTO(5, 4, "应用管理",1, "ADMIN", "/application", " fa-cloud", 4, 0,null),
+						new ResourceDTO(6, 4, "环境管理",1, "ADMIN", "/environment", "fa-cog", 5, 0, null),
+						new ResourceDTO(7, 4, "鉴权管理",1, "ADMIN", "/accesstoken", "fa-key", 6, 0, null),
+						new ResourceDTO(8, 4, "用户管理",1, "ADMIN", "/user", "fa-users", 7, 0, null)
+				)),
+				new ResourceDTO(9, 0, "帮助中心",1, "", "/help", "fa-book", 8, 0, null)
+		);
+		// valid
+		if (!loginService.isAdmin(request)) {
+			resourceDTOList = resourceDTOList.stream()
+					.filter(resourceDTO -> StringTool.isBlank(resourceDTO.getPermission() ))	// normal user had no permission
+					.collect(Collectors.toList());
+		}
+		resourceDTOList.stream().sorted(Comparator.comparing(ResourceDTO::getOrder)).collect(Collectors.toList());
+
+		modelAndView.addObject("resourceList", resourceDTOList);
+	}
+
+	public static final String XXL_CONF_CURRENT_ENV = "XXL_CONF_CURRENT_ENV";
+
+	/**
+	 * fill env data
+	 *
+	 * @param request
+	 * @param modelAndView
+	 */
+	private void fillEnvData(HttpServletRequest request, ModelAndView modelAndView){
+
+
+		// fill env-list
+		Response<List<Environment>> environmentListRet = environmentService.findAll();
+		List<Environment> environmentList = environmentListRet.getData();
+		modelAndView.addObject("environmentList", environmentList);
+
+		// current env
+		String currentEnv = "";
+		if (environmentList!=null && !environmentList.isEmpty()) {
+			String currentEnvCookie = CookieTool.getValue(request, XXL_CONF_CURRENT_ENV);
+			currentEnv = environmentList.stream().map(Environment::getEnv).collect(Collectors.toList()).contains(currentEnvCookie)
+					?currentEnvCookie
+					:environmentList.get(0).getEnv();
+		}
+		modelAndView.addObject(XXL_CONF_CURRENT_ENV, currentEnv);
 	}
 
 }

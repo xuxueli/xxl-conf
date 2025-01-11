@@ -148,5 +148,13 @@ $(function(){
             $.cookie('sidebar_status', 'close', { expires: 7 });	//$.cookie('the_cookie', '', { expires: -1 });
         }
     });
+
+    // change Env
+    $('.changeEnv').click(function(){
+        var env = $(this).attr('env');
+        $.cookie('XXL_CONF_CURRENT_ENV', env, { expires: 7 });	//$.cookie('the_cookie', '', { expires: -1 });
+
+        window.location.reload();
+    });
 	
 });
