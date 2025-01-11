@@ -1,8 +1,10 @@
 package com.xxl.conf.admin.service.impl;
 
+import com.xxl.conf.admin.mapper.ConfDataLogMapper;
 import com.xxl.conf.admin.mapper.ConfDataMapper;
 import com.xxl.conf.admin.model.dto.LoginUserDTO;
 import com.xxl.conf.admin.model.entity.ConfData;
+import com.xxl.conf.admin.model.entity.ConfDataLog;
 import com.xxl.conf.admin.service.ConfDataService;
 import com.xxl.conf.admin.util.I18nUtil;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,8 @@ public class ConfDataServiceImpl implements ConfDataService {
 
 	@Resource
 	private ConfDataMapper confDataMapper;
+	@Resource
+	private ConfDataLogMapper confDataLogMapper;
 
 	/**
     * 新增
@@ -44,6 +48,8 @@ public class ConfDataServiceImpl implements ConfDataService {
 
 		// opt
 		confDataMapper.insert(confData);
+		// log
+		confDataLogMapper.insert(new ConfDataLog(confData.getId(), confData.getValue(), loginUser.getUsername()));
 		return new ResponseBuilder<String>().success().build();
 	}
 
@@ -52,7 +58,12 @@ public class ConfDataServiceImpl implements ConfDataService {
 	*/
 	@Override
 	public Response<String> delete(List<Integer> ids, LoginUserDTO loginUser, boolean isAdmin) {
+		// delete
 		int ret = confDataMapper.delete(ids);
+		// log
+		for (Integer id: ids) {
+			confDataLogMapper.insert(new ConfDataLog(id, "", loginUser.getUsername()));
+		}
 		return ret>0? new ResponseBuilder<String>().success().build()
 					: new ResponseBuilder<String>().fail().build() ;
 	}
@@ -71,6 +82,10 @@ public class ConfDataServiceImpl implements ConfDataService {
 
 		// opt
 		int ret = confDataMapper.update(confData);
+		// log
+		if (ret > 0) {
+			confDataLogMapper.insert(new ConfDataLog(confData.getId(), confData.getValue(), loginUser.getUsername()));
+		}
 		return ret>0? new ResponseBuilder<String>().success().build()
 					: new ResponseBuilder<String>().fail().build() ;
 	}

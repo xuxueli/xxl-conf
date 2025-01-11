@@ -41,6 +41,13 @@ public class ConfDataLog implements Serializable {
     */
     private Date updateTime;
 
+    public ConfDataLog() {
+    }
+    public ConfDataLog(long dataId, String value, String optUsername) {
+        this.dataId = dataId;
+        this.value = value;
+        this.optUsername = optUsername;
+    }
 
     public long getId() {
         return id;

@@ -25,7 +25,7 @@
         t.`update_time`
     </sql>
 
-    <insert id="insert" parameterType="java.util.Map" >
+    <insert id="insert" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO xxl_conf_data (
             `env`,
             `appname`,
