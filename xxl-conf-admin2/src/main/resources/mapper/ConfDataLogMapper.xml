@@ -22,7 +22,7 @@
     </sql>
 
     <insert id="insert" parameterType="java.util.Map" >
-        INSERT INTO conf_data_log (
+        INSERT INTO xxl_conf_data_log (
             `data_id`,
             `value`,
             `opt_username`,
@@ -39,7 +39,7 @@
     </insert>
 
     <delete id="delete" parameterType="java.util.Map" >
-        DELETE FROM conf_data_log
+        DELETE FROM xxl_conf_data_log
         WHERE `id` in
         <foreach collection="ids" item="item" open="(" close=")" separator="," >
             #{item}
@@ -47,7 +47,7 @@
     </delete>
 
     <update id="update" parameterType="java.util.Map" >
-        UPDATE conf_data_log
+        UPDATE xxl_conf_data_log
         SET
             `data_id` = #{confDataLog.dataId},
             `value` = #{confDataLog.value},
@@ -58,19 +58,19 @@
 
     <select id="load" parameterType="java.util.Map" resultMap="ConfDataLog">
         SELECT <include refid="Base_Column_List" />
-        FROM conf_data_log AS t
+        FROM xxl_conf_data_log AS t
         WHERE t.`id` = #{id}
     </select>
 
     <select id="pageList" parameterType="java.util.Map" resultMap="ConfDataLog">
         SELECT <include refid="Base_Column_List" />
-        FROM conf_data_log AS t
+        FROM xxl_conf_data_log AS t
         LIMIT #{offset}, #{pagesize}
     </select>
 
     <select id="pageListCount" parameterType="java.util.Map" resultType="int">
         SELECT count(1)
-        FROM conf_data_log AS t
+        FROM xxl_conf_data_log AS t
     </select>
 
 </mapper>

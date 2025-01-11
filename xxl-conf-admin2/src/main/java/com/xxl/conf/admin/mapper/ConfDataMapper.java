@@ -25,7 +25,7 @@ public interface ConfDataMapper {
     public int delete(@Param("ids") List<Integer> ids);
 
     /**
-    * 更新
+    * 更新 (only update "value + desc" field)
     */
     public int update(@Param("confData") ConfData confData);
 
@@ -37,11 +37,19 @@ public interface ConfDataMapper {
     /**
     * 分页查询Data
     */
-	public List<ConfData> pageList(@Param("offset") int offset, @Param("pagesize") int pagesize);
+	public List<ConfData> pageList(@Param("offset") int offset,
+                                   @Param("pagesize") int pagesize,
+                                   @Param("env") String env,
+                                   @Param("appname") String appname,
+                                   @Param("key") String key);
 
     /**
     * 分页查询Count
     */
-    public int pageListCount(@Param("offset") int offset, @Param("pagesize") int pagesize);
+    public int pageListCount(@Param("offset") int offset,
+                             @Param("pagesize") int pagesize,
+                             @Param("env") String env,
+                             @Param("appname") String appname,
+                             @Param("key") String key);
 
 }

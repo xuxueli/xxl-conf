@@ -3,6 +3,7 @@ $(function() {
 	// select2
 	$("#addModal .form select[name='appname']").select2()
 	$("#updateModal .form select[name='appname']").select2()
+	$("#data_filter select[name='appname']").select2()
 
 	// ---------- ---------- ---------- main table  ---------- ---------- ----------
 	// init date tables
@@ -12,13 +13,14 @@ $(function() {
 		"processing" : true, 
 	    "serverSide": true,
 		"ajax": {
-			url: base_url + "/instance/pageList",
+			url: base_url + "/confdata/pageList",
 			type:"post",
 			// request data
 	        data : function ( d ) {
 	        	var obj = {};
-                obj.appname = $('#data_filter .appname').val();
-                obj.env = $('#data_filter .env').val();
+				obj.env = $('#currentEnv').val();
+				obj.appname = $("#data_filter select[name='appname']").val();
+				obj.key = $('#data_filter .key').val();
 	        	obj.start = d.start;
 	        	obj.length = d.length;
                 return obj;
@@ -59,39 +61,22 @@ $(function() {
 			{
 				"title": 'AppName',
 				"data": 'appname',
-				"width":'20%'
-			},
-			{
-				"title": 'IP:PORT',
-				"data": 'ip',
-				"width":'20%',
-				"render": function ( data, type, row ) {
-					return row.ip + ":" + row.port
-				}
-			},
-			{
-				"title": '注册模式',
-				"data": 'registerModel',
-				"width":'10%',
-				"render": function ( data, type, row ) {
-					var ret = data;
-					$("#addModal .form select[name='registerModel']").children("option").each(function() {
-						if ($(this).val() === row.registerModel+"") {
-							ret = $(this).html();
-						}
-					});
-					return ret;
-				}
-			},
-			{
-				"title": '最后注册心跳时间',
-				"data": 'registerHeartbeat',
 				"width":'15%'
 			},
 			{
-				"title": '扩展信息',
-				"data": 'extendInfo',
-				"width":'15%',
+				"title": '配置Key',
+				"data": 'key',
+				"width":'20%'
+			},
+			{
+				"title": '配置Value',
+				"data": 'key',
+				"width":'20%'
+			},
+			{
+				"title": '配置说明',
+				"data": 'desc',
+				"width":'20%',
 				"render": function ( data, type, row ) {
 					if (!data) {
 						return data;
@@ -158,7 +143,7 @@ $(function() {
 
 			$.ajax({
 				type : 'POST',
-				url : base_url + "/instance/delete",
+				url : base_url + "/confdata/delete",
 				data : {
 					"ids" : selectIds
 				},
@@ -185,6 +170,11 @@ $(function() {
 
 	// ---------- ---------- ---------- add operation ---------- ---------- ----------
 	// add validator method
+	jQuery.validator.addMethod("confKeyValid", function(value, element) {
+		var valid = /^[a-z][a-z0-9.]*$/;
+		return this.optional(element) || valid.test(value);
+	}, '限制小写字母开头，由小写字母、数字和点组成' );
+	// add validator method
 	$("#data_operation .add").click(function(){
 		$('#addModal').modal({backdrop: false, keyboard: false}).modal('show');
 	});
@@ -193,23 +183,20 @@ $(function() {
         errorClass : 'help-block',
         focusInvalid : true,  
         rules : {
-			ip : {
-                required : true,
-				rangelength:[9, 46]
+			desc : {
+                required : true
             },
-			port : {
+			key : {
 				required : true,
-				range:[1000, 65535]
+				confKeyValid:true
 			}
         }, 
         messages : {
-			ip : {
-                required : I18n.system_please_input,
-                rangelength: I18n.system_lengh_limit + "[9-46]"
+			desc : {
+                required : I18n.system_please_input
             },
-			port : {
-				required : I18n.system_please_input,
-				rangelength: I18n.system_num_range + "[1000-65535]"
+			key : {
+				required : I18n.system_please_input
 			}
         },
 		highlight : function(element) {  
@@ -228,7 +215,7 @@ $(function() {
 			var paramData = $("#addModal .form").serializeArray();
 
 			// post
-        	$.post(base_url + "/instance/insert", paramData, function(data, status) {
+        	$.post(base_url + "/confdata/insert", paramData, function(data, status) {
     			if (data.code == "200") {
 					$('#addModal').modal('hide');
 
@@ -267,10 +254,9 @@ $(function() {
 		$("#updateModal .form input[name='id']").val( row.id );
 		$("#updateModal .form select[name='env']").val( row.env );
 		$("#updateModal .form select[name='appname']").val( row.appname );
-		$("#updateModal .form input[name='ip']").val( row.ip );
-		$("#updateModal .form input[name='port']").val( row.port );
-		$("#updateModal .form select[name='registerModel']").val( row.registerModel );
-		$("#updateModal .form textarea[name='extendInfo']").val( row.extendInfo );
+		$("#updateModal .form input[name='key']").val( row.key );
+		$("#updateModal .form textarea[name='value']").val( row.value );
+		$("#updateModal .form input[name='desc']").val( row.desc );
 
 		// show
 		$('#updateModal').modal({backdrop: false, keyboard: false}).modal('show');
@@ -290,32 +276,20 @@ $(function() {
             element.parent('div').append(error);  
         },
 		rules : {
-			name : {
-				required : true,
-				rangelength:[4, 20]
-			},
 			desc : {
-				required : true,
-				rangelength:[4, 100]
+				required : true
 			},
-			accessToken : {
+			key : {
 				required : true,
-				rangelength:[4, 50],
-				accessTokenValid: true
+				confKeyValid:true
 			}
 		},
 		messages : {
-			name : {
-				required : I18n.system_please_input,
-				rangelength: I18n.system_lengh_limit + "[4-20]"
-			},
 			desc : {
-				required : I18n.system_please_input,
-				rangelength: I18n.system_lengh_limit + "[4-100]"
+				required : I18n.system_please_input
 			},
-			accessToken : {
-				required : I18n.system_please_input,
-				rangelength: I18n.system_lengh_limit + "[4-50]"
+			key : {
+				required : I18n.system_please_input
 			}
 		},
         submitHandler : function(form) {
@@ -323,7 +297,7 @@ $(function() {
 			// request
 			var paramData = $("#updateModal .form").serializeArray();
 
-            $.post(base_url + "/instance/update", paramData, function(data, status) {
+            $.post(base_url + "/confdata/update", paramData, function(data, status) {
                 if (data.code == "200") {
                     $('#updateModal').modal('hide');
 

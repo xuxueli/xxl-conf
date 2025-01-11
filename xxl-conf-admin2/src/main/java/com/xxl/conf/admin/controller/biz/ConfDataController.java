@@ -38,8 +38,6 @@ public class ConfDataController {
     @Resource
     private ConfDataService confDataService;
     @Resource
-    private EnvironmentService environmentService;
-    @Resource
     private ApplicationService applicationService;
     @Resource
     private LoginService loginService;
@@ -83,8 +81,11 @@ public class ConfDataController {
     @ResponseBody
     @Permission
     public Response<PageModel<ConfData>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
-                                                  @RequestParam(required = false, defaultValue = "10") int pagesize) {
-        PageModel<ConfData> pageModel = confDataService.pageList(offset, pagesize);
+                                                  @RequestParam(required = false, defaultValue = "10") int pagesize,
+                                                  @RequestParam("env") String env,
+                                                  @RequestParam("appname") String appname,
+                                                  @RequestParam("key") String key) {
+        PageModel<ConfData> pageModel = confDataService.pageList(offset, pagesize, env, appname, key);
         return new ResponseBuilder<PageModel<ConfData>>().success(pageModel).build();
     }
 
@@ -104,8 +105,8 @@ public class ConfDataController {
     @RequestMapping("/insert")
     @ResponseBody
     @Permission
-    public Response<String> insert(ConfData confData){
-        return confDataService.insert(confData);
+    public Response<String> insert(ConfData confData, HttpServletRequest request){
+        return confDataService.insert(confData, loginService.getLoginUser(request), loginService.isAdmin(request));
     }
 
     /**
@@ -114,8 +115,8 @@ public class ConfDataController {
     @RequestMapping("/delete")
     @ResponseBody
     @Permission
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
-        return confDataService.delete(ids);
+    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids, HttpServletRequest request){
+        return confDataService.delete(ids, loginService.getLoginUser(request), loginService.isAdmin(request));
     }
 
     /**
@@ -124,8 +125,8 @@ public class ConfDataController {
     @RequestMapping("/update")
     @ResponseBody
     @Permission
-    public Response<String> update(ConfData confData){
-        return confDataService.update(confData);
+    public Response<String> update(ConfData confData, HttpServletRequest request){
+        return confDataService.update(confData, loginService.getLoginUser(request), loginService.isAdmin(request));
     }
 
 }

@@ -59,7 +59,7 @@ $(function() {
 			{
 				"title": 'AppName',
 				"data": 'appname',
-				"width":'20%'
+				"width":'15%'
 			},
 			{
 				"title": 'IP:PORT',

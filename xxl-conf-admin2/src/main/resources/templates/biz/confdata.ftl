@@ -43,23 +43,20 @@
 			<div class="box" style="margin-bottom:9px;">
 				<div class="box-body">
 					<div class="row" id="data_filter" >
-						<div class="col-xs-3">
+						<div class="col-xs-4">
 							<div class="input-group">
-								<span class="input-group-addon">Env</span>
-								<select class="form-control env" >
-									<option value="" >全部</option>
-									<#if environmentList?exists>
-										<#list environmentList as item>
-											<option value="${item.env}" >${item.env}(${item.name})</option>
-										</#list>
-									</#if>
+								<span class="input-group-addon">AppName</span>
+								<select class="form-control " style="width: 100%;" name="appname" >
+									<#list applicationList as item>
+										<option value="${item.appname}" >${item.appname} (${item.name})</option>
+									</#list>
 								</select>
 							</div>
 						</div>
 						<div class="col-xs-5">
 							<div class="input-group">
-								<span class="input-group-addon">AppName</span>
-								<input type="text" class="form-control appname" autocomplete="on" >
+								<span class="input-group-addon">配置Key</span>
+								<input type="text" class="form-control key" autocomplete="on" >
 							</div>
 						</div>
 						<div class="col-xs-1">
@@ -77,6 +74,7 @@
 							<button class="btn btn-sm btn-info add" type="button"><i class="fa fa-plus" ></i>${I18n.system_opt_add}</button>
 							<button class="btn btn-sm btn-warning selectOnlyOne update" type="button"><i class="fa fa-edit"></i>${I18n.system_opt_edit}</button>
 							<button class="btn btn-sm btn-danger selectAny delete" type="button"><i class="fa fa-remove "></i>${I18n.system_opt_del}</button>
+							<button class="btn btn-sm btn-primary selectOnlyOne confDataLog" type="button"><i class="fa fa-remove ">变更记录</i></button>
 						</div>
 						<div class="box-body" >
 							<table id="data_list" class="table table-bordered table-striped" width="100%" >
@@ -101,11 +99,8 @@
 								<div class="form-group">
 									<label for="lastname" class="col-sm-3 control-label">Env<font color="red">*</font></label>
 									<div class="col-sm-6">
-										<select class="form-control" name="env" >
-											<#list environmentList as item>
-												<option value="${item.env}" >${item.env}(${item.name})</option>
-											</#list>
-										</select>
+										${XXL_CONF_CURRENT_ENV}
+										<input name="env" value="${XXL_CONF_CURRENT_ENV}" hidden="hidden" >
 									</div>
 								</div>
 								<div class="form-group">
@@ -119,28 +114,19 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">注册Ip<font color="red">*</font></label>
-									<div class="col-sm-9"><input type="text" class="form-control" name="ip" placeholder="${I18n.system_please_input}Ip" maxlength="46" ></div>
+									<label for="lastname" class="col-sm-3 control-label">配置Key<font color="red">*</font></label>
+									<div class="col-sm-9"><input type="text" class="form-control" name="key" placeholder="${I18n.system_please_input}配置key" maxlength="200" ></div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">注册端口<font color="red">*</font></label>
-									<div class="col-sm-6"><input type="text" class="form-control" name="port" placeholder="${I18n.system_please_input}port" maxlength="10" ></div>
+									<label for="lastname" class="col-sm-3 control-label">配置描述<font color="red">*</font></label>
+									<div class="col-sm-9"><input type="text" class="form-control" name="desc" placeholder="${I18n.system_please_input}配置描述" maxlength="100" ></div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">注册模式<font color="red">*</font></label>
-									<div class="col-sm-6">
-										<#--<select class="form-control" name="registerModel" >
-											<#list InstanceRegisterModelEnum as item>
-												<option value="${item.value}" >${item.desc}</option>
-											</#list>
-										</select>-->
+									<label for="lastname" class="col-sm-3 control-label">配置Value<font color="black">*</font></label>
+									<div class="col-sm-9">
+										<textarea type="text" class="form-control" name="value" placeholder="${I18n.system_please_input}" maxlength="3000" style="height: 150px;" ></textarea>
 									</div>
 								</div>
-								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">扩展信息<font color="black">*</font></label>
-									<div class="col-sm-9"><textarea type="text" class="form-control" name="extendInfo" placeholder="${I18n.system_please_input}" maxlength="500" ></textarea></div>
-								</div>
-
 
 								<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
 									<div style="margin-top: 10px;" >
@@ -167,11 +153,8 @@
 								<div class="form-group">
 									<label for="lastname" class="col-sm-3 control-label">Env<font color="red">*</font></label>
 									<div class="col-sm-6">
-										<select class="form-control" name="env" disabled >
-											<#list environmentList as item>
-												<option value="${item.env}" >${item.env}(${item.name})</option>
-											</#list>
-										</select>
+										${XXL_CONF_CURRENT_ENV}
+										<input name="env" value="${XXL_CONF_CURRENT_ENV}" hidden="hidden" >
 									</div>
 								</div>
 								<div class="form-group">
@@ -185,28 +168,19 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">注册Ip<font color="red">*</font></label>
-									<div class="col-sm-9"><input type="text" class="form-control" name="ip" placeholder="${I18n.system_please_input}Ip" maxlength="46" readonly ></div>
+									<label for="lastname" class="col-sm-3 control-label">配置Key<font color="red">*</font></label>
+									<div class="col-sm-9"><input type="text" class="form-control" name="key" placeholder="${I18n.system_please_input}配置key" maxlength="200" readonly ></div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">注册端口<font color="red">*</font></label>
-									<div class="col-sm-6"><input type="text" class="form-control" name="port" placeholder="${I18n.system_please_input}port" maxlength="10" readonly ></div>
+									<label for="lastname" class="col-sm-3 control-label">配置描述<font color="red">*</font></label>
+									<div class="col-sm-9"><input type="text" class="form-control" name="desc" placeholder="${I18n.system_please_input}配置描述" maxlength="100" ></div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">注册模式<font color="red">*</font></label>
-									<div class="col-sm-6">
-										<select class="form-control" name="registerModel" >
-											<#--<#list InstanceRegisterModelEnum as item>
-												<option value="${item.value}" >${item.desc}</option>
-											</#list>-->
-										</select>
+									<label for="lastname" class="col-sm-3 control-label">配置Value<font color="black">*</font></label>
+									<div class="col-sm-9">
+										<textarea type="text" class="form-control" name="value" placeholder="${I18n.system_please_input}" maxlength="3000" style="height: 150px;" ></textarea>
 									</div>
 								</div>
-								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">扩展信息<font color="black">*</font></label>
-									<div class="col-sm-9"><textarea type="text" class="form-control" name="extendInfo" placeholder="${I18n.system_please_input}" maxlength="500" ></textarea></div>
-								</div>
-
 
 								<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
 									<div style="margin-top: 10px;" >
