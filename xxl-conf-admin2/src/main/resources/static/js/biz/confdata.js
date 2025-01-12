@@ -70,8 +70,17 @@ $(function() {
 			},
 			{
 				"title": '配置Value',
-				"data": 'key',
-				"width":'20%'
+				"data": 'value',
+				"width":'20%',
+				"render": function ( data, type, row ) {
+					if (!data) {
+						return data;
+					}
+					var result = data.length<10
+						?data
+						:data.substring(0, 10) + '...';
+					return "<span title='"+ data +"'>"+ result +"</span>";
+				}
 			},
 			{
 				"title": '配置说明',

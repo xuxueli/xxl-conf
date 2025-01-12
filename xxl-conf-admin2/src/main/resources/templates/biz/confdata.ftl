@@ -89,7 +89,7 @@
 
 			<!-- 新增.模态框 -->
 			<div class="modal fade" id="addModal" tabindex="-1" role="dialog"  aria-hidden="true">
-				<div class="modal-dialog">
+				<div class="modal-dialog modal-lg">
 					<div class="modal-content">
 						<div class="modal-header">
 							<h4 class="modal-title" >${I18n.system_opt_add}注册节点</h4>
@@ -97,14 +97,14 @@
 						<div class="modal-body">
 							<form class="form-horizontal form" role="form" >
 								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">Env<font color="red">*</font></label>
-									<div class="col-sm-6">
+									<label for="lastname" class="col-sm-2 control-label">Env<font color="red">*</font></label>
+									<div class="col-sm-9">
 										${XXL_CONF_CURRENT_ENV}
 										<input name="env" value="${XXL_CONF_CURRENT_ENV}" hidden="hidden" >
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">AppName<font color="red">*</font></label>
+									<label for="lastname" class="col-sm-2 control-label">AppName<font color="red">*</font></label>
 									<div class="col-sm-9">
 										<select class="form-control " style="width: 100%;" name="appname" >
 											<#list applicationList as item>
@@ -114,17 +114,17 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">配置Key<font color="red">*</font></label>
+									<label for="lastname" class="col-sm-2 control-label">配置Key<font color="red">*</font></label>
 									<div class="col-sm-9"><input type="text" class="form-control" name="key" placeholder="${I18n.system_please_input}配置key" maxlength="200" ></div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">配置描述<font color="red">*</font></label>
+									<label for="lastname" class="col-sm-2 control-label">配置描述<font color="red">*</font></label>
 									<div class="col-sm-9"><input type="text" class="form-control" name="desc" placeholder="${I18n.system_please_input}配置描述" maxlength="100" ></div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">配置Value<font color="black">*</font></label>
+									<label for="lastname" class="col-sm-2 control-label">配置Value<font color="black">*</font></label>
 									<div class="col-sm-9">
-										<textarea type="text" class="form-control" name="value" placeholder="${I18n.system_please_input}" maxlength="3000" style="height: 150px;" ></textarea>
+										<textarea type="text" class="form-control" name="value" id="addConfDataIDE" maxlength="3000" style="height: 150px;" ></textarea>
 									</div>
 								</div>
 
@@ -143,7 +143,7 @@
 
 			<!-- 更新.模态框 -->
 			<div class="modal fade" id="updateModal" tabindex="-1" role="dialog"  aria-hidden="true">
-				<div class="modal-dialog">
+				<div class="modal-dialog modal-lg">
 					<div class="modal-content">
 						<div class="modal-header">
 							<h4 class="modal-title" >${I18n.system_opt_edit}应用信息</h4>
@@ -151,14 +151,14 @@
 						<div class="modal-body">
 							<form class="form-horizontal form" role="form" >
 								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">Env<font color="red">*</font></label>
-									<div class="col-sm-6">
+									<label for="lastname" class="col-sm-2 control-label">Env<font color="red">*</font></label>
+									<div class="col-sm-9">
 										${XXL_CONF_CURRENT_ENV}
 										<input name="env" value="${XXL_CONF_CURRENT_ENV}" hidden="hidden" >
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">AppName<font color="red">*</font></label>
+									<label for="lastname" class="col-sm-2 control-label">AppName<font color="red">*</font></label>
 									<div class="col-sm-9">
 										<select class="form-control " style="width: 100%;" name="appname" disabled >
 											<#list applicationList as item>
@@ -168,15 +168,15 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">配置Key<font color="red">*</font></label>
+									<label for="lastname" class="col-sm-2 control-label">配置Key<font color="red">*</font></label>
 									<div class="col-sm-9"><input type="text" class="form-control" name="key" placeholder="${I18n.system_please_input}配置key" maxlength="200" readonly ></div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">配置描述<font color="red">*</font></label>
+									<label for="lastname" class="col-sm-2 control-label">配置描述<font color="red">*</font></label>
 									<div class="col-sm-9"><input type="text" class="form-control" name="desc" placeholder="${I18n.system_please_input}配置描述" maxlength="100" ></div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">配置Value<font color="black">*</font></label>
+									<label for="lastname" class="col-sm-2 control-label">配置Value<font color="black">*</font></label>
 									<div class="col-sm-9">
 										<textarea type="text" class="form-control" name="value" placeholder="${I18n.system_please_input}" maxlength="3000" style="height: 150px;" ></textarea>
 									</div>

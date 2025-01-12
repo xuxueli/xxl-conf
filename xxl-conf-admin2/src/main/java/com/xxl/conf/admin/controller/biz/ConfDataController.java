@@ -4,11 +4,10 @@ import com.xxl.conf.admin.annotation.Permission;
 import com.xxl.conf.admin.model.dto.LoginUserDTO;
 import com.xxl.conf.admin.model.entity.Application;
 import com.xxl.conf.admin.model.entity.ConfData;
-import com.xxl.conf.admin.model.entity.Environment;
 import com.xxl.conf.admin.service.ApplicationService;
 import com.xxl.conf.admin.service.ConfDataService;
-import com.xxl.conf.admin.service.EnvironmentService;
 import com.xxl.conf.admin.service.impl.LoginService;
+import com.xxl.conf.admin.util.I18nUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,11 +46,11 @@ public class ConfDataController {
     */
     @RequestMapping
     @Permission
-    public String index(Model model) {
+    public String index(HttpServletRequest request, Model model) {
 
         // application
-        Response<List<Application>> applicationListRet = applicationService.findAll();
-        model.addAttribute("applicationList", applicationListRet.getData());
+        List<Application> applicationList = findPermissionApplication(request);
+        model.addAttribute("applicationList", applicationList);
 
         return "biz/confdata";
     }
@@ -80,11 +79,21 @@ public class ConfDataController {
     @RequestMapping("/pageList")
     @ResponseBody
     @Permission
-    public Response<PageModel<ConfData>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
+    public Response<PageModel<ConfData>> pageList(HttpServletRequest request,
+                                                  @RequestParam(required = false, defaultValue = "0") int offset,
                                                   @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                   @RequestParam("env") String env,
                                                   @RequestParam("appname") String appname,
                                                   @RequestParam("key") String key) {
+
+        // valid application
+        LoginUserDTO loginUser = loginService.getLoginUser(request);
+        List<String> appnameList = loginUser.getPermission()!=null? Arrays.asList(loginUser.getPermission().split(",")):new ArrayList<>();
+        if (!loginService.isAdmin(request) && !appnameList.contains(appname)){
+            return new ResponseBuilder<PageModel<ConfData>>().fail(I18nUtil.getString("system_permission_limit")).build();
+        }
+
+        // page
         PageModel<ConfData> pageModel = confDataService.pageList(offset, pagesize, env, appname, key);
         return new ResponseBuilder<PageModel<ConfData>>().success(pageModel).build();
     }
