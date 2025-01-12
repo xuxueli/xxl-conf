@@ -1,5 +1,7 @@
 package com.xxl.conf.admin.openapi.registry.model;
 
+import com.xxl.conf.admin.openapi.common.model.OpenApiRequest;
+
 import java.io.Serializable;
 import java.util.List;
 

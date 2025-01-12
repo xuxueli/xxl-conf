@@ -10,7 +10,7 @@ import com.xxl.conf.admin.model.entity.Message;
 import com.xxl.conf.admin.openapi.registry.config.RegistryFactory;
 import com.xxl.conf.admin.openapi.registry.model.DiscoveryRequest;
 import com.xxl.conf.admin.openapi.registry.model.DiscoveryResponse;
-import com.xxl.conf.admin.openapi.registry.model.OpenApiResponse;
+import com.xxl.conf.admin.openapi.common.model.OpenApiResponse;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.DateTool;
 import com.xxl.tool.core.StringTool;
@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.xxl.conf.admin.openapi.registry.model.OpenApiResponse.SUCCESS_CODE;
+import static com.xxl.conf.admin.openapi.common.model.OpenApiResponse.SUCCESS_CODE;
 
 /**
  * registry cache helper

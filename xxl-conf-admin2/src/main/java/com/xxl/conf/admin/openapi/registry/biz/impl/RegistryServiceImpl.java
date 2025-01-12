@@ -4,7 +4,7 @@ import com.xxl.conf.admin.openapi.registry.biz.RegistryService;
 import com.xxl.conf.admin.openapi.registry.config.RegistryFactory;
 import com.xxl.conf.admin.openapi.registry.model.DiscoveryRequest;
 import com.xxl.conf.admin.openapi.registry.model.DiscoveryResponse;
-import com.xxl.conf.admin.openapi.registry.model.OpenApiResponse;
+import com.xxl.conf.admin.openapi.common.model.OpenApiResponse;
 import com.xxl.conf.admin.openapi.registry.model.RegisterRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.async.DeferredResult;

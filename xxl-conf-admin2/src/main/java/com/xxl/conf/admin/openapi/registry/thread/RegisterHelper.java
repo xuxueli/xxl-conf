@@ -7,7 +7,7 @@ import com.xxl.conf.admin.model.dto.MessageForRegistryDTO;
 import com.xxl.conf.admin.model.entity.Instance;
 import com.xxl.conf.admin.model.entity.Message;
 import com.xxl.conf.admin.openapi.registry.config.RegistryFactory;
-import com.xxl.conf.admin.openapi.registry.model.OpenApiResponse;
+import com.xxl.conf.admin.openapi.common.model.OpenApiResponse;
 import com.xxl.conf.admin.openapi.registry.model.RegisterRequest;
 import com.xxl.tool.core.StringTool;
 import org.slf4j.Logger;

@@ -2,7 +2,7 @@ package com.xxl.conf.admin.openapi.registry.thread;
 
 
 import com.xxl.conf.admin.openapi.registry.model.DiscoveryRequest;
-import com.xxl.conf.admin.openapi.registry.model.OpenApiResponse;
+import com.xxl.conf.admin.openapi.common.model.OpenApiResponse;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.MapTool;
 import org.slf4j.Logger;

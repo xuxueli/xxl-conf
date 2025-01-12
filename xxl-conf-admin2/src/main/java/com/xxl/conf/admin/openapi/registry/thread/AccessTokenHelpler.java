@@ -4,7 +4,7 @@ package com.xxl.conf.admin.openapi.registry.thread;
 import com.xxl.conf.admin.constant.enums.AccessTokenStatuEnum;
 import com.xxl.conf.admin.model.entity.AccessToken;
 import com.xxl.conf.admin.openapi.registry.config.RegistryFactory;
-import com.xxl.conf.admin.openapi.registry.model.OpenApiRequest;
+import com.xxl.conf.admin.openapi.common.model.OpenApiRequest;
 import com.xxl.tool.core.CollectionTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

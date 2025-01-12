@@ -1,11 +1,9 @@
-package com.xxl.conf.admin.openapi.registry;
+package com.xxl.conf.admin.openapi.confdata;
 
 import com.alibaba.fastjson2.JSON;
 import com.xxl.conf.admin.annotation.Permission;
-import com.xxl.conf.admin.openapi.registry.biz.RegistryService;
 import com.xxl.conf.admin.openapi.registry.model.DiscoveryRequest;
-import com.xxl.conf.admin.openapi.registry.model.OpenApiResponse;
-import com.xxl.conf.admin.openapi.registry.model.RegisterRequest;
+import com.xxl.conf.admin.openapi.common.model.OpenApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -14,20 +12,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author xuxueli 2018-11-29
  */
 @Controller
-@RequestMapping("/openapi/registry")
-public class OpenApiController {
-    private static Logger logger = LoggerFactory.getLogger(OpenApiController.class);
+@RequestMapping("/openapi/confdata")
+public class ConfDataOpenApiController {
+    private static Logger logger = LoggerFactory.getLogger(ConfDataOpenApiController.class);
 
 
-    @Resource
-    private RegistryService registryService;
 
     @RequestMapping("/{uri}")
     @ResponseBody
@@ -44,34 +39,20 @@ public class OpenApiController {
 
         // services mapping
         try {
-            if ("register".equals(uri)) {
+            if ("discovery".equals(uri)) {
                 /**
-                 * 服务注册 & 续约 API
-                 * 说明：新服务注册上线1s内广播通知接入方；需要接入方循环续约，否则服务将会过期（三倍于注册中心心跳时间）下线；
-                 */
-                RegisterRequest request = JSON.parseObject(data, RegisterRequest.class);
-                return registryService.register(request);
-            } else if ("unregister".equals(uri)) {
-                /**
-                 * 服务摘除 API
-                 * 说明：新服务摘除下线1s内广播通知接入方；
-                 */
-                RegisterRequest request = JSON.parseObject(data, RegisterRequest.class);
-                return registryService.unregister(request);
-            } else if ("discovery".equals(uri)) {
-                /**
-                 * 服务发现 API
-                 * 说明：查询在线服务地址列表；
+                 * 配置数据查询 API
+                 * 说明：查询配置数据信息
                  */
                 DiscoveryRequest request = JSON.parseObject(data, DiscoveryRequest.class);
-                return registryService.discovery(request);
+                return null;
             } else if ("monitor".equals(uri)) {
                 /**
-                 * 服务监控 API
-                 * 说明：long-polling 接口，主动阻塞一段时间（三倍于注册中心心跳时间）；直至阻塞超时或服务注册信息变动时响应；
+                 * 配置数据监控 API
+                 * 说明：long-polling 接口，主动阻塞一段时间（三倍于注册中心心跳时间）；直至阻塞超时或信息变动时响应；
                  */
                 DiscoveryRequest request = JSON.parseObject(data, DiscoveryRequest.class);
-                return registryService.monitor(request);
+                return null;
             } else {
                 return new OpenApiResponse(OpenApiResponse.FAIL_CODE, "invalid request, uri-mapping("+ uri +") not found.");
             }
