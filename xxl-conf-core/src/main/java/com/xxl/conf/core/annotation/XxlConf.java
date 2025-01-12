@@ -3,7 +3,7 @@ package com.xxl.conf.core.annotation;
 import java.lang.annotation.*;
 
 /**
- * xxl conf annotaion  (only support filed)
+ * xxl conf annotaion
  *
  * @author xuxueli 2018-02-04 00:34:30
  */
