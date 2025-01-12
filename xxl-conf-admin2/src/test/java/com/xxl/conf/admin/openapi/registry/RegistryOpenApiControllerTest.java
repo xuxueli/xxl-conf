@@ -12,7 +12,7 @@ public class RegistryOpenApiControllerTest {
     private static final Logger logger = LoggerFactory.getLogger(RegistryOpenApiControllerTest.class);
 
     // admin-client
-    private static String adminAddress = "http://127.0.0.1:8080/xxl-conf-admin";
+    private static String adminAddress = "http://127.0.0.1:8081/xxl-conf-admin";
     private static String accessToken = "defaultaccesstoken";
     private static String env = "test";
 
@@ -41,7 +41,7 @@ public class RegistryOpenApiControllerTest {
     public void test_discovery() {
 
         // 3、discovery
-        List<String> appnameList = Arrays.asList("app01", "app02");
+        List<String> appnameList = Arrays.asList("xxl-conf-sample-springboot-server", "app02");
         RegisterTool.DiscoveryResponse openApiResponse = RegisterTool.discovery(adminAddress, accessToken, env, appnameList, false);
 
         logger.info("result:{}, appnameList:{}, openApiResponse:{}", openApiResponse.isSuccess()?"success":"fail", appnameList, openApiResponse);
@@ -51,7 +51,7 @@ public class RegistryOpenApiControllerTest {
     public void test_monitor() {
 
         // 4、monitor
-        List<String> appnameList = Arrays.asList("app01", "app02");
+        List<String> appnameList = Arrays.asList("xxl-conf-sample-springboot-server", "app02");
         RegisterTool.OpenApiResponse openApiResponse = RegisterTool.monitor(adminAddress, accessToken, env, appnameList, 30);
 
         logger.info("result:{}, appnameList:{}, openApiResponse:{}", openApiResponse.isSuccess()?"success":"fail", appnameList, openApiResponse);

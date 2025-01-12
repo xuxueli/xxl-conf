@@ -49,7 +49,7 @@ public class AccessTokenHelpler {
     public void start() {
 
         // deferredResultMonitorThread， for clean
-        accessTokenThread = RegistryCacheHelpler.startThread(new Runnable() {
+        accessTokenThread = MessageHelpler.startThread(new Runnable() {
             @Override
             public void run() {
                 logger.info(">>>>>>>>>>> xxl-conf, AccessTokenHelpler-accessTokenThread start.");
@@ -97,7 +97,7 @@ public class AccessTokenHelpler {
         }
 
         // stop thread
-        RegistryCacheHelpler.stopThread(accessTokenThread);
+        MessageHelpler.stopThread(accessTokenThread);
     }
 
     // ---------------------- helper ----------------------

@@ -22,6 +22,9 @@ public class MessageForConfDataDTO implements Serializable {
      */
     private String appname;
 
+    /**
+     * 配置key
+     */
     private String key;
 
     public MessageForConfDataDTO() {

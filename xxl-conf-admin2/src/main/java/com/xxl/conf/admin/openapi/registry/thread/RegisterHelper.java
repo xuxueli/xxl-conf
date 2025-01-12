@@ -5,7 +5,6 @@ import com.xxl.conf.admin.constant.enums.InstanceRegisterModelEnum;
 import com.xxl.conf.admin.constant.enums.MessageTypeEnum;
 import com.xxl.conf.admin.model.dto.MessageForRegistryDTO;
 import com.xxl.conf.admin.model.entity.Instance;
-import com.xxl.conf.admin.model.entity.Message;
 import com.xxl.conf.admin.openapi.registry.config.RegistryFactory;
 import com.xxl.conf.admin.openapi.common.model.OpenApiResponse;
 import com.xxl.conf.admin.openapi.registry.model.RegisterRequest;
@@ -80,7 +79,7 @@ public class RegisterHelper {
                 });
 
         // 2、registryMonitorThread， for registry clean
-        registryMonitorThread = RegistryCacheHelpler.startThread(new Runnable() {
+        registryMonitorThread = MessageHelpler.startThread(new Runnable() {
             @Override
             public void run() {
                 logger.info(">>>>>>>>>>> xxl-conf, RegistryHelpler-registryMonitorThread start");
@@ -128,7 +127,7 @@ public class RegisterHelper {
         }
 
         // 2、registryMonitorThread
-        RegistryCacheHelpler.stopThread(registryMonitorThread);
+        MessageHelpler.stopThread(registryMonitorThread);
     }
 
     // ---------------------- helper ----------------------
@@ -171,13 +170,8 @@ public class RegisterHelper {
 
                 int ret = RegistryFactory.getInstance().getInstanceMapper().addAutoInstance(instance);
                 if (ret > 0) {
-                    // message
-                    Message message = new Message();
-                    message.setType(MessageTypeEnum.REGISTRY.getValue());
-                    message.setData(JSON.toJSONString(new MessageForRegistryDTO(instance)));      // convert
-                    message.setAddTime(new Date());
-                    message.setUpdateTime(new Date());
-                    RegistryFactory.getInstance().getMessageMapper().insert(message);
+                    // broadcast message
+                    MessageHelpler.broadcastMessage(MessageTypeEnum.REGISTRY, JSON.toJSONString(new MessageForRegistryDTO(instance)));
                 }
             }
         });
@@ -221,13 +215,8 @@ public class RegisterHelper {
 
                 int ret = RegistryFactory.getInstance().getInstanceMapper().deleteAutoInstance(instance);
                 if (ret > 0) {
-                    // message
-                    Message message = new Message();
-                    message.setType(MessageTypeEnum.REGISTRY.getValue());
-                    message.setData(JSON.toJSONString(new MessageForRegistryDTO(instance)));      // convert
-                    message.setAddTime(new Date());
-                    message.setUpdateTime(new Date());
-                    RegistryFactory.getInstance().getMessageMapper().insert(message);
+                    // broadcast message
+                    MessageHelpler.broadcastMessage(MessageTypeEnum.REGISTRY, JSON.toJSONString(new MessageForRegistryDTO(instance)));
                 }
             }
         });

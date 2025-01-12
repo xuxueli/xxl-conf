@@ -23,7 +23,7 @@ public class ConfDataOpenApiControllerTest {
 
         // 1、discovery
         Map<String, List<String>> confKey = new HashMap<>();
-        confKey.put("app01", Arrays.asList("key1", "key2"));
+        confKey.put("app01", Arrays.asList("key1", "key2", "key3", "key5"));
 
         ConfDataTool.QueryConfDataResponse openApiResponse = ConfDataTool.query(adminAddress, accessToken, env, confKey, false);
 

@@ -6,6 +6,7 @@ import com.xxl.conf.admin.openapi.confdata.model.ConfDataCacheDTO;
 import com.xxl.conf.admin.openapi.confdata.model.QueryConfDataRequest;
 import com.xxl.conf.admin.openapi.confdata.model.QueryConfDataResponse;
 import com.xxl.conf.admin.openapi.registry.model.DiscoveryRequest;
+import com.xxl.conf.admin.openapi.registry.thread.MessageHelpler;
 import com.xxl.conf.admin.openapi.registry.thread.RegistryCacheHelpler;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.MapTool;
@@ -67,7 +68,7 @@ public class ConfDataDeferredResultHelpler {
     public void start() {
 
         // deferredResultMonitorThread， for clean
-        deferredResultMonitorThread = RegistryCacheHelpler.startThread(new Runnable() {
+        deferredResultMonitorThread = MessageHelpler.startThread(new Runnable() {
             @Override
             public void run() {
                 logger.info(">>>>>>>>>>> xxl-conf, ConfDataDeferredResultHelpler-deferredResultMonitorThread stop.");
@@ -114,10 +115,8 @@ public class ConfDataDeferredResultHelpler {
             logger.error(e.getMessage(), e);
         }
 
-        // TODO1，registryDeferredResultMap clean
-
         // stop thread
-        RegistryCacheHelpler.stopThread(deferredResultMonitorThread);
+        MessageHelpler.stopThread(deferredResultMonitorThread);
     }
 
     // ---------------------- helper ----------------------

@@ -62,7 +62,7 @@ public class RegistryDeferredResultHelpler {
     public void start() {
 
         // deferredResultMonitorThread， for clean
-        deferredResultMonitorThread = RegistryCacheHelpler.startThread(new Runnable() {
+        deferredResultMonitorThread = MessageHelpler.startThread(new Runnable() {
             @Override
             public void run() {
                 logger.info(">>>>>>>>>>> xxl-conf, RegistryDeferredResultHelpler-deferredResultMonitorThread stop.");
@@ -112,7 +112,7 @@ public class RegistryDeferredResultHelpler {
         // TODO1，registryDeferredResultMap clean
 
         // stop thread
-        RegistryCacheHelpler.stopThread(deferredResultMonitorThread);
+        MessageHelpler.stopThread(deferredResultMonitorThread);
     }
 
     // ---------------------- helper ----------------------

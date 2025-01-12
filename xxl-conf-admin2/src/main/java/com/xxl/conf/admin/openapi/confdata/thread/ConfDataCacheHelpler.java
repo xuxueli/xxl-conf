@@ -7,6 +7,7 @@ import com.xxl.conf.admin.openapi.confdata.model.ConfDataCacheDTO;
 import com.xxl.conf.admin.openapi.common.model.OpenApiResponse;
 import com.xxl.conf.admin.openapi.confdata.model.QueryConfDataRequest;
 import com.xxl.conf.admin.openapi.confdata.model.QueryConfDataResponse;
+import com.xxl.conf.admin.openapi.registry.thread.MessageHelpler;
 import com.xxl.conf.admin.openapi.registry.thread.RegistryCacheHelpler;
 import com.xxl.tool.core.CollectionTool;
 import org.slf4j.Logger;
@@ -85,7 +86,7 @@ public class ConfDataCacheHelpler {
      */
     public void start(){
         // 1、run fullSyncThread
-        fullSyncThread = RegistryCacheHelpler.startThread(new Runnable() {
+        fullSyncThread = MessageHelpler.startThread(new Runnable() {
             @Override
             public void run() {
                 // DB中全量注册数据，同步至 CacheStore；整个Map覆盖更新；
@@ -102,13 +103,12 @@ public class ConfDataCacheHelpler {
                         if (CollectionTool.isNotEmpty(envAndAppNameList)) {
                             for (ConfData envAndAppNameData : envAndAppNameList) {
                                 // query data by env-appname
-                                List<ConfData> confDataList = ConfDataFactory.getInstance().getConfDataMapper().
-                                        queryByEnvAndAppName(envAndAppNameData.getEnv(), envAndAppNameData.getAppname());
+                                List<ConfData> confDataList = ConfDataFactory.getInstance().getConfDataMapper().queryByEnvAndAppName(envAndAppNameData.getEnv(), envAndAppNameData.getAppname());
 
-                                // parse data
+                                // process each key of "env-appname
                                 if (CollectionTool.isNotEmpty(confDataList)) {
                                     for (ConfData confData : confDataList) {
-                                        // buld cache
+                                        // fill key cache
                                         String cacheKey = buildCacheKey(confData.getEnv(), confData.getAppname(), confData.getKey());
                                         ConfDataCacheDTO  cacheValue = new ConfDataCacheDTO(confData);
 
@@ -132,16 +132,15 @@ public class ConfDataCacheHelpler {
                                 diffConfList.add(confDataNew);
                             }
                         }
-
                         // find diff and push
                         if (CollectionTool.isNotEmpty(diffConfList)) {
                             pushClient(diffConfList);
+                            logger.info(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-fullSyncThread find diffData and pushClient, diffConfList:{}", diffConfList);
                         }
 
                         // e、replace with new data
                         confDataCacheStore = confDataCacheStoreNew;
-                        logger.debug(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-fullSyncThread success, confDataCacheStore:{}",
-                                confDataCacheStore);
+                        logger.debug(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-fullSyncThread success, confDataCacheStore:{}", confDataCacheStore);
 
                         // first full-sycs success, warmUp
                         if (!warmUp) {
@@ -177,7 +176,6 @@ public class ConfDataCacheHelpler {
         }
         // do push
         ConfDataFactory.getInstance().getConfDataDeferredResultHelpler().pushClient(diffConfList);
-        logger.info(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-pushClient, process diffConfList:{}", diffConfList);
     }
 
     /**
@@ -193,7 +191,7 @@ public class ConfDataCacheHelpler {
         }
 
         // stop thread
-        RegistryCacheHelpler.stopThread(fullSyncThread);
+        MessageHelpler.stopThread(fullSyncThread);
     }
 
     // ---------------------- tool ----------------------
@@ -209,6 +207,11 @@ public class ConfDataCacheHelpler {
         return String.format("%s##%s##%s", env, appname, key);
     }
 
+    /**
+     * check update and push
+     *
+     * @param messageForConfDataDTOList
+     */
     public void checkUpdateAndPush(List<MessageForConfDataDTO> messageForConfDataDTOList){
         // valid
         if (CollectionTool.isEmpty(messageForConfDataDTOList)) {
@@ -217,6 +220,11 @@ public class ConfDataCacheHelpler {
 
         // check and push
         for (MessageForConfDataDTO messageForConfDataDTO: messageForConfDataDTOList) {
+
+            // valid
+            if (messageForConfDataDTO.getEnv()==null || messageForConfDataDTO.getAppname()==null || messageForConfDataDTO.getKey()==null) {
+                continue;
+            }
 
             // newData
             ConfData confData = ConfDataFactory.getInstance().getConfDataMapper()
@@ -236,6 +244,7 @@ public class ConfDataCacheHelpler {
 
                 // push client
                 pushClient(Arrays.asList(confDataNew));
+                logger.info(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-checkUpdateAndPush find diffData and pushClient, diffConfList:{}", confDataNew);
             }
         }
     }
@@ -257,7 +266,6 @@ public class ConfDataCacheHelpler {
             return new QueryConfDataResponse(OpenApiResponse.FAIL_CODE, "query fail, invalid request");
         }
 
-
         // result data
         Map<String, Map<String, String>> confDataResult = new HashMap<>();
         Map<String, Map<String, String>> confDataResultMd5 = new HashMap<>();
@@ -275,9 +283,9 @@ public class ConfDataCacheHelpler {
 
                 // fill resp
                 if (confDataCacheDTO!=null) {
-                    // resp level-1: key is appname
+                    // resp level-1: appname as key
                     Map<String, String> confDataMd5Map = confDataResultMd5.computeIfAbsent(appname, k -> new HashMap<>());
-                    // resp level-2: key is key
+                    // resp level-2: key as key
                     confDataMd5Map.put(confDataCacheDTO.getKey(), confDataCacheDTO.getValueMd5());
 
                     // query data, not simple

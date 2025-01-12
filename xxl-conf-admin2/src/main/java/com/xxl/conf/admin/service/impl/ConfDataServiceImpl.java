@@ -6,11 +6,9 @@ import com.xxl.conf.admin.mapper.ConfDataLogMapper;
 import com.xxl.conf.admin.mapper.ConfDataMapper;
 import com.xxl.conf.admin.model.dto.LoginUserDTO;
 import com.xxl.conf.admin.model.dto.MessageForConfDataDTO;
-import com.xxl.conf.admin.model.dto.MessageForRegistryDTO;
 import com.xxl.conf.admin.model.entity.ConfData;
 import com.xxl.conf.admin.model.entity.ConfDataLog;
-import com.xxl.conf.admin.model.entity.Message;
-import com.xxl.conf.admin.openapi.registry.config.RegistryFactory;
+import com.xxl.conf.admin.openapi.registry.thread.MessageHelpler;
 import com.xxl.conf.admin.service.ConfDataService;
 import com.xxl.conf.admin.util.I18nUtil;
 import com.xxl.tool.core.CollectionTool;
@@ -59,25 +57,10 @@ public class ConfDataServiceImpl implements ConfDataService {
 		// log
 		confDataLogMapper.insert(new ConfDataLog(confData.getId(), confData.getValue(), loginUser.getUsername()));
 
-		// push message
-		broadcastMesssage(confData);
+		// broadcast message
+		MessageHelpler.broadcastMessage(MessageTypeEnum.CONFDATA, JSON.toJSONString(new MessageForConfDataDTO(confData)));
 
 		return new ResponseBuilder<String>().success().build();
-	}
-
-	/**
-	 * broadcast
-	 *
-	 * @param confData
-	 */
-	public void broadcastMesssage(ConfData confData){
-		// message
-		Message message = new Message();
-		message.setType(MessageTypeEnum.CONFDATA.getValue());
-		message.setData(JSON.toJSONString(new MessageForConfDataDTO(confData)));      // convert
-		message.setAddTime(new Date());
-		message.setUpdateTime(new Date());
-		RegistryFactory.getInstance().getMessageMapper().insert(message);
 	}
 
 	/**
@@ -124,8 +107,8 @@ public class ConfDataServiceImpl implements ConfDataService {
 			// log
 			confDataLogMapper.insert(new ConfDataLog(confData.getId(), confData.getValue(), loginUser.getUsername()));
 
-			// push message
-			broadcastMesssage(confData);
+			// broadcast message
+			MessageHelpler.broadcastMessage(MessageTypeEnum.CONFDATA, JSON.toJSONString(new MessageForConfDataDTO(confData)));
 		}
 		return ret>0? new ResponseBuilder<String>().success().build()
 					: new ResponseBuilder<String>().fail().build() ;

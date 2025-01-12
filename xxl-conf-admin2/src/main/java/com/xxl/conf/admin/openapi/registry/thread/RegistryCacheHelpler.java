@@ -102,11 +102,6 @@ public class RegistryCacheHelpler {
     private volatile boolean warmUp = false;
 
     /**
-     * message filtering to avoid duplicate processing
-     */
-    private volatile List<Long> readedMessageIds = Collections.synchronizedList(new ArrayList());
-
-    /**
      * 全量同步
      * 1、范围：DB中全量注册数据，同步至 registryCacheStore；整个Map覆盖更新；
      * 2、间隔：3倍心跳（REGISTRY_BEAT_TIME * 3）；
@@ -120,14 +115,14 @@ public class RegistryCacheHelpler {
      * 2、间隔：1s/次，实时检测广播消息；无消息则跳过；
      * 3、过滤：过滤掉无效数据；
      */
-    private Thread messageListenThread;
+    // MessageHelpler
 
     /**
      * start
      */
     public void start(){
         // 1、run fullSyncThread
-        fullSyncThread = startThread(new Runnable() {
+        fullSyncThread = MessageHelpler.startThread(new Runnable() {
             @Override
             public void run() {
                 // DB中全量注册数据，同步至 registryCacheStore；整个Map覆盖更新；
@@ -168,7 +163,7 @@ public class RegistryCacheHelpler {
                                 .filter(item -> !registryCacheMd5StoreNew.containsKey(item) || !registryCacheMd5StoreNew.get(item).equals(registryCacheMd5Store.get(item)))
                                 .collect(Collectors.toList());
                         if (CollectionTool.isNotEmpty(envAppnameDiffList)) {
-                            logger.warn(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-fullSyncThread find envAppnameDiffList:{}", envAppnameDiffList);
+                            logger.info(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-fullSyncThread find diffData and pushClient, envAppnameDiffList:{}", envAppnameDiffList);
                             pushClient(envAppnameDiffList);
                         }
 
@@ -200,106 +195,47 @@ public class RegistryCacheHelpler {
             }
         }, ">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-fullSyncThread");
 
-        // 3、messageListenThread
-        messageListenThread = startThread(new Runnable() {
-            @Override
-            public void run() {
-                // 实时监听广播消息，根据消息类型实时更新指定注册数据，从DB 同步至 registryCacheStore；单条数据维度覆盖更新；
-                logger.info(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-messageListenThread start");
-                while (!toStop) {
-                    try {
-                        // a、detect real-time messages, Once per second
-                        Date msgTimeValidStart = DateTool.addSeconds(new Date(), -1 * 10);
-                        Date msgTimeValidEnd = DateTool.addMinutes(msgTimeValidStart, 5);
-                        List<Long> excludeMsgIds = readedMessageIds.size()>50?readedMessageIds.subList(0, 50):readedMessageIds;
-
-                        List<Message> messageList = RegistryFactory.getInstance().getMessageMapper().queryValidMessage(msgTimeValidStart, msgTimeValidEnd, excludeMsgIds);
-
-                        // b、dispatch message
-                        if (CollectionTool.isNotEmpty(messageList)) {
-
-                            // 1、parse message by type
-                            List<MessageForRegistryDTO> messageForRegistryDTOList = messageList.stream()
-                                    .filter(item->item.getType()== MessageTypeEnum.REGISTRY.getValue())
-                                    .map(item-> (JSON.parseObject(item.getData(), MessageForRegistryDTO.class)))
-                                    .collect(Collectors.toList());
-                            List<MessageForConfDataDTO> messageForConfDataDTOList = messageList.stream()
-                                    .filter(item->item.getType()== MessageTypeEnum.CONFDATA.getValue())
-                                    .map(item-> (JSON.parseObject(item.getData(), MessageForConfDataDTO.class)))
-                                    .collect(Collectors.toList());
-
-                            // 2、process registry message
-                            checkUpdateAndPush(messageForRegistryDTOList);
-
-                            // 3、process confdata message
-                            ConfDataFactory.getInstance().getConfDataCacheHelpler().checkUpdateAndPush(messageForConfDataDTOList);
-                        }
-
-                        // c、store msgId, avoid repeat message
-                        readedMessageIds.addAll(messageList.stream().map(Message::getId).collect(Collectors.toList()));
-
-                        // d、clean old message， Avoid too often clean
-                        if ( (System.currentTimeMillis()/1000) % REGISTRY_BEAT_TIME ==0) {
-                            RegistryFactory.getInstance().getMessageMapper().cleanMessageInValid(msgTimeValidStart, msgTimeValidEnd);
-                            readedMessageIds.clear();
-                        }
-
-                    } catch (Throwable e) {
-                        if (!toStop) {
-                            logger.error(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-messageListenThread error:{}", e.getMessage(), e);
-                        }
-                    }
-                    try {
-                        TimeUnit.SECONDS.sleep(1);
-                    } catch (Throwable e) {
-                        if (!toStop) {
-                            logger.error(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-messageListenThread error2:{}", e.getMessage(), e);
-                        }
-                    }
-                }
-                logger.info(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-messageListenThread stop");
-            }
-        }, "xxl-conf, admin RegistryCacheHelpler-messageListenThread");
-
     }
 
-    private void checkUpdateAndPush(List<MessageForRegistryDTO> messageForRegistryDTOList){
+    /**
+     * checkUpdateAndPush
+     */
+    public void checkUpdateAndPush(List<MessageForRegistryDTO> messageForRegistryDTOList){
         // valid
         if (CollectionTool.isEmpty(messageForRegistryDTOList)) {
             return;
         }
 
-        // check and push
+        // find diff
         List<String> envAppnameDiffList = new ArrayList<>();
         for (MessageForRegistryDTO messageForRegistryDTO: messageForRegistryDTOList) {
-            // build key
-            String envAppNameKey = buildCacheKey(messageForRegistryDTO.getEnv(), messageForRegistryDTO.getAppname());
 
-            // build validValud
+            // valid
+            if (messageForRegistryDTO.getEnv()==null || messageForRegistryDTO.getAppname()==null ) {
+                continue;
+            }
+
+            // build new data
             List<InstanceCacheDTO> newCacheDTO = buildValidCache(messageForRegistryDTO.getEnv(), messageForRegistryDTO.getAppname());
-            // build validValud-md5
             String newCacheDTOMD5 = Md5Tool.md5(JSON.toJSONString(newCacheDTO));
 
             // load cache
+            String envAppNameKey = buildCacheKey(messageForRegistryDTO.getEnv(), messageForRegistryDTO.getAppname());
             String oldCacheDTOMD5 = registryCacheMd5Store.get(envAppNameKey);
 
             // set data (key exists and not match)
-            if (CollectionTool.isNotEmpty(newCacheDTO)) {
-                if (!newCacheDTOMD5.equals(oldCacheDTOMD5)) {
-                    registryCacheStore.put(envAppNameKey, newCacheDTO);
-                    registryCacheMd5Store.put(envAppNameKey, newCacheDTOMD5);      // only match md5, speed up match process
+            if (!(oldCacheDTOMD5!=null && oldCacheDTOMD5.equals(newCacheDTOMD5))) {
+                registryCacheStore.put(envAppNameKey, newCacheDTO);
+                registryCacheMd5Store.put(envAppNameKey, newCacheDTOMD5);      // only match md5, speed up match process
 
-                    // discovery diff
-                    envAppnameDiffList.add(envAppNameKey);
-                }
-            } else {
-                logger.info(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-messageListenThread offline-pass envAppNameKey:{}", envAppNameKey);
+                // discovery diff
+                envAppnameDiffList.add(envAppNameKey);
             }
         }
 
         // push client
         if (CollectionTool.isNotEmpty(envAppnameDiffList)) {
-            logger.error(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-messageListenThread find envAppnameDiffList:{}", envAppnameDiffList);
+            logger.info(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler - checkUpdateAndPush find diffData and pushClient, envAppnameDiffList:{}", envAppnameDiffList);
             pushClient(envAppnameDiffList);
         }
     }
@@ -314,7 +250,6 @@ public class RegistryCacheHelpler {
         }
         // do push
         RegistryFactory.getInstance().getRegistryDeferredResultHelpler().pushClient(envAppnameDiffList);
-        logger.info(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-pushClient, envAppnameDiffList:{}", envAppnameDiffList);
     }
 
     /**
@@ -330,43 +265,7 @@ public class RegistryCacheHelpler {
         }
 
         // stop thread
-        stopThread(fullSyncThread);
-        stopThread(messageListenThread);
-    }
-
-
-    // ---------------------- util ----------------------
-
-    /**
-     * start thread
-     *
-     * @param runnable
-     * @param name
-     * @return
-     */
-    public static Thread startThread(Runnable runnable, String name) {
-        Thread thread = new Thread(runnable);
-        thread.setDaemon(true);
-        thread.setName(name);
-        thread.start();
-        return thread;
-    }
-
-    /**
-     * stop thread
-     *
-     * @param thread
-     */
-    public static void stopThread(Thread thread) {
-        if (thread.getState() != Thread.State.TERMINATED){
-            // interrupt and wait
-            thread.interrupt();
-            try {
-                thread.join();
-            } catch (Throwable e) {
-                logger.error(e.getMessage(), e);
-            }
-        }
+        MessageHelpler.stopThread(fullSyncThread);
     }
 
     // ---------------------- tool ----------------------
