@@ -1,6 +1,6 @@
-package com.xxl.conf.admin.registry;
+package com.xxl.conf.admin.openapi.registry;
 
-import com.xxl.conf.admin.registry.openapi.RegisterTool;
+import com.xxl.conf.admin.openapi.registry.tool.RegisterTool;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.List;
 
-public class OpenApiControllerTest {
-    private static final Logger logger = LoggerFactory.getLogger(OpenApiControllerTest.class);
+public class RegistryOpenApiControllerTest {
+    private static final Logger logger = LoggerFactory.getLogger(RegistryOpenApiControllerTest.class);
 
     // admin-client
     private static String adminAddress = "http://127.0.0.1:8080/xxl-conf-admin";

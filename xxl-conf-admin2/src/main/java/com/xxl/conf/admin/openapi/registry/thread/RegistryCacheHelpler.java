@@ -3,7 +3,10 @@ package com.xxl.conf.admin.openapi.registry.thread;
 import com.alibaba.fastjson2.JSON;
 import com.xxl.conf.admin.constant.enums.InstanceRegisterModelEnum;
 import com.xxl.conf.admin.constant.enums.MessageTypeEnum;
-import com.xxl.conf.admin.model.dto.InstanceCacheDTO;
+import com.xxl.conf.admin.model.dto.MessageForConfDataDTO;
+import com.xxl.conf.admin.openapi.confdata.config.ConfDataFactory;
+import com.xxl.conf.admin.openapi.confdata.thread.ConfDataCacheHelpler;
+import com.xxl.conf.admin.openapi.registry.model.InstanceCacheDTO;
 import com.xxl.conf.admin.model.dto.MessageForRegistryDTO;
 import com.xxl.conf.admin.model.entity.Instance;
 import com.xxl.conf.admin.model.entity.Message;
@@ -211,59 +214,31 @@ public class RegistryCacheHelpler {
                         List<Long> excludeMsgIds = readedMessageIds.size()>50?readedMessageIds.subList(0, 50):readedMessageIds;
 
                         List<Message> messageList = RegistryFactory.getInstance().getMessageMapper().queryValidMessage(msgTimeValidStart, msgTimeValidEnd, excludeMsgIds);
-                        List<String> envAppnameDiffList = new ArrayList<>();
 
-                        // b、parse all registry-message-dto, by message-data
+                        // b、dispatch message
                         if (CollectionTool.isNotEmpty(messageList)) {
-                            // filter registry-message
-                            List<Message> registryMessageList = messageList.stream()
+
+                            // 1、parse message by type
+                            List<MessageForRegistryDTO> messageForRegistryDTOList = messageList.stream()
                                     .filter(item->item.getType()== MessageTypeEnum.REGISTRY.getValue())
+                                    .map(item-> (JSON.parseObject(item.getData(), MessageForRegistryDTO.class)))
+                                    .collect(Collectors.toList());
+                            List<MessageForConfDataDTO> messageForConfDataDTOList = messageList.stream()
+                                    .filter(item->item.getType()== MessageTypeEnum.CONFDATA.getValue())
+                                    .map(item-> (JSON.parseObject(item.getData(), MessageForConfDataDTO.class)))
                                     .collect(Collectors.toList());
 
-                            // c、process each env-appname
-                            if (CollectionTool.isNotEmpty(registryMessageList)) {
-                                // convert to registry-message-dto（env-appname）
-                                List<MessageForRegistryDTO> messageForRegistryDTOList = registryMessageList.stream()
-                                        .map(item-> (JSON.parseObject(item.getData(), MessageForRegistryDTO.class))
-                                        )
-                                        .collect(Collectors.toList());
+                            // 2、process registry message
+                            checkUpdateAndPush(messageForRegistryDTOList);
 
-                                for (MessageForRegistryDTO messageForRegistryDTO: messageForRegistryDTOList) {
-                                    // build key
-                                    String envAppNameKey = buildCacheKey(messageForRegistryDTO.getEnv(), messageForRegistryDTO.getAppname());
-
-                                    // build validValud
-                                    List<InstanceCacheDTO> cacheValue = buildValidCache(messageForRegistryDTO.getEnv(), messageForRegistryDTO.getAppname());
-
-                                    // build validValud-md5
-                                    String cacheValueMd5 = Md5Tool.md5(JSON.toJSONString(cacheValue));
-
-                                    // set data (key exists and not match)
-                                    if (CollectionTool.isNotEmpty(cacheValue)) {
-                                        if (!cacheValueMd5.equals(registryCacheMd5Store.get(envAppNameKey))) {
-                                            registryCacheStore.put(envAppNameKey, cacheValue);
-                                            registryCacheMd5Store.put(envAppNameKey, cacheValueMd5);      // only match md5, speed up match process
-
-                                            // discovery diff
-                                            envAppnameDiffList.add(envAppNameKey);
-                                        }
-                                    } else {
-                                        logger.info(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-messageListenThread offline-pass envAppNameKey:{}", envAppNameKey);
-                                    }
-                                }
-                            }
-
-                            // avoid repeat message
-                            readedMessageIds.addAll(messageList.stream().map(Message::getId).collect(Collectors.toList()));
+                            // 3、process confdata message
+                            ConfDataFactory.getInstance().getConfDataCacheHelpler().checkUpdateAndPush(messageForConfDataDTOList);
                         }
 
-                        // d、push client
-                        if (CollectionTool.isNotEmpty(envAppnameDiffList)) {
-                            logger.error(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-messageListenThread find envAppnameDiffList:{}", envAppnameDiffList);
-                            pushClient(envAppnameDiffList);
-                        }
+                        // c、store msgId, avoid repeat message
+                        readedMessageIds.addAll(messageList.stream().map(Message::getId).collect(Collectors.toList()));
 
-                        // e、clean old message， Avoid too often clean
+                        // d、clean old message， Avoid too often clean
                         if ( (System.currentTimeMillis()/1000) % REGISTRY_BEAT_TIME ==0) {
                             RegistryFactory.getInstance().getMessageMapper().cleanMessageInValid(msgTimeValidStart, msgTimeValidEnd);
                             readedMessageIds.clear();
@@ -286,6 +261,47 @@ public class RegistryCacheHelpler {
             }
         }, "xxl-conf, admin RegistryCacheHelpler-messageListenThread");
 
+    }
+
+    private void checkUpdateAndPush(List<MessageForRegistryDTO> messageForRegistryDTOList){
+        // valid
+        if (CollectionTool.isEmpty(messageForRegistryDTOList)) {
+            return;
+        }
+
+        // check and push
+        List<String> envAppnameDiffList = new ArrayList<>();
+        for (MessageForRegistryDTO messageForRegistryDTO: messageForRegistryDTOList) {
+            // build key
+            String envAppNameKey = buildCacheKey(messageForRegistryDTO.getEnv(), messageForRegistryDTO.getAppname());
+
+            // build validValud
+            List<InstanceCacheDTO> newCacheDTO = buildValidCache(messageForRegistryDTO.getEnv(), messageForRegistryDTO.getAppname());
+            // build validValud-md5
+            String newCacheDTOMD5 = Md5Tool.md5(JSON.toJSONString(newCacheDTO));
+
+            // load cache
+            String oldCacheDTOMD5 = registryCacheMd5Store.get(envAppNameKey);
+
+            // set data (key exists and not match)
+            if (CollectionTool.isNotEmpty(newCacheDTO)) {
+                if (!newCacheDTOMD5.equals(oldCacheDTOMD5)) {
+                    registryCacheStore.put(envAppNameKey, newCacheDTO);
+                    registryCacheMd5Store.put(envAppNameKey, newCacheDTOMD5);      // only match md5, speed up match process
+
+                    // discovery diff
+                    envAppnameDiffList.add(envAppNameKey);
+                }
+            } else {
+                logger.info(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-messageListenThread offline-pass envAppNameKey:{}", envAppNameKey);
+            }
+        }
+
+        // push client
+        if (CollectionTool.isNotEmpty(envAppnameDiffList)) {
+            logger.error(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-messageListenThread find envAppnameDiffList:{}", envAppnameDiffList);
+            pushClient(envAppnameDiffList);
+        }
     }
 
     /**

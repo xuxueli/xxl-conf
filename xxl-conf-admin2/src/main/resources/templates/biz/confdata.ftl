@@ -99,8 +99,7 @@
 								<div class="form-group">
 									<label for="lastname" class="col-sm-2 control-label">Env<font color="red">*</font></label>
 									<div class="col-sm-9">
-										${XXL_CONF_CURRENT_ENV}
-										<input name="env" value="${XXL_CONF_CURRENT_ENV}" hidden="hidden" >
+										<input type="text" class="form-control" name="env" value="${XXL_CONF_CURRENT_ENV}" readonly >
 									</div>
 								</div>
 								<div class="form-group">
@@ -153,18 +152,13 @@
 								<div class="form-group">
 									<label for="lastname" class="col-sm-2 control-label">Env<font color="red">*</font></label>
 									<div class="col-sm-9">
-										${XXL_CONF_CURRENT_ENV}
-										<input name="env" value="${XXL_CONF_CURRENT_ENV}" hidden="hidden" >
+										<input type="text" class="form-control" name="env" value="${XXL_CONF_CURRENT_ENV}" readonly >
 									</div>
 								</div>
 								<div class="form-group">
 									<label for="lastname" class="col-sm-2 control-label">AppName<font color="red">*</font></label>
 									<div class="col-sm-9">
-										<select class="form-control " style="width: 100%;" name="appname" disabled >
-											<#list applicationList as item>
-												<option value="${item.appname}" >${item.appname}</option>
-											</#list>
-										</select>
+										<input type="text" class="form-control" name="appname" readonly >
 									</div>
 								</div>
 								<div class="form-group">

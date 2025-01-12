@@ -1,6 +1,5 @@
 package com.xxl.conf.admin.openapi.registry.model;
 
-import com.xxl.conf.admin.model.dto.InstanceCacheDTO;
 import com.xxl.conf.admin.openapi.common.model.OpenApiResponse;
 
 import java.io.Serializable;

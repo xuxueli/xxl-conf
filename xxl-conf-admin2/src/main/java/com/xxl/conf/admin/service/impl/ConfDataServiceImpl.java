@@ -1,12 +1,20 @@
 package com.xxl.conf.admin.service.impl;
 
+import com.alibaba.fastjson2.JSON;
+import com.xxl.conf.admin.constant.enums.MessageTypeEnum;
 import com.xxl.conf.admin.mapper.ConfDataLogMapper;
 import com.xxl.conf.admin.mapper.ConfDataMapper;
 import com.xxl.conf.admin.model.dto.LoginUserDTO;
+import com.xxl.conf.admin.model.dto.MessageForConfDataDTO;
+import com.xxl.conf.admin.model.dto.MessageForRegistryDTO;
 import com.xxl.conf.admin.model.entity.ConfData;
 import com.xxl.conf.admin.model.entity.ConfDataLog;
+import com.xxl.conf.admin.model.entity.Message;
+import com.xxl.conf.admin.openapi.registry.config.RegistryFactory;
 import com.xxl.conf.admin.service.ConfDataService;
 import com.xxl.conf.admin.util.I18nUtil;
+import com.xxl.tool.core.CollectionTool;
+import com.xxl.tool.core.StringTool;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -36,9 +44,9 @@ public class ConfDataServiceImpl implements ConfDataService {
 	public Response<String> insert(ConfData confData, LoginUserDTO loginUser, boolean isAdmin) {
 
 		// valid
-		if (confData == null) {
+		if (confData == null || StringTool.isBlank(confData.getEnv()) || StringTool.isBlank(confData.getAppname())) {
 			return new ResponseBuilder<String>().fail("必要参数缺失").build();
-        }
+		}
 
 		// valid application
 		List<String> appnameList = loginUser.getPermission()!=null? Arrays.asList(loginUser.getPermission().split(",")):new ArrayList<>();
@@ -50,7 +58,26 @@ public class ConfDataServiceImpl implements ConfDataService {
 		confDataMapper.insert(confData);
 		// log
 		confDataLogMapper.insert(new ConfDataLog(confData.getId(), confData.getValue(), loginUser.getUsername()));
+
+		// push message
+		broadcastMesssage(confData);
+
 		return new ResponseBuilder<String>().success().build();
+	}
+
+	/**
+	 * broadcast
+	 *
+	 * @param confData
+	 */
+	public void broadcastMesssage(ConfData confData){
+		// message
+		Message message = new Message();
+		message.setType(MessageTypeEnum.CONFDATA.getValue());
+		message.setData(JSON.toJSONString(new MessageForConfDataDTO(confData)));      // convert
+		message.setAddTime(new Date());
+		message.setUpdateTime(new Date());
+		RegistryFactory.getInstance().getMessageMapper().insert(message);
 	}
 
 	/**
@@ -58,6 +85,12 @@ public class ConfDataServiceImpl implements ConfDataService {
 	*/
 	@Override
 	public Response<String> delete(List<Integer> ids, LoginUserDTO loginUser, boolean isAdmin) {
+
+		// valid
+		if (CollectionTool.isEmpty(ids)) {
+			return new ResponseBuilder<String>().fail("必要参数缺失").build();
+		}
+
 		// delete
 		int ret = confDataMapper.delete(ids);
 		// log
@@ -74,6 +107,11 @@ public class ConfDataServiceImpl implements ConfDataService {
 	@Override
 	public Response<String> update(ConfData confData, LoginUserDTO loginUser, boolean isAdmin) {
 
+		// valid
+		if (confData == null || StringTool.isBlank(confData.getEnv()) || StringTool.isBlank(confData.getAppname())) {
+			return new ResponseBuilder<String>().fail("必要参数缺失").build();
+		}
+
 		// valid application
 		List<String> appnameList = loginUser.getPermission()!=null? Arrays.asList(loginUser.getPermission().split(",")):new ArrayList<>();
 		if (!isAdmin && !appnameList.contains(confData.getAppname())){
@@ -82,9 +120,12 @@ public class ConfDataServiceImpl implements ConfDataService {
 
 		// opt
 		int ret = confDataMapper.update(confData);
-		// log
 		if (ret > 0) {
+			// log
 			confDataLogMapper.insert(new ConfDataLog(confData.getId(), confData.getValue(), loginUser.getUsername()));
+
+			// push message
+			broadcastMesssage(confData);
 		}
 		return ret>0? new ResponseBuilder<String>().success().build()
 					: new ResponseBuilder<String>().fail().build() ;

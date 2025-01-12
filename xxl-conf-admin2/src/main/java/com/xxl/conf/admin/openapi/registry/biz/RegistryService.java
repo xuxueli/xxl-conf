@@ -36,7 +36,6 @@ public interface RegistryService {
      *
      * logic：
      *      1、only read cache
-     *      2、
      */
     DiscoveryResponse discovery(DiscoveryRequest request);
 

@@ -262,7 +262,7 @@ $(function() {
 		// base data
 		$("#updateModal .form input[name='id']").val( row.id );
 		$("#updateModal .form select[name='env']").val( row.env );
-		$("#updateModal .form select[name='appname']").val( row.appname );
+		$("#updateModal .form input[name='appname']").val( row.appname );
 		$("#updateModal .form input[name='key']").val( row.key );
 		$("#updateModal .form textarea[name='value']").val( row.value );
 		$("#updateModal .form input[name='desc']").val( row.desc );

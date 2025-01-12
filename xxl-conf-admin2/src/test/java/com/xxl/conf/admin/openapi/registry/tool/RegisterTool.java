@@ -1,4 +1,4 @@
-package com.xxl.conf.admin.registry.openapi;
+package com.xxl.conf.admin.openapi.registry.tool;
 
 import com.alibaba.fastjson2.JSON;
 import com.xxl.tool.net.HttpTool;
@@ -406,7 +406,7 @@ public class RegisterTool {
         request.setInstance(instance);
 
         // 2、post
-        String responseBody = HttpTool.postBody(adminAddress + "/openapi/register",
+        String responseBody = HttpTool.postBody(adminAddress + "/openapi/registry/register",
                 JSON.toJSONString(request),
                 null,
                 3000);
@@ -436,7 +436,7 @@ public class RegisterTool {
         request.setInstance(instance);
 
         // 2、post
-        String responseBody = HttpTool.postBody(adminAddress + "/openapi/unregister",
+        String responseBody = HttpTool.postBody(adminAddress + "/openapi/registry/unregister",
                 JSON.toJSONString(request),
                 null,
                 3000);
@@ -467,7 +467,7 @@ public class RegisterTool {
         request.setAppnameList(appnameList);
         request.setSimpleQuery(simpleQuery);
 
-        String responseBody = HttpTool.postBody(adminAddress + "/openapi/discovery",
+        String responseBody = HttpTool.postBody(adminAddress + "/openapi/registry/discovery",
                 JSON.toJSONString(request),
                 null,
                 3000
@@ -499,7 +499,7 @@ public class RegisterTool {
         request.setSimpleQuery(false);
 
         try {
-            String responseBody = HttpTool.postBody(adminAddress + "/openapi/monitor",
+            String responseBody = HttpTool.postBody(adminAddress + "/openapi/registry/monitor",
                     JSON.toJSONString(request),
                     null,
                     timeout);

@@ -2,7 +2,8 @@ package com.xxl.conf.admin.openapi.confdata;
 
 import com.alibaba.fastjson2.JSON;
 import com.xxl.conf.admin.annotation.Permission;
-import com.xxl.conf.admin.openapi.registry.model.DiscoveryRequest;
+import com.xxl.conf.admin.openapi.confdata.biz.ConfDataBizService;
+import com.xxl.conf.admin.openapi.confdata.model.QueryConfDataRequest;
 import com.xxl.conf.admin.openapi.common.model.OpenApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -23,6 +25,8 @@ public class ConfDataOpenApiController {
     private static Logger logger = LoggerFactory.getLogger(ConfDataOpenApiController.class);
 
 
+    @Resource
+    private ConfDataBizService confdataService;
 
     @RequestMapping("/{uri}")
     @ResponseBody
@@ -39,20 +43,20 @@ public class ConfDataOpenApiController {
 
         // services mapping
         try {
-            if ("discovery".equals(uri)) {
+            if ("query".equals(uri)) {
                 /**
                  * 配置数据查询 API
                  * 说明：查询配置数据信息
                  */
-                DiscoveryRequest request = JSON.parseObject(data, DiscoveryRequest.class);
-                return null;
+                QueryConfDataRequest request = JSON.parseObject(data, QueryConfDataRequest.class);
+                return confdataService.query(request);
             } else if ("monitor".equals(uri)) {
                 /**
                  * 配置数据监控 API
                  * 说明：long-polling 接口，主动阻塞一段时间（三倍于注册中心心跳时间）；直至阻塞超时或信息变动时响应；
                  */
-                DiscoveryRequest request = JSON.parseObject(data, DiscoveryRequest.class);
-                return null;
+                QueryConfDataRequest request = JSON.parseObject(data, QueryConfDataRequest.class);
+                return confdataService.monitor(request);
             } else {
                 return new OpenApiResponse(OpenApiResponse.FAIL_CODE, "invalid request, uri-mapping("+ uri +") not found.");
             }

@@ -90,4 +90,24 @@
             </if>
     </select>
 
+    <select id="queryEnvAndAppName" parameterType="java.util.Map" resultMap="ConfData">
+        SELECT DISTINCT t.env, t.appname
+        FROM xxl_conf_data AS t
+    </select>
+
+    <select id="queryByEnvAndAppName" parameterType="java.util.Map" resultMap="ConfData">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_conf_data AS t
+        WHERE t.`env` = #{env}
+          AND t.`appname` = #{appname}
+    </select>
+
+    <select id="queryByEnvAndAppNameAndKey" parameterType="java.util.Map" resultMap="ConfData">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_conf_data AS t
+        WHERE t.`env` = #{env}
+            AND t.`appname` = #{appname}
+            AND t.`key` = #{key}
+    </select>
+
 </mapper>

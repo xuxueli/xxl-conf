@@ -8,9 +8,10 @@ package com.xxl.conf.admin.constant.enums;
 public enum MessageTypeEnum {
 
     /**
-     * 消息注册，包含 服务注册，服务下线等；
+     * 服务注册，包含 服务注册，服务下线等；
      */
-    REGISTRY(1, "消息注册");
+    REGISTRY(1, "服务注册变更"),
+    CONFDATA(2, "配置数据变更");
 
     private int value;
     private String desc;

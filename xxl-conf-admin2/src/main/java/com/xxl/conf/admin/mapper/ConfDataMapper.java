@@ -52,4 +52,22 @@ public interface ConfDataMapper {
                              @Param("appname") String appname,
                              @Param("key") String key);
 
+    /**
+     * 查询全部服务组（env + appname）
+     */
+    List<ConfData> queryEnvAndAppName();
+
+    /**
+     * 根据env + appname查询
+     */
+    List<ConfData> queryByEnvAndAppName(@Param("env") String env,
+                                        @Param("appname") String appname);
+
+    /**
+     * 根据env + appname + key查询
+     */
+    ConfData queryByEnvAndAppNameAndKey(@Param("env") String env,
+                                        @Param("appname") String appname,
+                                        @Param("key") String key);
+
 }

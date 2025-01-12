@@ -1,4 +1,4 @@
-package com.xxl.conf.admin.model.dto;
+package com.xxl.conf.admin.openapi.registry.model;
 
 import com.xxl.conf.admin.model.entity.Instance;
 
