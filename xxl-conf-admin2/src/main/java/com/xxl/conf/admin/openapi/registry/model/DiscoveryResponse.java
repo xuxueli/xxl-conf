@@ -1,4 +1,4 @@
-package com.xxl.conf.admin.registry.model;
+package com.xxl.conf.admin.openapi.registry.model;
 
 import com.xxl.conf.admin.model.dto.InstanceCacheDTO;
 

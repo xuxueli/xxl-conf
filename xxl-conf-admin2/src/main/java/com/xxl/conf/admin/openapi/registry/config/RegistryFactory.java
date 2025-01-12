@@ -1,10 +1,10 @@
-package com.xxl.conf.admin.registry.config;
+package com.xxl.conf.admin.openapi.registry.config;
 
 import com.xxl.conf.admin.mapper.*;
-import com.xxl.conf.admin.registry.thread.AccessTokenHelpler;
-import com.xxl.conf.admin.registry.thread.RegisterHelper;
-import com.xxl.conf.admin.registry.thread.RegistryCacheHelpler;
-import com.xxl.conf.admin.registry.thread.RegistryDeferredResultHelpler;
+import com.xxl.conf.admin.openapi.registry.thread.AccessTokenHelpler;
+import com.xxl.conf.admin.openapi.registry.thread.RegisterHelper;
+import com.xxl.conf.admin.openapi.registry.thread.RegistryCacheHelpler;
+import com.xxl.conf.admin.openapi.registry.thread.RegistryDeferredResultHelpler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;

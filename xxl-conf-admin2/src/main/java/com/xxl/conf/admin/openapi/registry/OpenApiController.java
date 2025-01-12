@@ -1,11 +1,11 @@
-package com.xxl.conf.admin.registry;
+package com.xxl.conf.admin.openapi.registry;
 
 import com.alibaba.fastjson2.JSON;
 import com.xxl.conf.admin.annotation.Permission;
-import com.xxl.conf.admin.registry.biz.RegistryService;
-import com.xxl.conf.admin.registry.model.DiscoveryRequest;
-import com.xxl.conf.admin.registry.model.OpenApiResponse;
-import com.xxl.conf.admin.registry.model.RegisterRequest;
+import com.xxl.conf.admin.openapi.registry.biz.RegistryService;
+import com.xxl.conf.admin.openapi.registry.model.DiscoveryRequest;
+import com.xxl.conf.admin.openapi.registry.model.OpenApiResponse;
+import com.xxl.conf.admin.openapi.registry.model.RegisterRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author xuxueli 2018-11-29
  */
 @Controller
-@RequestMapping("/openapi")
+@RequestMapping("/openapi/registry")
 public class OpenApiController {
     private static Logger logger = LoggerFactory.getLogger(OpenApiController.class);
 

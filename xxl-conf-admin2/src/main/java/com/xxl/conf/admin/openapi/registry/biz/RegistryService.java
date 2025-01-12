@@ -1,9 +1,9 @@
-package com.xxl.conf.admin.registry.biz;
+package com.xxl.conf.admin.openapi.registry.biz;
 
-import com.xxl.conf.admin.registry.model.DiscoveryRequest;
-import com.xxl.conf.admin.registry.model.DiscoveryResponse;
-import com.xxl.conf.admin.registry.model.OpenApiResponse;
-import com.xxl.conf.admin.registry.model.RegisterRequest;
+import com.xxl.conf.admin.openapi.registry.model.DiscoveryRequest;
+import com.xxl.conf.admin.openapi.registry.model.DiscoveryResponse;
+import com.xxl.conf.admin.openapi.registry.model.OpenApiResponse;
+import com.xxl.conf.admin.openapi.registry.model.RegisterRequest;
 import org.springframework.web.context.request.async.DeferredResult;
 
 /**

@@ -1,4 +1,4 @@
-package com.xxl.conf.admin.registry.thread;
+package com.xxl.conf.admin.openapi.registry.thread;
 
 import com.alibaba.fastjson2.JSON;
 import com.xxl.conf.admin.constant.enums.InstanceRegisterModelEnum;
@@ -6,9 +6,9 @@ import com.xxl.conf.admin.constant.enums.MessageTypeEnum;
 import com.xxl.conf.admin.model.dto.MessageForRegistryDTO;
 import com.xxl.conf.admin.model.entity.Instance;
 import com.xxl.conf.admin.model.entity.Message;
-import com.xxl.conf.admin.registry.config.RegistryFactory;
-import com.xxl.conf.admin.registry.model.OpenApiResponse;
-import com.xxl.conf.admin.registry.model.RegisterRequest;
+import com.xxl.conf.admin.openapi.registry.config.RegistryFactory;
+import com.xxl.conf.admin.openapi.registry.model.OpenApiResponse;
+import com.xxl.conf.admin.openapi.registry.model.RegisterRequest;
 import com.xxl.tool.core.StringTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
