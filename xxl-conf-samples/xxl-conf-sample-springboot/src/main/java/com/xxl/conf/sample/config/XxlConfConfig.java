@@ -1,6 +1,6 @@
 package com.xxl.conf.sample.config;
 
-import com.xxl.conf.core.spring.XxlConfFactory;
+import com.xxl.conf.core.factory.support.SpringXxlConfFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,30 +17,28 @@ public class XxlConfConfig {
     private Logger logger = LoggerFactory.getLogger(XxlConfConfig.class);
 
 
-    @Value("${xxl.conf.admin.address}")
-    private String adminAddress;
+    @Value("${xxl.conf.client.appname}")
+    private String appname;
 
-    @Value("${xxl.conf.env}")
+    @Value("${xxl.conf.client.env}")
     private String env;
 
-    @Value("${xxl.conf.access.token}")
-    private String accessToken;
+    @Value("${xxl.conf.admin.address}")
+    private String address;
 
-    @Value("${xxl.conf.mirrorfile}")
-    private String mirrorfile;
-
+    @Value("${xxl.conf.admin.accesstoken}")
+    private String accesstoken;
 
     @Bean
-    public XxlConfFactory xxlConfFactory() {
+    public SpringXxlConfFactory xxlConfFactory() {
 
-        XxlConfFactory xxlConf = new XxlConfFactory();
-        xxlConf.setAdminAddress(adminAddress);
-        xxlConf.setEnv(env);
-        xxlConf.setAccessToken(accessToken);
-        xxlConf.setMirrorfile(mirrorfile);
+        SpringXxlConfFactory xxlConfFactory = new SpringXxlConfFactory();
+        xxlConfFactory.setAppname(appname);
+        xxlConfFactory.setEnv(env);
+        xxlConfFactory.setAddress(address);
+        xxlConfFactory.setAccesstoken(accesstoken);
 
-        logger.info(">>>>>>>>>>> xxl-conf config init.");
-        return xxlConf;
+        return xxlConfFactory;
     }
 
 }

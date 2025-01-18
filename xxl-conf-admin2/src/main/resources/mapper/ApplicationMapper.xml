@@ -81,6 +81,7 @@
     <select id="findAll" parameterType="java.util.Map" resultMap="Application">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_conf_application AS t
+        ORDER BY t.`appname` ASC
     </select>
 
 </mapper>

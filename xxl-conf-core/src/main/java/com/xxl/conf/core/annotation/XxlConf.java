@@ -13,6 +13,13 @@ import java.lang.annotation.*;
 public @interface XxlConf {
 
     /**
+     * conf appname; if empty, the appname of current service will be used
+     *
+     * @return
+     */
+    String appname() default "";
+
+    /**
      * conf key
      *
      * @return

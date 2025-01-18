@@ -38,19 +38,11 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- xxl-conf-client -->
+        <!-- xxl-conf -->
         <dependency>
             <groupId>com.xuxueli</groupId>
             <artifactId>xxl-conf-core</artifactId>
             <version>${project.parent.version}</version>
-        </dependency>
-
-        <!-- devtools -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <version>${spring-boot.version}</version>
-            <optional>true</optional>
         </dependency>
 
     </dependencies>

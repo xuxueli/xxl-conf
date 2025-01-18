@@ -1,4 +1,4 @@
-package com.xxl.conf.core.model;
+package com.xxl.conf.admin.core.model;
 
 import java.util.List;
 

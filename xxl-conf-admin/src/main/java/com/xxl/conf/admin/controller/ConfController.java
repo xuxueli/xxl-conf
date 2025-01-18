@@ -9,7 +9,7 @@ import com.xxl.conf.admin.core.util.ReturnT;
 import com.xxl.conf.admin.dao.XxlConfProjectDao;
 import com.xxl.conf.admin.service.IXxlConfNodeService;
 import com.xxl.conf.admin.service.impl.LoginService;
-import com.xxl.conf.core.model.XxlConfParamVO;
+import com.xxl.conf.admin.core.model.XxlConfParamVO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

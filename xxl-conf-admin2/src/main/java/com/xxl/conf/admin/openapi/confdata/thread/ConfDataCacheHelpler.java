@@ -129,7 +129,7 @@ public class ConfDataCacheHelpler {
                             ConfDataCacheDTO confDataNew = confDataCacheStoreNew.get(envAppNameKey);
 
                             if (!(confDataNew!=null && confDataNew.getValueMd5().equals(confDataOld.getValueMd5()))) {
-                                diffConfList.add(confDataNew);
+                                diffConfList.add(confDataOld);
                             }
                         }
                         // find diff and push
@@ -299,7 +299,7 @@ public class ConfDataCacheHelpler {
         }
 
         // get Instance
-        QueryConfDataResponse response = new QueryConfDataResponse();
+        QueryConfDataResponse response = new QueryConfDataResponse(OpenApiResponse.SUCCESS_CODE, "");
         response.setConfData(confDataResult);
         response.setConfDataMd5(confDataResultMd5);
         return response;

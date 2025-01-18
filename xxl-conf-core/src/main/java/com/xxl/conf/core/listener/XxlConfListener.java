@@ -9,9 +9,7 @@ public interface XxlConfListener {
 
     /**
      * invoke when first-use or conf-change
-     *
-     * @param key
      */
-    public void onChange(String key, String value) throws Exception;
+    public void onChange(String appname, String key, String value) throws Exception;
 
 }

@@ -97,6 +97,7 @@
     <select id="findAll" parameterType="java.util.Map" resultMap="Environment">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_conf_environment AS t
+        ORDER BY t.`id` ASC
     </select>
 
 </mapper>

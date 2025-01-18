@@ -114,8 +114,8 @@ CREATE TABLE `xxl_conf_access_token` (
 
 ## —————————————————————— init data ——————————————————
 INSERT INTO `xxl_conf_user`(`id`, `username`, `password`, `user_token`, `status`, `real_name`, `role`, `add_time`, `update_time`)
-    VALUES (1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', 0, 'Jack', 'ADMIN', now(), now()),
-           (2, 'user', 'e10adc3949ba59abbe56e057f20f883e', '', 0, 'Lucy', 'NORMAL', now(), now());
+VALUES (1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', 0, 'Jack', 'ADMIN', now(), now()),
+       (2, 'user', 'e10adc3949ba59abbe56e057f20f883e', '', 0, 'Lucy', 'NORMAL', now(), now());
 INSERT INTO `xxl_conf_access_token` (id, `access_token`, `status`, add_time, update_time)
 VALUES (1, 'defaultaccesstoken', 0, now(), now());
 
@@ -125,7 +125,11 @@ VALUES  (1, 'test', '测试环境', '用于开发者和测试人员进行单元�
         (3, 'prod', '生产环境', '应用程序实际运行并面向外部用户的环境', now(), now());
 
 INSERT INTO `xxl_conf_application` (id, appname, name, `desc`, add_time, update_time)
-VALUES (1, 'app01', '测试应用', '测试应用', now(), now());
+VALUES (1, 'xxl-conf-sample', '示例应用', '示例应用，演示使用', '2025-01-18 20:03:13', '2025-01-18 20:03:13');
 
+INSERT INTO `xxl_conf_data` (id, env, appname, `key`, value, `desc`, add_time, update_time)
+VALUES (1, 'test', 'xxl-conf-sample', 'sample.key01', '100', '演示配置01', '2025-01-18 20:04:05', '2025-01-18 20:04:05'),
+       (2, 'test', 'xxl-conf-sample', 'sample.key02', '200', '演示配置02', '2025-01-18 20:05:14', '2025-01-18 20:08:42'),
+       (3, 'test', 'xxl-conf-sample', 'sample.key03', '300', '演示配置03', '2025-01-18 20:12:06', '2025-01-18 20:12:06');
 
 commit;

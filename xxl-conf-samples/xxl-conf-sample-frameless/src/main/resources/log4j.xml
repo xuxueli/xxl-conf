@@ -9,19 +9,9 @@
 		</layout>
 	</appender>
 	
-    <appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="file" value="/data/applogs/xxl-conf/xxl-conf-sample-frameless.log"/>
-        <param name="append" value="true"/>
-        <param name="encoding" value="UTF-8"/>
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%-d{yyyy-MM-dd HH:mm:ss} xxl-conf-sample-frameless [%c]-[%t]-[%M]-[%L]-[%p] %m%n"/>
-        </layout>
-    </appender>
-
     <root>
         <level value="INFO" />
         <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
     </root>
 
 </log4j:configuration>

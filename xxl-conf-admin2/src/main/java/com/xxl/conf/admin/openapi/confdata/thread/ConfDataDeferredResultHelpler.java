@@ -147,7 +147,7 @@ public class ConfDataDeferredResultHelpler {
             if (CollectionTool.isNotEmpty(deferredResultList)) {
                 registryDeferredResultMap.remove(confDataCacheDTO);   // thread-safe write
                 for (DeferredResult deferredResult: deferredResultList) {
-                    deferredResult.setResult(new OpenApiResponse(OpenApiResponse.SUCCESS_CODE, "Monitor key("+ confDataCacheDTO +") update."));
+                    deferredResult.setResult(new OpenApiResponse(OpenApiResponse.FAIL_CODE, "Monitor key("+ confDataCacheDTO +") update."));
                 }
             }
         }

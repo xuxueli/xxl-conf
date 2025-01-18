@@ -1,7 +1,7 @@
-package com.xxl.conf.admin.openapi.confdata.tool;
+package com.xxl.conf.core.data.tool;
 
 import com.alibaba.fastjson2.JSON;
-import com.xxl.tool.net.HttpTool;
+import com.xxl.conf.core.util.HttpTool;
 
 import java.io.Serializable;
 import java.util.List;
@@ -187,8 +187,8 @@ public class ConfDataTool {
 
         String responseBody = HttpTool.postBody(adminAddress + "/openapi/confdata/query",
                 JSON.toJSONString(request),
-                null,
-                3000
+                3000,
+                null
         );
         QueryConfDataResponse response = JSON.parseObject(responseBody, QueryConfDataResponse.class);
         return response;
@@ -222,8 +222,9 @@ public class ConfDataTool {
         try {
             String responseBody = HttpTool.postBody(adminAddress + "/openapi/confdata/monitor",
                     JSON.toJSONString(request),
-                    null,
-                    timeout);
+                    timeout,
+                    null
+                    );
             QueryConfDataResponse response = JSON.parseObject(responseBody, QueryConfDataResponse.class);
             return response;
         } catch (Exception e) {
