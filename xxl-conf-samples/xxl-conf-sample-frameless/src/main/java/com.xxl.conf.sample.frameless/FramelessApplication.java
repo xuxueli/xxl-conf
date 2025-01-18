@@ -59,10 +59,10 @@ public class FramelessApplication {
          * 		    - 支持多数据类型
          * 			- 配置从配置中心实时加载，且底层存在动态推动更新，实效性有保障；
          */
-        XxlConfHelper.addListener("default.key01", new XxlConfListener(){
+        XxlConfHelper.addListener("sample.key02", new XxlConfListener(){
             @Override
             public void onChange(String appname, String key, String value) throws Exception {
-                logger.info("XxlConfListener 配置变更事件通知：key={}, value={}", key, value);
+                logger.info("\n 2、XxlConfListener 配置变更事件通知：key={}, value={}", key, value);
             }
         });
     }
