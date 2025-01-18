@@ -12,7 +12,7 @@
 
 	<modules>
 		<module>xxl-conf-core</module>
-		<module>xxl-conf-admin2</module>
+		<module>xxl-conf-admin</module>
 		<module>xxl-conf-samples</module>
 	</modules>
 
