@@ -84,7 +84,7 @@ public class XxlConfFactory {
 		}
 
 		// address
-		if (address.contains(",")) {
+		if (!address.contains(",")) {
 			addressList.add(address);
 		} else {
 			addressList.addAll(
