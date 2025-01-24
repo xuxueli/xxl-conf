@@ -14,39 +14,50 @@
 ## 一、简介
 
 ### 1.1 概述
-XXL-CONF 是一个轻量级分布式配置管理平台，拥有"轻量级、秒级动态推送、多环境、跨语言、跨机房、配置监听、权限控制、版本回滚"等特性。现已开放源代码，开箱即用。
+XXL-CONF 一站式服务管理平台（配置中心、注册中心），提供 动态配置管理、服务注册与发现 等核心能力，拥有 “轻量级、秒级实时推送、多环境、跨语言、跨机房、权限控制” 等特性。现已开放源代码，开箱即用。
 
 ### 1.2 社区交流    
 - [社区交流](https://www.xuxueli.com/page/community.html)
 
 ### 1.3 特性
+
+#### 配置中心
 - 1、简单易用: 接入灵活方便，一分钟上手；
-- 2、轻量级: 部署简单，不依赖第三方服务，一分钟上手；
-- 3、配置中心HA：配置中心支持集群部署，提升配置中心系统容灾和可用性。
-- 4、在线管理: 提供配置中心, 通过Web界面在线操作配置数据，直观高效；
-- 5、多环境支持：单个配置中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
-- 6、多数据类型配置：支持多种数据类型配置，如：String、Boolean、Short、Integer、Long、Float、Double 等；
-- 7、跨语言：底层通过http服务（long-polling）拉取配置数据并实时感知配置变更，从而实现多语言支持。
-- 8、跨机房：得益于配置中心集群关系对等特性，集群各节点提供幂等的配置服务；因此，异地跨机房部署时，只需要请求本机房配置中心即可，实现异地多活；
-- 9、高性能：得益于配置中心的 "磁盘配置" 与客户端的 "LocalCache"，因此配置服务性能非常高；单机可承担大量配置请求；
-- 10、实时性: 秒级动态推送；配置更新后, 实时推送配置信息, 项目中配置数据会实时更新并生效, 不需要重启线上机器;
-- 11、配置变更监听功能：可开发Listener逻辑，监听配置变更事件，可据此动态刷新JDBC连接池等高级功能；
-- 12、最终一致性：底层借助内置广播机制，保障配置数据的最终一致性，从而保证配置数据的同步；
-- 13、配置备份: 配置数据同时在磁盘与MySQL中存储和备份，并定期同步， 提高配置数据的安全性;
-- 14、多种获取配置方式：支持 "API、 注解、XML占位符" 等多种方式获取配置，可灵活选择使用；
-- 15、兼容Spring原生配置：兼容Spring原生配置方式 "@Value"、"${}" 加载本地配置功能；与分布式配置获取方式隔离，互不干扰； 
-- 16、分布式: 支持多业务线接入并统一管理配置信息，支撑分布式业务场景;
-- 17、项目隔离: 以项目为维度管理配置, 方便隔离不同业务线配置;
-- 18、高性能: 通过LocalCache对配置数据做缓存, 提高性能;
-- 19、客户端断线重连强化：设置守护线程，周期性检测客户端连接、配置同步，提高异常情况下配置稳定性和时效性；
-- 20、空配置处理：主动缓存null或不存在类型配置，避免配置请求穿透到远程配置Server引发雪崩问题；
-- 21、用户管理：支持在线添加和维护用户，包括普通用户和管理员两种类型用户；
-- 22、配置权限控制；以项目为维度进行配置权限控制，管理员拥有全部项目权限，普通用户只有分配才拥有项目下配置的查看和管理权限；
-- 23、历史版本回滚：记录配置变更历史，方便历史配置版本回溯，默认记录10个历史版本；
-- 24、配置快照：客户端从配置中心获取到的配置数据后，会周期性缓存到本地快照文件中，当从配置中心获取配置失败时，将会使用使用本地快照文件中的配置数据；提高系统可用性；
-- 25、访问令牌（accessToken）：为提升系统安全性，配置中心和客户端进行安全性校验，双方AccessToken匹配才允许通讯；
+- 2、轻量级: 仅依赖DB无其他三方依赖，搭建部署及接入简单，一分钟上手；
+- 3、高可用/HA：配置中心支持集群部署，提升配置中心系统容灾和可用性；
+- 4、高性能:得益于配置中心与客户端的本地缓存以及多级缓存设计，因此配置读取性能非常高；单机可承担高并发配置读取；
+- 5、实时性: 借助内部广播机制，新服务上线、下线等变更，可以在1s内推送给客户端；
+- 6、线上化管理: 配置中心提供线上化管理界面, 通过Web UI在线操作配置数据，直观高效；
+- 8、动态更新：配置数据变更后，客户端配置数据会实时动态更新、并生效，不需要重启服务机器；
+- 9、最终一致性：底层借助内置广播机制，保障配置数据的最终一致性，从而保证配置数据的同步；
+- 10、多数据类型配置：支持多种数据类型配置，如：String、Boolean、Short、Integer、Long、Float、Double 等；
+- 11、丰富配置接入方式：支持 "API、 注解、Listener" 等多种方式获取配置，可灵活选择使用；
+- 12、配置变更监听功能：支持自定义Listener逻辑，监听配置变更事件，可据此动态刷新JDBC连接池等高级功能；
+- 13、多环境支持：支持自定义环境（命名空间），管理多个环境的的配置数据；环境之间相互隔离；
+- 14、跨语言/OpenAPI：提供语言无关的 配置中心 OpenAPI（RESTFUL 格式），提供拉取配置与实时感知配置变更能力，实现多语言支持；
+- 15、跨机房：得益于配置中心系统设计，服务端为无状态服务，集群各节点提供对等的服务；因此异地跨机房部署时，只需要请求本机房配置中心即可，实现异地多活；
+- 16、客户端断线重连强化：底层设计守护线程，周期性检测客户端连接、配置同步，提高异常情况下配置稳定性和时效性；
+- 17、空配置处理：主动缓存null或不存在类型配置，避免配置请求穿透到远程配置Server引发雪崩问题；
+- 18、访问令牌（AccessToken）：为提升系统安全性，服务端和客户端进行安全性校验，双方AccessToken匹配才允许通讯；
+- 19、用户管理：支持在线添加和维护用户，包括普通用户和管理员两种类型用户，灵活管控系统权限；
+- 20、配置权限控制；以项目为维度进行配置权限控制，管理员拥有全部项目权限，普通用户只有分配才拥有项目下配置的查看和管理权限；
+- 21、历史版本回滚：配置变更后及时记录配置变更历史，支持历史配置版本对比及快速回溯；
+- 22、配置快照：客户端从配置中心获取到的配置数据后，会周期性缓存到本地快照文件中，当从配置中心获取配置失败时，将会使用使用本地快照文件中的配置数据；提高系统可用性；
+- 23、容器化：提供官方docker镜像，并实时更新推送dockerhub，进一步实现产品开箱即用；
 
-
+#### 注册中心
+- 1、简单易用: 接入灵活方便，一分钟上手；
+- 2、轻量级: 仅依赖DB无其他三方依赖，搭建部署及接入简单，一分钟上手；
+- 3、高可用/HA：注册中心支持集群部署，提升注册中心系统容灾和可用性；
+- 4、高性能:得益于注册中心与客户端的本地缓存以及多级缓存设计，因此注册数据读取性能非常高；单机可承担高并发配置读取；
+- 5、实时性: 借助内部广播机制，新服务上线、下线等变更，可以在1s内推送给客户端；
+- 6、多环境支持：支持自定义环境（命名空间），管理多个环境的的服务注册数据；环境之间相互隔离；
+- 7、跨语言/OpenAPI：提供语言无关的 注册中心 OpenAPI（RESTFUL 格式），提供服务 注册、注销、心跳、查询 等能力，实现多语言支持；
+- 8、跨机房：得益于注册中心系统设计，服务端为无状态服务，集群各节点提供对等的服务；因此异地跨机房部署时，只需要请求本机房配置中心即可，实现异地多活；
+- 9、多状态：服务内置多状态，支持丰富业务使用场景。正常状态=支持动态注册、发现，服务注册信息实时更新；锁定状态=人工维护注册信息，服务注册信息固定不变；禁用状态=禁止使用，服务注册信息固定为空；
+- 10、访问令牌（AccessToken）：为提升系统安全性，服务端和客户端进行安全性校验，双方AccessToken匹配才允许通讯；
+- 11、用户管理：支持在线添加和维护用户，包括普通用户和管理员两种类型用户，灵活管控系统权限；
+- 12、容器化：提供官方docker镜像，并实时更新推送dockerhub，进一步实现产品开箱即用；
 
 ### 1.4 发展
 于2015年，我在github上创建XXL-CONF项目仓库并提交第一个commit，随之进行系统结构设计，UI选型，交互设计……
@@ -56,7 +67,7 @@ XXL-CONF 是一个轻量级分布式配置管理平台，拥有"轻量级、秒�
     - 1、深圳市绽放工场科技有限公司
 	- 2、深圳双猴科技有限公司
 	- 3、商智神州软件有限公司
-	- 4、浙江力太科技
+	- 4、浙江力太科技有限公司
 	- ……
 
 > 更多接入的公司，欢迎在 [登记地址](https://github.com/xuxueli/xxl-conf/issues/2 ) 登记，登记仅仅为了产品推广。
@@ -110,11 +121,11 @@ XXL-CONF 是一个轻量级分布式配置管理平台，拥有"轻量级、秒�
 
 ### 1.7 环境
 - Maven3+
-- Jdk1.7+
+- Jdk1.8+
 - Mysql5.6+
 
 
-## 二、快速入门
+## 二、XXL-CONF 快速搭建
 
 ### 2.1 环境准备
 
@@ -122,22 +133,22 @@ XXL-CONF 是一个轻量级分布式配置管理平台，拥有"轻量级、秒�
 
 请下载项目源码并解压，获取 "数据库初始化SQL脚本（Mysql）" 并执行即可。脚本位置如下：
  
-    xxl-conf/doc/db/xxl-conf.sql
+    xxl-conf/doc/db/tables_xxl_conf.sql
     
 
 ### 2.2 编译源码
 解压源码,按照maven格式将源码导入IDE, 使用maven进行编译即可，源码结构如下图所示：
 
-    - xxl-conf-admin：配置中心
+    - xxl-conf-admin：一站式服务管理中心（配置中心、注册中心）
     - xxl-conf-core：公共依赖
     - xxl-conf-samples: 接入XXl-CONF的示例项目，供用户参考学习
         - xxl-conf-sample-frameless：    无框架版本，main方法直接启动运行
         - xxl-conf-sample-springboot：   springboot版本
 
-### 2.3 “配置中心” 搭建（支持集群）
+### 2.3 “配置中心/注册中心” 搭建（支持集群）
 
     项目：xxl-conf-admin
-    作用：提供一个完善强大的配置管理平台，包含：环境管理、用户管理、项目管理、配置管理等功能，全部操作通过Web界面在线完成；
+    作用：一站式服务管理平台（配置中心、注册中心），提供 动态配置管理、服务注册与发现 等核心能力
     
 
 #### 方式1：源码编译方式搭建：
@@ -151,14 +162,11 @@ XXL-CONF 是一个轻量级分布式配置管理平台，拥有"轻量级、秒�
 - 配置项说明：
 
 ```
-# 配置中心数据库配置，存储配置元数据
-spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-conf?Unicode=true&characterEncoding=UTF-8
+# xxl-conf 数据库配置，存储配置元数据
+spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_conf?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
 
-# 配置中心配置数据磁盘路径地址，务必对该路径存在读写权限
-xxl.conf.confdata.filepath=/data/applogs/xxl-conf/confdata
-
-# 配置中心接入验证TOKEN，选填，非空时启用，进行安全严重
-xxl.conf.access.token=
+# xxl-conf 国际化配置, 默认 中文/zh_CN，可选 英文/en ；
+xxl.conf.i18n=zh_CN
 ```
 
 - 配置中心启动：   
@@ -170,7 +178,7 @@ xxl.conf.access.token=
 java -jar xxl-conf-admin.jar
 
 // 方式2：支持自定义 mysql 地址；
-java -jar xxl-conf-admin.jar --spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-conf?Unicode=true&characterEncoding=UTF-8
+java -jar xxl-conf-admin.jar --spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_conf?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
 ```
 
 #### 方式2：Docker 镜像方式搭建：
@@ -191,16 +199,16 @@ docker run -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/
 * 如需自定义 mysql 等配置，可通过 "PARAMS" 指定，参数格式 RAMS="--key=value  --key2=value2" ；
 * 配置项参考文件：/xxl-conf/xxl-conf-admin/src/main/resources/application.properties
 */
-docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-conf?Unicode=true&characterEncoding=UTF-8 " -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/xxl-conf-admin
+docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_conf?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true " -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/xxl-conf-admin
 ```
 
-#### "配置中心" 集群：
+#### XXL-CONF 集群：
 
-配置中心支持集群部署，提高配置中心负载能力和可用性。  
-配置中心集群部署时，项目配置文件保持一致即可。
+XXL-CONF 支持集群部署，提高配置中心负载能力和可用性。  
+XXL-CONF 集群部署时，项目配置文件保持一致即可。
 
 
-### 2.4 “接入XXL-CONF的示例项目” 项目配置
+### 2.4 接入 XXL-CONF 示例项目
 
     项目：xxl-conf-sample-springboot
     作用：接入XXl-CONF的示例项目，供用户参考学习。这里以 springboot 版本进行介绍，其他版本可参考各自sample项目。
@@ -224,21 +232,20 @@ docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-co
 
 配置项说明
 ```
-# 配置中心跟地址，必填；
+## 当前服务唯一标识，默认根据该AppName查询配置，必填；
+xxl.conf.client.appname=xxl-conf-sample
+
+## 当前环境标识，根据该Env隔离配置，必填；
+xxl.conf.client.env=test
+
+## XXL-CONF 服务端地址，多个逗号分隔，必填；
 xxl.conf.admin.address=http://localhost:8080/xxl-conf-admin
 
-# 环境配置，必填；如"test、ppe、product"等，指定配置加载环境；
-xxl.conf.env=test
-
-# 配置中心接入验证TOKEN，选填，非空时启用，进行安全严重
-xxl.conf.access.token=
-
-# 配置快照文件地址，必填；会周期性缓存到本地快照文件中，当从配置中心获取配置失败时，将会使用使用本地快照文件中的配置数据；提高系统可用性；
-xxl.conf.mirrorfile=/data/applogs/xxl-conf/xxl-conf-mirror-sample.properties
-
+## XXL-CONF 底层通讯 Token，进行安全验证，必填；
+xxl.conf.admin.accesstoken=defaultaccesstoken
 ```
 
-#### C、设置“XXL-CONF 配置工厂”
+#### C、设置“XXL-CONF 初始化工厂”
 
 可参考配置文件：
 ```
@@ -248,16 +255,15 @@ xxl.conf.mirrorfile=/data/applogs/xxl-conf/xxl-conf-mirror-sample.properties
 配置项说明
 ```
 @Bean
-public XxlConfFactory xxlConfFactory() {
+public SpringXxlConfFactory xxlConfFactory() {
 
-    XxlConfFactory xxlConf = new XxlConfFactory();
-    xxlConf.setAdminAddress(adminAddress);
-    xxlConf.setEnv(env);
-    xxlConf.setAccessToken(accessToken);
-    xxlConf.setMirrorfile(mirrorfile);
+    SpringXxlConfFactory xxlConfFactory = new SpringXxlConfFactory();
+    xxlConfFactory.setAppname(appname);
+    xxlConfFactory.setEnv(env);
+    xxlConfFactory.setAddress(address);
+    xxlConfFactory.setAccesstoken(accesstoken);
 
-    logger.info(">>>>>>>>>>> xxl-conf config init.");
-    return xxlConf;
+    return xxlConfFactory;
 }
 ```
 
@@ -267,97 +273,87 @@ public XxlConfFactory xxlConfFactory() {
 ### 2.5 功能测试
 
 #### a、添加和更新配置
-参考章节 "4.2 配置管理" 添加或更新配置信息； 
+参考章节 "4.4、配置管理" 添加或更新配置信息； 
 
 #### b、获取配置并接受动态推送更新
 参考章节 "三、客户端配置获取" 获取配置并接受动态推送更新；
 
 
-## 三、客户端配置获取
-XXL-CONF 提供多种配置方式，包括 "API、 @XxlConf、XML" 等多种配置方式，介绍如下。
+## 三、配置中心 客户端接入
+
+XXL-CONF 提供多种配置方式，包括 "API、 @XxlConf、Lisener" 等多种配置方式，介绍如下。
 
 > 可参考项目 "xxl-conf-sample-spring"（接入XXl-CONF的示例项目，供用户参考学习），代码位置：com.xxl.conf.sample.controller.IndexController.index() 
 
 
-### 3.1 方式1: API方式
-参考 "IndexController" 代码如下：
-```
-String paramByApi = XxlConfClient.get("default.key01", null);
-```
-- 用法：代码中直接调用API即可，示例代码 ""XxlConfClient.get("key", null)"";
-- 优点：
-    - 配置从配置中心自动加载；
-    - 存在LocalCache，不用担心性能问题；
-    - 支持动态推送更新；
-    - 支持多数据类型；
+### 3.1 方式1: API方式（XxlConfHelper）
 
+```
+/**
+ * API方式
+ *
+ * 		- 参考 "IndexController" 中 "XxlConfHelper.get("key")" 即可；
+ * 		- 用法：代码中直接调用API即可，API支持多数据类型，可快速获取各类型配置；
+ * 		- 优点：
+ * 			- API编程，灵活方便；
+ * 		    - 支持多数据类型
+ * 			- 配置从配置中心实时加载，且底层存在动态推动更新，实效性有保障；
+ * 		    - 底层存在配置LocalCache，且存在缓存击穿等防护，性能有保障；
+ */
+String paramByApi = XxlConfHelper.get("sample.key01", null);
+```
 
-### 3.2 方式2: @XxlConf 注解方式
-参考 "DemoConf.paramByAnno" 属性配置；示例代码 
+### 3.2 方式2: 注解方式（@XxlConf）
+
+ 
 ```
-@XxlConf("default.key02")
-public String paramByAnno;
+/**
+ * @XxlConf 注解方式
+ *
+ * 		- 参考 "IndexController.paramByAnnotation" 属性配置；示例代码 "@XxlConf("key") public String paramByAnnotation;"；
+ * 		- 用法：对象Field上加注解 ""@XxlConf"；支持设置默认值、跨服务复用配置，以及设置是否动态刷新；
+ * 		- 优点：
+ * 			- 注解编程，简洁易用；
+ * 		    - 支持多数据类型
+ * 		    - 配置从配置中心实时加载，且底层存在动态推动更新，实效性有保障；
+ * 		    - 注解属性自身承担数据存储职责，无外部请求逻辑，无性能风险；
+ */
+@XxlConf("sample.key02")
+public String paramByAnnotation;
 ```
-- 用法：对象Field上加注解 ""@XxlConf("key")"，支持设置默认值，支持设置是否开启动态刷新；
-- 优点：
-    - 配置从配置中心自动加载；
-    - 存在LocalCache，不用担心性能问题；
-    - 支持动态推送更新；
-    - 支持设置配置默认值；
-    - 可配置是否开启 "动态推送更新";
         
 “@XxlConf”注解属性 | 说明
 --- | ---
+appname | 配置归属AppName，为空时默认使用当前服务AppName（同配置项：xxl.conf.client.appname）
 value | 配置Key
 defaultValue | 配置为空时的默认值
 callback | 配置更新时，是否需要同步刷新配置
 
 
-### 3.3 方式3: XML占位符方式
-参考 "applicationcontext-xxl-conf.xml" 中 "DemoConf.paramByXml" 属性配置；示例代码如下：
-```
-<bean id="demoConf" class="com.xxl.conf.sample.demo.DemoConf">
-    <property name="paramByXml" value="$XxlConf{default.key03}" />
-</bean>
-```
-- 用法：占位符方式 "$XxlConf{key}"；
-- 优点：
-    - 配置从配置中心自动加载；
-    - 存在LocalCache，不用担心性能问题；
-    - 支持动态推送更新；
+### 3.3 方式2: 监听器方式（XxlConfListener）
 
-### 3.4 方式4: "XML + API" 混合方式
-参考如下代码：
-```
-<bean id="demoConf" class="com.xxl.conf.sample.demo.DemoConf2">
-    <constructor-arg index="0" value="#{T(com.xxl.conf.core.XxlConfClient).get('key')}" />
-    <property name="paramByXml" value="#{T(com.xxl.conf.core.XxlConfClient).get('default.key03')}" />
-</bean>
-```
-
-- 用法：占位符方式 "#{T(com.xxl.conf.core.XxlConfClient).get('key')}"；
-- 优点：
-    - 配置从配置中心自动加载；
-    - 存在LocalCache，不用担心性能问题；
-    - 兼容性好：在一些特殊的XML配置加载场景，如 "XML构造器传参"、"自定义spring的schema/xsd" ，上述几种方式不适用，此时可以考虑这种方式，兼容各种场景格式；
-- 缺点：
-    - 不支持动态推送更新；
-    
-
-### 3.5 其他方式: 配置变更监听
 可开发Listener逻辑，监听配置变更事件；可据此实现动态刷新JDBC连接池等高级功能；
-
-参考 "IndexController" 代码如下：
 ```
-XxlConfClient.addListener("default.key01", new XxlConfListener(){
+/**
+ * Listener / 监听器方式
+ *
+ * 		- 参考 "IndexController" 中 "XxlConfHelper.addListener(...)" 即可；
+ * 		- 用法：配置变更监听示例：可开发Listener逻辑，监听配置变更事件；可据此实现动态刷新 线程池、JDBC链接池 等高级功能；
+ * 		- 优点：
+ * 			- 监听器方式，扩展性更强；
+ * 		    - 支持多数据类型
+ * 			- 配置从配置中心实时加载，且底层存在动态推动更新，实效性有保障；
+ */
+XxlConfHelper.addListener("sample.key03", new XxlConfListener(){
     @Override
-    public void onChange(String key, String value) throws Exception {
-        logger.info("配置变更事件通知：{}={}", key, value);
+    public void onChange(String appname, String key, String value) throws Exception {
+        paramByListener = value;
+        logger.info("XxlConfListener 配置变更事件通知：key={}, value={}", key, value);
     }
 });
 ```
 
-## 四、管理中心操作指南
+## 四、配置中心 操作指南
 
 ### 4.1、环境管理
 
@@ -416,7 +412,7 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 
 ![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_05.png "在这里输入图片标题")
 
-### 4.4 配置管理
+### 4.4、配置管理
 
 进入"配置管理" 界面, 选择项目，然后可查看和操作该项目下配置数据。
 
@@ -439,7 +435,7 @@ XxlConfClient.addListener("default.key01", new XxlConfListener(){
 ![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_Whz5.png "在这里输入图片标题")
 
 
-## 五、总体设计
+## 五、总体设计（配置中心）
 
 ### 5.1 架构图
 
@@ -587,11 +583,259 @@ XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可�
 - 2、容灾性：即使一个机房内配置中心全部宕机，仅会影响到本机房内应用加载服务，其他机房不会受到影响。
 
 
-## 六、历史版本
-### 6.1 版本 v1.0.0 特性[2015-11-13]
+## 六、总体设计（注册中心）
+
+### 6.1 概述
+XXL-CONF 同时也是一个轻量级分布式服务注册中心，拥有"轻量级、秒级注册上线、多环境、跨语言、跨机房"等特性。现已开放源代码，开箱即用。
+
+原生支持集群部署，提供 环境/命名空间、应用、鉴权、服务注册节点 等在线运营管控能力。
+
+### 6.2 特性
+
+- 1、轻量级：基于DB与磁盘文件，只需要提供一个DB实例即可，无第三方依赖；
+- 2、实时性：借助内部广播机制，新服务上线、下线，可以在1s内推送给客户端；
+- 3、数据同步：注册中心会定期全量同步数据至磁盘文件，清理无效服务，确保服务数据实时可用；
+- 4、性能：服务发现时仅读磁盘文件，性能非常高；服务注册、摘除时通过磁盘文件校验，防止重复注册操作；
+- 5、扩展性：可方便、快速的横向扩展，只需保证服务注册中心配置一致即可，可借助负载均衡组件如Nginx快速集群部署；
+- 6、多状态：服务内置三种状态：
+  - 正常状态=支持动态注册、发现，服务注册信息实时更新；
+  - 锁定状态=人工维护注册信息，服务注册信息固定不变；
+  - 禁用状态=禁止使用，服务注册信息固定为空；
+- 7、跨语言：注册中心提供HTTP接口（RESTFUL 格式）供客户端实用，语言无关，通用性更强；
+- 8、兼容性：项目立项之初是为XXL-RPC量身设计，但是不限于XXL-RPC使用。兼容支持任何服务框架服务注册实用，如dubbo、springboot等；
+- 9、跨机房：得益于服务注册中心集群关系对等特性，集群各节点提供幂等的配置服务；因此，异地跨机房部署时，只需要请求本机房服务注册中心即可，实现异地多活；
+- 10、容器化：提供官方docker镜像，并实时更新推送dockerhub，进一步实现 "服务注册中心" 产品开箱即用；
+- 11、访问令牌（accessToken）：为提升系统安全性，注册中心和客户端进行安全性校验，双方AccessToken匹配才允许通讯；
+
+### 6.3 轻量级注册中心（xxl-rpc-admin）搭建
+
+- a、解压源码,按照maven格式将源码导入IDE, 使用maven进行编译即可，源码结构如下：
+```
+源码目录介绍：
+- /doc
+- /xxl-rpc-admin    ：轻量级服务（注册）中心，可选模块；
+- /xxl-rpc-core     ：核心依赖；
+- /xxl-rpc-samples  ：示例项目；
+    - /xxl-rpc-sample-frameless     ：无框架版本示例；
+    - /xxl-rpc-sample-springboot    ：springboot版本示例；
+        - /xxl-rpc-sample-springboot-api           ：公共API接口
+        - /xxl-rpc-sample-springboot-client        ：服务消费方 invoker 调用示例；
+        - /xxl-rpc-sample-springboot-server        ：服务提供方 provider 示例;     
+```
+
+- b、初始化“轻量级服务注册中心”数据库
+
+请下载项目源码并解压，获取 "调度数据库初始化SQL脚本" 并执行即可。数据库初始化SQL脚本"位置为:
+```
+/xxl-rpc/doc/db/tables_xxl_rpc.sql
+```
+服务(注册)中心支持集群部署，集群情况下各节点务必连接同一个mysql实例;如果mysql做主从,集群节点务必强制走主库;
+
+- c、配置“轻量级服务注册中心”
+```
+服务(注册)中心项目：xxl-rpc-admin
+作用：一个轻量级分布式服务(注册)中心，拥有"轻量级、秒级注册上线、多环境、跨语言、跨机房"等特性。现已开放源代码，开箱即用。
+```
+
+配置文件地址：
+```
+/xxl-rpc/xxl-rpc-admin/src/main/resources/application.properties
+```
+
+配置内容说明：
+```
+### 数据库配置
+spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_rpc?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+spring.datasource.username=root
+spring.datasource.password=root_pwd
+``` 
+
+- d、部署“轻量级服务注册中心”
+
+如果已经正确进行上述配置，可将项目编译打包部署。该地址接入方项目将会使用到，作为注册地址。
+```
+访问地址：http://localhost:8080/xxl-rpc-admin
+默认账号密码：admin/123456
+```
+
+登录后运行界面如下图所示：
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-rpc/images/img_01.png "在这里输入图片标题")
+
+至此“服务注册中心”项目已经部署成功。
+
+- e、服务注册中心集群（可选）
+
+服务注册中心支持集群部署，提升消息系统容灾和可用性。集群部署时，注意DB配置保持一致；建议通过nginx为集群做负载均衡、分配域名，访问及客户端配置等操作均通过该域名进行。
+
+- f、Docker 镜像方式搭建消息中心：
+
+下载镜像
+```
+// Docker地址：https://hub.docker.com/r/xuxueli/xxl-rpc-admin/
+docker pull xuxueli/xxl-rpc-admin
+```
+
+创建容器并运行
+```
+docker run -p 8080:8080 -v /tmp:/data/applogs --name xxl-rpc-admin  -d xuxueli/xxl-rpc-admin
+
+/**
+* 如需自定义 mysql 等配置，可通过 "PARAMS" 指定，参数格式 RAMS="--key=value  --key2=value2" ；
+* 配置项参考文件：/xxl-rpc/xxl-rpc-admin/src/main/resources/application.properties
+*/
+docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_rpc?Unicode=true&characterEncoding=UTF-8" -p 8080:8080 -v /tmp:/data/applogs --name xxl-rpc-admin  -d xuxueli/xxl-rpc-admin
+```
+
+### 6.4 接入 "服务注册中心" 示例
+
+#### a、Java语言项目接入示例
+XXL-RPC默认将 "XXL-RPC-ADMIN" 作为原生注册中心。其他Java服务框架。
+
+其他Java服务框架，如dubbo、springboot等，建议参考 XXL-RPC 提供的实例项目；
+
+#### b、非Java语言项目接入；
+非Java语言项目，可以借助提供的 RESTFUL 格式API接口实现服务注册与发现功能。
+
+
+### 6.5 注册中心 RESTful API
+服务注册中心为支持服务注册与发现功能，提供的 RESTful 格式API接口如下：
+
+#### a、服务注册 & 续约 API
+说明：新服务注册上线1s内广播通知接入方；需要接入方循环续约，否则服务将会过期（三倍于注册中心心跳时间）下线；
+
+```
+地址格式：{服务注册中心跟地址}/openapi/register
+
+请求参数说明：
+ 1、accessToken：请求令牌；
+ 2、env：环境标识
+ 3、instance：服务注册信息
+
+请求数据格式如下，放置在 RequestBody 中，JSON格式：
+ 
+    {
+        "accessToken" : "xxxxxx",
+        "env" : "test",
+        "instance" : {
+            "appname" : "app01",
+            "ip" : "127.0.0.1",
+            "port" : 7080,
+            "extendInfo" : "",
+        }
+    }
+    
+```
+
+#### b、服务摘除 API
+说明：新服务摘除下线1s内广播通知接入方；
+
+```
+地址格式：{服务注册中心跟地址}/openapi/unregister
+
+请求参数说明：
+ 1、accessToken：请求令牌；
+ 2、env：环境标识
+ 3、registryDataList：服务注册信息
+
+请求数据格式如下，放置在 RequestBody 中，JSON格式：
+ 
+    {
+        "accessToken" : "xxxxxx",
+        "env" : "test",
+        "instance" : {
+            "appname" : "app01",
+            "ip" : "127.0.0.1",
+            "port" : 7080,
+            "extendInfo" : "",
+        }
+    }
+
+```
+
+#### c、服务发现 API
+说明：查询在线服务地址列表；
+
+```
+地址格式：{服务注册中心跟地址}/openapi/discovery
+
+请求参数说明：
+ 1、accessToken：请求令牌；
+ 2、env：环境标识
+ 3、appnameList：服务发现的 appname 列表
+ 4、simpleQuery：是否简单查询；true，仅查询注册信息Md5值，用于检测是否变化；false，查询注册信息详情。
+ 
+请求数据格式如下，放置在 RequestBody 中，JSON格式：
+ 
+    {
+        "accessToken" : "xxxxxx",
+        "env" : "test",
+        "appnameList" : [
+            "app01",
+            "app02"
+        ],
+        "simpleQuery":false
+    }
+
+```
+
+#### d、服务监控 API
+说明：long-polling 接口，主动阻塞一段时间（三倍于注册中心心跳时间）；直至阻塞超时或服务注册信息变动时响应；
+
+```
+地址格式：{服务注册中心跟地址}/openapi/monitor
+
+请求参数说明：
+ 1、accessToken：请求令牌；
+ 2、env：环境标识
+ 3、keys：服务注册Key列表
+ 
+请求数据格式如下，放置在 RequestBody 中，JSON格式：
+ 
+    {
+        "accessToken" : "xxxxxx",
+        "env" : "test",
+        "appnameList" : [
+            "app01",
+            "app02"
+        ]
+    }
+    
+```
+
+### 6.6 服务注册中心系统设计
+#### 6.6.1 系统架构图
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-rpc/images/img_02.png "在这里输入图片标题")
+
+#### 6.6.2 原理解析
+内部通过广播机制，集群节点实时同步服务注册信息，确保一致。客户端借助 long pollong 实时感知服务注册信息，简洁、高效；
+
+#### 6.6.3 跨机房（异地多活）
+得益于服务注册中心集群关系对等特性，集群各节点提供幂等的服务注册服务；因此，异地跨机房部署时，只需要请求本机房服务注册中心即可，实现异地多活；
+
+举个例子：比如机房A、B 内分别部署服务注册中心集群节点。即机房A部署 a1、a2 两个服务注册中心服务节点，机房B部署 b1、b2 两个服务注册中心服务节点；
+
+那么各机房内应用只需要请求本机房内部署的服务注册中心节点即可，不需要跨机房调用。即机房A内业务应用请求 a1、a2 获取配置、机房B内业务应用 b1、b2 获取配置。
+
+这种跨机房部署方式实现了配置服务的 "异地多活"，拥有以下几点好处：
+
+- 1、注册服务响应更快：注册请求本机房内搞定；
+- 2、注册服务更稳定：注册请求不需要跨机房，不需要考虑复杂的网络情况，更加稳定；
+- 2、容灾性：即使一个机房内服务注册中心全部宕机，仅会影响到本机房内应用加载服务，其他机房不会受到影响。
+
+#### 6.6.4 一致性
+类似 Raft 方案，更轻量级、稳定；
+- Raft：Leader统一处理变更操作请求，一致性协议的作用具化为保证节点间操作日志副本(log replication)一致，以term作为逻辑时钟(logical clock)保证时序，节点运行相同状态机(state machine)得到一致结果。
+- 本项目：
+  - Leader（统一处理分发变更请求）：DB消息表（仅变更时产生消息，消息量较小，而且消息轮训存在间隔，因此消息表压力不会太大；）；
+  - state machine（顺序操作日志副本并保证结果一直）：顺序消费消息，保证本地数据一致，并通过周期全量同步进一步保证一致性；
+
+
+
+## 七、历史版本
+### 7.1 版本 v1.0.0 特性[2015-11-13]
 - 初始版本导入;
 
-### 6.2 版本 v1.1.0 特性[2016-08-17]
+### 7.2 版本 v1.1.0 特性[2016-08-17]
 - 1、简单易用: 上手非常简单, 只需要引入maven依赖和一行配置即可;
 - 2、在线管理: 提供配置中心, 支持在线管理配置信息;
 - 3、实时推送: 配置信息更新后, Zookeeper实时推送配置信息, 项目中配置数据会实时更新并生效, 不需要重启线上机器;
@@ -601,22 +845,22 @@ XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可�
 - 7、分布式: 可方便的接入线上分布式部署的各个业务线, 统一管理配置信息;
 - 8、配置共享: 平台中的配置信息针对各个业务线是平等的, 各个业务线可以共享配置中心的配置信息, 当然也可以配置业务内专属配置信息;
 
-### 6.3 版本 v1.2.0 新特性[2016-10-08]
+### 7.3 版本 v1.2.0 新特性[2016-10-08]
 - 1、配置分组: 支持对配置进行分组管理, 每条配置将会生成全局唯一标示GroupKey,在client端使用时,需要通过该值匹配对应的配置信息;
 
-### 6.4 版本 v1.3.0 新特性[2016-10-08]
+### 7.4 版本 v1.3.0 新特性[2016-10-08]
 - 1、支持在线维护配置分组；
 - 2、项目groupId从com.xxl迁移至com.xuxueli，为推送maven中央仓库做准备；
 - 3、v1.3.0版本开始，推送公共依赖至中央仓库；
 
-### 6.5 版本 v1.3.1-beta 新特性[2017-08-10]
+### 7.5 版本 v1.3.1-beta 新特性[2017-08-10]
 - 1、本地配置优先加载逻辑调整；
 - 2、zookeeper地址方式从磁盘迁移至项目内；
 
-### 6.6 版本 v1.3.1-beta2 新特性[2017-08-19]
+### 7.6 版本 v1.3.1-beta2 新特性[2017-08-19]
 - 1、配置文件统一问题fix；
 
-### 6.7 版本 v1.4.0 新特性[2018-03-02]
+### 7.7 版本 v1.4.0 新特性[2018-03-02]
 - 1、支持通过 "@XxlConf" 注解获取配置；
 - 2、动态推送更新：目前支持 "XML、 @XxlConf、API" 三种配置方式，均支持配置动态刷新；
 - 3、配置变更监听功能：可开发Listener逻辑，监听配置变更事件，可据此动态刷新JDBC连接池等高级功能；
@@ -639,12 +883,12 @@ XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可�
 - 20、Sample项目目录结构规范；
 - 21、新增SpringBoot类型Sample项目；
 
-### 6.8 版本 v1.4.1 新特性[2018-04-12]
+### 7.8 版本 v1.4.1 新特性[2018-04-12]
 - 1、Ehcache缓存对象CacheNode序列化优化；
 - 2、XML配置方式，Bean初始化时配置加载逻辑优化；
 - 3、升级多项依赖至较新版本：spring、spring-boot、jackson、freemarker、mybatis等；
 
-### 6.9 版本 v1.4.2 新特性[2018-05-30]
+### 7.9 版本 v1.4.2 新特性[2018-05-30]
 - 1、多环境支持：单个配置中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
 - 2、多数据类型配置：支持多种数据类型配置，如：String、Boolean、Short、Integer、Long、Float、Double 等；
 - 3、多语言支持：提供配置Agent服务，可据此通过Http获取配置数据，从而实现多语言支持。Agent存在Ehcache缓存性能极高，并且支持集群横向扩展；
@@ -660,7 +904,7 @@ XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可�
 - 13、小概率情况下BeanRefresh重复刷新问题修复；
 - 14、升级pom依赖至较新版本，如Spring、Zookeeper等；
 
-### 6.10 版本 v1.5.0 新特性[2018-06-15]
+### 7.10 版本 v1.5.0 新特性[2018-06-15]
 - 1、配置中心Agent服务增强：针对非Java应用提供Agent服务获取配置，提供同步、异步两种Http请求方式，原生支持 long-polling（Http） 的方式获取配置数据、并实时感知配置变更。同时，强化请求权限校验；
 - 2、配置同步功能：将会检测对应项目下的全部未同步配置项，使用DB中配置数据覆盖ZK中配置数据并推送更新；在配置中心异常恢复、新配置中心集群初始化等场景中十分有效；
 - 3、配置快照：客户端从配置中心获取到的配置数据后，会周期性缓存到本地快照文件中，当从配置中心获取配置失败时，将会使用使用本地快照文件中的配置数据；提高系统可用性；
@@ -670,14 +914,14 @@ XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可�
 - 7、springboot项目加载prop失败的问题修复；
 - 8、升级多项maven依赖至较新版本，如spring等；
 
-### 6.11 版本 v1.5.1 新特性[2018-10-24]
+### 7.11 版本 v1.5.1 新特性[2018-10-24]
 - 1、ftl变量判空问题修复；
 - 2、配置快照文件生成时自动创建多层父目录；
 - 3、移除ehcache依赖，取消local cache容量限制；
 - 4、ZK初始化逻辑优化，避免并发初始化，阻塞至TCP连接创建成功才允许后续操作；
 - 5、升级多项maven依赖至较新版本，如spring等；
 
-### 6.12 版本 v1.5.2 Release Notes[2018-11-13]
+### 7.12 版本 v1.5.2 Release Notes[2018-11-13]
 - 1、ZK节点watch逻辑优化，配置中心取消冗余的watch操作；
 - 2、ZK初始化时unlock逻辑调整，优化断线重连特性；
 - 3、Client端ZK初始化逻辑调整，取消对ZK状态的强依赖，连接失败也允许启动，此时使用镜像配置文件；
@@ -685,7 +929,7 @@ XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可�
 - 5、新增无框架接入配置中心Sample示例项目 "xxl-conf-sample-frameless"。不依赖第三方框架，快速接入配置中心，只需main方法即可启动运行；
 - 6、权限控制增强，细粒度到环境权限校验；
 
-### 6.13 版本 v1.6.0 Release Notes[2018-11-29]
+### 7.13 版本 v1.6.0 Release Notes[2018-11-29]
 - 1、轻量级改造：废弃ZK，改为 "DB + 磁盘 + long polling" 方案，部署更轻量，学习更简单；集群部署更方便，与单机一致；
 - 2、pom依赖清理、升级；客户端唯一依赖组件为 "slf4j-api"，彻底的零依赖。配置中心升级部分依赖；
 - 3、Docker基础镜像切换，精简镜像；
@@ -694,7 +938,7 @@ XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可�
 - 6、访问令牌（accessToken）：为提升系统安全性，配置中心和客户端进行安全性校验，双方AccessToken匹配才允许通讯；
 - 7、启动时，优先全量加载镜像数据到registry层，避免逐个请求耗时；
 
-### 6.14 版本 v1.6.1 Release Notes[2018-12-21]
+### 7.14 版本 v1.6.1 Release Notes[2018-12-21]
 - 1、在未设置accessToken情况下，非法请求恶意构造配置Key可遍历读取文件漏洞修复；（From：360代码卫士团队）
 - 2、项目名正则校验问题修复，项目名中划线分隔，配置点分隔；
 - 3、底层HTTP工具类优化；
@@ -702,7 +946,7 @@ XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可�
 - 5、配置Key合法性校验逻辑优化，非法Key服务端自动过滤，避免阻塞正常配置的查询加载；
 - 6、升级pom依赖至较新版本；
 
-### 6.15 版本 v1.7.0 Release Notes[迭代中]
+### 7.15 版本 v1.7.0 Release Notes[迭代中]
 - 1、服务端非法Key、空值均响应, 返回 "", 客户端注册信息发现null值缓存，避免缓存穿透；
 - 2、日志优化：仅变更日志保留为info级别，非核心日志调整为debug级别；
 - 3、客户端配置监控逻辑优化，避免异常情况下重试请求太频繁； 

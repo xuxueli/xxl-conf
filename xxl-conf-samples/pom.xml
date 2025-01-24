@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.xuxueli</groupId>
 		<artifactId>xxl-conf</artifactId>
-		<version>1.7.0-SNAPSHOT</version>
+		<version>1.7.0</version>
 	</parent>
 	<artifactId>xxl-conf-samples</artifactId>
 	<packaging>pom</packaging>
@@ -13,5 +13,10 @@
 		<module>xxl-conf-sample-springboot</module>
 		<module>xxl-conf-sample-frameless</module>
 	</modules>
+
+	<properties>
+		<maven.install.skip>true</maven.install.skip>
+		<maven.deploy.skip>true</maven.deploy.skip>
+	</properties>
 
 </project>
