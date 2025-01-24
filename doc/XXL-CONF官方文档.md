@@ -14,7 +14,7 @@
 ## 一、简介
 
 ### 1.1 概述
-XXL-CONF 一站式服务管理平台（配置中心、注册中心），提供 动态配置管理、服务注册与发现 等核心能力，拥有 “轻量级、秒级实时推送、多环境、跨语言、跨机房、权限控制” 等特性。现已开放源代码，开箱即用。
+XXL-CONF 一站式服务管理平台（配置中心、注册中心），提供 动态配置管理、服务注册与发现 等核心能力，拥有 “轻量级、秒级推送（配置变更、注册发现）、多环境、跨语言、跨机房、权限控制” 等特性。现已开放源代码，开箱即用。
 
 ### 1.2 社区交流    
 - [社区交流](https://www.xuxueli.com/page/community.html)
@@ -26,7 +26,7 @@ XXL-CONF 一站式服务管理平台（配置中心、注册中心），提供 �
 - 2、轻量级: 仅依赖DB无其他三方依赖，搭建部署及接入简单，一分钟上手；
 - 3、高可用/HA：配置中心支持集群部署，提升配置中心系统容灾和可用性；
 - 4、高性能:得益于配置中心与客户端的本地缓存以及多级缓存设计，因此配置读取性能非常高；单机可承担高并发配置读取；
-- 5、实时性: 借助内部广播机制，新服务上线、下线等变更，可以在1s内推送给客户端；
+- 5、实时性（秒级配置推送）: 借助内部广播机制，配置修改、增删等变更，可以在1s内推送给客户端；
 - 6、线上化管理: 配置中心提供线上化管理界面, 通过Web UI在线操作配置数据，直观高效；
 - 8、动态更新：配置数据变更后，客户端配置数据会实时动态更新、并生效，不需要重启服务机器；
 - 9、最终一致性：底层借助内置广播机制，保障配置数据的最终一致性，从而保证配置数据的同步；
@@ -50,7 +50,7 @@ XXL-CONF 一站式服务管理平台（配置中心、注册中心），提供 �
 - 2、轻量级: 仅依赖DB无其他三方依赖，搭建部署及接入简单，一分钟上手；
 - 3、高可用/HA：注册中心支持集群部署，提升注册中心系统容灾和可用性；
 - 4、高性能:得益于注册中心与客户端的本地缓存以及多级缓存设计，因此注册数据读取性能非常高；单机可承担高并发配置读取；
-- 5、实时性: 借助内部广播机制，新服务上线、下线等变更，可以在1s内推送给客户端；
+- 5、实时性（秒级注册上线）: 借助内部广播机制，新服务上线、下线等变更，可以在1s内推送给客户端；
 - 6、多环境支持：支持自定义环境（命名空间），管理多个环境的的服务注册数据；环境之间相互隔离；
 - 7、跨语言/OpenAPI：提供语言无关的 注册中心 OpenAPI（RESTFUL 格式），提供服务 注册、注销、心跳、查询 等能力，实现多语言支持；
 - 8、跨机房：得益于注册中心系统设计，服务端为无状态服务，集群各节点提供对等的服务；因此异地跨机房部署时，只需要请求本机房配置中心即可，实现异地多活；
@@ -355,7 +355,7 @@ XxlConfHelper.addListener("sample.key03", new XxlConfListener(){
 
 ## 四、配置中心 操作指南
 
-### 4.1、环境管理
+### 4.1、环境管理（Env）
 
 进入 "环境管理" 界面，可自定义和管理环境信息。   
 单个配置中心集群，支持自定义多套环境，管理多个环境的的配置数据；环境之间相互隔离；
@@ -373,7 +373,18 @@ XxlConfHelper.addListener("sample.key03", new XxlConfListener(){
 
 ![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_03.png "在这里输入图片标题")
 
-### 4.2、用户（权限）管理
+### 4.2、应用管理（AppName）
+
+系统以 "AppName / 应用" 为维度进行权限控制，以及配置隔离。可进入 "配置管理界面" 操作和维护项目，项目属性说明如下：
+
+    - AppName：每个项目拥有唯一的AppName，作为项目标识，同时作为该项目下配置的统一前缀；
+    - 项目名称：该项目的名称；
+
+系统默认提供了一个示例项目。
+
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_05.png "在这里输入图片标题")
+
+### 4.3、用户管理
 
 进入 "用户管理" 界面，可查看配置中心中所有用户信息。
 ![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_04.png "在这里输入图片标题")
@@ -401,18 +412,13 @@ XxlConfHelper.addListener("sample.key03", new XxlConfListener(){
 ![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_syzc.png "在这里输入图片标题")
 
 
-### 4.3、项目管理
+### 4.4、AccessToken管理
 
-系统以 "项目" 为维度进行权限控制，以及配置隔离。可进入 "配置管理界面" 操作和维护项目，项目属性说明如下：
+进入 "AccessToken管理" 界面，可线上化管理 AccessToken；在客户端基于OpenAPI与服务端通讯时将会校验AccessToken合法性。
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_04.png![img_09.png](images/img_09.png) "在这里输入图片标题")
 
-    - AppName：每个项目拥有唯一的AppName，作为项目标识，同时作为该项目下配置的统一前缀；
-    - 项目名称：该项目的名称；
 
-系统默认提供了一个示例项目。
-
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_05.png "在这里输入图片标题")
-
-### 4.4、配置管理
+### 4.5、配置管理
 
 进入"配置管理" 界面, 选择项目，然后可查看和操作该项目下配置数据。
 
@@ -437,6 +443,9 @@ XxlConfHelper.addListener("sample.key03", new XxlConfListener(){
 
 ## 五、总体设计（配置中心）
 
+XXL-CONF 一站式服务管理平台（配置中心、注册中心），提供 动态配置管理、服务注册与发现 等核心能力。 
+下文主要介绍 “配置中心” 能力系统设计及实现细节。
+
 ### 5.1 架构图
 
 ![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_07.png "在这里输入图片标题")
@@ -445,10 +454,12 @@ XxlConfHelper.addListener("sample.key03", new XxlConfListener(){
 
 配置中心由以下几个核心部分组成：
 
-- 1、管理平台：提供一个完善强大的配置管理平台，包含：环境管理、用户管理、项目管理、配置管理等功能，全部操作通过Web界面在线完成；
-- 2、管理平台DB：存储配置信息备份、配置的版本变更信息等，进一步保证数据的安全性；同时也存储"管理平台"中多个模块的底层数据；
-- 3、磁盘配置数据：配置中心在每个配置中心集群节点磁盘中维护一份镜像数据，当配置新增、更新等操作时，将会广播通知并实时刷新每个集群节点磁盘中的配置数据, 最终实时通知接入方客户端；
-- 4、客户端：可参考章节 "5.3 客户端 设计" ；
+- 1、管理平台：提供一个完善强大的配置管理平台，包含 “配置中心”、“注册中心” 及 “系统管理” 等配置，全部操作通过Web界面在线完成；
+  - 配置中心：支持配置数据线上化管理能力，包括 新增、删除、修改、查看、历史查看、回滚……等操作；
+  - 注册中心：支持服务注册信息线上化管理能力，包括 查看注册信息、人工维护注册信息、禁用异常节点……等操作；
+  - 系统管理：支持 “环境管理（Env）、应用管理（AppName）、AccessToken管理、用户管理” 等功能，存储配置信息备份、配置的版本变更信息等，进一步保证数据的安全性；
+- 2、管理平台DB：存储 配置中心、注册中心及系统管理等多模块底层数据。配置中心视角看，
+- 3、客户端：可参考章节 "5.3 客户端 设计" ；
 
 ### 5.3 "客户端" 设计
 
@@ -463,57 +474,66 @@ XxlConfHelper.addListener("sample.key03", new XxlConfListener(){
 
 得益于客户端的多层设计，以及 LocalCache 和 Mirror-File 等特性，因此业务方可以在高QPS、高并发场景下使用XXL-CONF的客户端, 不必担心并发压力或配置中心宕机导致系统问题。
 
-### 5.4 配置中心 http 服务（多语言支持）
+### 5.4 配置中心 Restful OpenAPI（多语言支持）
 
-Java语言应用，可以直接通过依赖提供的Client包的方式，方便快速的接入和使用配置中心；可参考章节 "二、快速入门"：
+Java语言应用可以通过“xxl-conf-core”方便快速的接入使用；可参考章节 "二、快速入门"： 非Java语言，可借助 XXL-CONF 提供的 Restful OpenAPI，获取配置、实时感知配置更新，从而实现多语言支持。
 
-非Java语言，可借助 XXL-CONF 提供的 "配置中心http服务"，获取配置、实时感知配置更新，从而实现多语言支持。
-
-配置中心提供的 "配置中心http服务" 只会读磁盘配置数据，因此性能极高，而且配置中心支持通过集群无线横向扩展；
-
-"配置中心http服务" 接口文档如下：
-
-#### a、配置批量获取接口：
+配置中心 Restful OpenAPI 接口明细如下：
 ```
-说明：查询配置数据；
+可参考测试用例：/xxl-conf/xxl-conf-admin/src/test/java/com/xxl/conf/admin/openapi/registry/RegistryOpenApiControllerTest.java
+```
+
+#### a、配置数据查询 API：
+```
+说明：查询配置数据信息；
 
 ------
-
-地址格式：{配置中心跟地址}/find
+地址格式：{XXL-CONF服务端地址}/openapi/confdata/query
 
 请求参数说明：
  1、accessToken：请求令牌；
  2、env：环境标识
- 3、keys：配置Key列表
+ 3、confKey：配置查询 appname 和 key 列表
  
 请求数据格式如下，放置在 RequestBody 中，JSON格式：
+
     {
         "accessToken" : "xx",
         "env" : "xx",
-        "keys" : [
-            "key01",
-            "key02"
-        ]
+        "confKey":{
+            "appname01": ["key01", "key02"],
+            "appname02": ["key03", "key04"]
+        }
     }
 
-// 响应数据格式：
-{
-  "code": 200,      // 200 表示正常、其他失败
-  "msg": null,      // 错误提示消息
-  "data": {         // 配置信息，KV格式
-    "key01": "22",
-    "key02": "111"
-  }
-}
+响应数据格式：
+
+    {
+        "code": 200,        // 200 表示正常、其他失败
+        "msg": 200,         // 错误提示消息
+        "confData":{        // 配置数据，值为原始值数据；
+             "app01":{``
+                 "key01": "value01",
+                 "key02": "value02"
+             }
+        }
+        "confDataMd5":{     // 配置摘要数据，值为 md5 数据；
+             "appname01":{
+                 "key01": md5(data),
+                 "key02": md5(data)
+             }
+        }
+    }
+
 ```
 
-#### b、配置实时监控接口：
+#### b、配置数据监控 API：
 ```
 说明：long-polling 接口，主动阻塞一段时间（默认30s）；直至阻塞超时或配置信息变动时响应；
 
 ------
 
-地址格式：{配置中心跟地址}/monitor
+地址格式：{XXL-CONF服务端地址}/openapi/confdata/monitor
 
 请求参数说明：
  1、accessToken：请求令牌；
@@ -521,20 +541,24 @@ Java语言应用，可以直接通过依赖提供的Client包的方式，方便�
  3、keys：配置Key列表
  
 请求数据格式如下，放置在 RequestBody 中，JSON格式：
+
     {
         "accessToken" : "xx",
         "env" : "xx",
-        "keys" : [
-            "key01",
-            "key02"
-        ]
+        "confKey":{
+            "appname01": ["key01", "key02"],
+            "appname02": ["key03", "key04"]
+        }
     }
 
+
 响应数据格式：
-{
-  "code": 200,                      // 200 表示正常，一直阻塞到配置变更或超时；非200 表示请求异常
-  "msg": "Monitor key update."      // 错误提示消息
-}
+
+    {
+        "code": 200,                    // 200 表示正常，一直阻塞到配置变更或超时；非200 表示请求异常
+        "msg": "Monitor key update."    // 错误提示消息
+    }
+
 ```
 
 接入方可以借助上面两个接口，获取配置、实时感知配置更新；
@@ -585,120 +609,22 @@ XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可�
 
 ## 六、总体设计（注册中心）
 
-### 6.1 概述
-XXL-CONF 同时也是一个轻量级分布式服务注册中心，拥有"轻量级、秒级注册上线、多环境、跨语言、跨机房"等特性。现已开放源代码，开箱即用。
+XXL-CONF 一站式服务管理平台（配置中心、注册中心），提供 动态配置管理、服务注册与发现 等核心能力。
+下文主要介绍 “注册中心” 能力系统设计及实现细节。
 
-原生支持集群部署，提供 环境/命名空间、应用、鉴权、服务注册节点 等在线运营管控能力。
+### 6.1 架构图
 
-### 6.2 特性
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_registry.png "在这里输入图片标题")
 
-- 1、轻量级：基于DB与磁盘文件，只需要提供一个DB实例即可，无第三方依赖；
-- 2、实时性：借助内部广播机制，新服务上线、下线，可以在1s内推送给客户端；
-- 3、数据同步：注册中心会定期全量同步数据至磁盘文件，清理无效服务，确保服务数据实时可用；
-- 4、性能：服务发现时仅读磁盘文件，性能非常高；服务注册、摘除时通过磁盘文件校验，防止重复注册操作；
-- 5、扩展性：可方便、快速的横向扩展，只需保证服务注册中心配置一致即可，可借助负载均衡组件如Nginx快速集群部署；
-- 6、多状态：服务内置三种状态：
-  - 正常状态=支持动态注册、发现，服务注册信息实时更新；
-  - 锁定状态=人工维护注册信息，服务注册信息固定不变；
-  - 禁用状态=禁止使用，服务注册信息固定为空；
-- 7、跨语言：注册中心提供HTTP接口（RESTFUL 格式）供客户端实用，语言无关，通用性更强；
-- 8、兼容性：项目立项之初是为XXL-RPC量身设计，但是不限于XXL-RPC使用。兼容支持任何服务框架服务注册实用，如dubbo、springboot等；
-- 9、跨机房：得益于服务注册中心集群关系对等特性，集群各节点提供幂等的配置服务；因此，异地跨机房部署时，只需要请求本机房服务注册中心即可，实现异地多活；
-- 10、容器化：提供官方docker镜像，并实时更新推送dockerhub，进一步实现 "服务注册中心" 产品开箱即用；
-- 11、访问令牌（accessToken）：为提升系统安全性，注册中心和客户端进行安全性校验，双方AccessToken匹配才允许通讯；
+### 6.2 注册中心 Restful OpenAPI（多语言支持）
 
-### 6.3 轻量级注册中心（xxl-rpc-admin）搭建
+Java应用可参考XXL-RPC实现方案，XXL-RPC原生基于XXL-CONF的 Restful OpenAPI实现服务注册发现。
+非Java语言，可借助 XXL-CONF 提供的 Restful OpenAPI 进行动态服务注册与发现，从而实现多语言支持。
 
-- a、解压源码,按照maven格式将源码导入IDE, 使用maven进行编译即可，源码结构如下：
+注册中心 Restful OpenAPI 接口明细如下：
 ```
-源码目录介绍：
-- /doc
-- /xxl-rpc-admin    ：轻量级服务（注册）中心，可选模块；
-- /xxl-rpc-core     ：核心依赖；
-- /xxl-rpc-samples  ：示例项目；
-    - /xxl-rpc-sample-frameless     ：无框架版本示例；
-    - /xxl-rpc-sample-springboot    ：springboot版本示例；
-        - /xxl-rpc-sample-springboot-api           ：公共API接口
-        - /xxl-rpc-sample-springboot-client        ：服务消费方 invoker 调用示例；
-        - /xxl-rpc-sample-springboot-server        ：服务提供方 provider 示例;     
+可参考测试用例：/xxl-conf/xxl-conf-admin/src/test/java/com/xxl/conf/admin/openapi/registry/ConfDataOpenApiControllerTest.java
 ```
-
-- b、初始化“轻量级服务注册中心”数据库
-
-请下载项目源码并解压，获取 "调度数据库初始化SQL脚本" 并执行即可。数据库初始化SQL脚本"位置为:
-```
-/xxl-rpc/doc/db/tables_xxl_rpc.sql
-```
-服务(注册)中心支持集群部署，集群情况下各节点务必连接同一个mysql实例;如果mysql做主从,集群节点务必强制走主库;
-
-- c、配置“轻量级服务注册中心”
-```
-服务(注册)中心项目：xxl-rpc-admin
-作用：一个轻量级分布式服务(注册)中心，拥有"轻量级、秒级注册上线、多环境、跨语言、跨机房"等特性。现已开放源代码，开箱即用。
-```
-
-配置文件地址：
-```
-/xxl-rpc/xxl-rpc-admin/src/main/resources/application.properties
-```
-
-配置内容说明：
-```
-### 数据库配置
-spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_rpc?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
-spring.datasource.username=root
-spring.datasource.password=root_pwd
-``` 
-
-- d、部署“轻量级服务注册中心”
-
-如果已经正确进行上述配置，可将项目编译打包部署。该地址接入方项目将会使用到，作为注册地址。
-```
-访问地址：http://localhost:8080/xxl-rpc-admin
-默认账号密码：admin/123456
-```
-
-登录后运行界面如下图所示：
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-rpc/images/img_01.png "在这里输入图片标题")
-
-至此“服务注册中心”项目已经部署成功。
-
-- e、服务注册中心集群（可选）
-
-服务注册中心支持集群部署，提升消息系统容灾和可用性。集群部署时，注意DB配置保持一致；建议通过nginx为集群做负载均衡、分配域名，访问及客户端配置等操作均通过该域名进行。
-
-- f、Docker 镜像方式搭建消息中心：
-
-下载镜像
-```
-// Docker地址：https://hub.docker.com/r/xuxueli/xxl-rpc-admin/
-docker pull xuxueli/xxl-rpc-admin
-```
-
-创建容器并运行
-```
-docker run -p 8080:8080 -v /tmp:/data/applogs --name xxl-rpc-admin  -d xuxueli/xxl-rpc-admin
-
-/**
-* 如需自定义 mysql 等配置，可通过 "PARAMS" 指定，参数格式 RAMS="--key=value  --key2=value2" ；
-* 配置项参考文件：/xxl-rpc/xxl-rpc-admin/src/main/resources/application.properties
-*/
-docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_rpc?Unicode=true&characterEncoding=UTF-8" -p 8080:8080 -v /tmp:/data/applogs --name xxl-rpc-admin  -d xuxueli/xxl-rpc-admin
-```
-
-### 6.4 接入 "服务注册中心" 示例
-
-#### a、Java语言项目接入示例
-XXL-RPC默认将 "XXL-RPC-ADMIN" 作为原生注册中心。其他Java服务框架。
-
-其他Java服务框架，如dubbo、springboot等，建议参考 XXL-RPC 提供的实例项目；
-
-#### b、非Java语言项目接入；
-非Java语言项目，可以借助提供的 RESTFUL 格式API接口实现服务注册与发现功能。
-
-
-### 6.5 注册中心 RESTful API
-服务注册中心为支持服务注册与发现功能，提供的 RESTful 格式API接口如下：
 
 #### a、服务注册 & 续约 API
 说明：新服务注册上线1s内广播通知接入方；需要接入方循环续约，否则服务将会过期（三倍于注册中心心跳时间）下线；

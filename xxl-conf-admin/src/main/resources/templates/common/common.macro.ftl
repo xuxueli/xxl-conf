@@ -107,7 +107,7 @@
 					<#-- env -->
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-							Env :
+							当前环境 :
 							<#list environmentList as item>
 								<#if XXL_CONF_CURRENT_ENV == item.env>
 									${item.env} (${item.name})
@@ -119,7 +119,7 @@
 						</a>
 						<ul class="dropdown-menu" role="menu">
 							<#list environmentList as item>
-								<li class="changeEnv" env="${item.env}" ><a href="javascript:;">${item.name}(${item.env})</a></li>
+								<li class="changeEnv" env="${item.env}" ><a href="javascript:;">${item.env}(${item.name})</a></li>
 							</#list>
 							<#--<li class="divider"></li>-->
 						</ul>

@@ -53,7 +53,7 @@ public class ConfDataOpenApiController {
             } else if ("monitor".equals(uri)) {
                 /**
                  * 配置数据监控 API
-                 * 说明：long-polling 接口，主动阻塞一段时间（三倍于注册中心心跳时间）；直至阻塞超时或信息变动时响应；
+                 * 说明：long-polling 接口，主动阻塞一段时间（默认30s）；直至阻塞超时或配置信息变动时响应；
                  */
                 QueryConfDataRequest request = JSON.parseObject(data, QueryConfDataRequest.class);
                 return confdataService.monitor(request);
