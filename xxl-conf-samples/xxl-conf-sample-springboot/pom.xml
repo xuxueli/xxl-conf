@@ -11,9 +11,6 @@
     <artifactId>xxl-conf-sample-springboot</artifactId>
     <packaging>jar</packaging>
 
-    <properties>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
