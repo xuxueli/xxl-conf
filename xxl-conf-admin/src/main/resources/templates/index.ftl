@@ -79,15 +79,22 @@
                         </div>
                         <!-- /.box-header -->
                         <div class="box-body">
-                            <strong><i class="fa fa-cloud margin-r-5"></i>应用管理</strong>
+
+                            <strong><i class="fa fa-cubes margin-r-5"></i>配置中心</strong>
                             <p class="text-muted">
-                                提供应用定义、管理能力，支持通过应用维度聚合分析服务注册信息、节点健康信息等。
+                                提供配置管理以及动态推送能力，支持线上化变更及管理配置、历史记录回滚，以及实时与热更新主动推送等。
                             </p>
 
                             <hr>
-                            <strong><i class="fa fa-cubes margin-r-5"></i>注册节点管理</strong>
+                            <strong><i class="fa fa-cubes margin-r-5"></i>注册中心</strong>
                             <p class="text-muted">
-                                提供服务注册节点管理能力，支持实时分析查看服务注册信息，以及针对注册节点人工运营管控能力。
+                                提供服务节点注册及主动发现能力，支持服务节点注册、服务节点注销、服务节点心跳保活、服务节点健康监测等。
+                            </p>
+
+                            <hr>
+                            <strong><i class="fa fa-cloud margin-r-5"></i>应用管理</strong>
+                            <p class="text-muted">
+                                提供应用定义、管理能力，支持通过应用维度聚合分析服务注册信息、节点健康信息等。
                             </p>
 
                             <hr>
