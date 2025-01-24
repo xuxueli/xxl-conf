@@ -358,7 +358,7 @@ XxlConfHelper.addListener("sample.key03", new XxlConfListener(){
 });
 ```
 
-## 四、配置中心 操作指南
+## 四、XXL-CONF 操作指南
 
 ### 4.1、环境管理（Env）
 
@@ -420,12 +420,12 @@ XxlConfHelper.addListener("sample.key03", new XxlConfListener(){
 ### 4.4、AccessToken管理
 
 进入 "AccessToken管理" 界面，可线上化管理 AccessToken；在客户端基于OpenAPI与服务端通讯时将会校验AccessToken合法性。
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_04.png![img_09.png](images/img_09.png) "在这里输入图片标题")
 
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_09.png "在这里输入图片标题")
 
-### 4.5、配置管理
+### 4.5、配置中心（配置管理）
 
-进入"配置管理" 界面, 选择项目，然后可查看和操作该项目下配置数据。
+进入"配置中心" 界面, 选择应用/AppName，然后可查看和操作该项目下配置数据。
 
 ![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_06.png "在这里输入图片标题")
 
@@ -444,6 +444,12 @@ XxlConfHelper.addListener("sample.key03", new XxlConfListener(){
 包括操作时间、操作人，设置的配置值等历史数据，因此可以根据历史数据，重新编辑配置并回滚到历史版本；
 
 ![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_Whz5.png "在这里输入图片标题")
+
+### 4.6、注册中心（服务注册管理）
+
+进入 "注册中心" 界面, 选择应用/AppName，然后可查看和操作该项目下服务注册节点数据。
+
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_12.png "在这里输入图片标题")
 
 
 ## 五、总体设计（配置中心）
