@@ -2,7 +2,7 @@
     <img src="https://www.xuxueli.com/doc/static/xxl-job/images/xxl-logo.jpg" width="150">
     <h3 align="center">XXL-CONF</h3>
     <p align="center">
-        XXL-CONF, A lightweight distributed configuration management platform.
+        XXL-CONF is a one-stop service management platform, that acts as a configuration center and a service registry.
         <br>
         <a href="https://www.xuxueli.com/xxl-conf/"><strong>-- Home Page --</strong></a>
         <br>
@@ -30,10 +30,10 @@
 </p>
 
 ## Introduction
-XXL-CONF, a one-stop service management platform (configuration center, registry center), providing dynamic configuration management, service registration and discovery and other core capabilities.
-with "lightweight, second-level real-time push, multi-environment, cross-language, cross-room, permission control" and other features. Now open source, out of the box.
+XXL-CONF is a one-stop service management platform, that acts as a configuration center and service registry.
+providing dynamic configuration management, service registration and discovery and other core capabilities. with "lightweight, second-level real-time push, multi-environment, cross-language, cross-room, permission control" and other features. Now open source, out of the box.
 
-XXL-CONF 一站式服务管理平台（配置中心、注册中心），提供 动态配置管理、服务注册与发现 等核心能力，拥有 “轻量级、秒级实时推送、多环境、跨语言、跨机房、权限控制” 等特性。现已开放源代码，开箱即用。
+XXL-CONF 是 一站式服务管理平台，作为服务 配置中心 与 注册中心，提供 动态配置管理、服务注册与发现 等核心能力；拥有 “轻量级、秒级实时推送、多环境、跨语言、跨机房、权限控制” 等特性。现已开放源代码，开箱即用。
 
 ## Documentation
 - [中文文档](https://www.xuxueli.com/xxl-conf/)
