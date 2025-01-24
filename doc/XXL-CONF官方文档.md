@@ -5,7 +5,7 @@
 [![GitHub release](https://img.shields.io/github/release/xuxueli/xxl-conf.svg)](https://github.com/xuxueli/xxl-conf/releases)
 [![GitHub stars](https://img.shields.io/github/stars/xuxueli/xxl-conf)](https://github.com/xuxueli/xxl-conf/)
 [![Docker pulls](https://img.shields.io/docker/pulls/xuxueli/xxl-conf-admin)](https://hub.docker.com/r/xuxueli/xxl-conf-admin/)
-<img src="https://img.shields.io/github/license/xuxueli/xxl-conf.svg" >
+[![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
 [![donate](https://img.shields.io/badge/%24-donate-ff69b4.svg?style=flat-square)](https://www.xuxueli.com/page/donate.html)
 
 [TOCM]
