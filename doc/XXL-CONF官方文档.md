@@ -283,8 +283,12 @@ public SpringXxlConfFactory xxlConfFactory() {
 
 XXL-CONF 提供多种配置方式，包括 "API、 @XxlConf、Lisener" 等多种配置方式，介绍如下。
 
-> 可参考项目 "xxl-conf-sample-spring"（接入XXl-CONF的示例项目，供用户参考学习），代码位置：com.xxl.conf.sample.controller.IndexController.index() 
+```
+参考代码：见示例项目 "xxl-conf-sample-spring"，代码位置：com.xxl.conf.sample.controller.IndexController.index()
+```
 
+可启动并访问示例项目地址，XXL-CONF配置中心变更配置后，可体验实时配置推送效果：http://localhost:8081/
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_11.png "在这里输入图片标题")
 
 ### 3.1 方式1: API方式（XxlConfHelper）
 
