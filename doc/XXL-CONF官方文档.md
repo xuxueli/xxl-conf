@@ -1,10 +1,11 @@
 ## 《分布式配置管理平台XXL-CONF》
 
 [![Build Status](https://travis-ci.org/xuxueli/xxl-conf.svg?branch=master)](https://travis-ci.org/xuxueli/xxl-conf)
-[![Docker Status](https://img.shields.io/badge/docker-passing-brightgreen.svg)](https://hub.docker.com/r/xuxueli/xxl-conf-admin/)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-conf/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-conf/)
 [![GitHub release](https://img.shields.io/github/release/xuxueli/xxl-conf.svg)](https://github.com/xuxueli/xxl-conf/releases)
-[![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
+[![GitHub stars](https://img.shields.io/github/stars/xuxueli/xxl-conf)](https://github.com/xuxueli/xxl-conf/)
+[![Docker pulls](https://img.shields.io/docker/pulls/xuxueli/xxl-conf-admin)](https://hub.docker.com/r/xuxueli/xxl-conf-admin/)
+<img src="https://img.shields.io/github/license/xuxueli/xxl-conf.svg" >
 [![donate](https://img.shields.io/badge/%24-donate-ff69b4.svg?style=flat-square)](https://www.xuxueli.com/page/donate.html)
 
 [TOCM]
