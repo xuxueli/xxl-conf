@@ -1,6 +1,6 @@
 ## 《分布式配置管理平台XXL-CONF》
 
-[![Build Status](https://travis-ci.org/xuxueli/xxl-conf.svg?branch=master)](https://travis-ci.org/xuxueli/xxl-conf)
+[![Build Status](https://github.com/xuxueli/xxl-conf/workflows/Java%20CI/badge.svg)](https://github.com/xuxueli/xxl-conf/actions)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-conf/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-conf/)
 [![GitHub release](https://img.shields.io/github/release/xuxueli/xxl-conf.svg)](https://github.com/xuxueli/xxl-conf/releases)
 [![GitHub stars](https://img.shields.io/github/stars/xuxueli/xxl-conf)](https://github.com/xuxueli/xxl-conf/)
