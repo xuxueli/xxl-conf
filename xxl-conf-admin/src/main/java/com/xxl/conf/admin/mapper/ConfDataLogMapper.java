@@ -22,7 +22,7 @@ public interface ConfDataLogMapper {
     /**
     * 删除
     */
-    public int delete(@Param("ids") List<Integer> ids);
+    public int delete(@Param("ids") List<Long> ids);
 
     /**
     * 更新
@@ -32,16 +32,16 @@ public interface ConfDataLogMapper {
     /**
     * Load查询
     */
-    public ConfDataLog load(@Param("id") int id);
+    public ConfDataLog load(@Param("id") Long id);
 
     /**
     * 分页查询Data
     */
-	public List<ConfDataLog> pageList(@Param("offset") int offset, @Param("pagesize") int pagesize);
+	public List<ConfDataLog> pageList(@Param("offset") int offset, @Param("pagesize") int pagesize, @Param("dataId") long dataId);
 
     /**
     * 分页查询Count
     */
-    public int pageListCount(@Param("offset") int offset, @Param("pagesize") int pagesize);
+    public int pageListCount(@Param("offset") int offset, @Param("pagesize") int pagesize, @Param("dataId") long dataId);
 
 }

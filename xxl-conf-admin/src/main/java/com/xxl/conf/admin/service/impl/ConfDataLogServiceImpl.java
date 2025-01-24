@@ -44,7 +44,7 @@ public class ConfDataLogServiceImpl implements ConfDataLogService {
 	* 删除
 	*/
 	@Override
-	public Response<String> delete(List<Integer> ids) {
+	public Response<String> delete(List<Long> ids) {
 		int ret = confDataLogMapper.delete(ids);
 		return ret>0? new ResponseBuilder<String>().success().build()
 					: new ResponseBuilder<String>().fail().build() ;
@@ -64,7 +64,7 @@ public class ConfDataLogServiceImpl implements ConfDataLogService {
 	* Load查询
 	*/
 	@Override
-	public Response<ConfDataLog> load(int id) {
+	public Response<ConfDataLog> load(Long id) {
 		ConfDataLog record = confDataLogMapper.load(id);
 		return new ResponseBuilder<ConfDataLog>().success(record).build();
 	}
@@ -73,10 +73,10 @@ public class ConfDataLogServiceImpl implements ConfDataLogService {
 	* 分页查询
 	*/
 	@Override
-	public PageModel<ConfDataLog> pageList(int offset, int pagesize) {
+	public PageModel<ConfDataLog> pageList(int offset, int pagesize, long dataId) {
 
-		List<ConfDataLog> pageList = confDataLogMapper.pageList(offset, pagesize);
-		int totalCount = confDataLogMapper.pageListCount(offset, pagesize);
+		List<ConfDataLog> pageList = confDataLogMapper.pageList(offset, pagesize, dataId);
+		int totalCount = confDataLogMapper.pageListCount(offset, pagesize, dataId);
 
 		// result
 		PageModel<ConfDataLog> pageModel = new PageModel<ConfDataLog>();

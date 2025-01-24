@@ -22,7 +22,7 @@ public interface ConfDataMapper {
     /**
     * 删除
     */
-    public int delete(@Param("ids") List<Integer> ids);
+    public int delete(@Param("ids") List<Long> ids);
 
     /**
     * 更新 (only update "value + desc" field)
@@ -32,7 +32,7 @@ public interface ConfDataMapper {
     /**
     * Load查询
     */
-    public ConfData load(@Param("id") int id);
+    public ConfData load(@Param("id") long id);
 
     /**
     * 分页查询Data

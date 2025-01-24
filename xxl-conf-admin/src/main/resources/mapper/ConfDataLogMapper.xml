@@ -65,12 +65,15 @@
     <select id="pageList" parameterType="java.util.Map" resultMap="ConfDataLog">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_conf_data_log AS t
+        WHERE t.`data_id` = #{dataId}
+        ORDER BY t.`id` DESC
         LIMIT #{offset}, #{pagesize}
     </select>
 
     <select id="pageListCount" parameterType="java.util.Map" resultType="int">
         SELECT count(1)
         FROM xxl_conf_data_log AS t
+        WHERE t.`data_id` = #{dataId}
     </select>
 
 </mapper>

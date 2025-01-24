@@ -67,7 +67,7 @@ public class ConfDataServiceImpl implements ConfDataService {
 	* 删除
 	*/
 	@Override
-	public Response<String> delete(List<Integer> ids, LoginUserDTO loginUser, boolean isAdmin) {
+	public Response<String> delete(List<Long> ids, LoginUserDTO loginUser, boolean isAdmin) {
 
 		// valid
 		if (CollectionTool.isEmpty(ids)) {
@@ -77,7 +77,7 @@ public class ConfDataServiceImpl implements ConfDataService {
 		// delete
 		int ret = confDataMapper.delete(ids);
 		// log
-		for (Integer id: ids) {
+		for (Long id: ids) {
 			confDataLogMapper.insert(new ConfDataLog(id, "", loginUser.getUsername()));
 		}
 		return ret>0? new ResponseBuilder<String>().success().build()
@@ -118,7 +118,7 @@ public class ConfDataServiceImpl implements ConfDataService {
 	* Load查询
 	*/
 	@Override
-	public Response<ConfData> load(int id) {
+	public Response<ConfData> load(Long id) {
 		ConfData record = confDataMapper.load(id);
 		return new ResponseBuilder<ConfData>().success(record).build();
 	}

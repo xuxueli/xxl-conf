@@ -22,7 +22,7 @@ public interface ConfDataService {
     /**
     * 删除
     */
-    public Response<String> delete(List<Integer> ids, LoginUserDTO loginUser, boolean isAdmin);
+    public Response<String> delete(List<Long> ids, LoginUserDTO loginUser, boolean isAdmin);
 
     /**
     * 更新
@@ -32,7 +32,7 @@ public interface ConfDataService {
     /**
     * Load查询
     */
-    public Response<ConfData> load(int id);
+    public Response<ConfData> load(Long id);
 
     /**
     * 分页查询

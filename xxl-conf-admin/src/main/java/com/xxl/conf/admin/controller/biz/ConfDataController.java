@@ -104,7 +104,7 @@ public class ConfDataController {
     @RequestMapping("/load")
     @ResponseBody
     @Permission
-    public Response<ConfData> load(int id){
+    public Response<ConfData> load(long id){
         return confDataService.load(id);
     }
 
@@ -124,7 +124,7 @@ public class ConfDataController {
     @RequestMapping("/delete")
     @ResponseBody
     @Permission
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids, HttpServletRequest request){
+    public Response<String> delete(@RequestParam("ids[]") List<Long> ids, HttpServletRequest request){
         return confDataService.delete(ids, loginService.getLoginUser(request), loginService.isAdmin(request));
     }
 

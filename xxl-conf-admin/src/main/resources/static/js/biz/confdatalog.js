@@ -1,10 +1,5 @@
 $(function() {
 
-	// select2
-	$("#addModal .form select[name='appname']").select2()
-	$("#updateModal .form select[name='appname']").select2()
-	$("#data_filter select[name='appname']").select2()
-
 	// ---------- ---------- ---------- main table  ---------- ---------- ----------
 	// init date tables
 	$.dataTableSelect.init();
@@ -13,14 +8,12 @@ $(function() {
 		"processing" : true, 
 	    "serverSide": true,
 		"ajax": {
-			url: base_url + "/confdata/pageList",
+			url: base_url + "/confdatalog/pageList",
 			type:"post",
 			// request data
 	        data : function ( d ) {
 	        	var obj = {};
-				obj.env = $('#currentEnv').val();
-				obj.appname = $("#data_filter select[name='appname']").val();
-				obj.key = $('#data_filter .key').val();
+				obj.dataId = $('#dataId').val();
 	        	obj.start = d.start;
 	        	obj.length = d.length;
                 return obj;
@@ -54,19 +47,14 @@ $(function() {
 				}
 			},
 			{
-				"title": 'Env',
-				"data": 'env',
+				"title": '操作人',
+				"data": 'optUsername',
 				"width":'10%'
 			},
 			{
-				"title": 'AppName',
-				"data": 'appname',
-				"width":'15%'
-			},
-			{
-				"title": '配置Key',
-				"data": 'key',
-				"width":'20%'
+				"title": '操作时间',
+				"data": 'addTime',
+				"width":'10%'
 			},
 			{
 				"title": '配置Value',
@@ -81,21 +69,7 @@ $(function() {
 						:data.substring(0, 10) + '...';
 					return "<span title='"+ data +"'>"+ result +"</span>";
 				}
-			},
-			{
-				"title": '配置说明',
-				"data": 'desc',
-				"width":'20%',
-				"render": function ( data, type, row ) {
-					if (!data) {
-						return data;
-					}
-					var result = data.length<10
-						?data
-						:data.substring(0, 10) + '...';
-					return "<span title='"+ data +"'>"+ result +"</span>";
-				}
-			},
+			}
 		],
 		"language" : {
 			"sProcessing" : I18n.dataTable_sProcessing ,
@@ -131,7 +105,7 @@ $(function() {
         mainDataTable.fnDraw();
 	});
 
-	// ---------- ---------- ---------- delete operation ---------- ---------- ----------
+	/*// ---------- ---------- ---------- delete operation ---------- ---------- ----------
 	// delete
 	$("#data_operation").on('click', '.delete',function() {
 
@@ -152,7 +126,7 @@ $(function() {
 
 			$.ajax({
 				type : 'POST',
-				url : base_url + "/confdata/delete",
+				url : base_url + "/confdatalog/delete",
 				data : {
 					"ids" : selectIds
 				},
@@ -224,7 +198,7 @@ $(function() {
 			var paramData = $("#addModal .form").serializeArray();
 
 			// post
-        	$.post(base_url + "/confdata/insert", paramData, function(data, status) {
+        	$.post(base_url + "/confdatalog/insert", paramData, function(data, status) {
     			if (data.code == "200") {
 					$('#addModal').modal('hide');
 
@@ -306,7 +280,7 @@ $(function() {
 			// request
 			var paramData = $("#updateModal .form").serializeArray();
 
-            $.post(base_url + "/confdata/update", paramData, function(data, status) {
+            $.post(base_url + "/confdatalog/update", paramData, function(data, status) {
                 if (data.code == "200") {
                     $('#updateModal').modal('hide');
 
@@ -330,24 +304,6 @@ $(function() {
 
 		$("#updateModal .form")[0].reset();
         $("#updateModal .form .form-group").removeClass("has-error");
-	});
-
-
-	// ---------- ---------- ---------- confDataLog ---------- ---------- ----------
-
-	$("#data_operation .confDataLog").click(function(){
-
-		// find select ids
-		var selectIds = $.dataTableSelect.selectIdsFind();
-		if (selectIds.length != 1) {
-			layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
-			return;
-		}
-		var row = tableData[ 'key' + selectIds[0] ];
-
-		var dataId = row.id;
-		window.open(base_url + '/confdatalog?dataId=' + dataId);
-
-	});
+	});*/
 
 });

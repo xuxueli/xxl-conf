@@ -21,7 +21,7 @@ public interface ConfDataLogService {
     /**
     * 删除
     */
-    public Response<String> delete(List<Integer> ids);
+    public Response<String> delete(List<Long> ids);
 
     /**
     * 更新
@@ -31,11 +31,11 @@ public interface ConfDataLogService {
     /**
     * Load查询
     */
-    public Response<ConfDataLog> load(int id);
+    public Response<ConfDataLog> load(Long id);
 
     /**
     * 分页查询
     */
-    public PageModel<ConfDataLog> pageList(int offset, int pagesize);
+    public PageModel<ConfDataLog> pageList(int offset, int pagesize, long dataId);
 
 }
