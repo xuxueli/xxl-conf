@@ -68,7 +68,7 @@ public class RegistryOpenApiController {
             } else if ("monitor".equals(uri)) {
                 /**
                  * 服务监控 API
-                 * 说明：long-polling 接口，主动阻塞一段时间（三倍于注册中心心跳时间）；直至阻塞超时或服务注册信息变动时响应；
+                 * 说明：long-polling 接口，主动阻塞一段时间（默认30s）；直至阻塞超时或服务注册信息变动时响应；
                  */
                 DiscoveryRequest request = JSON.parseObject(data, DiscoveryRequest.class);
                 return registryService.monitor(request);

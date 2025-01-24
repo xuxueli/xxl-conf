@@ -480,7 +480,7 @@ Java语言应用可以通过“xxl-conf-core”方便快速的接入使用；可
 
 配置中心 Restful OpenAPI 接口明细如下：
 ```
-可参考测试用例：/xxl-conf/xxl-conf-admin/src/test/java/com/xxl/conf/admin/openapi/registry/RegistryOpenApiControllerTest.java
+可参考测试用例：/xxl-conf/xxl-conf-admin/src/test/java/com/xxl/conf/admin/openapi/registry/ConfDataOpenApiControllerTestjava
 ```
 
 #### a、配置数据查询 API：
@@ -616,21 +616,31 @@ XXL-CONF 一站式服务管理平台（配置中心、注册中心），提供 �
 
 ![输入图片说明](https://www.xuxueli.com/doc/static/xxl-conf/images/img_registry.png "在这里输入图片标题")
 
-### 6.2 注册中心 Restful OpenAPI（多语言支持）
+#### 6.2 注册发现原理
+内部通过广播机制，集群节点实时同步服务注册信息，确保一致。客户端借助 long pollong 实时感知服务注册信息，简洁、高效；
+
+#### 6.3 注册数据一致性
+类似 Raft 方案，更轻量级、稳定；
+- Raft：Leader统一处理变更操作请求，一致性协议的作用具化为保证节点间操作日志副本(log replication)一致，以term作为逻辑时钟(logical clock)保证时序，节点运行相同状态机(state machine)得到一致结果。
+- 本项目：
+  - Leader（统一处理分发变更请求）：DB消息表（仅变更时产生消息，消息量较小，而且消息轮训存在间隔，因此消息表压力不会太大；）；
+  - state machine（顺序操作日志副本并保证结果一直）：顺序消费消息，保证本地数据一致，并通过周期全量同步进一步保证一致性；
+
+### 6.4 注册中心 Restful OpenAPI（多语言支持）
 
 Java应用可参考XXL-RPC实现方案，XXL-RPC原生基于XXL-CONF的 Restful OpenAPI实现服务注册发现。
 非Java语言，可借助 XXL-CONF 提供的 Restful OpenAPI 进行动态服务注册与发现，从而实现多语言支持。
 
 注册中心 Restful OpenAPI 接口明细如下：
 ```
-可参考测试用例：/xxl-conf/xxl-conf-admin/src/test/java/com/xxl/conf/admin/openapi/registry/ConfDataOpenApiControllerTest.java
+可参考测试用例：/xxl-conf/xxl-conf-admin/src/test/java/com/xxl/conf/admin/openapi/registry/RegistryOpenApiControllerTest..java
 ```
 
 #### a、服务注册 & 续约 API
 说明：新服务注册上线1s内广播通知接入方；需要接入方循环续约，否则服务将会过期（三倍于注册中心心跳时间）下线；
 
 ```
-地址格式：{服务注册中心跟地址}/openapi/register
+地址格式：{服务注册中心跟地址}/openapi/registry/register
 
 请求参数说明：
  1、accessToken：请求令牌；
@@ -650,13 +660,20 @@ Java应用可参考XXL-RPC实现方案，XXL-RPC原生基于XXL-CONF的 Restful 
         }
     }
     
+响应数据格式：
+
+    {
+        "code": 200,        // 200 表示成功
+        "msg": ""           // 错误提示消息
+    }
+    
 ```
 
 #### b、服务摘除 API
 说明：新服务摘除下线1s内广播通知接入方；
 
 ```
-地址格式：{服务注册中心跟地址}/openapi/unregister
+地址格式：{服务注册中心跟地址}/openapi/registry/unregister
 
 请求参数说明：
  1、accessToken：请求令牌；
@@ -675,6 +692,13 @@ Java应用可参考XXL-RPC实现方案，XXL-RPC原生基于XXL-CONF的 Restful 
             "extendInfo" : "",
         }
     }
+    
+响应数据格式：
+
+    {
+        "code": 200,        // 200 表示成功
+        "msg": ""           // 错误提示消息
+    }
 
 ```
 
@@ -682,7 +706,7 @@ Java应用可参考XXL-RPC实现方案，XXL-RPC原生基于XXL-CONF的 Restful 
 说明：查询在线服务地址列表；
 
 ```
-地址格式：{服务注册中心跟地址}/openapi/discovery
+地址格式：{服务注册中心跟地址}/openapi/registry/discovery
 
 请求参数说明：
  1、accessToken：请求令牌；
@@ -696,19 +720,35 @@ Java应用可参考XXL-RPC实现方案，XXL-RPC原生基于XXL-CONF的 Restful 
         "accessToken" : "xxxxxx",
         "env" : "test",
         "appnameList" : [
-            "app01",
-            "app02"
+            "appname01",
+            "appname01"
         ],
         "simpleQuery":false
+    }
+    
+响应数据格式：
+
+    {
+        "code": 200,          // 200 表示成功
+        "msg": "",            // 错误提示消息
+        "discoveryData": {
+            "appname01":[{
+                "env" : "test",
+                "appname" : "app01",
+                "ip" : "127.0.0.1",
+                "port" : 7080,
+                "extendInfo" : "",
+            }]
+        }
     }
 
 ```
 
 #### d、服务监控 API
-说明：long-polling 接口，主动阻塞一段时间（三倍于注册中心心跳时间）；直至阻塞超时或服务注册信息变动时响应；
+说明：long-polling 接口，主动阻塞一段时间（默认30s）；直至阻塞超时或服务注册信息变动时响应；
 
 ```
-地址格式：{服务注册中心跟地址}/openapi/monitor
+地址格式：{服务注册中心跟地址}/openapi/registry/monitor
 
 请求参数说明：
  1、accessToken：请求令牌；
@@ -726,35 +766,14 @@ Java应用可参考XXL-RPC实现方案，XXL-RPC原生基于XXL-CONF的 Restful 
         ]
     }
     
+响应数据格式：
+
+    {
+        "code": 200,                    // 200 表示正常，一直阻塞到配置变更或超时；非200 表示请求异常
+        "msg": "Monitor key update."    // 错误提示消息
+    }
+    
 ```
-
-### 6.6 服务注册中心系统设计
-#### 6.6.1 系统架构图
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-rpc/images/img_02.png "在这里输入图片标题")
-
-#### 6.6.2 原理解析
-内部通过广播机制，集群节点实时同步服务注册信息，确保一致。客户端借助 long pollong 实时感知服务注册信息，简洁、高效；
-
-#### 6.6.3 跨机房（异地多活）
-得益于服务注册中心集群关系对等特性，集群各节点提供幂等的服务注册服务；因此，异地跨机房部署时，只需要请求本机房服务注册中心即可，实现异地多活；
-
-举个例子：比如机房A、B 内分别部署服务注册中心集群节点。即机房A部署 a1、a2 两个服务注册中心服务节点，机房B部署 b1、b2 两个服务注册中心服务节点；
-
-那么各机房内应用只需要请求本机房内部署的服务注册中心节点即可，不需要跨机房调用。即机房A内业务应用请求 a1、a2 获取配置、机房B内业务应用 b1、b2 获取配置。
-
-这种跨机房部署方式实现了配置服务的 "异地多活"，拥有以下几点好处：
-
-- 1、注册服务响应更快：注册请求本机房内搞定；
-- 2、注册服务更稳定：注册请求不需要跨机房，不需要考虑复杂的网络情况，更加稳定；
-- 2、容灾性：即使一个机房内服务注册中心全部宕机，仅会影响到本机房内应用加载服务，其他机房不会受到影响。
-
-#### 6.6.4 一致性
-类似 Raft 方案，更轻量级、稳定；
-- Raft：Leader统一处理变更操作请求，一致性协议的作用具化为保证节点间操作日志副本(log replication)一致，以term作为逻辑时钟(logical clock)保证时序，节点运行相同状态机(state machine)得到一致结果。
-- 本项目：
-  - Leader（统一处理分发变更请求）：DB消息表（仅变更时产生消息，消息量较小，而且消息轮训存在间隔，因此消息表压力不会太大；）；
-  - state machine（顺序操作日志副本并保证结果一直）：顺序消费消息，保证本地数据一致，并通过周期全量同步进一步保证一致性；
-
 
 
 ## 七、历史版本
@@ -872,15 +891,20 @@ Java应用可参考XXL-RPC实现方案，XXL-RPC原生基于XXL-CONF的 Restful 
 - 5、配置Key合法性校验逻辑优化，非法Key服务端自动过滤，避免阻塞正常配置的查询加载；
 - 6、升级pom依赖至较新版本；
 
-### 7.15 版本 v1.7.0 Release Notes[迭代中]
-- 1、服务端非法Key、空值均响应, 返回 "", 客户端注册信息发现null值缓存，避免缓存穿透；
-- 2、日志优化：仅变更日志保留为info级别，非核心日志调整为debug级别；
-- 3、客户端配置监控逻辑优化，避免异常情况下重试请求太频繁； 
-- 4、配置中心全量同步线程优化，对齐起始时间，避免集群节点数据不一致；
-- 5、小概率情况下底层通讯乱码问题修复；
-- 6、升级多项maven依赖至较新版本，如springboot等；
-- 7、XXL-CONF升级重构，定位 微服务管理中心，提供配置中心、注册中心能力；
-- 8、【迭代中】配置中心-变更日志，支持Diff及回滚能力；配置中心-客户端，重构API端；注册中心，升级与XXL-RPC兼容；
+### 7.15 版本 v1.7.0 Release Notes[2024-01-24]
+- 1、【升级】XXL-CONF 升级重构，定位 一站式服务管理平台（配置中心、注册中心），提供 动态配置管理、服务注册及发现能力；降低中间件认知及运维成本；
+- 2、【整合】XXL-CONF 整合XXL-RPC注册中心（xxl-rpc-admin）能力，提供轻量级服务动态注册及发现能力；
+- 3、【重构】XXL-CONF 客户端代码重构，模块化设计实现，提升可扩展性与稳定性；
+- 4、【优化】客户端配置监控逻辑优化，避免异常情况下重试请求太频繁；
+- 5、【优化】服务端非法Key空值处理，主动进行Null值缓存，避免缓存穿透；
+- 6、【优化】日志优化：仅变更日志保留为info级别，非核心日志调整为debug级别；
+- 7、【优化】全量配置同步线程优化，对齐起始时间，避免集群节点数据不一致；
+- 8、【修复】小概率情况下底层通讯乱码问题修复；
+- 9、【升级】升级多项maven依赖至较新版本，如springboot等；
+
+
+### 7.16 版本 v1.7.1 Release Notes[迭代中]
+- 1、【迭代中】XXL-CONF 配置历史Diff及一键回滚能力完善；
 
 ### TODO LIST
 - 支持托管配置文件，properties或yml，待考虑，不利于配置复用与细粒度管理；
