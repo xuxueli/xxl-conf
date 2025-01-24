@@ -169,7 +169,7 @@ public class XxlConfLocalCacheHelper {
         // monitor
         ConfDataTool.QueryConfDataResponse monitorRet = xxlConfFactory.getRemoteHelper().monitor(confKey, true);
         // 1、avoid fail-retry too quick；2、make sure server broadcast complete
-        TimeUnit.SECONDS.sleep(3);
+        TimeUnit.SECONDS.sleep(1);
 
         // remote param
         confKey.clear();
