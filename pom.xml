@@ -43,7 +43,7 @@
 		<!-- tool -->
 		<xxl-tool.version>1.3.2</xxl-tool.version>
 		<!-- json -->
-		<fastjson2.version>2.0.53</fastjson2.version>
+		<fastjson2.version>2.0.54</fastjson2.version>
 	</properties>
 
 
