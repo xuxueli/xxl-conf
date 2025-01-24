@@ -85,7 +85,7 @@
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h4 class="modal-title" >${I18n.system_opt_add}应用列表</h4>
+							<h4 class="modal-title" >${I18n.system_opt_add}应用信息</h4>
 						</div>
 						<div class="modal-body">
 							<form class="form-horizontal form" role="form" >
