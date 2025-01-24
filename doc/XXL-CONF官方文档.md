@@ -335,7 +335,7 @@ defaultValue | 配置为空时的默认值
 callback | 配置更新时，是否需要同步刷新配置
 
 
-### 3.3 方式2: 监听器方式（XxlConfListener）
+### 3.3 方式3: 监听器方式（XxlConfListener）
 
 可开发Listener逻辑，监听配置变更事件；可据此实现动态刷新JDBC连接池等高级功能；
 ```
