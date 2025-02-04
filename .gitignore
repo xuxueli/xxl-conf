@@ -2,6 +2,6 @@
 .classpath
 .project
 *.iml
-target/
+**/target/
 .DS_Store
 .gitattributes
