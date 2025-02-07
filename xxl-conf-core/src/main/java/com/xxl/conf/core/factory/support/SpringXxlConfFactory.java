@@ -7,14 +7,15 @@ import com.xxl.conf.core.factory.XxlConfFactory;
 import com.xxl.conf.core.util.FieldReflectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.*;
-import org.springframework.beans.factory.*;
+import org.springframework.aop.support.AopUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.SmartInstantiationAwareBeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.ReflectionUtils;
 
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 
 /**
@@ -125,12 +126,19 @@ public class SpringXxlConfFactory implements InitializingBean, DisposableBean, A
 		}
 
 		// reflect
-		Field fieldItem = ReflectionUtils.findField(bean.getClass(), beanField.getFieldName());
+		Field fieldItem;
+		if (AopUtils.isAopProxy(bean)) {
+			fieldItem = ReflectionUtils.findField(AopUtils.getTargetClass(bean), beanField.getFieldName());
+		} else {
+			fieldItem = ReflectionUtils.findField(bean.getClass(), beanField.getFieldName());
+		}
+
 		if (fieldItem != null) {
 			try {
 				// reflect invoke
 				Object valueObj = FieldReflectionUtil.parseValue(fieldItem.getType(), value);
 
+				//ReflectionUtils.makeAccessible(fieldItem);
 				fieldItem.setAccessible(true);
 				fieldItem.set(bean, valueObj);								// support mult data types
 

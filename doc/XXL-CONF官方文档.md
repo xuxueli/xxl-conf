@@ -915,8 +915,9 @@ Java应用可参考XXL-RPC实现方案，XXL-RPC原生基于XXL-CONF的 Restful 
 
 
 ### 7.16 版本 v1.7.1 Release Notes[迭代中]
-- 1、【迭代中】XXL-CONF 配置历史Diff及一键回滚能力完善；
-- 2、【迭代中】启动预热优化，加载当前AppName下全量配置预热；
+- 1、【强化】注解方式（@XxlConf）配置更新逻辑调整，Proxy情况下赋值逻辑优化；
+- 2、【迭代中】XXL-CONF 配置历史Diff及一键回滚能力完善；
+- 3、【迭代中】启动预热优化，加载当前AppName下全量配置预热；
 
 ### TODO LIST
 - 支持托管配置文件，properties或yml，待考虑，不利于配置复用与细粒度管理；
