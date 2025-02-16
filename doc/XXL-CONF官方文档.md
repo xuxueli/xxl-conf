@@ -919,6 +919,7 @@ Java应用可参考XXL-RPC实现方案，XXL-RPC原生基于XXL-CONF的 Restful 
 - 2、【迭代中】XXL-CONF 配置历史Diff及一键回滚能力完善；
 - 3、【迭代中】启动预热优化，加载当前AppName下全量配置预热；
 - 4、【迭代中】首页报表数据处理；Sample示例，动态线程池处理，动态JDBC处理等；
+- 5、【迭代中】Springboot 微服务 接入 注册中心 Sample示例；
 
 ### TODO LIST
 - 支持托管配置文件，properties或yml，待考虑，不利于配置复用与细粒度管理；
