@@ -17,17 +17,17 @@ public class Application implements Serializable {
     private int id;
 
     /**
-    * 应用唯一标识
+    * 服务唯一标识
     */
     private String appname;
 
     /**
-    * 应用名称
+    * 服务名称
     */
     private String name;
 
     /**
-    * 应用描述
+    * 服务描述
     */
     private String desc;
 

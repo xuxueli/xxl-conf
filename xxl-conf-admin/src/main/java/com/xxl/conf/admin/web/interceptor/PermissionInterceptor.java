@@ -109,13 +109,13 @@ public class PermissionInterceptor implements AsyncHandlerInterceptor {
 				// TODO，配置管理（配置类型；int、long、boolean、json、text），历史版本（记录，类型；diff、回滚；）
 
 				new ResourceDTO(3, 0, "注册中心",1, "", "/instance", " fa-cubes", 3, 0, null),
-				new ResourceDTO(4, 0, "系统管理",0, "ADMIN", "/system", "fa-cog", 5, 0, Arrays.asList(
-						new ResourceDTO(5, 4, "应用管理",1, "ADMIN", "/application", " fa-cloud", 4, 0,null),
-						new ResourceDTO(6, 4, "环境管理",1, "ADMIN", "/environment", "fa-cog", 5, 0, null),
-						new ResourceDTO(7, 4, "AccessToken",1, "ADMIN", "/accesstoken", "fa-key", 6, 0, null),
-						new ResourceDTO(8, 4, "用户管理",1, "ADMIN", "/user", "fa-users", 7, 0, null)
+				new ResourceDTO(4, 0, "服务管理",1, "ADMIN", "/application", " fa-cloud", 4, 0,null),
+				new ResourceDTO(5, 0, "环境管理",1, "ADMIN", "/environment", "fa-server", 5, 0, null),
+				new ResourceDTO(6, 0, "系统管理",0, "ADMIN", "/system", "fa-cog", 6, 0, Arrays.asList(
+						new ResourceDTO(7, 6, "AccessToken",1, "ADMIN", "/accesstoken", "fa-key", 7, 0, null),
+						new ResourceDTO(8, 6, "用户管理",1, "ADMIN", "/user", "fa-users", 8, 0, null)
 				)),
-				new ResourceDTO(9, 0, "帮助中心",1, "", "/help", "fa-book", 8, 0, null)
+				new ResourceDTO(9, 0, "帮助中心",1, "", "/help", "fa-book", 9, 0, null)
 		);
 		// valid
 		if (!loginService.isAdmin(request)) {

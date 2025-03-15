@@ -50,7 +50,7 @@ public class RegistryCacheHelpler {
      * <pre>
      *      DB-Instance：DB完整注册信息。
      *          env：Env（环境唯一标识）
-     *          appname：AppName（应用唯一标识）
+     *          appname：AppName（服务唯一标识）
      *          ip：注册节点IP
      *          port：注册节点端口号
      *          registerModel：注册模式

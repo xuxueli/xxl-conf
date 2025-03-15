@@ -20,7 +20,7 @@ public class ConfDataCacheDTO implements Serializable {
     private String env;
 
     /**
-     * AppName（应用唯一标识）
+     * AppName（服务唯一标识）
      */
     private String appname;
 

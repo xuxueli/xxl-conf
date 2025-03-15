@@ -48,12 +48,12 @@ $(function() {
 				}
 			},
 			{
-				"title": 'AppName（应用标识）',
+				"title": 'AppName（服务标识）',
 				"data": 'appname',
 				"width":'30%'
 			},
 			{
-				"title": '应用名称',
+				"title": '服务名称',
 				"data": 'name',
 				"width":'30%'
 			},

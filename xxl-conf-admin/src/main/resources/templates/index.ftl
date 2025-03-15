@@ -43,7 +43,7 @@
                     <div class="info-box">
                         <span class="info-box-icon bg-aqua"><i class="fa fa-cloud"></i></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">应用数量</span>
+                            <span class="info-box-text">服务数量</span>
                             <span class="info-box-number">***</span>
                         </div>
                     </div>
@@ -62,7 +62,7 @@
                         <span class="info-box-icon bg-green"><i class="ion ion-ios-gear-outline"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">环境数量</span>
-                            <span class="info-box-number">*</span>
+                            <span class="info-box-number">***</span>
                         </div>
                     </div>
                 </div>
@@ -92,9 +92,9 @@
                             </p>
 
                             <hr>
-                            <strong><i class="fa fa-cloud margin-r-5"></i>应用管理</strong>
+                            <strong><i class="fa fa-cloud margin-r-5"></i>服务管理</strong>
                             <p class="text-muted">
-                                提供应用定义、管理能力，支持通过应用维度聚合分析服务注册信息、节点健康信息等。
+                                提供服务定义、管理能力，支持通过服务维度聚合分析服务注册信息、节点健康信息等。
                             </p>
 
                             <hr>

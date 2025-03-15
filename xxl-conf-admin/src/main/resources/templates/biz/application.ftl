@@ -28,7 +28,7 @@
 		<!-- content-header -->
 		<section class="content-header">
 			<#-- biz start（3/5 name） -->
-			<h1>应用管理</h1>
+			<h1>服务管理</h1>
 			<#-- biz end（3/5 name） -->
 		</section>
 
@@ -49,7 +49,7 @@
 						</div>
 						<div class="col-xs-4">
 							<div class="input-group">
-								<span class="input-group-addon">应用名称</span>
+								<span class="input-group-addon">服务名称</span>
 								<input type="text" class="form-control name" autocomplete="on" >
 							</div>
 						</div>
@@ -85,7 +85,7 @@
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h4 class="modal-title" >${I18n.system_opt_add}应用信息</h4>
+							<h4 class="modal-title" >${I18n.system_opt_add}服务信息</h4>
 						</div>
 						<div class="modal-body">
 							<form class="form-horizontal form" role="form" >
@@ -94,12 +94,12 @@
 									<div class="col-sm-9"><input type="text" class="form-control" name="appname" placeholder="${I18n.system_please_input}AppName" maxlength="50" ></div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">应用名称<font color="red">*</font></label>
-									<div class="col-sm-9"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}应用名称" maxlength="20" ></div>
+									<label for="lastname" class="col-sm-3 control-label">服务名称<font color="red">*</font></label>
+									<div class="col-sm-9"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}服务名称" maxlength="20" ></div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">应用描述<font color="red">*</font></label>
-									<div class="col-sm-9"><textarea type="text" class="form-control" name="desc" placeholder="${I18n.system_please_input}应用描述" maxlength="100" ></textarea></div>
+									<label for="lastname" class="col-sm-3 control-label">服务描述<font color="red">*</font></label>
+									<div class="col-sm-9"><textarea type="text" class="form-control" name="desc" placeholder="${I18n.system_please_input}服务描述" maxlength="100" ></textarea></div>
 								</div>
 
 								<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
@@ -120,7 +120,7 @@
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h4 class="modal-title" >${I18n.system_opt_edit}应用信息</h4>
+							<h4 class="modal-title" >${I18n.system_opt_edit}服务信息</h4>
 						</div>
 						<div class="modal-body">
 							<form class="form-horizontal form" role="form" >
@@ -129,12 +129,12 @@
 									<div class="col-sm-9"><input type="text" class="form-control" name="appname" placeholder="${I18n.system_please_input}AppName" maxlength="50" readonly ></div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">应用名称<font color="red">*</font></label>
-									<div class="col-sm-9"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}应用名称" maxlength="20" ></div>
+									<label for="lastname" class="col-sm-3 control-label">服务名称<font color="red">*</font></label>
+									<div class="col-sm-9"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}服务名称" maxlength="20" ></div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-3 control-label">应用描述<font color="red">*</font></label>
-									<div class="col-sm-9"><textarea type="text" class="form-control" name="desc" placeholder="${I18n.system_please_input}应用描述" maxlength="100" ></textarea></div>
+									<label for="lastname" class="col-sm-3 control-label">服务描述<font color="red">*</font></label>
+									<div class="col-sm-9"><textarea type="text" class="form-control" name="desc" placeholder="${I18n.system_please_input}服务描述" maxlength="100" ></textarea></div>
 								</div>
 
 								<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">

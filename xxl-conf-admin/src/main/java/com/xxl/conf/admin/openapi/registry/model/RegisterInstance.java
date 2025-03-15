@@ -9,7 +9,7 @@ public class RegisterInstance implements Serializable {
     public static final long serialVersionUID = 42L;
 
     /**
-     * AppName（应用唯一标识）
+     * AppName（服务唯一标识）
      */
     private String appname;
 

@@ -14,7 +14,7 @@ public class User {
 	private int status;				// 状态：0-正常、1-停用
 	private String realName;		// 真实姓名
 	private String role;			// 角色：ADMIN-管理员，NORMAL-普通用户
-	private String permission;		// 权限：应用ID列表，多个逗号分割
+	private String permission;		// 权限：服务ID列表，多个逗号分割
 	private Date addTime;
 	private Date updateTime;
 
