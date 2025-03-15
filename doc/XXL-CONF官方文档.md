@@ -1,4 +1,4 @@
-## 《配置中心与注册中心XXL-CONF》
+## 《分布式配置中心与注册中心XXL-CONF》
 
 [![Build Status](https://github.com/xuxueli/xxl-conf/workflows/Java%20CI/badge.svg)](https://github.com/xuxueli/xxl-conf/actions)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-conf/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-conf/)
