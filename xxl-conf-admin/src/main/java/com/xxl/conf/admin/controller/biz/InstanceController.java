@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
-import com.xxl.tool.response.ResponseBuilder;
 
 /**
 * Instance Controller
@@ -72,7 +71,7 @@ public class InstanceController {
                                                      @RequestParam() String appname,
                                                      @RequestParam() String env) {
         PageModel<InstanceDTO> pageModel = instanceService.pageList(offset, pagesize, appname, env);
-        return new ResponseBuilder<PageModel<InstanceDTO>>().success(pageModel).build();
+        return Response.ofSuccess(pageModel);
     }
 
     /**

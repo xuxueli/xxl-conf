@@ -1,7 +1,7 @@
 package com.xxl.conf.core.data.tool;
 
-import com.alibaba.fastjson2.JSON;
-import com.xxl.conf.core.util.HttpTool;
+import com.xxl.tool.gson.GsonTool;
+import com.xxl.tool.http.HttpTool;
 
 import java.io.Serializable;
 import java.util.List;
@@ -186,11 +186,12 @@ public class ConfDataTool {
         request.setSimpleQuery(simpleQuery);
 
         String responseBody = HttpTool.postBody(adminAddress + "/openapi/confdata/query",
-                JSON.toJSONString(request),
-                3000,
-                null
+                GsonTool.toJson(request),
+                null,
+                3000
+
         );
-        QueryConfDataResponse response = JSON.parseObject(responseBody, QueryConfDataResponse.class);
+        QueryConfDataResponse response = GsonTool.fromJson(responseBody, QueryConfDataResponse.class);
         return response;
     }
 
@@ -221,11 +222,11 @@ public class ConfDataTool {
 
         try {
             String responseBody = HttpTool.postBody(adminAddress + "/openapi/confdata/monitor",
-                    JSON.toJSONString(request),
-                    timeout,
-                    null
+                    GsonTool.toJson(request),
+                    null,
+                    timeout
                     );
-            QueryConfDataResponse response = JSON.parseObject(responseBody, QueryConfDataResponse.class);
+            QueryConfDataResponse response = GsonTool.fromJson(responseBody, QueryConfDataResponse.class);
             return response;
         } catch (Exception e) {
             return new QueryConfDataResponse(QueryConfDataResponse.FAIL_CODE, e.getMessage());

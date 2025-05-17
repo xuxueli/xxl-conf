@@ -1,7 +1,7 @@
 package com.xxl.conf.admin.util;
 
 
-import com.alibaba.fastjson2.JSON;
+import com.xxl.tool.gson.GsonTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -73,7 +73,7 @@ public class I18nUtil {
             }
         }
 
-        String json = JSON.toJSONString(map);
+        String json = GsonTool.toJson(map);
         return json;
     }
 

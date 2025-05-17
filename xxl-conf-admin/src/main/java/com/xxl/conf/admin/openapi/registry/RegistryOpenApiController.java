@@ -1,11 +1,11 @@
 package com.xxl.conf.admin.openapi.registry;
 
-import com.alibaba.fastjson2.JSON;
 import com.xxl.conf.admin.annotation.Permission;
 import com.xxl.conf.admin.openapi.registry.biz.RegistryService;
 import com.xxl.conf.admin.openapi.registry.model.DiscoveryRequest;
 import com.xxl.conf.admin.openapi.common.model.OpenApiResponse;
 import com.xxl.conf.admin.openapi.registry.model.RegisterRequest;
+import com.xxl.tool.gson.GsonTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -49,28 +49,28 @@ public class RegistryOpenApiController {
                  * 服务注册 & 续约 API
                  * 说明：新服务注册上线1s内广播通知接入方；需要接入方循环续约，否则服务将会过期（三倍于注册中心心跳时间）下线；
                  */
-                RegisterRequest request = JSON.parseObject(data, RegisterRequest.class);
+                RegisterRequest request = GsonTool.fromJson(data, RegisterRequest.class);
                 return registryService.register(request);
             } else if ("unregister".equals(uri)) {
                 /**
                  * 服务摘除 API
                  * 说明：新服务摘除下线1s内广播通知接入方；
                  */
-                RegisterRequest request = JSON.parseObject(data, RegisterRequest.class);
+                RegisterRequest request = GsonTool.fromJson(data, RegisterRequest.class);
                 return registryService.unregister(request);
             } else if ("discovery".equals(uri)) {
                 /**
                  * 服务发现 API
                  * 说明：查询在线服务地址列表；
                  */
-                DiscoveryRequest request = JSON.parseObject(data, DiscoveryRequest.class);
+                DiscoveryRequest request = GsonTool.fromJson(data, DiscoveryRequest.class);
                 return registryService.discovery(request);
             } else if ("monitor".equals(uri)) {
                 /**
                  * 服务监控 API
                  * 说明：long-polling 接口，主动阻塞一段时间（默认30s）；直至阻塞超时或服务注册信息变动时响应；
                  */
-                DiscoveryRequest request = JSON.parseObject(data, DiscoveryRequest.class);
+                DiscoveryRequest request = GsonTool.fromJson(data, DiscoveryRequest.class);
                 return registryService.monitor(request);
             } else {
                 return new OpenApiResponse(OpenApiResponse.FAIL_CODE, "invalid request, uri-mapping("+ uri +") not found.");

@@ -6,12 +6,8 @@ import com.xxl.conf.admin.service.ConfDataLogService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import com.xxl.tool.response.PageModel;
 
 /**
@@ -33,11 +29,11 @@ public class ConfDataLogServiceImpl implements ConfDataLogService {
 
 		// valid
 		if (confDataLog == null) {
-			return new ResponseBuilder<String>().fail("必要参数缺失").build();
+			return Response.ofFail("必要参数缺失");
         }
 
 		confDataLogMapper.insert(confDataLog);
-		return new ResponseBuilder<String>().success().build();
+		return Response.ofSuccess();
 	}
 
 	/**
@@ -46,8 +42,7 @@ public class ConfDataLogServiceImpl implements ConfDataLogService {
 	@Override
 	public Response<String> delete(List<Long> ids) {
 		int ret = confDataLogMapper.delete(ids);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
 
 	/**
@@ -56,8 +51,7 @@ public class ConfDataLogServiceImpl implements ConfDataLogService {
 	@Override
 	public Response<String> update(ConfDataLog confDataLog) {
 		int ret = confDataLogMapper.update(confDataLog);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
 
 	/**
@@ -66,7 +60,7 @@ public class ConfDataLogServiceImpl implements ConfDataLogService {
 	@Override
 	public Response<ConfDataLog> load(Long id) {
 		ConfDataLog record = confDataLogMapper.load(id);
-		return new ResponseBuilder<ConfDataLog>().success(record).build();
+		return Response.ofSuccess(record);
 	}
 
 	/**

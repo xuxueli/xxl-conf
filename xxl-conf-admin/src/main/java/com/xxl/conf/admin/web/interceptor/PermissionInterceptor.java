@@ -6,12 +6,12 @@ import com.xxl.conf.admin.model.dto.LoginUserDTO;
 import com.xxl.conf.admin.model.dto.ResourceDTO;
 import com.xxl.conf.admin.model.entity.Environment;
 import com.xxl.conf.admin.service.EnvironmentService;
-import com.xxl.conf.admin.util.CookieTool;
 import com.xxl.conf.admin.util.I18nUtil;
 import com.xxl.conf.admin.service.impl.LoginService;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.exception.BizException;
-import com.xxl.tool.freemarker.FreemarkerTool;
+import com.xxl.tool.freemarker.FtlTool;
+import com.xxl.tool.http.CookieTool;
 import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -85,7 +85,7 @@ public class PermissionInterceptor implements AsyncHandlerInterceptor {
 
 		if (modelAndView != null) {
 			// i18n, static method
-			modelAndView.addObject("I18nUtil", FreemarkerTool.generateStaticModel(I18nUtil.class.getName()));
+			modelAndView.addObject("I18nUtil", FtlTool.generateStaticModel(I18nUtil.class.getName()));
 
 			// fill menu data
 			fillMenuData(request, modelAndView);

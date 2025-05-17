@@ -1,9 +1,8 @@
 package com.xxl.conf.admin.web.error;
 
-import com.alibaba.fastjson2.JSON;
 import com.xxl.tool.exception.BizException;
+import com.xxl.tool.gson.GsonTool;
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -44,14 +43,14 @@ public class WebHandlerExceptionResolver implements HandlerExceptionResolver {
 		}
 
 		// error result
-		Response<String> errorResult = new ResponseBuilder<String>().fail(ex.toString().replaceAll("\n", "<br/>")).build();
+		Response<String> errorResult = Response.ofFail(ex.toString().replaceAll("\n", "<br/>"));
 
 		// response
 		ModelAndView mv = new ModelAndView();
 		if (isJson) {
 			try {
 				response.setContentType("application/json;charset=utf-8");
-				response.getWriter().print(JSON.toJSONString(errorResult));
+				response.getWriter().print(GsonTool.toJson(errorResult));
 			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
 			}

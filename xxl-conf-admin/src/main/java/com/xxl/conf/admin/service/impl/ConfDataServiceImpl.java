@@ -1,6 +1,5 @@
 package com.xxl.conf.admin.service.impl;
 
-import com.alibaba.fastjson2.JSON;
 import com.xxl.conf.admin.constant.enums.MessageTypeEnum;
 import com.xxl.conf.admin.mapper.ConfDataLogMapper;
 import com.xxl.conf.admin.mapper.ConfDataMapper;
@@ -13,13 +12,13 @@ import com.xxl.conf.admin.service.ConfDataService;
 import com.xxl.conf.admin.util.I18nUtil;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.StringTool;
+import com.xxl.tool.gson.GsonTool;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
 
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import com.xxl.tool.response.PageModel;
 
 /**
@@ -43,13 +42,13 @@ public class ConfDataServiceImpl implements ConfDataService {
 
 		// valid
 		if (confData == null || StringTool.isBlank(confData.getEnv()) || StringTool.isBlank(confData.getAppname())) {
-			return new ResponseBuilder<String>().fail("必要参数缺失").build();
+			return Response.ofFail("必要参数缺失");
 		}
 
 		// valid application
 		List<String> appnameList = loginUser.getPermission()!=null? Arrays.asList(loginUser.getPermission().split(",")):new ArrayList<>();
 		if (!isAdmin && !appnameList.contains(confData.getAppname())){
-			return new ResponseBuilder<String>().fail(I18nUtil.getString("system_permission_limit")).build();
+			return Response.ofFail(I18nUtil.getString("system_permission_limit"));
 		}
 
 		// opt
@@ -58,9 +57,9 @@ public class ConfDataServiceImpl implements ConfDataService {
 		confDataLogMapper.insert(new ConfDataLog(confData.getId(), confData.getValue(), loginUser.getUsername()));
 
 		// broadcast message
-		MessageHelpler.broadcastMessage(MessageTypeEnum.CONFDATA, JSON.toJSONString(new MessageForConfDataDTO(confData)));
+		MessageHelpler.broadcastMessage(MessageTypeEnum.CONFDATA, GsonTool.toJson(new MessageForConfDataDTO(confData)));
 
-		return new ResponseBuilder<String>().success().build();
+		return Response.ofSuccess();
 	}
 
 	/**
@@ -71,7 +70,7 @@ public class ConfDataServiceImpl implements ConfDataService {
 
 		// valid
 		if (CollectionTool.isEmpty(ids)) {
-			return new ResponseBuilder<String>().fail("必要参数缺失").build();
+			return Response.ofFail("必要参数缺失");
 		}
 
 		// delete
@@ -80,8 +79,7 @@ public class ConfDataServiceImpl implements ConfDataService {
 		for (Long id: ids) {
 			confDataLogMapper.insert(new ConfDataLog(id, "", loginUser.getUsername()));
 		}
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
 
 	/**
@@ -92,13 +90,13 @@ public class ConfDataServiceImpl implements ConfDataService {
 
 		// valid
 		if (confData == null || StringTool.isBlank(confData.getEnv()) || StringTool.isBlank(confData.getAppname())) {
-			return new ResponseBuilder<String>().fail("必要参数缺失").build();
+			return Response.ofFail("必要参数缺失");
 		}
 
 		// valid application
 		List<String> appnameList = loginUser.getPermission()!=null? Arrays.asList(loginUser.getPermission().split(",")):new ArrayList<>();
 		if (!isAdmin && !appnameList.contains(confData.getAppname())){
-			return new ResponseBuilder<String>().fail(I18nUtil.getString("system_permission_limit")).build();
+			return Response.ofFail(I18nUtil.getString("system_permission_limit"));
 		}
 
 		// opt
@@ -108,10 +106,9 @@ public class ConfDataServiceImpl implements ConfDataService {
 			confDataLogMapper.insert(new ConfDataLog(confData.getId(), confData.getValue(), loginUser.getUsername()));
 
 			// broadcast message
-			MessageHelpler.broadcastMessage(MessageTypeEnum.CONFDATA, JSON.toJSONString(new MessageForConfDataDTO(confData)));
+			MessageHelpler.broadcastMessage(MessageTypeEnum.CONFDATA, GsonTool.toJson(new MessageForConfDataDTO(confData)));
 		}
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
 
 	/**
@@ -120,7 +117,7 @@ public class ConfDataServiceImpl implements ConfDataService {
 	@Override
 	public Response<ConfData> load(Long id) {
 		ConfData record = confDataMapper.load(id);
-		return new ResponseBuilder<ConfData>().success(record).build();
+		return Response.ofSuccess(record);
 	}
 
 	/**

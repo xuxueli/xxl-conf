@@ -10,7 +10,6 @@ import javax.annotation.Resource;
 import java.util.List;
 
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import com.xxl.tool.response.PageModel;
 
 /**
@@ -35,17 +34,17 @@ public class EnvironmentServiceImpl implements EnvironmentService {
 				|| StringTool.isBlank(environment.getEnv())
 				|| StringTool.isBlank(environment.getName())
 				|| StringTool.isBlank(environment.getDesc())) {
-			return new ResponseBuilder<String>().fail("必要参数缺失").build();
+			return Response.ofFail("必要参数缺失");
         }
 
 		// valid
 		if (environmentMapper.loadByEnv(environment.getEnv()) != null) {
-			return new ResponseBuilder<String>().fail("Env（环境标识）已存在，请更换").build();
+			return Response.ofFail("Env（环境标识）已存在，请更换");
 		};
 
 		// invoke
 		environmentMapper.insert(environment);
-		return new ResponseBuilder<String>().success().build();
+		return Response.ofSuccess();
 	}
 
 	/**
@@ -54,8 +53,7 @@ public class EnvironmentServiceImpl implements EnvironmentService {
 	@Override
 	public Response<String> delete(List<Integer> ids) {
 		int ret = environmentMapper.delete(ids);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
 
 	/**
@@ -69,13 +67,12 @@ public class EnvironmentServiceImpl implements EnvironmentService {
 				|| StringTool.isBlank(environment.getEnv())
 				|| StringTool.isBlank(environment.getName())
 				|| StringTool.isBlank(environment.getDesc())) {
-			return new ResponseBuilder<String>().fail("必要参数缺失").build();
+			return Response.ofFail("必要参数缺失");
 		}
 
 		// invoke
 		int ret = environmentMapper.update(environment);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
 
 	/**
@@ -84,7 +81,7 @@ public class EnvironmentServiceImpl implements EnvironmentService {
 	@Override
 	public Response<Environment> load(int id) {
 		Environment record = environmentMapper.load(id);
-		return new ResponseBuilder<Environment>().success(record).build();
+		return Response.ofSuccess(record);
 	}
 
 	/**
@@ -107,7 +104,7 @@ public class EnvironmentServiceImpl implements EnvironmentService {
 	@Override
 	public Response<List<Environment>> findAll() {
 		List<Environment> environmentList = environmentMapper.findAll();
-		return new ResponseBuilder<List<Environment>>().success(environmentList).build();
+		return Response.ofSuccess(environmentList);
 	}
 
 }

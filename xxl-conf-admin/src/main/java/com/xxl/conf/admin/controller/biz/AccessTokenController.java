@@ -17,7 +17,6 @@ import javax.annotation.Resource;
 
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
-import com.xxl.tool.response.ResponseBuilder;
 
 /**
 * AccessToken Controller
@@ -53,7 +52,7 @@ public class AccessTokenController {
                                                      @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                      @RequestParam(required = false) String accessToken) {
         PageModel<AccessTokenDTO> pageModel = accessTokenService.pageList(offset, pagesize, accessToken);
-        return new ResponseBuilder<PageModel<AccessTokenDTO>>().success(pageModel).build();
+        return Response.ofSuccess(pageModel);
     }
 
     /**

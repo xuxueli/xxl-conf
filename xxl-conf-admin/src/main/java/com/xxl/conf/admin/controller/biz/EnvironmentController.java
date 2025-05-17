@@ -15,7 +15,6 @@ import javax.annotation.Resource;
 
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
-import com.xxl.tool.response.ResponseBuilder;
 
 /**
 * Environment Controller
@@ -49,7 +48,7 @@ public class EnvironmentController {
                                                      @RequestParam(required = false) String env,
                                                      @RequestParam(required = false) String name) {
         PageModel<Environment> pageModel = environmentService.pageList(offset, pagesize, env, name);
-        return new ResponseBuilder<PageModel<Environment>>().success(pageModel).build();
+        return Response.ofSuccess(pageModel);
     }
 
     /**

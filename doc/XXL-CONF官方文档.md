@@ -922,6 +922,7 @@ Java服务可参考XXL-RPC实现方案，XXL-RPC原生基于XXL-CONF的 Restful 
 - 5、【ING】启动预热优化，加载当前AppName下全量配置预热；
 - 6、【ING】首页报表数据处理；Sample示例，动态线程池处理，动态JDBC处理等；
 - 7、【ING】Springboot 微服务 接入 注册中心 Sample示例；
+- 8、【升级】升级多项maven依赖至较新版本，如 xxl-tool、gson、junit 等；
 
 ### TODO LIST
 - 支持托管配置文件，properties或yml，待考虑，不利于配置复用与细粒度管理；

@@ -1,6 +1,5 @@
 package com.xxl.conf.admin.openapi.registry.thread;
 
-import com.alibaba.fastjson2.JSON;
 import com.xxl.conf.admin.constant.enums.MessageTypeEnum;
 import com.xxl.conf.admin.model.dto.MessageForConfDataDTO;
 import com.xxl.conf.admin.model.dto.MessageForRegistryDTO;
@@ -9,6 +8,7 @@ import com.xxl.conf.admin.openapi.confdata.config.ConfDataFactory;
 import com.xxl.conf.admin.openapi.registry.config.RegistryFactory;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.DateTool;
+import com.xxl.tool.gson.GsonTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,11 +73,11 @@ public class MessageHelpler {
                             // 1、parse message by type
                             List<MessageForRegistryDTO> messageForRegistryDTOList = messageList.stream()
                                     .filter(item->item.getType()== MessageTypeEnum.REGISTRY.getValue())
-                                    .map(item-> (JSON.parseObject(item.getData(), MessageForRegistryDTO.class)))
+                                    .map(item-> (GsonTool.fromJson(item.getData(), MessageForRegistryDTO.class)))
                                     .collect(Collectors.toList());
                             List<MessageForConfDataDTO> messageForConfDataDTOList = messageList.stream()
                                     .filter(item->item.getType()== MessageTypeEnum.CONFDATA.getValue())
-                                    .map(item-> (JSON.parseObject(item.getData(), MessageForConfDataDTO.class)))
+                                    .map(item-> (GsonTool.fromJson(item.getData(), MessageForConfDataDTO.class)))
                                     .collect(Collectors.toList());
 
                             // 2、process registry message

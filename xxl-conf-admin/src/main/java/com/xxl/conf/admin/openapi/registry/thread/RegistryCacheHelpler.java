@@ -1,15 +1,9 @@
 package com.xxl.conf.admin.openapi.registry.thread;
 
-import com.alibaba.fastjson2.JSON;
 import com.xxl.conf.admin.constant.enums.InstanceRegisterModelEnum;
-import com.xxl.conf.admin.constant.enums.MessageTypeEnum;
-import com.xxl.conf.admin.model.dto.MessageForConfDataDTO;
-import com.xxl.conf.admin.openapi.confdata.config.ConfDataFactory;
-import com.xxl.conf.admin.openapi.confdata.thread.ConfDataCacheHelpler;
 import com.xxl.conf.admin.openapi.registry.model.InstanceCacheDTO;
 import com.xxl.conf.admin.model.dto.MessageForRegistryDTO;
 import com.xxl.conf.admin.model.entity.Instance;
-import com.xxl.conf.admin.model.entity.Message;
 import com.xxl.conf.admin.openapi.registry.config.RegistryFactory;
 import com.xxl.conf.admin.openapi.registry.model.DiscoveryRequest;
 import com.xxl.conf.admin.openapi.registry.model.DiscoveryResponse;
@@ -18,6 +12,7 @@ import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.DateTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.encrypt.Md5Tool;
+import com.xxl.tool.gson.GsonTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,7 +141,7 @@ public class RegistryCacheHelpler {
                                 List<InstanceCacheDTO> cacheValue = buildValidCache(instance.getEnv(), instance.getAppname());
 
                                 // build validValud-md5
-                                String cacheValueMd5 = Md5Tool.md5(JSON.toJSONString(cacheValue));
+                                String cacheValueMd5 = Md5Tool.md5(GsonTool.toJson(cacheValue));
 
                                 // set data
                                 registryCacheStoreNew.put(envAppNameKey, cacheValue);
@@ -217,7 +212,7 @@ public class RegistryCacheHelpler {
 
             // build new data
             List<InstanceCacheDTO> newCacheDTO = buildValidCache(messageForRegistryDTO.getEnv(), messageForRegistryDTO.getAppname());
-            String newCacheDTOMD5 = Md5Tool.md5(JSON.toJSONString(newCacheDTO));
+            String newCacheDTOMD5 = Md5Tool.md5(GsonTool.toJson(newCacheDTO));
 
             // load cache
             String envAppNameKey = buildCacheKey(messageForRegistryDTO.getEnv(), messageForRegistryDTO.getAppname());

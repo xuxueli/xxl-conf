@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import com.xxl.tool.response.PageModel;
 
 /**
@@ -45,18 +44,18 @@ public class InstanceServiceImpl implements InstanceService {
 				|| StringTool.isBlank(instance.getIp())
 				|| instance.getPort() <=0
 				|| InstanceRegisterModelEnum.match(instance.getRegisterModel())==null ){
-			return new ResponseBuilder<String>().fail("必要参数缺失").build();
+			return Response.ofFail("必要参数缺失");
         }
 
 		// valid application
 		List<String> appnameList = loginUser.getPermission()!=null? Arrays.asList(loginUser.getPermission().split(",")):new ArrayList<>();
 		if (!isAdmin && !appnameList.contains(instance.getAppname())){
-			return new ResponseBuilder<String>().fail(I18nUtil.getString("system_permission_limit")).build();
+			return Response.ofFail(I18nUtil.getString("system_permission_limit"));
 		}
 
 		// add
 		instanceMapper.insert(instance);
-		return new ResponseBuilder<String>().success().build();
+		return Response.ofSuccess();
 	}
 
 	/**
@@ -66,8 +65,7 @@ public class InstanceServiceImpl implements InstanceService {
 	public Response<String> delete(List<Integer> ids, LoginUserDTO loginUser, boolean isAdmin) {
 
 		int ret = instanceMapper.delete(ids);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
 
 	/**
@@ -81,19 +79,18 @@ public class InstanceServiceImpl implements InstanceService {
 		if (instance == null
 				|| instance.getId() <=0
 				|| registerModelEnum==null ){
-			return new ResponseBuilder<String>().fail("必要参数缺失").build();
+			return Response.ofFail("必要参数缺失");
 		}
 
 		// valid application
 		List<String> appnameList = loginUser.getPermission()!=null? Arrays.asList(loginUser.getPermission().split(",")):new ArrayList<>();
 		if (!isAdmin && !appnameList.contains(instance.getAppname())){
-			return new ResponseBuilder<String>().fail(I18nUtil.getString("system_permission_limit")).build();
+			return Response.ofFail(I18nUtil.getString("system_permission_limit"));
 		}
 
 		// update
 		int ret = instanceMapper.update(instance);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
 
 	/**
@@ -102,7 +99,7 @@ public class InstanceServiceImpl implements InstanceService {
 	@Override
 	public Response<Instance> load(int id) {
 		Instance record = instanceMapper.load(id);
-		return new ResponseBuilder<Instance>().success(record).build();
+		return Response.ofSuccess(record);
 	}
 
 	/**

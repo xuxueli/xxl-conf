@@ -1,6 +1,5 @@
 package com.xxl.conf.admin.service.impl;
 
-import com.alibaba.fastjson2.JSON;
 import com.xxl.conf.admin.constant.enums.RoleEnum;
 import com.xxl.conf.admin.constant.enums.UserStatuEnum;
 import com.xxl.conf.admin.mapper.UserMapper;
@@ -9,9 +8,9 @@ import com.xxl.conf.admin.model.dto.LoginUserDTO;
 import com.xxl.conf.admin.model.entity.User;
 import com.xxl.conf.admin.util.I18nUtil;
 import com.xxl.tool.core.StringTool;
-import com.xxl.tool.net.CookieTool;
+import com.xxl.tool.gson.GsonTool;
+import com.xxl.tool.http.CookieTool;
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.DigestUtils;
 
@@ -37,7 +36,7 @@ public class LoginService {
      * make token from user
      */
     private String makeToken(LoginUserDTO loginUserDTO){
-        String tokenJson = JSON.toJSONString(loginUserDTO);
+        String tokenJson = GsonTool.toJson(loginUserDTO);
         String tokenHex = new BigInteger(tokenJson.getBytes()).toString(16);
         return tokenHex;
     }
@@ -49,7 +48,7 @@ public class LoginService {
         LoginUserDTO loginUser = null;
         if (tokenHex != null) {
             String tokenJson = new String(new BigInteger(tokenHex, 16).toByteArray());      // username_password(md5)
-            loginUser = JSON.parseObject(tokenJson, LoginUserDTO.class);
+            loginUser = GsonTool.fromJson(tokenJson, LoginUserDTO.class);
         }
         return loginUser;
     }
@@ -69,20 +68,20 @@ public class LoginService {
 
         // param
         if (StringTool.isBlank(username) || StringTool.isBlank(password)){
-            return new ResponseBuilder<String>().fail( I18nUtil.getString("login_param_empty") ).build();
+            return Response.ofFail( I18nUtil.getString("login_param_empty") );
         }
 
         // valid user, empty、status、passowrd
         User user = xxlJobUserMapper.loadByUserName(username);
         if (user == null) {
-            return new ResponseBuilder<String>().fail( I18nUtil.getString("login_param_unvalid") ).build();
+            return Response.ofFail( I18nUtil.getString("login_param_unvalid") );
         }
         if (user.getStatus() != UserStatuEnum.NORMAL.getValue()) {
-            return new ResponseBuilder<String>().fail( I18nUtil.getString("login_status_invalid") ).build();
+            return Response.ofFail( I18nUtil.getString("login_status_invalid") );
         }
         String passwordMd5 = DigestUtils.md5DigestAsHex(password.getBytes());
         if (!passwordMd5.equals(user.getPassword())) {
-            return new ResponseBuilder<String>().fail( I18nUtil.getString("login_param_unvalid") ).build();
+            return Response.ofFail( I18nUtil.getString("login_param_unvalid") );
         }
 
         // find resource
@@ -93,7 +92,7 @@ public class LoginService {
 
         // do login
         CookieTool.set(response, LOGIN_IDENTITY_KEY, loginToken, ifRemember);
-        return new ResponseBuilder<String>().success().build();
+        return Response.ofSuccess();
     }
 
     /**
@@ -104,7 +103,7 @@ public class LoginService {
      */
     public Response<String> logout(HttpServletRequest request, HttpServletResponse response){
         CookieTool.remove(request, response, LOGIN_IDENTITY_KEY);
-        return new ResponseBuilder<String>().success().build();
+        return Response.ofSuccess();
     }
 
     /**

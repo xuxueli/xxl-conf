@@ -12,7 +12,6 @@ import com.xxl.conf.admin.service.UserService;
 import com.xxl.conf.admin.service.impl.LoginService;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,7 +62,7 @@ public class UserController {
                                                  @RequestParam(required = false, defaultValue = "-1") int status) {
 
         PageModel<UserDTO> pageModel = userService.pageList(start, length, username, status);
-        return new ResponseBuilder<PageModel<UserDTO>>().success(pageModel).build();
+        return Response.ofSuccess(pageModel);
     }
 
     @RequestMapping("/add")

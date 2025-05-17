@@ -12,7 +12,6 @@ import com.xxl.conf.admin.service.impl.LoginService;
 import com.xxl.conf.admin.util.I18nUtil;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -90,19 +89,19 @@ public class ConfDataLogController {
             confData = response.getData();
         }
         if (confData == null) {
-            return new ResponseBuilder<PageModel<ConfDataLog>>().fail(I18nUtil.getString("system_param_empty")).build();
+            return Response.ofFail(I18nUtil.getString("system_param_empty"));
         }
 
         // valid application
         LoginUserDTO loginUser = loginService.getLoginUser(request);
         List<String> appnameList = loginUser.getPermission()!=null? Arrays.asList(loginUser.getPermission().split(",")):new ArrayList<>();
         if (!loginService.isAdmin(request) && !appnameList.contains(confData.getAppname())){
-            return new ResponseBuilder<PageModel<ConfDataLog>>().fail(I18nUtil.getString("system_permission_limit")).build();
+            return Response.ofFail(I18nUtil.getString("system_permission_limit"));
         }
 
         // page
         PageModel<ConfDataLog> pageModel = confDataLogService.pageList(offset, pagesize, dataId);
-        return new ResponseBuilder<PageModel<ConfDataLog>>().success(pageModel).build();
+        return Response.ofSuccess(pageModel);
     }
 
     /**

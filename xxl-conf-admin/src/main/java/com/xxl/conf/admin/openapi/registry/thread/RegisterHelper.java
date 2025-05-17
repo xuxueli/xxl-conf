@@ -1,6 +1,5 @@
 package com.xxl.conf.admin.openapi.registry.thread;
 
-import com.alibaba.fastjson2.JSON;
 import com.xxl.conf.admin.constant.enums.InstanceRegisterModelEnum;
 import com.xxl.conf.admin.constant.enums.MessageTypeEnum;
 import com.xxl.conf.admin.model.dto.MessageForRegistryDTO;
@@ -9,6 +8,7 @@ import com.xxl.conf.admin.openapi.registry.config.RegistryFactory;
 import com.xxl.conf.admin.openapi.common.model.OpenApiResponse;
 import com.xxl.conf.admin.openapi.registry.model.RegisterRequest;
 import com.xxl.tool.core.StringTool;
+import com.xxl.tool.gson.GsonTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -171,7 +171,7 @@ public class RegisterHelper {
                 int ret = RegistryFactory.getInstance().getInstanceMapper().addAutoInstance(instance);
                 if (ret > 0) {
                     // broadcast message
-                    MessageHelpler.broadcastMessage(MessageTypeEnum.REGISTRY, JSON.toJSONString(new MessageForRegistryDTO(instance)));
+                    MessageHelpler.broadcastMessage(MessageTypeEnum.REGISTRY, GsonTool.toJson(new MessageForRegistryDTO(instance)));
                 }
             }
         });
@@ -216,7 +216,7 @@ public class RegisterHelper {
                 int ret = RegistryFactory.getInstance().getInstanceMapper().deleteAutoInstance(instance);
                 if (ret > 0) {
                     // broadcast message
-                    MessageHelpler.broadcastMessage(MessageTypeEnum.REGISTRY, JSON.toJSONString(new MessageForRegistryDTO(instance)));
+                    MessageHelpler.broadcastMessage(MessageTypeEnum.REGISTRY, GsonTool.toJson(new MessageForRegistryDTO(instance)));
                 }
             }
         });

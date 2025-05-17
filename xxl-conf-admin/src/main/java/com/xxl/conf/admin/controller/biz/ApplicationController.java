@@ -15,7 +15,6 @@ import javax.annotation.Resource;
 
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
-import com.xxl.tool.response.ResponseBuilder;
 
 /**
 * Service Controller
@@ -47,7 +46,7 @@ public class ApplicationController {
     public Response<PageModel<Application>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                      @RequestParam(required = false, defaultValue = "10") int pagesize) {
         PageModel<Application> pageModel = applicationService.pageList(offset, pagesize);
-        return new ResponseBuilder<PageModel<Application>>().success(pageModel).build();
+        return Response.ofSuccess(pageModel);
     }
 
     /**
