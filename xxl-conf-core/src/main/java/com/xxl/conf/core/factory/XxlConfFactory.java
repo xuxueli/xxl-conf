@@ -1,7 +1,6 @@
 package com.xxl.conf.core.factory;
 
 import com.xxl.conf.core.data.XxlConfLocalCacheHelper;
-import com.xxl.conf.core.data.XxlConfRemoteHelper;
 import com.xxl.conf.core.exception.XxlConfException;
 import com.xxl.conf.core.listener.XxlConfListenerRepository;
 import org.slf4j.Logger;
@@ -10,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 /**
@@ -59,13 +59,20 @@ public class XxlConfFactory {
 		this.xxlConfFactory = this;
 	}
 
+	// ---------------------- valid config ----------------------
+
 	/**
 	 * addressList
 	 */
 	private List<String> addressList = new ArrayList<>();
 
-	public List<String> getAddressList() {
-		return addressList;
+	/**
+	 * load address
+	 */
+	public String loadAddress() {
+		return addressList.size()>1
+				?addressList.get(ThreadLocalRandom.current().nextInt(addressList.size()))
+				:addressList.get(0);
 	}
 
 	/**
@@ -97,13 +104,9 @@ public class XxlConfFactory {
 
 	// ---------------------- start / stop ----------------------
 
-	private XxlConfRemoteHelper remoteHelper;
 	private XxlConfLocalCacheHelper localCacheHelper;
 	private XxlConfListenerRepository listenerRepository;
 
-	public XxlConfRemoteHelper getRemoteHelper() {
-		return remoteHelper;
-	}
 	public XxlConfListenerRepository getListenerRepository() {
 		return listenerRepository;
 	}
@@ -121,7 +124,6 @@ public class XxlConfFactory {
 
 			// init
 			listenerRepository = new XxlConfListenerRepository(this);
-			remoteHelper = new XxlConfRemoteHelper(this);
 			localCacheHelper = new XxlConfLocalCacheHelper(this);
 
 			// start (+thread, cycle refresh + monitor, notify change-data)

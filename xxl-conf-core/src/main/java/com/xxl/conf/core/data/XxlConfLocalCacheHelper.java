@@ -1,7 +1,7 @@
 package com.xxl.conf.core.data;
 
 import com.xxl.conf.core.XxlConfHelper;
-import com.xxl.conf.core.data.tool.ConfDataTool;
+import com.xxl.conf.core.data.openapi.ConfDataOpenApiTool;
 import com.xxl.conf.core.factory.XxlConfFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -166,8 +166,9 @@ public class XxlConfLocalCacheHelper {
             confKey.put(appname, keyList);
         }
 
-        // monitor
-        ConfDataTool.QueryConfDataResponse monitorRet = xxlConfFactory.getRemoteHelper().monitor(confKey, true);
+        // openapi monitor
+        ConfDataOpenApiTool.QueryConfDataResponse monitorRet = ConfDataOpenApiTool.monitor(xxlConfFactory.loadAddress(), xxlConfFactory.getAccesstoken(), xxlConfFactory.getEnv(), confKey, true, 30);
+
         // 1、avoid fail-retry too quick；2、make sure server broadcast complete
         TimeUnit.SECONDS.sleep(1);
 
@@ -190,8 +191,8 @@ public class XxlConfLocalCacheHelper {
      */
     private void remoteQueryWithRefreshAndNotify(Map<String, List<String>> confKey){
 
-        // remote query
-        ConfDataTool.QueryConfDataResponse queryConfDataResponse = xxlConfFactory.getRemoteHelper().query(confKey, false);
+        // openapi query
+        ConfDataOpenApiTool.QueryConfDataResponse queryConfDataResponse = ConfDataOpenApiTool.query(xxlConfFactory.loadAddress(), xxlConfFactory.getAccesstoken(), xxlConfFactory.getEnv(), confKey, false);
 
         // parse response
         if (queryConfDataResponse.isSuccess() && queryConfDataResponse.getConfData()!=null && !queryConfDataResponse.getConfData().isEmpty())  {

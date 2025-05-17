@@ -1,4 +1,4 @@
-package com.xxl.conf.core.data.tool;
+package com.xxl.conf.core.data.openapi;
 
 import com.xxl.tool.gson.GsonTool;
 import com.xxl.tool.http.HttpTool;
@@ -7,7 +7,12 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class ConfDataTool {
+/**
+ * conf data openapi tool
+ *
+ * @author xuxueli 2018-11-29
+ */
+public class ConfDataOpenApiTool {
 
     public static class QueryConfDataRequest implements Serializable {
         public static final long serialVersionUID = 42L;
