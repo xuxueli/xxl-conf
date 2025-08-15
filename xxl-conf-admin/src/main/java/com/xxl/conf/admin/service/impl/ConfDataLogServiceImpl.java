@@ -5,7 +5,7 @@ import com.xxl.conf.admin.model.entity.ConfDataLog;
 import com.xxl.conf.admin.service.ConfDataLogService;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;

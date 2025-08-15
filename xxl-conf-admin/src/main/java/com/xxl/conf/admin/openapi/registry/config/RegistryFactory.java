@@ -8,7 +8,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * registry config

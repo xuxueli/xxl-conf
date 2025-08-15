@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.xuxueli</groupId>
 		<artifactId>xxl-conf</artifactId>
-		<version>1.7.1-SNAPSHOT</version>
+		<version>1.8.0</version>
 	</parent>
 	<artifactId>xxl-conf-core</artifactId>
 	<packaging>jar</packaging>
@@ -15,14 +15,22 @@
 
 	<dependencies>
 
-		<!-- slf4j -->
+		<!-- slf4j-reload4j -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
+			<artifactId>slf4j-reload4j</artifactId>
 			<version>${slf4j-api.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- junit -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>${junit-jupiter.version}</version>
+			<scope>test</scope>
 		</dependency>
 
-		<!-- xxl-tool -->
+		<!-- xxl-tool：+gson -->
 		<dependency>
 			<groupId>com.xuxueli</groupId>
 			<artifactId>xxl-tool</artifactId>

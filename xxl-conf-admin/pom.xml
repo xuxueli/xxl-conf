@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.xuxueli</groupId>
 		<artifactId>xxl-conf</artifactId>
-		<version>1.7.1-SNAPSHOT</version>
+		<version>1.8.0</version>
 	</parent>
 	<artifactId>xxl-conf-admin</artifactId>
 	<packaging>jar</packaging>
@@ -48,12 +48,6 @@
 			<artifactId>spring-boot-starter-freemarker</artifactId>
 		</dependency>
 
-		<!-- aop -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-aop</artifactId>
-		</dependency>
-
 		<!-- starter-actuator -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -73,17 +67,11 @@
 			<version>${mysql-connector-j.version}</version>
 		</dependency>
 
-		<!-- xxl-tool -->
+		<!-- xxl-sso -->
 		<dependency>
 			<groupId>com.xuxueli</groupId>
-			<artifactId>xxl-tool</artifactId>
-			<version>${xxl-tool.version}</version>
-		</dependency>
-		<!-- gson -->
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>${gson.version}</version>
+			<artifactId>xxl-sso-core</artifactId>
+			<version>${xxl-sso.version}</version>
 		</dependency>
 
 	</dependencies>
@@ -101,24 +89,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<!-- docker -->
-			<plugin>
-				<groupId>com.spotify</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.4.13</version>
-				<configuration>
-					<!-- made of '[a-z0-9-_.]' -->
-					<imageName>${project.artifactId}:${project.version}</imageName>
-					<dockerDirectory>${project.basedir}</dockerDirectory>
-					<resources>
-						<resource>
-							<targetPath>/</targetPath>
-							<directory>${project.build.directory}</directory>
-							<include>${project.build.finalName}.jar</include>
-						</resource>
-					</resources>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

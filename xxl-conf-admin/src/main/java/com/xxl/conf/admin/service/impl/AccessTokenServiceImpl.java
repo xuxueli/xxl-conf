@@ -7,7 +7,7 @@ import com.xxl.conf.admin.service.AccessTokenService;
 import com.xxl.tool.core.CollectionTool;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

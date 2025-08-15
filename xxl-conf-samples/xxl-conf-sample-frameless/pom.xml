@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.xuxueli</groupId>
         <artifactId>xxl-conf-samples</artifactId>
-        <version>1.7.1-SNAPSHOT</version>
+        <version>1.8.0</version>
     </parent>
     <artifactId>xxl-conf-sample-frameless</artifactId>
     <packaging>jar</packaging>

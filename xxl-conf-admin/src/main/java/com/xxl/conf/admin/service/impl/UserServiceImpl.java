@@ -15,7 +15,7 @@ import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 

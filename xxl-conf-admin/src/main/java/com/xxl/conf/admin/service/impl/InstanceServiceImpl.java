@@ -11,7 +11,7 @@ import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.StringTool;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

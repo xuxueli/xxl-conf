@@ -15,7 +15,7 @@ import com.xxl.tool.core.StringTool;
 import com.xxl.tool.gson.GsonTool;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.*;
 
 import com.xxl.tool.response.Response;
