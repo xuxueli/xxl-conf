@@ -15,7 +15,7 @@ public class UserAdaptor {
         xxlUser.setId(userDTO.getId());
         xxlUser.setUsername(userDTO.getUsername());
         xxlUser.setPassword(userDTO.getPassword());
-        xxlUser.setUserToken(userDTO.getUserToken());
+        xxlUser.setToken(userDTO.getToken());
         xxlUser.setStatus(userDTO.getStatus());
         xxlUser.setRealName(userDTO.getRealName());
         xxlUser.setRole(userDTO.getRole());
@@ -33,11 +33,11 @@ public class UserAdaptor {
         xxlUser.setId(user.getId());
         xxlUser.setUsername(user.getUsername());
         xxlUser.setPassword(user.getPassword());
-        xxlUser.setUserToken(user.getUserToken());
+        xxlUser.setToken(user.getToken());
         xxlUser.setStatus(user.getStatus());
         xxlUser.setRealName(user.getRealName());
         xxlUser.setRole(user.getRole());
-        xxlUser.setPermission(user.getPermission());
+        xxlUser.setAppnames(user.getAppnames());
         xxlUser.setAddTime(user.getAddTime());
         xxlUser.setUpdateTime(user.getUpdateTime());
         return xxlUser;
@@ -58,10 +58,10 @@ public class UserAdaptor {
         loginUserDTO.setId(user.getId());
         loginUserDTO.setUsername(user.getUsername());
         loginUserDTO.setPassword(user.getPassword());
-        loginUserDTO.setUserToken(user.getUserToken());
+        loginUserDTO.setToken(user.getToken());
         loginUserDTO.setRealName(user.getRealName());
         loginUserDTO.setRole(user.getRole());
-        loginUserDTO.setPermission(user.getPermission());
+        loginUserDTO.setPermission(user.getAppnames());
 
         return loginUserDTO;
     }

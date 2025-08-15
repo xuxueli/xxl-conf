@@ -8,8 +8,8 @@ public class LoginUserDTO {
 	private int id;
 	private String username;		// 账号
 	private String password;		// 密码
-	private String userToken;		// 登录token
 	private String realName;		// 真实姓名
+	private String token;			// 登录token
 
 	// other
 	private String role;		  	// 角色
@@ -40,12 +40,12 @@ public class LoginUserDTO {
 		this.password = password;
 	}
 
-	public String getUserToken() {
-		return userToken;
+	public String getToken() {
+		return token;
 	}
 
-	public void setUserToken(String userToken) {
-		this.userToken = userToken;
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 	public String getRealName() {

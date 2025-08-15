@@ -179,10 +179,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Response<String> grantPermission(String username, String permission) {
+    public Response<String> grantAppnames(String username, String appnames) {
         // update
         User existUser = userMapper.loadByUserName(username);
-        existUser.setPermission(permission);
+        existUser.setAppnames(appnames);
         userMapper.update(existUser);
         return Response.ofSuccess();
     }

@@ -66,25 +66,25 @@ CREATE TABLE `xxl_conf_message` (
 
 ## —————————————————————— env and app ——————————————————
 CREATE TABLE `xxl_conf_application` (
-                                        `id`            int(11)         NOT NULL AUTO_INCREMENT,
-                                        `appname`       varchar(50)     NOT NULL COMMENT 'AppName（服务唯一标识）',
-                                        `name`          varchar(20)     NOT NULL COMMENT '服务名称',
-                                        `desc`          varchar(100)    NOT NULL COMMENT '服务描述',
-                                        `add_time`      datetime        NOT NULL COMMENT '新增时间',
-                                        `update_time`   datetime        NOT NULL COMMENT '更新时间',
-                                        PRIMARY KEY (`id`),
-                                        UNIQUE KEY `i_appname` (`appname`) USING BTREE
+    `id`            int(11)         NOT NULL AUTO_INCREMENT,
+    `appname`       varchar(50)     NOT NULL COMMENT 'AppName（服务唯一标识）',
+    `name`          varchar(20)     NOT NULL COMMENT '服务名称',
+    `desc`          varchar(100)    NOT NULL COMMENT '服务描述',
+    `add_time`      datetime        NOT NULL COMMENT '新增时间',
+    `update_time`   datetime        NOT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `i_appname` (`appname`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='服务';
 
 CREATE TABLE `xxl_conf_environment` (
-                                        `id`             int(11)         NOT NULL AUTO_INCREMENT,
-                                        `env`            varchar(10)     NOT NULL COMMENT 'ENV（环境唯一标识）',
-                                        `name`           varchar(20)     NOT NULL COMMENT '环境名称',
-                                        `desc`           varchar(100)    NOT NULL COMMENT '环境描述',
-                                        `add_time`       datetime        NOT NULL COMMENT '新增时间',
-                                        `update_time`    datetime        NOT NULL COMMENT '更新时间',
-                                        PRIMARY KEY (`id`),
-                                        UNIQUE KEY `i_env` (`env`) USING BTREE
+    `id`             int(11)         NOT NULL AUTO_INCREMENT,
+    `env`            varchar(10)     NOT NULL COMMENT 'ENV（环境唯一标识）',
+    `name`           varchar(20)     NOT NULL COMMENT '环境名称',
+    `desc`           varchar(100)    NOT NULL COMMENT '环境描述',
+    `add_time`       datetime        NOT NULL COMMENT '新增时间',
+    `update_time`    datetime        NOT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `i_env` (`env`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='环境';
 
 ## —————————————————————— user and token ——————————————————
@@ -92,11 +92,11 @@ CREATE TABLE `xxl_conf_user` (
     `id`            int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
     `username`      varchar(50) NOT NULL COMMENT '账号',
     `password`      varchar(50) NOT NULL COMMENT '密码',
-    `user_token`    varchar(50) DEFAULT NULL COMMENT '登录token',
+    `token`         varchar(200) DEFAULT NULL COMMENT '登录token',
     `status`        tinyint(4)  NOT NULL COMMENT '状态：0-正常、1-禁用',
     `real_name`     varchar(50) DEFAULT NULL COMMENT '真实姓名',
     `role`          varchar(20) NOT NULL COMMENT '角色：ADMIN-管理员，NORMAL-普通用户',
-    `permission`    varchar(255) DEFAULT NULL COMMENT '权限：服务ID列表，多个逗号分割',
+    `appnames`      varchar(255) DEFAULT NULL COMMENT '授权服务：服务ID列表，多个逗号分割',
     `add_time`      datetime    NOT NULL COMMENT '新增时间',
     `update_time`   datetime    NOT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
@@ -113,7 +113,7 @@ CREATE TABLE `xxl_conf_access_token` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='注册发现AccessToken';
 
 ## —————————————————————— init data ——————————————————
-INSERT INTO `xxl_conf_user`(`id`, `username`, `password`, `user_token`, `status`, `real_name`, `role`, `add_time`, `update_time`)
+INSERT INTO `xxl_conf_user`(`id`, `username`, `password`, `token`, `status`, `real_name`, `role`, `add_time`, `update_time`)
 VALUES (1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', 0, 'Jack', 'ADMIN', now(), now()),
        (2, 'user', 'e10adc3949ba59abbe56e057f20f883e', '', 0, 'Lucy', 'NORMAL', now(), now());
 INSERT INTO `xxl_conf_access_token` (id, `access_token`, `status`, add_time, update_time)

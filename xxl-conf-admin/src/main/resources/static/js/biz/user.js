@@ -349,8 +349,8 @@ $(function() {
         $("#updateModal .form .form-group").removeClass("has-error");
 	});
 
-	// ---------- ---------- ---------- grant permission ---------- ---------- ----------
-	$("#data_operation .grantPermission").click(function(){
+	// ---------- ---------- ---------- grant appnames ---------- ---------- ----------
+	$("#data_operation .grantAppnames").click(function(){
 
 		// find select ids
 		var selectIds = $.dataTableSelect.selectIdsFind();
@@ -361,13 +361,13 @@ $(function() {
 		var row = tableData[ 'key' + selectIds[0] ];
 
 		// fill data
-		$("#grantPermissionModal .form input[name='username']").val(row.username)
-		var permissionDataChoose;
-		if (row.permission) {
-			permissionDataChoose = $(row.permission.split(","));
+		$("#grantAppnamesModal .form input[name='username']").val(row.username)
+		var appnameDataChoose;
+		if (row.appnames) {
+			appnameDataChoose = $(row.appnames.split(","));
 		}
-		$("#grantPermissionModal .form input[name='application']").each(function () {
-			if ( $.inArray($(this).val(), permissionDataChoose) > -1 ) {
+		$("#grantAppnamesModal .form input[name='application']").each(function () {
+			if ( $.inArray($(this).val(), appnameDataChoose) > -1 ) {
 				$(this).prop("checked",true).iCheck('update');
 			} else {
 				$(this).prop("checked",false).iCheck('update');
@@ -375,22 +375,22 @@ $(function() {
 		});
 
 		// show
-		$('#grantPermissionModal').modal({backdrop: false, keyboard: false}).modal('show');
+		$('#grantAppnamesModal').modal({backdrop: false, keyboard: false}).modal('show');
 	});
-	$('#grantPermissionModal .ok').click(function () {
+	$('#grantAppnamesModal .ok').click(function () {
 
 		// find select application arr
-		var username = $("#grantPermissionModal .form input[name='username']").val();
+		var username = $("#grantAppnamesModal .form input[name='username']").val();
 		var selectedApplications = [];
-		$('#grantPermissionModal .form input[name="application"]:checked').each(function () {
+		$('#grantAppnamesModal .form input[name="application"]:checked').each(function () {
 			selectedApplications.push($(this).val());
 		});
 
 		// post
-		$.post(base_url + "/user/grantPermission",
+		$.post(base_url + "/user/grantAppnames",
 			{
 				username: username,
-				permission: selectedApplications.join(",")
+				appnames: selectedApplications.join(",")
 			},
 			function(data, status) {
 			if (data.code == 200) {
@@ -398,7 +398,9 @@ $(function() {
 					icon: '1',
 					content: '操作成功' ,
 					end: function(layero, index){
-						$('#grantPermissionModal').modal('hide');
+						$('#grantAppnamesModal').modal('hide');
+
+						mainDataTable.fnDraw(false);
 					}
 				});
 			} else {
@@ -409,9 +411,9 @@ $(function() {
 			}
 		});
 	});
-	$("#grantPermissionModal").on('hide.bs.modal', function () {
-		$("#grantPermissionModal .form")[0].reset();
-		$("#grantPermissionModal .form .form-group").removeClass("has-error");
+	$("#grantAppnamesModal").on('hide.bs.modal', function () {
+		$("#grantAppnamesModal .form")[0].reset();
+		$("#grantAppnamesModal .form .form-group").removeClass("has-error");
 	});
 
 

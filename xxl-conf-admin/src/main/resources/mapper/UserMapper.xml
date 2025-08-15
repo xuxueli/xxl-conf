@@ -7,11 +7,11 @@
 		<result column="id" property="id" />
 		<result column="username" property="username" />
 	    <result column="password" property="password" />
-	    <result column="user_token" property="userToken" />
+	    <result column="token" property="token" />
 	    <result column="status" property="status" />
 		<result column="real_name" property="realName" />
 		<result column="role" property="role" />
-		<result column="permission" property="permission" />
+		<result column="appnames" property="appnames" />
 		<result column="add_time" property="addTime" />
 		<result column="update_time" property="updateTime" />
 	</resultMap>
@@ -20,11 +20,11 @@
 		t.id,
 		t.username,
 		t.password,
-		t.user_token,
+		t.token,
 		t.status,
 		t.real_name,
 		t.role,
-		t.permission,
+		t.appnames,
 		t.add_time,
 		t.update_time
 	</sql>
@@ -33,21 +33,21 @@
 		INSERT INTO xxl_conf_user (
 			username,
 			password,
-			user_token,
+			token,
 			status,
 			real_name,
 			role,
-			permission,
+			appnames,
 			add_time,
 			update_time
 		) VALUES (
 			 #{username},
 			 #{password},
-			 #{userToken},
+			 #{token},
 			 #{status},
 			 #{realName},
 			 #{role},
-			 #{permission},
+			 #{appnames},
 			 NOW(),
 			 NOW()
 		 );
@@ -74,11 +74,11 @@
 			<if test="password != null and password != ''">
 				password = #{password},
 			</if>
-			user_token = #{userToken},
+			token = #{token},
 			status = #{status},
 			real_name = #{realName},
 			role = #{role},
-			permission = #{permission}
+			appnames = #{appnames}
 		WHERE id = #{id}
 	</update>
 

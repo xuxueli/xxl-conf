@@ -48,7 +48,7 @@ public interface UserService {
     /**
      * 授权权限
      */
-    public Response<String> grantPermission(String username, String permission);
+    public Response<String> grantAppnames(String username, String appnames);
 
     /**
      * 分页查询
