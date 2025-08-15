@@ -1,9 +1,9 @@
 package com.xxl.conf.admin.openapi.confdata;
 
-import com.xxl.conf.admin.annotation.Permission;
 import com.xxl.conf.admin.openapi.confdata.biz.ConfDataBizService;
 import com.xxl.conf.admin.openapi.confdata.model.QueryConfDataRequest;
 import com.xxl.conf.admin.openapi.common.model.OpenApiResponse;
+import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.gson.GsonTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ public class ConfDataOpenApiController {
 
     @RequestMapping("/{uri}")
     @ResponseBody
-    @Permission(login = false)
+    @XxlSso(login = false)
     public Object api(HttpServletRequest httpServletRequest, @PathVariable("uri") String uri, @RequestBody(required = false) String data){
 
         // valid

@@ -3,13 +3,11 @@ package com.xxl.conf.admin.service.impl;
 import com.xxl.conf.admin.constant.enums.MessageTypeEnum;
 import com.xxl.conf.admin.mapper.ConfDataLogMapper;
 import com.xxl.conf.admin.mapper.ConfDataMapper;
-import com.xxl.conf.admin.model.dto.LoginUserDTO;
 import com.xxl.conf.admin.model.dto.MessageForConfDataDTO;
 import com.xxl.conf.admin.model.entity.ConfData;
 import com.xxl.conf.admin.model.entity.ConfDataLog;
 import com.xxl.conf.admin.openapi.registry.thread.MessageHelpler;
 import com.xxl.conf.admin.service.ConfDataService;
-import com.xxl.conf.admin.util.I18nUtil;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.gson.GsonTool;
@@ -38,23 +36,17 @@ public class ConfDataServiceImpl implements ConfDataService {
     * 新增
     */
 	@Override
-	public Response<String> insert(ConfData confData, LoginUserDTO loginUser, boolean isAdmin) {
+	public Response<String> insert(ConfData confData, String optUserName) {
 
 		// valid
 		if (confData == null || StringTool.isBlank(confData.getEnv()) || StringTool.isBlank(confData.getAppname())) {
 			return Response.ofFail("必要参数缺失");
 		}
 
-		// valid application
-		List<String> appnameList = loginUser.getPermission()!=null? Arrays.asList(loginUser.getPermission().split(",")):new ArrayList<>();
-		if (!isAdmin && !appnameList.contains(confData.getAppname())){
-			return Response.ofFail(I18nUtil.getString("system_permission_limit"));
-		}
-
 		// opt
 		confDataMapper.insert(confData);
 		// log
-		confDataLogMapper.insert(new ConfDataLog(confData.getId(), confData.getValue(), loginUser.getUsername()));
+		confDataLogMapper.insert(new ConfDataLog(confData.getId(), confData.getValue(), optUserName));
 
 		// broadcast message
 		MessageHelpler.broadcastMessage(MessageTypeEnum.CONFDATA, GsonTool.toJson(new MessageForConfDataDTO(confData)));
@@ -66,7 +58,7 @@ public class ConfDataServiceImpl implements ConfDataService {
 	* 删除
 	*/
 	@Override
-	public Response<String> delete(List<Long> ids, LoginUserDTO loginUser, boolean isAdmin) {
+	public Response<String> delete(List<Long> ids, String optUserName) {
 
 		// valid
 		if (CollectionTool.isEmpty(ids)) {
@@ -77,7 +69,7 @@ public class ConfDataServiceImpl implements ConfDataService {
 		int ret = confDataMapper.delete(ids);
 		// log
 		for (Long id: ids) {
-			confDataLogMapper.insert(new ConfDataLog(id, "", loginUser.getUsername()));
+			confDataLogMapper.insert(new ConfDataLog(id, "", optUserName));
 		}
 		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
@@ -86,24 +78,18 @@ public class ConfDataServiceImpl implements ConfDataService {
 	* 更新
 	*/
 	@Override
-	public Response<String> update(ConfData confData, LoginUserDTO loginUser, boolean isAdmin) {
+	public Response<String> update(ConfData confData, String optUserName) {
 
 		// valid
 		if (confData == null || StringTool.isBlank(confData.getEnv()) || StringTool.isBlank(confData.getAppname())) {
 			return Response.ofFail("必要参数缺失");
 		}
 
-		// valid application
-		List<String> appnameList = loginUser.getPermission()!=null? Arrays.asList(loginUser.getPermission().split(",")):new ArrayList<>();
-		if (!isAdmin && !appnameList.contains(confData.getAppname())){
-			return Response.ofFail(I18nUtil.getString("system_permission_limit"));
-		}
-
 		// opt
 		int ret = confDataMapper.update(confData);
 		if (ret > 0) {
 			// log
-			confDataLogMapper.insert(new ConfDataLog(confData.getId(), confData.getValue(), loginUser.getUsername()));
+			confDataLogMapper.insert(new ConfDataLog(confData.getId(), confData.getValue(), optUserName));
 
 			// broadcast message
 			MessageHelpler.broadcastMessage(MessageTypeEnum.CONFDATA, GsonTool.toJson(new MessageForConfDataDTO(confData)));

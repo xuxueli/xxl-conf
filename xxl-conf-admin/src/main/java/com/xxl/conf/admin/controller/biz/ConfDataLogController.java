@@ -1,15 +1,13 @@
 package com.xxl.conf.admin.controller.biz;
 
-import com.xxl.conf.admin.annotation.Permission;
 import com.xxl.conf.admin.model.dto.LoginUserDTO;
-import com.xxl.conf.admin.model.entity.Application;
 import com.xxl.conf.admin.model.entity.ConfData;
 import com.xxl.conf.admin.model.entity.ConfDataLog;
 import com.xxl.conf.admin.service.ApplicationService;
 import com.xxl.conf.admin.service.ConfDataLogService;
 import com.xxl.conf.admin.service.ConfDataService;
-import com.xxl.conf.admin.service.impl.LoginService;
 import com.xxl.conf.admin.util.I18nUtil;
+import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Controller;
@@ -24,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.xxl.conf.admin.controller.biz.ConfDataController.hasPermissionApplication;
 
 /**
 * ConfData Controller
@@ -40,14 +40,12 @@ public class ConfDataLogController {
     private ConfDataLogService confDataLogService;
     @Resource
     private ApplicationService applicationService;
-    @Resource
-    private LoginService loginService;
 
     /**
     * 页面
     */
     @RequestMapping
-    @Permission
+    @XxlSso
     public String index(HttpServletRequest request, Model model, @RequestParam(required = false, defaultValue = "-1") Long dataId) {
 
         // valid confData
@@ -62,9 +60,7 @@ public class ConfDataLogController {
         model.addAttribute("confData", confData);
 
         // valid permission of appname
-        LoginUserDTO loginUser = loginService.getLoginUser(request);
-        List<String> appnameList = loginUser.getPermission()!=null? Arrays.asList(loginUser.getPermission().split(",")):new ArrayList<>();
-        if (!loginService.isAdmin(request) && !appnameList.contains(confData.getAppname())){
+        if (!hasPermissionApplication(request, applicationService, confData.getAppname())){
             throw new RuntimeException(I18nUtil.getString("system_permission_limit"));
         }
 
@@ -76,7 +72,7 @@ public class ConfDataLogController {
     */
     @RequestMapping("/pageList")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<PageModel<ConfDataLog>> pageList(HttpServletRequest request,
                                                   @RequestParam(required = false, defaultValue = "0") int offset,
                                                   @RequestParam(required = false, defaultValue = "10") int pagesize,
@@ -92,10 +88,8 @@ public class ConfDataLogController {
             return Response.ofFail(I18nUtil.getString("system_param_empty"));
         }
 
-        // valid application
-        LoginUserDTO loginUser = loginService.getLoginUser(request);
-        List<String> appnameList = loginUser.getPermission()!=null? Arrays.asList(loginUser.getPermission().split(",")):new ArrayList<>();
-        if (!loginService.isAdmin(request) && !appnameList.contains(confData.getAppname())){
+        // valid permission of appname
+        if (!hasPermissionApplication(request, applicationService, confData.getAppname())){
             return Response.ofFail(I18nUtil.getString("system_permission_limit"));
         }
 
@@ -109,7 +103,7 @@ public class ConfDataLogController {
     */
     /*@RequestMapping("/delete")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<String> delete(@RequestParam("ids[]") List<Long> ids, HttpServletRequest request){
         return confDataLogService.delete(ids);
     }*/

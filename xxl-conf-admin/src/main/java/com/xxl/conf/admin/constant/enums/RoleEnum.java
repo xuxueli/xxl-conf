@@ -1,8 +1,8 @@
 package com.xxl.conf.admin.constant.enums;
 
-import java.util.*;
+import com.xxl.conf.admin.constant.consts.Consts;
 
-import static com.xxl.conf.admin.constant.consts.Consts.ADMIN_PERMISSION;
+import java.util.*;
 
 /**
  * role enum
@@ -11,7 +11,7 @@ import static com.xxl.conf.admin.constant.consts.Consts.ADMIN_PERMISSION;
  */
 public enum RoleEnum {
 
-    ADMIN("ADMIN", "管理员", Arrays.asList(ADMIN_PERMISSION)),
+    ADMIN(Consts.ADMIN_ROLE, "管理员", new ArrayList<>()),
     NORMAL("NORMAL", "普通用户", new ArrayList<>());
 
     private String value;

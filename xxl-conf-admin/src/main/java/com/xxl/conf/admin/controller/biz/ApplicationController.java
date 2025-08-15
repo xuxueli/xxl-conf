@@ -1,9 +1,9 @@
 package com.xxl.conf.admin.controller.biz;
 
-import com.xxl.conf.admin.annotation.Permission;
 import com.xxl.conf.admin.constant.consts.Consts;
 import com.xxl.conf.admin.model.entity.Application;
 import com.xxl.conf.admin.service.ApplicationService;
+import com.xxl.sso.core.annotation.XxlSso;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +32,7 @@ public class ApplicationController {
     * 页面
     */
     @RequestMapping
-    @Permission
+    @XxlSso
     public String index(Model model) {
         return "biz/application";
     }
@@ -42,7 +42,7 @@ public class ApplicationController {
     */
     @RequestMapping("/pageList")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<PageModel<Application>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                      @RequestParam(required = false, defaultValue = "10") int pagesize) {
         PageModel<Application> pageModel = applicationService.pageList(offset, pagesize);
@@ -54,7 +54,7 @@ public class ApplicationController {
     */
     @RequestMapping("/load")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<Application> load(int id){
         return applicationService.load(id);
     }
@@ -64,7 +64,7 @@ public class ApplicationController {
     */
     @RequestMapping("/insert")
     @ResponseBody
-    @Permission(Consts.ADMIN_PERMISSION)
+    @XxlSso(role = Consts.ADMIN_ROLE)
     public Response<String> insert(Application service){
         return applicationService.insert(service);
     }
@@ -74,7 +74,7 @@ public class ApplicationController {
     */
     @RequestMapping("/delete")
     @ResponseBody
-    @Permission(Consts.ADMIN_PERMISSION)
+    @XxlSso(role = Consts.ADMIN_ROLE)
     public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
         return applicationService.delete(ids);
     }
@@ -84,7 +84,7 @@ public class ApplicationController {
     */
     @RequestMapping("/update")
     @ResponseBody
-    @Permission(Consts.ADMIN_PERMISSION)
+    @XxlSso(role = Consts.ADMIN_ROLE)
     public Response<String> update(Application service){
         return applicationService.update(service);
     }

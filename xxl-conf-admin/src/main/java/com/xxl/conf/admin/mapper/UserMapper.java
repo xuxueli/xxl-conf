@@ -11,23 +11,27 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-	public int insert(User xxlJobUser);
+	int insert(User xxlJobUser);
 
-	public int delete(@Param("id") int id);
+	int delete(@Param("id") int id);
 
-	public int deleteByIds(@Param("ids") List<Integer> ids);
+	int deleteByIds(@Param("ids") List<Integer> ids);
 
-	public int update(User xxlJobUser);
+	int update(User xxlJobUser);
 
-	public User loadByUserName(@Param("username") String username);
+	User loadByUserName(@Param("username") String username);
 
-	public List<User> pageList(@Param("offset") int offset,
-							   @Param("pagesize") int pagesize,
-							   @Param("username") String username,
-							   @Param("status") int status);
-	public int pageListCount(@Param("offset") int offset,
-							 @Param("pagesize") int pagesize,
-							 @Param("username") String username,
-							 @Param("status") int status);
+	User loadById(@Param("id") int id);
+
+	List<User> pageList(@Param("offset") int offset,
+						   @Param("pagesize") int pagesize,
+						   @Param("username") String username,
+						   @Param("status") int status);
+	int pageListCount(@Param("offset") int offset,
+						 @Param("pagesize") int pagesize,
+						 @Param("username") String username,
+						 @Param("status") int status);
+
+	int updateToken(@Param("id") int id, @Param("token") String token);
 
 }

@@ -15,7 +15,7 @@ import jakarta.annotation.Resource;
 public class WebMvcConfig implements WebMvcConfigurer {
 
     @Resource
-    private PermissionInterceptor permissionInterceptor;
+    private CommonDataInterceptor permissionInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

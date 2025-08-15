@@ -1,10 +1,10 @@
 package com.xxl.conf.admin.openapi.registry;
 
-import com.xxl.conf.admin.annotation.Permission;
 import com.xxl.conf.admin.openapi.registry.biz.RegistryService;
 import com.xxl.conf.admin.openapi.registry.model.DiscoveryRequest;
 import com.xxl.conf.admin.openapi.common.model.OpenApiResponse;
 import com.xxl.conf.admin.openapi.registry.model.RegisterRequest;
+import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.gson.GsonTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ public class RegistryOpenApiController {
 
     @RequestMapping("/{uri}")
     @ResponseBody
-    @Permission(login = false)
+    @XxlSso(login = false)
     public Object api(HttpServletRequest httpServletRequest, @PathVariable("uri") String uri, @RequestBody(required = false) String data){
 
         // valid

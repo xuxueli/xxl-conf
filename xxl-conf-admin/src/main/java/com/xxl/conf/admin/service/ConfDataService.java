@@ -2,7 +2,6 @@ package com.xxl.conf.admin.service;
 
 import java.util.List;
 
-import com.xxl.conf.admin.model.dto.LoginUserDTO;
 import com.xxl.conf.admin.model.entity.ConfData;
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
@@ -17,17 +16,17 @@ public interface ConfDataService {
     /**
     * 新增
     */
-    public Response<String> insert(ConfData confData, LoginUserDTO loginUser, boolean isAdmin);
+    public Response<String> insert(ConfData confData, String optUserName);
 
     /**
     * 删除
     */
-    public Response<String> delete(List<Long> ids, LoginUserDTO loginUser, boolean isAdmin);
+    public Response<String> delete(List<Long> ids, String optUserName);
 
     /**
     * 更新
     */
-    public Response<String> update(ConfData confData, LoginUserDTO loginUser, boolean isAdmin);
+    public Response<String> update(ConfData confData, String optUserName);
 
     /**
     * Load查询

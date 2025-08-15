@@ -208,7 +208,7 @@
 						<div class="modal-body">
 							<form class="form-horizontal form" role="form" >
 								<div class="table-responsive">
-									<table id="permissionData" class="table table-bordered" width="100%" >
+									<table class="table table-bordered" width="100%" >
 										<thead>
 										<tr>
 											<th>AppName</th>

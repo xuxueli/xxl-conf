@@ -1,17 +1,15 @@
 package com.xxl.conf.admin.controller.biz;
 
-import com.xxl.conf.admin.annotation.Permission;
 import com.xxl.conf.admin.constant.consts.Consts;
 import com.xxl.conf.admin.constant.enums.InstanceRegisterModelEnum;
 import com.xxl.conf.admin.model.dto.InstanceDTO;
-import com.xxl.conf.admin.model.dto.LoginUserDTO;
 import com.xxl.conf.admin.model.entity.Application;
-import com.xxl.conf.admin.model.entity.Environment;
 import com.xxl.conf.admin.model.entity.Instance;
 import com.xxl.conf.admin.service.ApplicationService;
 import com.xxl.conf.admin.service.EnvironmentService;
 import com.xxl.conf.admin.service.InstanceService;
-import com.xxl.conf.admin.service.impl.LoginService;
+import com.xxl.conf.admin.util.I18nUtil;
+import com.xxl.sso.core.annotation.XxlSso;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +22,8 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
+
+import static com.xxl.conf.admin.controller.biz.ConfDataController.hasPermissionApplication;
 
 /**
 * Instance Controller
@@ -40,14 +40,12 @@ public class InstanceController {
     private EnvironmentService environmentService;
     @Resource
     private ApplicationService applicationService;
-    @Resource
-    private LoginService loginService;
 
     /**
     * 页面
     */
     @RequestMapping
-    @Permission
+    @XxlSso
     public String index(Model model) {
 
         // enum
@@ -65,7 +63,7 @@ public class InstanceController {
     */
     @RequestMapping("/pageList")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<PageModel<InstanceDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                      @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                      @RequestParam() String appname,
@@ -79,7 +77,7 @@ public class InstanceController {
     */
     @RequestMapping("/load")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<Instance> load(int id){
         return instanceService.load(id);
     }
@@ -89,10 +87,15 @@ public class InstanceController {
     */
     @RequestMapping("/insert")
     @ResponseBody
-    @Permission(Consts.ADMIN_PERMISSION)
+    @XxlSso(role = Consts.ADMIN_ROLE)
     public Response<String> insert(Instance instance, HttpServletRequest request){
-        LoginUserDTO loginUser = loginService.getLoginUser(request);
-        return instanceService.insert(instance,loginUser, loginService.isAdmin(request));
+
+        // valid application
+        if (!hasPermissionApplication(request, applicationService, instance.getAppname())){
+            return Response.ofFail(I18nUtil.getString("system_permission_limit"));
+        }
+
+        return instanceService.insert(instance);
     }
 
     /**
@@ -100,10 +103,9 @@ public class InstanceController {
     */
     @RequestMapping("/delete")
     @ResponseBody
-    @Permission(Consts.ADMIN_PERMISSION)
+    @XxlSso(role = Consts.ADMIN_ROLE)
     public Response<String> delete(@RequestParam("ids[]") List<Integer> ids, HttpServletRequest request){
-        LoginUserDTO loginUser = loginService.getLoginUser(request);
-        return instanceService.delete(ids,loginUser, loginService.isAdmin(request));
+        return instanceService.delete(ids);
     }
 
     /**
@@ -111,10 +113,15 @@ public class InstanceController {
     */
     @RequestMapping("/update")
     @ResponseBody
-    @Permission(Consts.ADMIN_PERMISSION)
+    @XxlSso(role = Consts.ADMIN_ROLE)
     public Response<String> update(Instance instance, HttpServletRequest request){
-        LoginUserDTO loginUser = loginService.getLoginUser(request);
-        return instanceService.update(instance,loginUser, loginService.isAdmin(request));
+
+        // valid application
+        if (!hasPermissionApplication(request, applicationService, instance.getAppname())){
+            return Response.ofFail(I18nUtil.getString("system_permission_limit"));
+        }
+
+        return instanceService.update(instance);
     }
 
 }

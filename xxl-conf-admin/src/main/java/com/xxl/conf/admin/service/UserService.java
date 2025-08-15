@@ -28,22 +28,27 @@ public interface UserService {
     /**
      * 删除
      */
-    Response<String> deleteByIds(List<Integer> userIds, LoginUserDTO loginUser);
+    Response<String> deleteByIds(List<Integer> userIds, int optUserId);
 
     /**
      * 更新
      */
-    public Response<String> update(UserDTO xxlJobUser, LoginUserDTO loginUser);
+    public Response<String> update(UserDTO xxlJobUser, String optUserName);
 
     /**
      * 修改密码
      */
-    public Response<String> updatePwd(LoginUserDTO loginUser, String password);
+    public Response<String> updatePwd(String optUserName, String password);
 
     /**
      * Load查询
      */
     public Response<User> loadByUserName(String username);
+
+    /**
+     * Load查询
+     */
+    Response<User> loadById(Integer integer);
 
     /**
      * 授权权限
@@ -54,5 +59,10 @@ public interface UserService {
      * 分页查询
      */
     public PageModel<UserDTO> pageList(int offset, int pagesize, String username, int status);
+
+    /**
+     * 更新token
+     */
+    Response<String> updateToken(Integer id, String token);
 
 }

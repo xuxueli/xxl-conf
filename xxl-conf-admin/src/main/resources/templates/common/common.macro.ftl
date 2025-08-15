@@ -127,9 +127,8 @@
 
 					<#-- login user -->
                     <li class="dropdown">
-                        <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                            ${I18n.system_welcome}：${Request["XXL_CONF_LOGIN_IDENTITY"].username}
-							<#-- todo，改为 loginuser  -->
+                        <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" style="font-weight: bold;" >
+                            ${I18n.system_welcome}：${xxl_sso_user.userName}
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">

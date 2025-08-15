@@ -1,6 +1,5 @@
 package com.xxl.conf.admin.controller;
 
-import com.xxl.conf.admin.service.impl.LoginService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -22,12 +21,12 @@ public class IndexControllerTest extends AbstractSpringMvcTest {
   @BeforeEach
   public void login() throws Exception {
     MvcResult ret = mockMvc.perform(
-        post("/login")
+        post("/auth/doLogin")
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .param("userName", "admin")
             .param("password", "123456")
     ).andReturn();
-    cookie = ret.getResponse().getCookie(LoginService.LOGIN_IDENTITY_KEY);
+    cookie = ret.getResponse().getCookie("xxl_conf_login_token");
   }
 
   @Test

@@ -3,7 +3,6 @@ package com.xxl.conf.admin.service.impl;
 import com.xxl.conf.admin.constant.enums.RoleEnum;
 import com.xxl.conf.admin.mapper.UserMapper;
 import com.xxl.conf.admin.model.adaptor.UserAdaptor;
-import com.xxl.conf.admin.model.dto.LoginUserDTO;
 import com.xxl.conf.admin.model.dto.UserDTO;
 import com.xxl.conf.admin.model.entity.User;
 import com.xxl.conf.admin.service.UserService;
@@ -92,7 +91,7 @@ public class UserServiceImpl implements UserService {
      * 删除
      */
     @Override
-    public Response<String> deleteByIds(List<Integer> userIds, LoginUserDTO loginUser) {
+    public Response<String> deleteByIds(List<Integer> userIds, int optUserId) {
 
         // valid
         if (CollectionTool.isEmpty(userIds)) {
@@ -100,7 +99,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // avoid opt login seft
-        if (userIds.contains(loginUser.getId())) {
+        if (userIds.contains(optUserId)) {
             return Response.ofFail( I18nUtil.getString("user_update_loginuser_limit") );
         }
 
@@ -112,13 +111,13 @@ public class UserServiceImpl implements UserService {
      * 更新
      */
     @Override
-    public Response<String> update(UserDTO xxlJobUser, LoginUserDTO loginUser) {
+    public Response<String> update(UserDTO xxlJobUser, String optUserName) {
 
         // adapt
         User user = UserAdaptor.adapt(xxlJobUser);
 
         // avoid opt login seft
-        if (loginUser.getUsername().equals(user.getUsername())) {
+        if (optUserName.equals(user.getUsername())) {
             return Response.ofFail( I18nUtil.getString("user_update_loginuser_limit") );
         }
 
@@ -148,7 +147,7 @@ public class UserServiceImpl implements UserService {
     /**
      * 修改密码
      */
-    public Response<String> updatePwd(LoginUserDTO loginUser, String password){
+    public Response<String> updatePwd(String optUserName, String password){
         // valid password
         if (StringTool.isBlank(password)){
             Response.ofFail( "密码不可为空" );
@@ -162,7 +161,7 @@ public class UserServiceImpl implements UserService {
         String md5Password = DigestUtils.md5DigestAsHex(password.getBytes());
 
         // update pwd
-        User existUser = userMapper.loadByUserName(loginUser.getUsername());
+        User existUser = userMapper.loadByUserName(optUserName);
         existUser.setPassword(md5Password);
         userMapper.update(existUser);
 
@@ -175,6 +174,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public Response<User> loadByUserName(String username){
         User record = userMapper.loadByUserName(username);
+        return Response.ofSuccess(record);
+    }
+
+    @Override
+    public Response<User> loadById(Integer integer) {
+        User record = userMapper.loadById(integer);
         return Response.ofSuccess(record);
     }
 
@@ -213,6 +218,12 @@ public class UserServiceImpl implements UserService {
         pageModel.setTotalCount(totalCount);
 
         return pageModel;
+    }
+
+    @Override
+    public Response<String> updateToken(Integer id, String token) {
+        int ret = userMapper.updateToken(id, token);
+        return ret>0? Response.ofSuccess() : Response.ofFail();
     }
 
 }

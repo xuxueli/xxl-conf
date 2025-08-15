@@ -1,11 +1,11 @@
 package com.xxl.conf.admin.controller.biz;
 
-import com.xxl.conf.admin.annotation.Permission;
 import com.xxl.conf.admin.constant.consts.Consts;
 import com.xxl.conf.admin.constant.enums.AccessTokenStatuEnum;
 import com.xxl.conf.admin.model.dto.AccessTokenDTO;
 import com.xxl.conf.admin.model.entity.AccessToken;
 import com.xxl.conf.admin.service.AccessTokenService;
+import com.xxl.sso.core.annotation.XxlSso;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +34,7 @@ public class AccessTokenController {
     * 页面
     */
     @RequestMapping
-    @Permission(Consts.ADMIN_PERMISSION)
+    @XxlSso(role = Consts.ADMIN_ROLE)
     public String index(Model model) {
 
         model.addAttribute("AccessTokenStatuEnum", AccessTokenStatuEnum.values());
@@ -47,7 +47,7 @@ public class AccessTokenController {
     */
     @RequestMapping("/pageList")
     @ResponseBody
-    @Permission(Consts.ADMIN_PERMISSION)
+    @XxlSso(role = Consts.ADMIN_ROLE)
     public Response<PageModel<AccessTokenDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                      @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                      @RequestParam(required = false) String accessToken) {
@@ -60,7 +60,7 @@ public class AccessTokenController {
     */
     @RequestMapping("/load")
     @ResponseBody
-    @Permission(Consts.ADMIN_PERMISSION)
+    @XxlSso(role = Consts.ADMIN_ROLE)
     public Response<AccessToken> load(int id){
         return accessTokenService.load(id);
     }
@@ -70,7 +70,7 @@ public class AccessTokenController {
     */
     @RequestMapping("/insert")
     @ResponseBody
-    @Permission(Consts.ADMIN_PERMISSION)
+    @XxlSso(role = Consts.ADMIN_ROLE)
     public Response<String> insert(AccessToken accessToken){
         return accessTokenService.insert(accessToken);
     }
@@ -80,7 +80,7 @@ public class AccessTokenController {
     */
     @RequestMapping("/delete")
     @ResponseBody
-    @Permission(Consts.ADMIN_PERMISSION)
+    @XxlSso(role = Consts.ADMIN_ROLE)
     public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
         return accessTokenService.delete(ids);
     }
@@ -90,7 +90,7 @@ public class AccessTokenController {
     */
     @RequestMapping("/update")
     @ResponseBody
-    @Permission(Consts.ADMIN_PERMISSION)
+    @XxlSso(role = Consts.ADMIN_ROLE)
     public Response<String> update(AccessToken accessToken){
         return accessTokenService.update(accessToken);
     }

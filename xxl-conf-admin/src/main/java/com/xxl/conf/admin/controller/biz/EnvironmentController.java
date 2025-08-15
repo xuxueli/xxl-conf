@@ -1,9 +1,9 @@
 package com.xxl.conf.admin.controller.biz;
 
-import com.xxl.conf.admin.annotation.Permission;
 import com.xxl.conf.admin.constant.consts.Consts;
 import com.xxl.conf.admin.model.entity.Environment;
 import com.xxl.conf.admin.service.EnvironmentService;
+import com.xxl.sso.core.annotation.XxlSso;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +32,7 @@ public class EnvironmentController {
     * 页面
     */
     @RequestMapping
-    @Permission(Consts.ADMIN_PERMISSION)
+    @XxlSso(role = Consts.ADMIN_ROLE)
     public String index(Model model) {
         return "biz/environment";
     }
@@ -42,7 +42,7 @@ public class EnvironmentController {
     */
     @RequestMapping("/pageList")
     @ResponseBody
-    @Permission(Consts.ADMIN_PERMISSION)
+    @XxlSso(role = Consts.ADMIN_ROLE)
     public Response<PageModel<Environment>> pageList(@RequestParam(required = true, defaultValue = "0") int offset,
                                                      @RequestParam(required = true, defaultValue = "10") int pagesize,
                                                      @RequestParam(required = false) String env,
@@ -56,7 +56,7 @@ public class EnvironmentController {
     */
     @RequestMapping("/load")
     @ResponseBody
-    @Permission(Consts.ADMIN_PERMISSION)
+    @XxlSso(role = Consts.ADMIN_ROLE)
     public Response<Environment> load(int id){
         return environmentService.load(id);
     }
@@ -66,7 +66,7 @@ public class EnvironmentController {
     */
     @RequestMapping("/insert")
     @ResponseBody
-    @Permission(Consts.ADMIN_PERMISSION)
+    @XxlSso(role = Consts.ADMIN_ROLE)
     public Response<String> insert(Environment environment){
         return environmentService.insert(environment);
     }
@@ -76,7 +76,7 @@ public class EnvironmentController {
     */
     @RequestMapping("/delete")
     @ResponseBody
-    @Permission(Consts.ADMIN_PERMISSION)
+    @XxlSso(role = Consts.ADMIN_ROLE)
     public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
         return environmentService.delete(ids);
     }
@@ -86,7 +86,7 @@ public class EnvironmentController {
     */
     @RequestMapping("/update")
     @ResponseBody
-    @Permission(Consts.ADMIN_PERMISSION)
+    @XxlSso(role = Consts.ADMIN_ROLE)
     public Response<String> update(Environment environment){
         return environmentService.update(environment);
     }

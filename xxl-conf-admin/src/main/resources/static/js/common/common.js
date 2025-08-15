@@ -11,7 +11,7 @@ $(function(){
 		}, function(index){
 			layer.close(index);
 
-			$.post(base_url + "/logout", function(data, status) {
+			$.post(base_url + "/auth/logout", function(data, status) {
 				if (data.code == "200") {
                     layer.msg( I18n.logout_success );
                     setTimeout(function(){
@@ -69,7 +69,7 @@ $(function(){
 
                     layer.msg( I18n.change_pwd_suc_to_logout );
                     setTimeout(function(){
-                        $.post(base_url + "/logout", function(data, status) {
+                        $.post(base_url + "/auth/logout", function(data, status) {
                             if (data.code == 200) {
                                 window.location.href = base_url + "/";
                             } else {
