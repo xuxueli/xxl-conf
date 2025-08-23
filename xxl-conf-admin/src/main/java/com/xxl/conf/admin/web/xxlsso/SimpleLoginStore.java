@@ -4,7 +4,6 @@ import com.xxl.conf.admin.model.entity.User;
 import com.xxl.conf.admin.service.UserService;
 import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.sso.core.store.LoginStore;
-import com.xxl.sso.core.token.TokenHelper;
 import com.xxl.tool.core.MapTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.response.Response;
@@ -34,15 +33,11 @@ public class SimpleLoginStore implements LoginStore {
     @Override
     public Response<String> set(LoginInfo loginInfo) {
 
-        // build token
-        Response<String> tokenResponse = TokenHelper.generateToken(loginInfo);
-        if (!tokenResponse.isSuccess()) {
-            return Response.ofFail("generate token fail");
-        }
-        String token = tokenResponse.getData();
+        // parse token-signature
+        String token_sign = loginInfo.getSignature();
 
         // write token by UserId
-        return userService.updateToken(Integer.valueOf(loginInfo.getUserId()), token);
+        return userService.updateToken(Integer.valueOf(loginInfo.getUserId()), token_sign);
     }
 
     @Override
@@ -52,7 +47,7 @@ public class SimpleLoginStore implements LoginStore {
 
     @Override
     public Response<String> remove(String userId) {
-        // delete token by UserId
+        // delete token-signature
         return userService.updateToken(Integer.valueOf(userId), "");
     }
 
@@ -62,29 +57,24 @@ public class SimpleLoginStore implements LoginStore {
     @Override
     public Response<LoginInfo> get(String userId) {
 
-        // load user by UserId
-        Response<User> xxlBootUser = userService.loadById(Integer.valueOf(userId));
-        if (!xxlBootUser.isSuccess()) {
+        // load login-user
+        Response<User> userResponse = userService.loadById(Integer.valueOf(userId));
+        if (!userResponse.isSuccess()) {
             return Response.ofFail("userId invalid.");
         }
 
-        // parse token of UserId
-        LoginInfo loginInfo = TokenHelper.parseToken(xxlBootUser.getData().getToken());
-        if (loginInfo==null) {
-            return Response.ofFail("token invalid.");
-        }
-
         // find role
-        List<String> roleList = StringTool.isNotBlank(xxlBootUser.getData().getRole())
-                ? Arrays.asList(xxlBootUser.getData().getRole())
+        List<String> roleList = StringTool.isNotBlank(userResponse.getData().getRole())
+                ? Arrays.asList(userResponse.getData().getRole())
                 :null;
 
         // fill extraInfo (appname list)
-        Map<String, String> extraInfo = MapTool.newHashMap("appnameList", xxlBootUser.getData().getAppnames());
+        Map<String, String> extraInfo = MapTool.newHashMap("appnameList", userResponse.getData().getAppnames());
 
-        // fill data of loginInfo
-        loginInfo.setUserName(xxlBootUser.getData().getUsername());
-        loginInfo.setRealName(xxlBootUser.getData().getRealName());
+        // build LoginInfo
+        LoginInfo loginInfo = new LoginInfo(userId, userResponse.getData().getToken());
+        loginInfo.setUserName(userResponse.getData().getUsername());
+        loginInfo.setRealName(userResponse.getData().getRealName());
         loginInfo.setRoleList(roleList);
         loginInfo.setExtraInfo(extraInfo);
 

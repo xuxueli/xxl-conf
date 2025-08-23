@@ -8,13 +8,13 @@ import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
 import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.tool.core.StringTool;
+import com.xxl.tool.encrypt.SHA256Tool;
 import com.xxl.tool.id.UUIDTool;
 import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -65,8 +65,8 @@ public class LoginController {
 		if (user.getStatus() != UserStatuEnum.NORMAL.getValue()) {
 			return Response.ofFail( I18nUtil.getString("login_status_invalid") );
 		}
-		String passwordMd5 = DigestUtils.md5DigestAsHex(password.getBytes());
-		if (!passwordMd5.equals(user.getPassword())) {
+		String passwordHash = SHA256Tool.sha256(password);
+		if (!passwordHash.equals(user.getPassword())) {
 			return Response.ofFail( I18nUtil.getString("login_param_unvalid") );
 		}
 

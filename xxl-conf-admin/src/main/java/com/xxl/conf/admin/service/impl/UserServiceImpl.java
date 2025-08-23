@@ -9,10 +9,10 @@ import com.xxl.conf.admin.service.UserService;
 import com.xxl.conf.admin.util.I18nUtil;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.StringTool;
+import com.xxl.tool.encrypt.SHA256Tool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 
 import jakarta.annotation.Resource;
 import java.util.*;
@@ -58,8 +58,9 @@ public class UserServiceImpl implements UserService {
         if (!(user.getPassword().length()>=4 && user.getPassword().length()<=20)) {
             return Response.ofFail( I18nUtil.getString("system_lengh_limit")+"[4-20]" );
         }
-        // md5 password
-        user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));    // todo，move to token
+        // hash password
+        String passwordHash = SHA256Tool.sha256(user.getPassword());
+        user.setPassword(passwordHash);
 
         // valid user role
         if (RoleEnum.matchByValue(user.getRole()) == null) {
@@ -127,8 +128,9 @@ public class UserServiceImpl implements UserService {
             if (!(user.getPassword().length()>=4 && user.getPassword().length()<=20)) {
                 return Response.ofFail(  I18nUtil.getString("system_lengh_limit")+"[4-20]" );
             }
-            // md5 password
-            user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
+            // hash password
+            String passwordHash = SHA256Tool.sha256(user.getPassword());
+            user.setPassword(passwordHash);
         } else {
             user.setPassword(null);
         }
@@ -157,12 +159,12 @@ public class UserServiceImpl implements UserService {
             Response.ofFail( I18nUtil.getString("system_lengh_limit")+"[4-20]" );
         }
 
-        // md5 password
-        String md5Password = DigestUtils.md5DigestAsHex(password.getBytes());
+        // hash password
+        String passwordHash = SHA256Tool.sha256(password);
 
         // update pwd
         User existUser = userMapper.loadByUserName(optUserName);
-        existUser.setPassword(md5Password);
+        existUser.setPassword(passwordHash);
         userMapper.update(existUser);
 
         return Response.ofSuccess();

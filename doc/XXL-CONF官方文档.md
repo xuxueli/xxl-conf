@@ -920,11 +920,24 @@ Java服务可参考XXL-RPC实现方案，XXL-RPC原生基于XXL-CONF的 Restful 
 - 4、【优化】XXL-CONF更名“配置中心与注册中心”、AppName实体由应用更名为服务，统一话术理解；管理端菜单层级调整，提升操作易用性；
 
 ### v1.8.1 Release Notes[迭代中]
-- 4、【ING】XXL-CONF 配置历史Diff及一键回滚能力完善；
-- 5、【ING】启动预热优化，加载当前AppName下全量配置预热；
-- 6、【ING】首页报表数据处理；Sample示例，动态线程池处理，动态JDBC处理等；
-- 7、【ING】Springboot 微服务 接入 注册中心 Sample示例；
-- 8、【升级】升级多项maven依赖至较新版本，如 xxl-tool、gson、junit 等；
+- 1、【安全】登录安全升级，密码加密处理算法从Md5改为Sha256；
+```
+// 1、用户表password字段需要调整长度，执行如下命令
+ALTER TABLE xxl_conf_user
+    MODIFY COLUMN `password` varchar(100) NOT NULL COMMENT '密码加密信息';
+    
+// 2、存量用户密码需要修改，可执行如下命令将密码初始化 “123456”；也可以自行通过 “SHA256Tool.sha256” 工具生成其他初始化密码；
+UPDATE xxl_conf_user t SET t.password = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' WHERE t.username = {用户名};
+```
+- 2、【优化】登录态持久化逻辑调整，简化代码逻辑；
+- 3、【优化】异常页面处理逻辑优化，新增兜底落地页配置；
+- 4、【优化】登录信息页面空值处理优化，避免空值影响ftl渲染；
+- 5、【升级】升级多项maven依赖至较新版本，如 xxl-tool、gson、junit 等；
+- 6、【ING】XXL-CONF 配置历史Diff及一键回滚能力完善；
+- 7、【ING】启动预热优化，加载当前AppName下全量配置预热；
+- 8、【ING】首页报表数据处理；Sample示例，动态线程池处理，动态JDBC处理等；
+- 9、【ING】Springboot 微服务 接入 注册中心 Sample示例；
+
 
 ### TODO LIST
 - 支持托管配置文件，properties或yml，待考虑，不利于配置复用与细粒度管理；
