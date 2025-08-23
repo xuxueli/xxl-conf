@@ -57,7 +57,7 @@ public class LoginController {
 			return Response.ofFail( I18nUtil.getString("login_param_empty") );
 		}
 
-		// valid user, empty、status、passowrd
+		// valid user、status
 		User user = userMapper.loadByUserName(userName);
 		if (user == null) {
 			return Response.ofFail( I18nUtil.getString("login_param_unvalid") );
@@ -65,6 +65,8 @@ public class LoginController {
 		if (user.getStatus() != UserStatuEnum.NORMAL.getValue()) {
 			return Response.ofFail( I18nUtil.getString("login_status_invalid") );
 		}
+
+		// valid passowrd
 		String passwordHash = SHA256Tool.sha256(password);
 		if (!passwordHash.equals(user.getPassword())) {
 			return Response.ofFail( I18nUtil.getString("login_param_unvalid") );
