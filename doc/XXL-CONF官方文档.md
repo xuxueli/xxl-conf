@@ -933,10 +933,11 @@ UPDATE xxl_conf_user t SET t.password = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5
 - 3、【优化】异常页面处理逻辑优化，新增兜底落地页配置；
 - 4、【优化】登录信息页面空值处理优化，避免空值影响ftl渲染；
 - 5、【升级】升级多项maven依赖至较新版本，如 xxl-tool、gson、junit 等；
-- 6、【ING】XXL-CONF 配置历史Diff及一键回滚能力完善；
-- 7、【ING】启动预热优化，加载当前AppName下全量配置预热；
-- 8、【ING】首页报表数据处理；Sample示例，动态线程池处理，动态JDBC处理等；
-- 9、【ING】Springboot 微服务 接入 注册中心 Sample示例；
+- 6、【优化】系统日志调整，支持启动时指定 -DLOG_HOME 参数自定义日志位置；同时优化日志格式提升易读性；
+- 7、【ING】XXL-CONF 配置历史Diff及一键回滚能力完善；
+- 8、【ING】启动预热优化，加载当前AppName下全量配置预热；
+- 9、【ING】首页报表数据处理；Sample示例，动态线程池处理，动态JDBC处理等；
+- 10、【ING】Springboot 微服务 接入 注册中心 Sample示例；
 
 
 ### TODO LIST
