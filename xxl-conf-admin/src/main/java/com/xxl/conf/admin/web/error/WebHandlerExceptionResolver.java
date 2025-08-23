@@ -3,6 +3,8 @@ package com.xxl.conf.admin.web.error;
 import com.xxl.tool.exception.BizException;
 import com.xxl.tool.gson.GsonTool;
 import com.xxl.tool.response.Response;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -11,8 +13,6 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -32,35 +32,35 @@ public class WebHandlerExceptionResolver implements HandlerExceptionResolver {
 			logger.error("WebExceptionResolver:{}", ex);
 		}
 
-		// if json
+		// parse isJson
 		boolean isJson = false;
 		if (handler instanceof HandlerMethod) {
 			HandlerMethod method = (HandlerMethod)handler;
-			ResponseBody responseBody = method.getMethodAnnotation(ResponseBody.class);
-			if (responseBody != null) {
-				isJson = true;
-			}
+			isJson = method.getMethodAnnotation(ResponseBody.class)!=null;
 		}
 
-		// error result
-		Response<String> errorResult = Response.ofFail(ex.toString().replaceAll("\n", "<br/>"));
-
-		// response
+		// process error
 		ModelAndView mv = new ModelAndView();
 		if (isJson) {
 			try {
-				response.setContentType("application/json;charset=utf-8");
-				response.getWriter().print(GsonTool.toJson(errorResult));
+				// errorMsg
+				String errorMsg = GsonTool.toJson(Response.ofFail(ex.toString()));
+
+				// write response
+				response.setStatus(HttpServletResponse.SC_OK);
+				response.setContentType("application/json;charset=UTF-8");
+				response.getWriter().println(errorMsg);
 			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
 			}
 			return mv;
 		} else {
 
-			mv.addObject("exceptionMsg", errorResult.getMsg());
+			mv.addObject("exceptionMsg", ex.toString());
 			mv.setViewName("common/common.errorpage");
 			return mv;
 		}
+
 	}
 	
 }
