@@ -1,5 +1,7 @@
 $(function(){
 
+    // ---------------------- logout ----------------------
+
     /**
      * logout
      */
@@ -29,6 +31,9 @@ $(function(){
 		});
 
 	});
+
+
+    // ---------------------- update pwd ----------------------
 
     /**
      * update pwd
@@ -95,6 +100,9 @@ $(function(){
         $("#updatePwdModal .form .form-group").removeClass("has-error");
     });
 
+
+    // ---------------------- slideToTop ----------------------
+
     /**
      * slideToTop
      */
@@ -140,14 +148,35 @@ $(function(){
 	});
 
 
+    // ---------------------- body fixed ----------------------
+
+    // init body fixed
+    $('body').addClass('fixed');
+
+
+    // ---------------------- menu, sidebar-toggle ----------------------
+
+    // init menu speed
+    $('.sidebar-menu').attr('data-animation-speed', 1);
+
+    // init menu status
+    if ( 'close' === $.cookie('sidebar_status') ) {
+        $('body').addClass('sidebar-collapse');
+    } else {
+        $('body').removeClass('sidebar-collapse');
+    }
+
     // change menu status
     $('.sidebar-toggle').click(function(){
-        if ( 'close' == $.cookie('sidebar_status') ) {
+        if ( 'close' === $.cookie('sidebar_status') ) {
             $.cookie('sidebar_status', 'open', { expires: 7 });
         } else {
             $.cookie('sidebar_status', 'close', { expires: 7 });	//$.cookie('the_cookie', '', { expires: -1 });
         }
     });
+
+
+    // ---------------------- change Env ----------------------
 
     // change Env
     $('.changeEnv').click(function(){
