@@ -130,6 +130,8 @@ VALUES (1, 'xxl-conf-sample', '示例服务', '示例服务，演示使用', '20
 INSERT INTO `xxl_conf_data` (id, env, appname, `key`, value, `desc`, add_time, update_time)
 VALUES (1, 'test', 'xxl-conf-sample', 'sample.key01', '100', '演示配置01', '2025-01-18 20:04:05', '2025-01-18 20:04:05'),
        (2, 'test', 'xxl-conf-sample', 'sample.key02', '200', '演示配置02', '2025-01-18 20:05:14', '2025-01-18 20:08:42'),
-       (3, 'test', 'xxl-conf-sample', 'sample.key03', '300', '演示配置03', '2025-01-18 20:12:06', '2025-01-18 20:12:06');
+       (3, 'test', 'xxl-conf-sample', 'sample.key03', '300', '演示配置03', '2025-01-18 20:12:06', '2025-01-18 20:12:06'),
+       (4, 'test', 'xxl-conf-sample', 'sample.dynamic.threadpool', '{"corePoolSize":10,"maximumPoolSize":200,"keepAliveTime":60,"queueCapacity":1000}', '动态线程池配置', '2025-01-18 20:12:06', '2025-01-18 20:12:06');
+
 
 commit;
