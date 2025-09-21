@@ -919,7 +919,7 @@ Java服务可参考XXL-RPC实现方案，XXL-RPC原生基于XXL-CONF的 Restful 
 - 3、【强化】注解方式（@XxlConf）配置更新逻辑调整，Proxy情况下赋值逻辑优化；
 - 4、【优化】XXL-CONF更名“配置中心与注册中心”、AppName实体由应用更名为服务，统一话术理解；管理端菜单层级调整，提升操作易用性；
 
-### v1.8.1 Release Notes[迭代中]
+### v1.9.0 Release Notes[2025-09-21]
 - 1、【安全】登录安全升级，密码加密处理算法从Md5改为Sha256；
 ```
 // 1、用户表password字段需要调整长度，执行如下命令
@@ -932,12 +932,16 @@ UPDATE xxl_conf_user t SET t.password = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5
 - 2、【优化】登录态持久化逻辑调整，简化代码逻辑；
 - 3、【优化】异常页面处理逻辑优化，新增兜底落地页配置；
 - 4、【优化】登录信息页面空值处理优化，避免空值影响ftl渲染；
-- 5、【升级】升级多项maven依赖至较新版本，如 xxl-tool、gson、junit 等；
+- 5、【升级】升级多项maven依赖至较新版本，如 spring、gson、xxl-tool、junit 等；
 - 6、【优化】系统日志调整，支持启动时指定 -DLOG_HOME 参数自定义日志位置；同时优化日志格式提升易读性；
-- 7、【ING】XXL-CONF 配置历史Diff及一键回滚能力完善；
-- 8、【ING】启动预热优化，加载当前AppName下全量配置预热；
-- 9、【ING】首页报表数据处理；Sample示例，动态线程池处理，动态JDBC处理等；
-- 10、【ING】Springboot 微服务 接入 注册中心 Sample示例；
+- 7、【优化】优化配置推送逻辑，完善异常捕获防止线程中断推送丢失；
+
+
+### v2.0.0 Release Notes[ING]
+- 1、【ING】XXL-CONF 配置历史Diff及一键回滚能力完善；
+- 2、【ING】启动预热优化，加载当前AppName下全量配置预热；
+- 3、【ING】首页报表数据处理；Sample示例，动态线程池处理，动态JDBC处理等；
+- 4、【ING】Springboot 微服务 接入 注册中心 Sample示例；
 
 
 ### TODO LIST
