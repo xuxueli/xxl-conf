@@ -921,14 +921,14 @@ Java服务可参考XXL-RPC实现方案，XXL-RPC原生基于XXL-CONF的 Restful 
 
 ### v1.9.0 Release Notes[2025-09-21]
 - 1、【安全】登录安全升级，密码加密处理算法从Md5改为Sha256；
-```
-// 1、用户表password字段需要调整长度，执行如下命令
-ALTER TABLE xxl_conf_user
-    MODIFY COLUMN `password` varchar(100) NOT NULL COMMENT '密码加密信息';
-    
-// 2、存量用户密码需要修改，可执行如下命令将密码初始化 “123456”；也可以自行通过 “SHA256Tool.sha256” 工具生成其他初始化密码；
-UPDATE xxl_conf_user t SET t.password = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' WHERE t.username = {用户名};
-```
+  ```
+  // 1、用户表password字段需要调整长度，执行如下命令
+  ALTER TABLE xxl_conf_user
+      MODIFY COLUMN `password` varchar(100) NOT NULL COMMENT '密码加密信息';
+      
+  // 2、存量用户密码需要修改，可执行如下命令将密码初始化 “123456”；也可以自行通过 “SHA256Tool.sha256” 工具生成其他初始化密码；
+  UPDATE xxl_conf_user t SET t.password = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' WHERE t.username = {用户名};
+  ```
 - 2、【新增】新增“动态线程池”配置扩展应用，支持动态调整线程池核心参数，实时监控线程数量、任务队列以及线程等信息；（示例代码参考：IndexController#initDynamicThread）
 - 3、【优化】系统日志调整，支持启动时指定 -DLOG_HOME 参数自定义日志位置；同时优化日志格式提升易读性；
 - 4、【修复】优化配置推送逻辑，完善异常捕获防止线程中断导致推送丢失问题；
