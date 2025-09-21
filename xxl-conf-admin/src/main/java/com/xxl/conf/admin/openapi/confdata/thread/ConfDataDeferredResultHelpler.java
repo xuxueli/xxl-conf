@@ -5,9 +5,7 @@ import com.xxl.conf.admin.openapi.common.model.OpenApiResponse;
 import com.xxl.conf.admin.openapi.confdata.model.ConfDataCacheDTO;
 import com.xxl.conf.admin.openapi.confdata.model.QueryConfDataRequest;
 import com.xxl.conf.admin.openapi.confdata.model.QueryConfDataResponse;
-import com.xxl.conf.admin.openapi.registry.model.DiscoveryRequest;
 import com.xxl.conf.admin.openapi.registry.thread.MessageHelpler;
-import com.xxl.conf.admin.openapi.registry.thread.RegistryCacheHelpler;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.MapTool;
 import org.slf4j.Logger;
@@ -141,13 +139,21 @@ public class ConfDataDeferredResultHelpler {
 
         // find client and push
         for (ConfDataCacheDTO confDataCacheDTO: diffConfList) {
-            // monitor key
+            // build param
             String envAppnameKey = buildMonitorKey(confDataCacheDTO.getEnv(), confDataCacheDTO.getAppname());
+            OpenApiResponse failResponse = new OpenApiResponse(OpenApiResponse.FAIL_CODE,
+                    "Monitor key update: env="+confDataCacheDTO.getEnv()+", appname="+ confDataCacheDTO.getAppname() +", key="+confDataCacheDTO.getKey());
+
+            // do push
             List<DeferredResult> deferredResultList = registryDeferredResultMap.get(envAppnameKey);
             if (CollectionTool.isNotEmpty(deferredResultList)) {
-                registryDeferredResultMap.remove(confDataCacheDTO);   // thread-safe write
+                registryDeferredResultMap.remove(envAppnameKey);   // thread-safe write
                 for (DeferredResult deferredResult: deferredResultList) {
-                    deferredResult.setResult(new OpenApiResponse(OpenApiResponse.FAIL_CODE, "Monitor key("+ confDataCacheDTO +") update."));
+                    try {
+                        deferredResult.setResult(failResponse);
+                    } catch (Exception e) {
+                        logger.error(">>>>>>>>>>> xxl-conf, ConfDataDeferredResultHelpler-pushClient error, failResponse:{}", failResponse, e);
+                    }
                 }
             }
         }
