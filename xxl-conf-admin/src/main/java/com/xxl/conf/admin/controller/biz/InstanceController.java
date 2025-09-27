@@ -66,8 +66,8 @@ public class InstanceController {
     @XxlSso
     public Response<PageModel<InstanceDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                      @RequestParam(required = false, defaultValue = "10") int pagesize,
-                                                     @RequestParam() String appname,
-                                                     @RequestParam() String env) {
+                                                     String appname,
+                                                     String env) {
         PageModel<InstanceDTO> pageModel = instanceService.pageList(offset, pagesize, appname, env);
         return Response.ofSuccess(pageModel);
     }

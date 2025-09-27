@@ -212,6 +212,10 @@
             $.cookie('XXL_CONF_CURRENT_ENV', env, { expires: 7 });	//$.cookie('the_cookie', '', { expires: -1 });
             window.location.reload();
         });
+        // find Env
+        window.findEnv = function (){
+            return $('#currentEnv').val();
+        }
     });
 </script>
 <!-- 6-script end -->

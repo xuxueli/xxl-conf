@@ -82,11 +82,9 @@ public class ConfDataController {
      */
     public static boolean hasPermissionApplication(HttpServletRequest request, ApplicationService applicationService, String appname){
         List<Application> applicationList = findPermissionApplication(request, applicationService);
-        return !applicationList
-                .stream()
-                .filter(application -> application.getAppname().equals(appname))
-                .toList()
-                .isEmpty();
+        List<String> appnameList = applicationList.stream().map(Application::getAppname).toList();
+
+        return appnameList.contains(appname);
     }
 
     /**

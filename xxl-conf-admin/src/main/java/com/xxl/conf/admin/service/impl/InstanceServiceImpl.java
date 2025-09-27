@@ -66,10 +66,9 @@ public class InstanceServiceImpl implements InstanceService {
 	public Response<String> update(Instance instance) {
 
 		// valid
-		InstanceRegisterModelEnum registerModelEnum = InstanceRegisterModelEnum.match(instance.getRegisterModel());
 		if (instance == null
 				|| instance.getId() <=0
-				|| registerModelEnum==null ){
+				|| InstanceRegisterModelEnum.match(instance.getRegisterModel())==null ){
 			return Response.ofFail("必要参数缺失");
 		}
 
