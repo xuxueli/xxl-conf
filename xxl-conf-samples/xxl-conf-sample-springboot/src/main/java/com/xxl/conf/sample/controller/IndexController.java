@@ -290,7 +290,7 @@ public class IndexController {
                 </tbody>
             </table>
             
-            <h4>2、配置扩展使用</h4>
+            <h4>2、配置扩展使用：动态线程池</h4>
             <table style='border-collapse: collapse; width: 80%; font-family: Arial, sans-serif; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden;'>
                 <thead>
                     <tr style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;'>
