@@ -1,16 +1,19 @@
 package com.xxl.conf.admin.util;
 
 
+import com.xxl.tool.core.PropTool;
+import com.xxl.tool.freemarker.FtlTool;
 import com.xxl.tool.gson.GsonTool;
+import freemarker.template.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.EncodedResource;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -20,26 +23,60 @@ import java.util.Properties;
  *
  * @author xuxueli 2018-01-17 20:39:06
  */
-public class I18nUtil {
+@Component
+public class I18nUtil implements InitializingBean  {
     private static Logger logger = LoggerFactory.getLogger(I18nUtil.class);
+
+    // ---------------------- for i18n config ----------------------
+
+    /**
+     * i18n config
+     */
+    @Value("${xxl.conf.i18n}")
+    private String i18n;
+
+    /**
+     * freemarker config
+     */
+    @Autowired
+    private Configuration configuration;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        // init freemarker shared variable
+        configuration.setSharedVariable("I18nUtil", FtlTool.generateStaticModel(I18nUtil.class.getName()));
+        // init single
+        single = this;
+    }
+
+    /**
+     * get i18n
+     */
+    public String getI18n() {
+        if (!Arrays.asList("zh_CN", "zh_TC", "en").contains(i18n)) {
+            return "zh_CN";
+        }
+        return i18n;
+    }
+
+    private static I18nUtil single = null;
+    private static I18nUtil getSingle() {
+        return single;
+    }
+
+    // ---------------------- tool ----------------------
 
     private static Properties prop = null;
     public static Properties loadI18nProp(){
         if (prop != null) {
             return prop;
         }
-        try {
-            // build i18n prop
-            String i18n = PropConfUtil.getSingle().getI18n();
-            String i18nFile = MessageFormat.format("i18n/message_{0}.properties", i18n);
+        // build i18n filepath
+        String i18n = getSingle().getI18n();
+        String i18nFile = MessageFormat.format("i18n/message_{0}.properties", i18n);
 
-            // load prop
-            Resource resource = new ClassPathResource(i18nFile);
-            EncodedResource encodedResource = new EncodedResource(resource,"UTF-8");
-            prop = PropertiesLoaderUtils.loadProperties(encodedResource);
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
+        // load prop
+        prop = PropTool.loadProp(i18nFile);
         return prop;
     }
 
@@ -60,7 +97,7 @@ public class I18nUtil {
      * @return
      */
     public static String getMultString(String... keys) {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
 
         Properties prop = loadI18nProp();
         if (keys!=null && keys.length>0) {
@@ -73,8 +110,7 @@ public class I18nUtil {
             }
         }
 
-        String json = GsonTool.toJson(map);
-        return json;
+        return GsonTool.toJson(map);
     }
 
 }

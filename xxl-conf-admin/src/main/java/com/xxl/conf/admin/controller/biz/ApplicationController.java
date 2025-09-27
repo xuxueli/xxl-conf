@@ -44,8 +44,10 @@ public class ApplicationController {
     @ResponseBody
     @XxlSso
     public Response<PageModel<Application>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
-                                                     @RequestParam(required = false, defaultValue = "10") int pagesize) {
-        PageModel<Application> pageModel = applicationService.pageList(offset, pagesize);
+                                                     @RequestParam(required = false, defaultValue = "10") int pagesize,
+                                                     String appname,
+                                                     String name) {
+        PageModel<Application> pageModel = applicationService.pageList(offset, pagesize, appname, name);
         return Response.ofSuccess(pageModel);
     }
 

@@ -42,12 +42,18 @@ public interface ApplicationMapper {
     /**
     * 分页查询Data
     */
-	public List<Application> pageList(@Param("offset") int offset, @Param("pagesize") int pagesize);
+	public List<Application> pageList(@Param("offset") int offset,
+                                      @Param("pagesize") int pagesize,
+                                      @Param("appname") String appname,
+                                      @Param("name") String name);
 
     /**
     * 分页查询Count
     */
-    public int pageListCount(@Param("offset") int offset, @Param("pagesize") int pagesize);
+    public int pageListCount(@Param("offset") int offset,
+                             @Param("pagesize") int pagesize,
+                             @Param("appname") String appname,
+                             @Param("name") String name);
 
     /**
      * find all

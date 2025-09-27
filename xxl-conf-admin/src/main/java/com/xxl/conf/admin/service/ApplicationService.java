@@ -36,7 +36,7 @@ public interface ApplicationService {
     /**
     * 分页查询
     */
-    public PageModel<Application> pageList(int offset, int pagesize);
+    public PageModel<Application> pageList(int offset, int pagesize, String appname, String name);
 
     /**
      * find all

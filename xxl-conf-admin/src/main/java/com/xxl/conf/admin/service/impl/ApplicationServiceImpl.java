@@ -87,10 +87,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 	* 分页查询
 	*/
 	@Override
-	public PageModel<Application> pageList(int offset, int pagesize) {
+	public PageModel<Application> pageList(int offset, int pagesize, String appname, String name) {
 
-		List<Application> pageList = applicationMapper.pageList(offset, pagesize);
-		int totalCount = applicationMapper.pageListCount(offset, pagesize);
+		List<Application> pageList = applicationMapper.pageList(offset, pagesize, appname, name);
+		int totalCount = applicationMapper.pageListCount(offset, pagesize, appname, name);
 
 		// result
 		PageModel<Application> pageModel = new PageModel<>();
