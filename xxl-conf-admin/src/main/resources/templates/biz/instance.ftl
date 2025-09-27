@@ -217,6 +217,13 @@
 
 		// init filter : env
 		function initFilter(){
+			// valid
+			if (!(typeof window.parent.findEnv === 'function')) {
+				layer.msg('Env not found.');
+				return;
+			}
+
+			// filter init
 			let currentEnv = window.parent.findEnv();
 			$("#data_filter .env").val( currentEnv );
 		}
