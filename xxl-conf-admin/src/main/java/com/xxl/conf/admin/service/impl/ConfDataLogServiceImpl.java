@@ -1,14 +1,19 @@
 package com.xxl.conf.admin.service.impl;
 
 import com.xxl.conf.admin.mapper.ConfDataLogMapper;
+import com.xxl.conf.admin.model.adaptor.ConfDataLogAdaptor;
+import com.xxl.conf.admin.model.dto.ConfDataLogDTO;
 import com.xxl.conf.admin.model.entity.ConfDataLog;
 import com.xxl.conf.admin.service.ConfDataLogService;
 import com.xxl.conf.admin.service.ConfDataService;
 import com.xxl.conf.admin.util.I18nUtil;
+import com.xxl.tool.core.CollectionTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
+
+import java.util.ArrayList;
 import java.util.List;
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
@@ -83,14 +88,20 @@ public class ConfDataLogServiceImpl implements ConfDataLogService {
 	* 分页查询
 	*/
 	@Override
-	public PageModel<ConfDataLog> pageList(int offset, int pagesize, long dataId) {
+	public PageModel<ConfDataLogDTO> pageList(int offset, int pagesize, long dataId) {
 
+		// page list
 		List<ConfDataLog> pageList = confDataLogMapper.pageList(offset, pagesize, dataId);
 		int totalCount = confDataLogMapper.pageListCount(offset, pagesize, dataId);
 
+		// adaptor
+		List<ConfDataLogDTO> pageList2 = CollectionTool.isNotEmpty(pageList)
+				?pageList.stream().map(ConfDataLogAdaptor::adapt).toList()
+				:new ArrayList<>();
+
 		// result
-		PageModel<ConfDataLog> pageModel = new PageModel<ConfDataLog>();
-		pageModel.setPageData(pageList);
+		PageModel<ConfDataLogDTO> pageModel = new PageModel<>();
+		pageModel.setPageData(pageList2);
 		pageModel.setTotalCount(totalCount);
 
 		return pageModel;

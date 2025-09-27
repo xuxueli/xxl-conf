@@ -2,6 +2,7 @@ package com.xxl.conf.admin.service;
 
 import java.util.List;
 
+import com.xxl.conf.admin.model.dto.ConfDataLogDTO;
 import com.xxl.conf.admin.model.entity.ConfDataLog;
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
@@ -41,7 +42,7 @@ public interface ConfDataLogService {
     /**
     * 分页查询
     */
-    public PageModel<ConfDataLog> pageList(int offset, int pagesize, long dataId);
+    public PageModel<ConfDataLogDTO> pageList(int offset, int pagesize, long dataId);
 
 
 }

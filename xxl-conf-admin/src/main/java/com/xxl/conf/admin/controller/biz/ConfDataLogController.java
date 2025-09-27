@@ -1,7 +1,7 @@
 package com.xxl.conf.admin.controller.biz;
 
+import com.xxl.conf.admin.model.dto.ConfDataLogDTO;
 import com.xxl.conf.admin.model.entity.ConfData;
-import com.xxl.conf.admin.model.entity.ConfDataLog;
 import com.xxl.conf.admin.service.ApplicationService;
 import com.xxl.conf.admin.service.ConfDataLogService;
 import com.xxl.conf.admin.service.ConfDataService;
@@ -74,10 +74,10 @@ public class ConfDataLogController {
     @RequestMapping("/pageList")
     @ResponseBody
     @XxlSso
-    public Response<PageModel<ConfDataLog>> pageList(HttpServletRequest request,
-                                                  @RequestParam(required = false, defaultValue = "0") int offset,
-                                                  @RequestParam(required = false, defaultValue = "10") int pagesize,
-                                                  @RequestParam(required = false, defaultValue = "-1") Long dataId) {
+    public Response<PageModel<ConfDataLogDTO>> pageList(HttpServletRequest request,
+                                                        @RequestParam(required = false, defaultValue = "0") int offset,
+                                                        @RequestParam(required = false, defaultValue = "10") int pagesize,
+                                                        @RequestParam(required = false, defaultValue = "-1") Long dataId) {
 
         // valid confData
         ConfData confData = null;
@@ -95,7 +95,7 @@ public class ConfDataLogController {
         }
 
         // page
-        PageModel<ConfDataLog> pageModel = confDataLogService.pageList(offset, pagesize, dataId);
+        PageModel<ConfDataLogDTO> pageModel = confDataLogService.pageList(offset, pagesize, dataId);
         return Response.ofSuccess(pageModel);
     }
 

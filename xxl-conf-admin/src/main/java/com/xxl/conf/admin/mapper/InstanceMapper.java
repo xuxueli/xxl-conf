@@ -96,4 +96,9 @@ public interface InstanceMapper {
      */
     int addAutoInstance(@Param("instance") Instance instance);
 
+    /**
+     * 统计env下注册的实例数
+     */
+    int countByEnv(@Param("env") String env);
+
 }

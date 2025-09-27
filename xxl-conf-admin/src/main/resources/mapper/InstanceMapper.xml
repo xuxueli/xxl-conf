@@ -161,4 +161,10 @@
             `register_heartbeat` = #{instance.registerHeartbeat}
     </insert>
 
+    <select id="countByEnv" parameterType="java.util.Map" resultType="int" >
+        SELECT count(1)
+        FROM xxl_conf_instance AS t
+        WHERE t.`env` = #{env}
+    </select>
+
 </mapper>

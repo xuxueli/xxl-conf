@@ -1,6 +1,8 @@
 package com.xxl.conf.admin.service.impl;
 
+import com.xxl.conf.admin.mapper.ConfDataMapper;
 import com.xxl.conf.admin.mapper.EnvironmentMapper;
+import com.xxl.conf.admin.mapper.InstanceMapper;
 import com.xxl.conf.admin.model.entity.Environment;
 import com.xxl.conf.admin.service.EnvironmentService;
 import com.xxl.tool.core.StringTool;
@@ -22,6 +24,10 @@ public class EnvironmentServiceImpl implements EnvironmentService {
 
 	@Resource
 	private EnvironmentMapper environmentMapper;
+	@Resource
+	private InstanceMapper instanceMapper;
+	@Resource
+	private ConfDataMapper confDataMapper;
 
 	/**
     * 新增
@@ -52,6 +58,24 @@ public class EnvironmentServiceImpl implements EnvironmentService {
 	*/
 	@Override
 	public Response<String> delete(List<Integer> ids) {
+		// valid
+		for (Integer id: ids) {
+			Environment environment = environmentMapper.load( id);
+			if (environment == null) {
+				continue;
+			}
+
+			int confDataCount = confDataMapper.countByEnv(environment.getEnv());
+			if (confDataCount > 0) {
+				return Response.ofFail("该环境下存在配置数据，请先删除配置数据");
+			}
+			int instanceCount = instanceMapper.countByEnv(environment.getEnv());
+			if (instanceCount > 0) {
+				return Response.ofFail("该环境下存在注册节点实例，请先删除注册实例数据");
+			}
+		}
+
+		// do delete
 		int ret = environmentMapper.delete(ids);
 		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}

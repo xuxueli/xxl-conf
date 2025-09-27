@@ -110,4 +110,10 @@
             AND t.`key` = #{key}
     </select>
 
+    <select id="countByEnv" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_conf_data AS t
+        WHERE t.`env` = #{env}
+    </select>
+
 </mapper>

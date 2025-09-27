@@ -70,4 +70,9 @@ public interface ConfDataMapper {
                                         @Param("appname") String appname,
                                         @Param("key") String key);
 
+    /**
+     * 统计env下配置数
+     */
+    int countByEnv(@Param("env") String env);
+
 }
