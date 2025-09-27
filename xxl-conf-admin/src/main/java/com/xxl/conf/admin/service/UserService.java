@@ -1,6 +1,5 @@
 package com.xxl.conf.admin.service;
 
-import com.xxl.conf.admin.model.dto.LoginUserDTO;
 import com.xxl.conf.admin.model.dto.UserDTO;
 import com.xxl.conf.admin.model.entity.User;
 import com.xxl.tool.response.PageModel;

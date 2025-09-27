@@ -1,6 +1,5 @@
 package com.xxl.conf.admin.controller.biz;
 
-import com.xxl.conf.admin.model.dto.LoginUserDTO;
 import com.xxl.conf.admin.model.entity.ConfData;
 import com.xxl.conf.admin.model.entity.ConfDataLog;
 import com.xxl.conf.admin.service.ApplicationService;
@@ -8,6 +7,8 @@ import com.xxl.conf.admin.service.ConfDataLogService;
 import com.xxl.conf.admin.service.ConfDataService;
 import com.xxl.conf.admin.util.I18nUtil;
 import com.xxl.sso.core.annotation.XxlSso;
+import com.xxl.sso.core.helper.XxlSsoHelper;
+import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Controller;
@@ -101,11 +102,23 @@ public class ConfDataLogController {
     /**
     * 删除
     */
-    /*@RequestMapping("/delete")
+    @RequestMapping("/delete")
     @ResponseBody
     @XxlSso
     public Response<String> delete(@RequestParam("ids[]") List<Long> ids, HttpServletRequest request){
         return confDataLogService.delete(ids);
-    }*/
+    }
+
+    /**
+     * 回滚
+     */
+    @RequestMapping("/rollback")
+    @ResponseBody
+    @XxlSso
+    public Response<String> rollback(long dataLogId, HttpServletRequest request){
+        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr( request);
+        String optUserName = loginInfoResponse.getData().getUserName();
+        return confDataLogService.rollback(optUserName, dataLogId);
+    }
 
 }

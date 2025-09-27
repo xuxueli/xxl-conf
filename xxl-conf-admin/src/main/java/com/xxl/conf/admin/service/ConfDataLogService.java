@@ -29,6 +29,11 @@ public interface ConfDataLogService {
     public Response<String> update(ConfDataLog confDataLog);
 
     /**
+     * 回顾配置
+     */
+    public Response<String> rollback(String optUserName, long dataLogId);
+
+    /**
     * Load查询
     */
     public Response<ConfDataLog> load(Long id);
@@ -37,5 +42,6 @@ public interface ConfDataLogService {
     * 分页查询
     */
     public PageModel<ConfDataLog> pageList(int offset, int pagesize, long dataId);
+
 
 }

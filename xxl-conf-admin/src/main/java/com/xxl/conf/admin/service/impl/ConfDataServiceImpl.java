@@ -8,6 +8,7 @@ import com.xxl.conf.admin.model.entity.ConfData;
 import com.xxl.conf.admin.model.entity.ConfDataLog;
 import com.xxl.conf.admin.openapi.registry.thread.MessageHelpler;
 import com.xxl.conf.admin.service.ConfDataService;
+import com.xxl.conf.admin.util.I18nUtil;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.gson.GsonTool;
@@ -41,6 +42,9 @@ public class ConfDataServiceImpl implements ConfDataService {
 		// valid
 		if (confData == null || StringTool.isBlank(confData.getEnv()) || StringTool.isBlank(confData.getAppname())) {
 			return Response.ofFail("必要参数缺失");
+		}
+		if (StringTool.isBlank(confData.getValue())) {
+			confData.setValue("");
 		}
 
 		// opt
@@ -86,6 +90,32 @@ public class ConfDataServiceImpl implements ConfDataService {
 		}
 
 		// opt
+		int ret = confDataMapper.update(confData);
+		if (ret > 0) {
+			// log
+			confDataLogMapper.insert(new ConfDataLog(confData.getId(), confData.getValue(), optUserName));
+
+			// broadcast message
+			MessageHelpler.broadcastMessage(MessageTypeEnum.CONFDATA, GsonTool.toJson(new MessageForConfDataDTO(confData)));
+		}
+		return ret>0? Response.ofSuccess() : Response.ofFail();
+	}
+
+	@Override
+	public Response<String> updateDataValue(long dataId, String value, String optUserName) {
+		// load conf data
+		ConfData confData = confDataMapper.load(dataId);
+
+		// valid
+		if (confData == null || StringTool.isBlank(optUserName)) {
+			return Response.ofFail(I18nUtil.getString("system_param_empty"));
+		}
+		if (StringTool.isBlank(value)) {
+			value = "";
+		}
+
+		// update value
+		confData.setValue(value);
 		int ret = confDataMapper.update(confData);
 		if (ret > 0) {
 			// log

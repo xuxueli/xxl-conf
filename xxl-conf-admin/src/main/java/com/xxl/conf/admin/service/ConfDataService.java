@@ -29,6 +29,11 @@ public interface ConfDataService {
     public Response<String> update(ConfData confData, String optUserName);
 
     /**
+     * 更新配置数据值
+     */
+    public Response<String> updateDataValue(long dataId, String value, String optUserName);
+
+    /**
     * Load查询
     */
     public Response<ConfData> load(Long id);

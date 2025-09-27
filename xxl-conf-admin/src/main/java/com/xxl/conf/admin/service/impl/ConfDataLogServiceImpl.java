@@ -3,6 +3,9 @@ package com.xxl.conf.admin.service.impl;
 import com.xxl.conf.admin.mapper.ConfDataLogMapper;
 import com.xxl.conf.admin.model.entity.ConfDataLog;
 import com.xxl.conf.admin.service.ConfDataLogService;
+import com.xxl.conf.admin.service.ConfDataService;
+import com.xxl.conf.admin.util.I18nUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
@@ -20,6 +23,8 @@ public class ConfDataLogServiceImpl implements ConfDataLogService {
 
 	@Resource
 	private ConfDataLogMapper confDataLogMapper;
+    @Autowired
+    private ConfDataService confDataService;
 
 	/**
     * 新增
@@ -52,6 +57,17 @@ public class ConfDataLogServiceImpl implements ConfDataLogService {
 	public Response<String> update(ConfDataLog confDataLog) {
 		int ret = confDataLogMapper.update(confDataLog);
 		return ret>0? Response.ofSuccess() : Response.ofFail();
+	}
+
+	@Override
+	public Response<String> rollback(String optUserName, long dataLogId) {
+		ConfDataLog confDataLog = confDataLogMapper.load(dataLogId);
+		if (confDataLog == null) {
+			return Response.ofFail(I18nUtil.getString("system_param_empty"));
+		}
+
+		// do rollback
+		return confDataService.updateDataValue(confDataLog.getDataId(), confDataLog.getValue(), optUserName);
 	}
 
 	/**

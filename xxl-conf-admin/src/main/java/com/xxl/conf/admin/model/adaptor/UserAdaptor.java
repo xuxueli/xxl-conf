@@ -1,6 +1,5 @@
 package com.xxl.conf.admin.model.adaptor;
 
-import com.xxl.conf.admin.model.dto.LoginUserDTO;
 import com.xxl.conf.admin.model.dto.UserDTO;
 import com.xxl.conf.admin.model.entity.User;
 
@@ -41,29 +40,6 @@ public class UserAdaptor {
         xxlUser.setAddTime(user.getAddTime());
         xxlUser.setUpdateTime(user.getUpdateTime());
         return xxlUser;
-    }
-
-    /**
-     * adapt to login user
-     *
-     * @param user
-     * @return
-     */
-    public static LoginUserDTO adapt2LoginUser(User user) {
-        if (user == null) {
-            return null;
-        }
-
-        LoginUserDTO loginUserDTO = new LoginUserDTO();
-        loginUserDTO.setId(user.getId());
-        loginUserDTO.setUsername(user.getUsername());
-        loginUserDTO.setPassword(user.getPassword());
-        loginUserDTO.setToken(user.getToken());
-        loginUserDTO.setRealName(user.getRealName());
-        loginUserDTO.setRole(user.getRole());
-        loginUserDTO.setPermission(user.getAppnames());
-
-        return loginUserDTO;
     }
 
 }
