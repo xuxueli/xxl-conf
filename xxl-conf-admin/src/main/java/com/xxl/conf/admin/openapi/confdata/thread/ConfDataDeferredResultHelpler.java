@@ -1,13 +1,11 @@
 package com.xxl.conf.admin.openapi.confdata.thread;
 
-
-import com.xxl.conf.admin.openapi.common.model.OpenApiResponse;
-import com.xxl.conf.admin.openapi.confdata.model.ConfDataCacheDTO;
-import com.xxl.conf.admin.openapi.confdata.model.QueryConfDataRequest;
-import com.xxl.conf.admin.openapi.confdata.model.QueryConfDataResponse;
 import com.xxl.conf.admin.openapi.registry.thread.MessageHelpler;
+import com.xxl.conf.core.openapi.confdata.model.ConfDataCacheDTO;
+import com.xxl.conf.core.openapi.confdata.model.ConfDataRequest;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.MapTool;
+import com.xxl.tool.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -128,9 +126,6 @@ public class ConfDataDeferredResultHelpler {
 
     /**
      * pushClient
-     *
-     * @param diffConfList
-     * @return
      */
     public void pushClient(List<ConfDataCacheDTO> diffConfList){
         if (CollectionTool.isEmpty(diffConfList)) {
@@ -141,8 +136,7 @@ public class ConfDataDeferredResultHelpler {
         for (ConfDataCacheDTO confDataCacheDTO: diffConfList) {
             // build param
             String envAppnameKey = buildMonitorKey(confDataCacheDTO.getEnv(), confDataCacheDTO.getAppname());
-            OpenApiResponse failResponse = new OpenApiResponse(OpenApiResponse.FAIL_CODE,
-                    "Monitor key update: env="+confDataCacheDTO.getEnv()+", appname="+ confDataCacheDTO.getAppname() +", key="+confDataCacheDTO.getKey());
+            String failMsg = "Monitor key update: env="+confDataCacheDTO.getEnv()+", appname="+ confDataCacheDTO.getAppname() +", key="+confDataCacheDTO.getKey();
 
             // do push
             List<DeferredResult> deferredResultList = registryDeferredResultMap.get(envAppnameKey);
@@ -150,9 +144,9 @@ public class ConfDataDeferredResultHelpler {
                 registryDeferredResultMap.remove(envAppnameKey);   // thread-safe write
                 for (DeferredResult deferredResult: deferredResultList) {
                     try {
-                        deferredResult.setResult(failResponse);
+                        deferredResult.setResult(Response.ofFail(failMsg));
                     } catch (Exception e) {
-                        logger.error(">>>>>>>>>>> xxl-conf, ConfDataDeferredResultHelpler-pushClient error, failResponse:{}", failResponse, e);
+                        logger.error(">>>>>>>>>>> xxl-conf, ConfDataDeferredResultHelpler-pushClient error, failResponse:{}", failMsg, e);
                     }
                 }
             }
@@ -161,18 +155,17 @@ public class ConfDataDeferredResultHelpler {
 
     /**
      * monitor
-     *
-     * @param request
-     * @return
      */
-    public DeferredResult<QueryConfDataResponse> monitor(QueryConfDataRequest request) {
+    public DeferredResult<Response<String>> monitor(ConfDataRequest request) {
 
         // init
-        DeferredResult deferredResult = new DeferredResult(30 * 1000L, new OpenApiResponse(OpenApiResponse.SUCCESS_CODE, "Monitor timeout, no key updated."));
+        DeferredResult<Response<String>> deferredResult = new DeferredResult<>(
+                30 * 1000L,
+                Response.ofSuccess("Monitor timeout, no key updated."));
 
         // valid
         if (request == null || request.getConfKey()==null) {
-            deferredResult.setResult(new OpenApiResponse(OpenApiResponse.FAIL_CODE, "request invalid"));
+            deferredResult.setResult(Response.ofFail("request invalid"));
             return deferredResult;
         }
 

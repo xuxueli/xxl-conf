@@ -1,6 +1,6 @@
 package com.xxl.conf.core;
 
-import com.xxl.conf.core.factory.XxlConfFactory;
+import com.xxl.conf.core.factory.XxlConfBootstrap;
 import com.xxl.conf.core.listener.XxlConfListener;
 
 /**
@@ -21,7 +21,7 @@ public class XxlConfHelper {
 	 * @return
 	 */
 	public static String get(String appname, String key, String defaultVal) {
-		return XxlConfFactory.getInstance().getLocalCacheHelper().get(appname, key, defaultVal);
+		return XxlConfBootstrap.getInstance().getLocalCacheHelper().get(appname, key, defaultVal);
 	}
 
 	/**
@@ -32,7 +32,7 @@ public class XxlConfHelper {
 	 * @return
 	 */
 	public static String get(String key, String defaultVal) {
-		return get(XxlConfFactory.getInstance().getAppname(), key, defaultVal);
+		return get(XxlConfBootstrap.getInstance().getAppname(), key, defaultVal);
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class XxlConfHelper {
 		return Boolean.valueOf(value);
 	}
 	public static boolean getBoolean(String key, Boolean defaultVal) {
-		return getBoolean(XxlConfFactory.getInstance().getAppname(), key, defaultVal);
+		return getBoolean(XxlConfBootstrap.getInstance().getAppname(), key, defaultVal);
 	}
 	public static boolean getBoolean(String key) {
 		return getBoolean(key, null);
@@ -91,7 +91,7 @@ public class XxlConfHelper {
 	 * @return
 	 */
 	public static Integer getInteger(String key, Integer defaultVal) {
-		return getInteger(XxlConfFactory.getInstance().getAppname(), key, defaultVal);
+		return getInteger(XxlConfBootstrap.getInstance().getAppname(), key, defaultVal);
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class XxlConfHelper {
 	 * @return
 	 */
 	public static Short getShort(String key, Short defaultVal) {
-		return getShort(XxlConfFactory.getInstance().getAppname(), key, defaultVal);
+		return getShort(XxlConfBootstrap.getInstance().getAppname(), key, defaultVal);
 	}
 
 	/**
@@ -163,7 +163,7 @@ public class XxlConfHelper {
 	 * @return
 	 */
 	public static Long getLong(String key, Long defaultVal) {
-		return getLong(XxlConfFactory.getInstance().getAppname(), key, defaultVal);
+		return getLong(XxlConfBootstrap.getInstance().getAppname(), key, defaultVal);
 	}
 
 	/**
@@ -199,7 +199,7 @@ public class XxlConfHelper {
 	 * @return
 	 */
 	public static Double getDouble(String key, Double defaultVal) {
-		return getDouble(XxlConfFactory.getInstance().getAppname(), key, defaultVal);
+		return getDouble(XxlConfBootstrap.getInstance().getAppname(), key, defaultVal);
 	}
 
 	/**
@@ -235,7 +235,7 @@ public class XxlConfHelper {
 	 * @return
 	 */
 	public static Float getFloat(String key, Float defaultVal) {
-		return getFloat(XxlConfFactory.getInstance().getAppname(), key, defaultVal);
+		return getFloat(XxlConfBootstrap.getInstance().getAppname(), key, defaultVal);
 	}
 
 	/**
@@ -258,7 +258,7 @@ public class XxlConfHelper {
 	 * @return
 	 */
 	public static boolean addListener(String appname, String key, XxlConfListener xxlConfListener){
-		return XxlConfFactory.getInstance().getListenerRepository().addListener(appname, key, xxlConfListener);
+		return XxlConfBootstrap.getInstance().getListenerRepository().addListener(appname, key, xxlConfListener);
 	}
 
 	/**
@@ -269,7 +269,7 @@ public class XxlConfHelper {
 	 * @return
 	 */
 	public static boolean addListener(String key, XxlConfListener xxlConfListener){
-		return addListener(XxlConfFactory.getInstance().getAppname(), key, xxlConfListener);
+		return addListener(XxlConfBootstrap.getInstance().getAppname(), key, xxlConfListener);
 	}
 
 }

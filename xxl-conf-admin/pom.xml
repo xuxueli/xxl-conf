@@ -67,6 +67,13 @@
 			<version>${mysql-connector-j.version}</version>
 		</dependency>
 
+		<!-- xxl-conf -->
+		<dependency>
+			<groupId>com.xuxueli</groupId>
+			<artifactId>xxl-conf-core</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
 		<!-- xxl-sso -->
 		<dependency>
 			<groupId>com.xuxueli</groupId>

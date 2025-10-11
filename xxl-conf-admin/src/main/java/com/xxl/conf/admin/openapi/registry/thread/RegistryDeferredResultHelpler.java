@@ -1,10 +1,10 @@
 package com.xxl.conf.admin.openapi.registry.thread;
 
 
-import com.xxl.conf.admin.openapi.registry.model.DiscoveryRequest;
-import com.xxl.conf.admin.openapi.common.model.OpenApiResponse;
+import com.xxl.conf.core.openapi.registry.model.DiscoveryRequest;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.MapTool;
+import com.xxl.tool.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -134,7 +134,7 @@ public class RegistryDeferredResultHelpler {
             if (CollectionTool.isNotEmpty(deferredResultList)) {
                 registryDeferredResultMap.remove(envAppname);   // thread-safe write
                 for (DeferredResult deferredResult: deferredResultList) {
-                    deferredResult.setResult(new OpenApiResponse(OpenApiResponse.SUCCESS_CODE, "Monitor key("+ envAppname +") update."));
+                    deferredResult.setResult(Response.ofSuccess("Monitor key("+ envAppname +") update."));
                 }
             }
         }
@@ -146,14 +146,14 @@ public class RegistryDeferredResultHelpler {
      * @param request
      * @return
      */
-    public DeferredResult<OpenApiResponse> monitor(DiscoveryRequest request) {
+    public DeferredResult<Response<String>> monitor(DiscoveryRequest request) {
 
         // init
-        DeferredResult deferredResult = new DeferredResult(30 * 1000L, new OpenApiResponse(OpenApiResponse.SUCCESS_CODE, "Monitor timeout, no key updated."));
+        DeferredResult deferredResult = new DeferredResult(30 * 1000L, Response.ofSuccess("Monitor timeout, no key updated."));
 
         // valid
         if (request == null) {
-            deferredResult.setResult(new OpenApiResponse(OpenApiResponse.FAIL_CODE, "request invalid"));
+            deferredResult.setResult(Response.ofFail("request invalid"));
             return deferredResult;
         }
 

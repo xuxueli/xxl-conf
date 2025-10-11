@@ -256,15 +256,15 @@ xxl.conf.admin.accesstoken=defaultaccesstoken
 配置项说明
 ```
 @Bean
-public SpringXxlConfFactory xxlConfFactory() {
+public SpringXxlConfBootstrap xxlConfBootstrap() {
 
-    SpringXxlConfFactory xxlConfFactory = new SpringXxlConfFactory();
-    xxlConfFactory.setAppname(appname);
-    xxlConfFactory.setEnv(env);
-    xxlConfFactory.setAddress(address);
-    xxlConfFactory.setAccesstoken(accesstoken);
+    SpringXxlConfBootstrap xxlConfBootstrap = new SpringXxlConfBootstrap();
+    xxlConfBootstrap.setAppname(appname);
+    xxlConfBootstrap.setEnv(env);
+    xxlConfBootstrap.setAddress(address);
+    xxlConfBootstrap.setAccesstoken(accesstoken);
 
-    return xxlConfFactory;
+    return xxlConfBootstrap;
 }
 ```
 
@@ -501,15 +501,16 @@ Java语言服务可以通过“xxl-conf-core”方便快速的接入使用；可
 ------
 地址格式：{XXL-CONF服务端地址}/openapi/confdata/query
 
+Header：
+    XXL_CONF_ACCESS_TOKEN : {通讯鉴权AccessToken}
+
 请求参数说明：
- 1、accessToken：请求令牌；
- 2、env：环境标识
- 3、confKey：配置查询 appname 和 key 列表
+ 1、env：环境标识
+ 2、confKey：配置查询 appname 和 key 列表
  
 请求数据格式如下，放置在 RequestBody 中，JSON格式：
 
     {
-        "accessToken" : "xx",
         "env" : "xx",
         "confKey":{
             "appname01": ["key01", "key02"],
@@ -546,15 +547,16 @@ Java语言服务可以通过“xxl-conf-core”方便快速的接入使用；可
 
 地址格式：{XXL-CONF服务端地址}/openapi/confdata/monitor
 
+Header：
+    XXL_CONF_ACCESS_TOKEN : {通讯鉴权AccessToken}
+
 请求参数说明：
- 1、accessToken：请求令牌；
- 2、env：环境标识
- 3、keys：配置Key列表
+ 1、env：环境标识
+ 2、confKey：配置查询 appname 和 key 列表
  
 请求数据格式如下，放置在 RequestBody 中，JSON格式：
 
     {
-        "accessToken" : "xx",
         "env" : "xx",
         "confKey":{
             "appname01": ["key01", "key02"],
@@ -653,15 +655,16 @@ Java服务可参考XXL-RPC实现方案，XXL-RPC原生基于XXL-CONF的 Restful 
 ```
 地址格式：{服务注册中心跟地址}/openapi/registry/register
 
+Header：
+    XXL_CONF_ACCESS_TOKEN : {通讯鉴权AccessToken}
+
 请求参数说明：
- 1、accessToken：请求令牌；
- 2、env：环境标识
- 3、instance：服务注册信息
+ 1、env：环境标识
+ 2、instance：服务注册信息
 
 请求数据格式如下，放置在 RequestBody 中，JSON格式：
  
     {
-        "accessToken" : "xxxxxx",
         "env" : "test",
         "instance" : {
             "appname" : "app01",
@@ -686,15 +689,16 @@ Java服务可参考XXL-RPC实现方案，XXL-RPC原生基于XXL-CONF的 Restful 
 ```
 地址格式：{服务注册中心跟地址}/openapi/registry/unregister
 
+Header：
+    XXL_CONF_ACCESS_TOKEN : {通讯鉴权AccessToken}
+
 请求参数说明：
- 1、accessToken：请求令牌；
- 2、env：环境标识
- 3、registryDataList：服务注册信息
+ 1、env：环境标识
+ 2、instance：服务注册信息
 
 请求数据格式如下，放置在 RequestBody 中，JSON格式：
  
     {
-        "accessToken" : "xxxxxx",
         "env" : "test",
         "instance" : {
             "appname" : "app01",
@@ -719,16 +723,17 @@ Java服务可参考XXL-RPC实现方案，XXL-RPC原生基于XXL-CONF的 Restful 
 ```
 地址格式：{服务注册中心跟地址}/openapi/registry/discovery
 
+Header：
+    XXL_CONF_ACCESS_TOKEN : {通讯鉴权AccessToken}
+
 请求参数说明：
- 1、accessToken：请求令牌；
- 2、env：环境标识
- 3、appnameList：服务发现的 appname 列表
- 4、simpleQuery：是否简单查询；true，仅查询注册信息Md5值，用于检测是否变化；false，查询注册信息详情。
+ 1、env：环境标识
+ 2、appnameList：服务发现的 appname 列表
+ 3、simpleQuery：是否简单查询；true，仅查询注册信息Md5值，用于检测是否变化；false，查询注册信息详情。
  
 请求数据格式如下，放置在 RequestBody 中，JSON格式：
  
     {
-        "accessToken" : "xxxxxx",
         "env" : "test",
         "appnameList" : [
             "appname01",
@@ -761,15 +766,16 @@ Java服务可参考XXL-RPC实现方案，XXL-RPC原生基于XXL-CONF的 Restful 
 ```
 地址格式：{服务注册中心跟地址}/openapi/registry/monitor
 
+Header：
+    XXL_CONF_ACCESS_TOKEN : {通讯鉴权AccessToken}
+
 请求参数说明：
- 1、accessToken：请求令牌；
- 2、env：环境标识
- 3、keys：服务注册Key列表
+ 1、env：环境标识
+ 2、keys：服务注册Key列表
  
 请求数据格式如下，放置在 RequestBody 中，JSON格式：
  
     {
-        "accessToken" : "xxxxxx",
         "env" : "test",
         "appnameList" : [
             "app01",
@@ -945,7 +951,14 @@ Java服务可参考XXL-RPC实现方案，XXL-RPC原生基于XXL-CONF的 Restful 
 - 5、【修复】服务管理接口优化，解决搜索参数不生效问题；
 - 6、【升级】升级多项依赖至较新版本；
 
-### v2.1.0 Release Notes[ING]
+### v2.1.0 Release Notes[2025-10-08]
+- 1、【优化】数据表格组件分页字段规范，统一前后端交互字段；
+- 2、【优化】TAB组件逻辑优化，避免小概率情况下首页加载失败问题；
+- 3、【优化】通讯组件升级，优化简化通讯交互实现；
+- 4、【优化】RESTful通讯格式标准化，鉴权token调整至header；
+- 5、【升级】升级多项依赖至较新版本；
+
+### v2.2.0 Release Notes[ING]
 - 1、【ING】XXL-CONF 配置历史Diff及一键回滚能力完善；
 - 2、【ING】配置onChange调整为异步线程处理，避免耗时监听逻辑影响性能；
 - 3、【ING】启动预热优化，加载当前AppName下全量配置预热；

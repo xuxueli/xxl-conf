@@ -1,18 +1,18 @@
 package com.xxl.conf.admin.openapi.registry.thread;
 
 import com.xxl.conf.admin.constant.enums.InstanceRegisterModelEnum;
-import com.xxl.conf.admin.openapi.registry.model.InstanceCacheDTO;
 import com.xxl.conf.admin.model.dto.MessageForRegistryDTO;
 import com.xxl.conf.admin.model.entity.Instance;
-import com.xxl.conf.admin.openapi.registry.config.RegistryFactory;
-import com.xxl.conf.admin.openapi.registry.model.DiscoveryRequest;
-import com.xxl.conf.admin.openapi.registry.model.DiscoveryResponse;
-import com.xxl.conf.admin.openapi.common.model.OpenApiResponse;
+import com.xxl.conf.admin.openapi.registry.config.RegistryBootstrap;
+import com.xxl.conf.core.openapi.registry.model.DiscoveryRequest;
+import com.xxl.conf.core.openapi.registry.model.DiscoveryData;
+import com.xxl.conf.core.openapi.registry.model.InstanceCacheDTO;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.DateTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.encrypt.Md5Tool;
 import com.xxl.tool.gson.GsonTool;
+import com.xxl.tool.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,8 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import static com.xxl.conf.admin.openapi.common.model.OpenApiResponse.SUCCESS_CODE;
 
 /**
  * registry cache helper
@@ -129,7 +127,7 @@ public class RegistryCacheHelpler {
                         ConcurrentMap<String, String> registryCacheMd5StoreNew = new ConcurrentHashMap<>();
 
                         // b、load all env-appname
-                        List<Instance> envAndAppNameList = RegistryFactory.getInstance().getInstanceMapper().queryEnvAndAppName();
+                        List<Instance> envAndAppNameList = RegistryBootstrap.getInstance().getInstanceMapper().queryEnvAndAppName();
 
                         // c、process each env-appname
                         if (CollectionTool.isNotEmpty(envAndAppNameList)) {
@@ -244,7 +242,7 @@ public class RegistryCacheHelpler {
             return;
         }
         // do push
-        RegistryFactory.getInstance().getRegistryDeferredResultHelpler().pushClient(envAppnameDiffList);
+        RegistryBootstrap.getInstance().getRegistryDeferredResultHelpler().pushClient(envAppnameDiffList);
     }
 
     /**
@@ -289,7 +287,7 @@ public class RegistryCacheHelpler {
 
         // query valid instance
         Date registerHeartbeatValid = DateTool.addSeconds(new Date(), -1 * REGISTRY_BEAT_TIME * 3);
-        List<Instance> instanceCacheDTOList = RegistryFactory.getInstance().getInstanceMapper().queryByEnvAndAppNameValid(
+        List<Instance> instanceCacheDTOList = RegistryBootstrap.getInstance().getInstanceMapper().queryByEnvAndAppNameValid(
                 env,
                 appname,
                 InstanceRegisterModelEnum.AUTO.getValue(),
@@ -301,7 +299,14 @@ public class RegistryCacheHelpler {
             // convert to cache-dto, and sort by "ip:port"
             cacheValue = instanceCacheDTOList
                     .stream()
-                    .map(InstanceCacheDTO::new)
+                    .map(instance ->
+                            new InstanceCacheDTO(
+                                    instance.getEnv(),
+                                    instance.getAppname(),
+                                    instance.getIp(),
+                                    instance.getPort(),
+                                    instance.getExtendInfo())
+                    )
                     .sorted(Comparator.comparing(InstanceCacheDTO::getSortKey))     // sort， for md5 match
                     .collect(Collectors.toList());
         }
@@ -364,14 +369,14 @@ public class RegistryCacheHelpler {
      * @param request
      * @return
      */
-    public DiscoveryResponse discoveryOnLineInstance(DiscoveryRequest request) {
+    public Response<DiscoveryData> discoveryOnLineInstance(DiscoveryRequest request) {
         // valid
         if (request == null || CollectionTool.isEmpty(request.getAppnameList())) {
-            return new DiscoveryResponse(OpenApiResponse.FAIL_CODE, "param Invalid.");
+            return Response.ofFail("param Invalid.");
         }
 
         // query data
-        Map<String, List<InstanceCacheDTO>> discoveryData = new HashMap<>();
+        Map<String, List<InstanceCacheDTO>> discoveryDataMap = new HashMap<>();
         Map<String, String> discoveryDataMd5 = new HashMap<>();
         for (String appname : request.getAppnameList()) {
             String onLineInstanceMd5 = findOnLineInstanceMd5(request.getEnv(), appname);
@@ -380,16 +385,16 @@ public class RegistryCacheHelpler {
                 discoveryDataMd5.put(appname, onLineInstanceMd5);
                 // set detail
                 if (!request.isSimpleQuery()) {
-                    discoveryData.put(appname, findOnLineInstance(request.getEnv(), appname));
+                    discoveryDataMap.put(appname, findOnLineInstance(request.getEnv(), appname));
                 }
             }
         }
 
-        // build response
-        DiscoveryResponse response = new DiscoveryResponse(SUCCESS_CODE, null);
-        response.setDiscoveryData(discoveryData);
-        response.setDiscoveryDataMd5(discoveryDataMd5);
-        return response;
+        // response
+        DiscoveryData discoveryData = new DiscoveryData();
+        discoveryData.setDiscoveryData(discoveryDataMap);
+        discoveryData.setDiscoveryDataMd5(discoveryDataMd5);
+        return Response.ofSuccess(discoveryData);
     }
 
 }

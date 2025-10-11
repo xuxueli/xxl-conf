@@ -4,8 +4,8 @@ import com.xxl.conf.admin.constant.enums.MessageTypeEnum;
 import com.xxl.conf.admin.model.dto.MessageForConfDataDTO;
 import com.xxl.conf.admin.model.dto.MessageForRegistryDTO;
 import com.xxl.conf.admin.model.entity.Message;
-import com.xxl.conf.admin.openapi.confdata.config.ConfDataFactory;
-import com.xxl.conf.admin.openapi.registry.config.RegistryFactory;
+import com.xxl.conf.admin.openapi.confdata.config.ConfDataBootstrap;
+import com.xxl.conf.admin.openapi.registry.config.RegistryBootstrap;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.DateTool;
 import com.xxl.tool.gson.GsonTool;
@@ -65,7 +65,7 @@ public class MessageHelpler {
                         Date msgTimeValidEnd = DateTool.addMinutes(msgTimeValidStart, 5);
                         List<Long> excludeMsgIds = readedMessageIds.size()>50?readedMessageIds.subList(0, 50):readedMessageIds;
 
-                        List<Message> messageList = RegistryFactory.getInstance().getMessageMapper().queryValidMessage(msgTimeValidStart, msgTimeValidEnd, excludeMsgIds);
+                        List<Message> messageList = RegistryBootstrap.getInstance().getMessageMapper().queryValidMessage(msgTimeValidStart, msgTimeValidEnd, excludeMsgIds);
 
                         // b、dispatch message
                         if (CollectionTool.isNotEmpty(messageList)) {
@@ -81,10 +81,10 @@ public class MessageHelpler {
                                     .collect(Collectors.toList());
 
                             // 2、process registry message
-                            RegistryFactory.getInstance().getRegistryCacheHelpler().checkUpdateAndPush(messageForRegistryDTOList);
+                            RegistryBootstrap.getInstance().getRegistryCacheHelpler().checkUpdateAndPush(messageForRegistryDTOList);
 
                             // 3、process confdata message
-                            ConfDataFactory.getInstance().getConfDataCacheHelpler().checkUpdateAndPush(messageForConfDataDTOList);
+                            ConfDataBootstrap.getInstance().getConfDataCacheHelpler().checkUpdateAndPush(messageForConfDataDTOList);
                         }
 
                         // c、store msgId, avoid repeat message
@@ -92,7 +92,7 @@ public class MessageHelpler {
 
                         // d、clean old message， Avoid too often clean
                         if ( (System.currentTimeMillis()/1000) % CLEAN_INTERVAL_TIME ==0) {
-                            RegistryFactory.getInstance().getMessageMapper().cleanMessageInValid(msgTimeValidStart, msgTimeValidEnd);
+                            RegistryBootstrap.getInstance().getMessageMapper().cleanMessageInValid(msgTimeValidStart, msgTimeValidEnd);
                             readedMessageIds.clear();
                         }
 
@@ -180,7 +180,7 @@ public class MessageHelpler {
         message.setData(data);      // convert
         message.setAddTime(new Date());
         message.setUpdateTime(new Date());
-        RegistryFactory.getInstance().getMessageMapper().insert(message);
+        RegistryBootstrap.getInstance().getMessageMapper().insert(message);
     }
 
 }

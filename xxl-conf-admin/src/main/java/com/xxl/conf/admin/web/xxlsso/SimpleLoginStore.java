@@ -69,7 +69,7 @@ public class SimpleLoginStore implements LoginStore {
                 :null;
 
         // fill extraInfo (appname list)
-        Map<String, String> extraInfo = MapTool.newHashMap("appnameList", userResponse.getData().getAppnames());
+        Map<String, String> extraInfo = MapTool.newMap("appnameList", userResponse.getData().getAppnames());
 
         // build LoginInfo
         LoginInfo loginInfo = new LoginInfo(userId, userResponse.getData().getToken());

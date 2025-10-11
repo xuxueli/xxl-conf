@@ -49,8 +49,8 @@ public class AccessTokenController {
     @ResponseBody
     @XxlSso(role = Consts.ADMIN_ROLE)
     public Response<PageModel<AccessTokenDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
-                                                     @RequestParam(required = false, defaultValue = "10") int pagesize,
-                                                     @RequestParam(required = false) String accessToken) {
+                                                        @RequestParam(required = false, defaultValue = "10") int pagesize,
+                                                        @RequestParam(required = false) String accessToken) {
         PageModel<AccessTokenDTO> pageModel = accessTokenService.pageList(offset, pagesize, accessToken);
         return Response.ofSuccess(pageModel);
     }

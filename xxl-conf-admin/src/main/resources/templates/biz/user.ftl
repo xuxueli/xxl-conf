@@ -254,8 +254,8 @@
 				var obj = {};
 				obj.username = $('#data_filter .username').val();
 				obj.status = $('#data_filter .status').val();
-				obj.start = params.offset;
-				obj.length = params.limit;
+				obj.offset = params.offset;
+				obj.pagesize = params.limit;
 				return obj;
 			},
 			columns:[

@@ -4,7 +4,7 @@ import com.xxl.conf.admin.constant.enums.RoleEnum;
 import com.xxl.conf.admin.model.entity.Application;
 import com.xxl.conf.admin.model.entity.ConfData;
 import com.xxl.conf.admin.service.ApplicationService;
-import com.xxl.conf.admin.service.ConfDataService;
+import com.xxl.conf.admin.service.ConfDataBizService;
 import com.xxl.conf.admin.util.I18nUtil;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
@@ -36,7 +36,7 @@ import com.xxl.tool.response.PageModel;
 public class ConfDataController {
 
     @Resource
-    private ConfDataService confDataService;
+    private ConfDataBizService confDataService;
     @Resource
     private ApplicationService applicationService;
 

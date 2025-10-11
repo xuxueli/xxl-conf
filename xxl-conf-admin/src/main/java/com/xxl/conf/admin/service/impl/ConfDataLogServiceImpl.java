@@ -5,7 +5,7 @@ import com.xxl.conf.admin.model.adaptor.ConfDataLogAdaptor;
 import com.xxl.conf.admin.model.dto.ConfDataLogDTO;
 import com.xxl.conf.admin.model.entity.ConfDataLog;
 import com.xxl.conf.admin.service.ConfDataLogService;
-import com.xxl.conf.admin.service.ConfDataService;
+import com.xxl.conf.admin.service.ConfDataBizService;
 import com.xxl.conf.admin.util.I18nUtil;
 import com.xxl.tool.core.CollectionTool;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class ConfDataLogServiceImpl implements ConfDataLogService {
 	@Resource
 	private ConfDataLogMapper confDataLogMapper;
     @Autowired
-    private ConfDataService confDataService;
+    private ConfDataBizService confDataService;
 
 	/**
     * 新增

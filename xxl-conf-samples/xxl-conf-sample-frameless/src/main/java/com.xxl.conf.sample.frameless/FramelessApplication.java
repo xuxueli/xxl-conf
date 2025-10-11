@@ -1,7 +1,7 @@
 package com.xxl.conf.sample.frameless;
 
 import com.xxl.conf.core.XxlConfHelper;
-import com.xxl.conf.core.factory.XxlConfFactory;
+import com.xxl.conf.core.factory.XxlConfBootstrap;
 import com.xxl.conf.core.listener.XxlConfListener;
 import com.xxl.conf.core.util.PropUtil;
 import org.slf4j.Logger;
@@ -70,27 +70,27 @@ public class FramelessApplication {
 
     // ---------------------- xxl-conf config ----------------------
 
-    private static XxlConfFactory xxlConfFactory;
+    private static XxlConfBootstrap xxlConfBootstrap;
     /**
      * start
      */
     public static void start() {
         Properties prop = PropUtil.loadProp("xxl-conf.properties");
 
-        xxlConfFactory = new XxlConfFactory(
+        xxlConfBootstrap = new XxlConfBootstrap(
                 prop.getProperty("xxl.conf.client.appname"),
                 prop.getProperty("xxl.conf.client.env"),
                 prop.getProperty("xxl.conf.admin.address"),
                 prop.getProperty("xxl.conf.admin.accesstoken")
         );
-        xxlConfFactory.start();
+        xxlConfBootstrap.start();
     }
 
     /**
      * stop
      */
     public static void stop() {
-        xxlConfFactory.stop();
+        xxlConfBootstrap.stop();
     }
 
 }

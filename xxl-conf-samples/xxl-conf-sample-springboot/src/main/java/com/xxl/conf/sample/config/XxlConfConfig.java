@@ -1,6 +1,6 @@
 package com.xxl.conf.sample.config;
 
-import com.xxl.conf.core.factory.support.SpringXxlConfFactory;
+import com.xxl.conf.core.factory.support.SpringXxlConfBootstrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,15 +30,15 @@ public class XxlConfConfig {
     private String accesstoken;
 
     @Bean
-    public SpringXxlConfFactory xxlConfFactory() {
+    public SpringXxlConfBootstrap xxlConfBootstrap() {
 
-        SpringXxlConfFactory xxlConfFactory = new SpringXxlConfFactory();
-        xxlConfFactory.setAppname(appname);
-        xxlConfFactory.setEnv(env);
-        xxlConfFactory.setAddress(address);
-        xxlConfFactory.setAccesstoken(accesstoken);
+        SpringXxlConfBootstrap xxlConfBootstrap = new SpringXxlConfBootstrap();
+        xxlConfBootstrap.setAppname(appname);
+        xxlConfBootstrap.setEnv(env);
+        xxlConfBootstrap.setAddress(address);
+        xxlConfBootstrap.setAccesstoken(accesstoken);
 
-        return xxlConfFactory;
+        return xxlConfBootstrap;
     }
 
 }

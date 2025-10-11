@@ -2,14 +2,13 @@ package com.xxl.conf.admin.openapi.confdata.thread;
 
 import com.xxl.conf.admin.model.dto.MessageForConfDataDTO;
 import com.xxl.conf.admin.model.entity.ConfData;
-import com.xxl.conf.admin.openapi.confdata.config.ConfDataFactory;
-import com.xxl.conf.admin.openapi.confdata.model.ConfDataCacheDTO;
-import com.xxl.conf.admin.openapi.common.model.OpenApiResponse;
-import com.xxl.conf.admin.openapi.confdata.model.QueryConfDataRequest;
-import com.xxl.conf.admin.openapi.confdata.model.QueryConfDataResponse;
+import com.xxl.conf.admin.openapi.confdata.config.ConfDataBootstrap;
 import com.xxl.conf.admin.openapi.registry.thread.MessageHelpler;
-import com.xxl.conf.admin.openapi.registry.thread.RegistryCacheHelpler;
+import com.xxl.conf.core.openapi.confdata.model.ConfDataCacheDTO;
+import com.xxl.conf.core.openapi.confdata.model.ConfDataRequest;
+import com.xxl.conf.core.openapi.confdata.model.ConfDataInfo;
 import com.xxl.tool.core.CollectionTool;
+import com.xxl.tool.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,20 +96,20 @@ public class ConfDataCacheHelpler {
                         ConcurrentMap<String, ConfDataCacheDTO> confDataCacheStoreNew = new ConcurrentHashMap<>();
 
                         // b、load all env-appname
-                        List<ConfData> envAndAppNameList = ConfDataFactory.getInstance().getConfDataMapper().queryEnvAndAppName();
+                        List<ConfData> envAndAppNameList = ConfDataBootstrap.getInstance().getConfDataMapper().queryEnvAndAppName();
 
                         // c、process each env-appname
                         if (CollectionTool.isNotEmpty(envAndAppNameList)) {
                             for (ConfData envAndAppNameData : envAndAppNameList) {
                                 // query data by env-appname
-                                List<ConfData> confDataList = ConfDataFactory.getInstance().getConfDataMapper().queryByEnvAndAppName(envAndAppNameData.getEnv(), envAndAppNameData.getAppname());
+                                List<ConfData> confDataList = ConfDataBootstrap.getInstance().getConfDataMapper().queryByEnvAndAppName(envAndAppNameData.getEnv(), envAndAppNameData.getAppname());
 
                                 // process each key of "env-appname
                                 if (CollectionTool.isNotEmpty(confDataList)) {
                                     for (ConfData confData : confDataList) {
                                         // fill key cache
                                         String cacheKey = buildCacheKey(confData.getEnv(), confData.getAppname(), confData.getKey());
-                                        ConfDataCacheDTO  cacheValue = new ConfDataCacheDTO(confData);
+                                        ConfDataCacheDTO  cacheValue = new ConfDataCacheDTO(confData.getEnv(), confData.getAppname(), confData.getKey(), confData.getValue());
 
                                         confDataCacheStoreNew.put(cacheKey, cacheValue);
                                     }
@@ -175,7 +174,7 @@ public class ConfDataCacheHelpler {
             return;
         }
         // do push
-        ConfDataFactory.getInstance().getConfDataDeferredResultHelpler().pushClient(diffConfList);
+        ConfDataBootstrap.getInstance().getConfDataDeferredResultHelpler().pushClient(diffConfList);
     }
 
     /**
@@ -227,10 +226,10 @@ public class ConfDataCacheHelpler {
             }
 
             // newData
-            ConfData confData = ConfDataFactory.getInstance().getConfDataMapper()
+            ConfData confData = ConfDataBootstrap.getInstance().getConfDataMapper()
                     .queryByEnvAndAppNameAndKey(messageForConfDataDTO.getEnv(), messageForConfDataDTO.getAppname(), messageForConfDataDTO.getKey());
             ConfDataCacheDTO  confDataNew = confData!=null?
-                    new ConfDataCacheDTO(confData):
+                    new ConfDataCacheDTO(confData.getEnv(), confData.getAppname(), confData.getKey(), confData.getValue()):
                     new ConfDataCacheDTO(messageForConfDataDTO.getEnv(), messageForConfDataDTO.getAppname(), messageForConfDataDTO.getKey(), "");
 
             // cacheData
@@ -257,13 +256,13 @@ public class ConfDataCacheHelpler {
      * @param request
      * @return
      */
-    public QueryConfDataResponse queryConfData(QueryConfDataRequest request){
+    public Response<ConfDataInfo> queryConfData(ConfDataRequest request){
         // valid
         if (!warmUp) {
-            return new QueryConfDataResponse(OpenApiResponse.FAIL_CODE, "query fail, openapi not warmUp");
+            return Response.ofFail("query fail, openapi not warmUp");
         }
         if (request==null || request.getConfKey()==null || request.getConfKey().isEmpty()) {
-            return new QueryConfDataResponse(OpenApiResponse.FAIL_CODE, "query fail, invalid request");
+            return Response.ofFail("query fail, invalid request");
         }
 
         // result data
@@ -298,11 +297,11 @@ public class ConfDataCacheHelpler {
             }
         }
 
-        // get Instance
-        QueryConfDataResponse response = new QueryConfDataResponse(OpenApiResponse.SUCCESS_CODE, "");
-        response.setConfData(confDataResult);
-        response.setConfDataMd5(confDataResultMd5);
-        return response;
+        // result
+        ConfDataInfo confDataInfo = new ConfDataInfo();
+        confDataInfo.setConfData(confDataResult);
+        confDataInfo.setConfDataMd5(confDataResultMd5);
+        return Response.ofSuccess(confDataInfo);
     }
 
 }

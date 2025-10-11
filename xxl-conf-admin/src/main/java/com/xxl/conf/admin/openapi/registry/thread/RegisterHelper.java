@@ -4,11 +4,11 @@ import com.xxl.conf.admin.constant.enums.InstanceRegisterModelEnum;
 import com.xxl.conf.admin.constant.enums.MessageTypeEnum;
 import com.xxl.conf.admin.model.dto.MessageForRegistryDTO;
 import com.xxl.conf.admin.model.entity.Instance;
-import com.xxl.conf.admin.openapi.registry.config.RegistryFactory;
-import com.xxl.conf.admin.openapi.common.model.OpenApiResponse;
-import com.xxl.conf.admin.openapi.registry.model.RegisterRequest;
+import com.xxl.conf.admin.openapi.registry.config.RegistryBootstrap;
+import com.xxl.conf.core.openapi.registry.model.RegisterRequest;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.gson.GsonTool;
+import com.xxl.tool.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,20 +138,20 @@ public class RegisterHelper {
      * @param request
      * @return
      */
-    public OpenApiResponse registry(RegisterRequest request) {
+    public Response<String> registry(RegisterRequest request) {
         // valid
         if (request == null) {
-            return new OpenApiResponse(OpenApiResponse.FAIL_CODE, "RegisterRequest is null.");
+            return Response.ofFail("RegisterRequest is null.");
         }
         if (StringTool.isBlank(request.getEnv())
                 || request.getInstance() == null
                 || StringTool.isBlank(request.getInstance().getAppname())
                 || StringTool.isBlank(request.getInstance().getIp())
                 || request.getInstance().getPort()<1){
-            return new OpenApiResponse(OpenApiResponse.FAIL_CODE, "RegisterRequest param invalid.");
+            return Response.ofFail("RegisterRequest param invalid.");
         }
         if (request.getInstance().getAppname().length() > 50) {
-            return new OpenApiResponse(OpenApiResponse.FAIL_CODE, "RegisterRequest param invalid, appname too long (less than 50).");
+            return Response.ofFail("RegisterRequest param invalid, appname too long (less than 50).");
         }
 
         // async execute
@@ -168,7 +168,7 @@ public class RegisterHelper {
                 instance.setRegisterModel(InstanceRegisterModelEnum.AUTO.getValue());
                 instance.setRegisterHeartbeat(new Date());
 
-                int ret = RegistryFactory.getInstance().getInstanceMapper().addAutoInstance(instance);
+                int ret = RegistryBootstrap.getInstance().getInstanceMapper().addAutoInstance(instance);
                 if (ret > 0) {
                     // broadcast message
                     MessageHelpler.broadcastMessage(MessageTypeEnum.REGISTRY, GsonTool.toJson(new MessageForRegistryDTO(instance)));
@@ -176,7 +176,7 @@ public class RegisterHelper {
             }
         });
 
-        return new OpenApiResponse(OpenApiResponse.SUCCESS_CODE, null);
+        return Response.ofSuccess();
     }
 
     /**
@@ -185,20 +185,20 @@ public class RegisterHelper {
      * @param request
      * @return
      */
-    public OpenApiResponse unregister(RegisterRequest request) {
+    public Response<String> unregister(RegisterRequest request) {
         // valid
         if (request == null) {
-            return new OpenApiResponse(OpenApiResponse.FAIL_CODE, "RegisterRequest is null.");
+            return Response.ofFail("RegisterRequest is null.");
         }
         if (StringTool.isBlank(request.getEnv())
                 || request.getInstance() == null
                 || StringTool.isBlank(request.getInstance().getAppname())
                 || StringTool.isBlank(request.getInstance().getIp())
                 || request.getInstance().getPort()<1){
-            return new OpenApiResponse(OpenApiResponse.FAIL_CODE, "RegisterRequest param invalid.");
+            return Response.ofFail("RegisterRequest param invalid.");
         }
         if (request.getInstance().getAppname().length() > 50) {
-            return new OpenApiResponse(OpenApiResponse.FAIL_CODE, "RegisterRequest param invalid, appname too long (less than 50).");
+            return Response.ofFail("RegisterRequest param invalid, appname too long (less than 50).");
         }
 
         // async execute
@@ -213,7 +213,7 @@ public class RegisterHelper {
                 instance.setPort(request.getInstance().getPort());
                 instance.setRegisterModel(InstanceRegisterModelEnum.AUTO.getValue());
 
-                int ret = RegistryFactory.getInstance().getInstanceMapper().deleteAutoInstance(instance);
+                int ret = RegistryBootstrap.getInstance().getInstanceMapper().deleteAutoInstance(instance);
                 if (ret > 0) {
                     // broadcast message
                     MessageHelpler.broadcastMessage(MessageTypeEnum.REGISTRY, GsonTool.toJson(new MessageForRegistryDTO(instance)));
@@ -221,7 +221,7 @@ public class RegisterHelper {
             }
         });
 
-        return new OpenApiResponse(OpenApiResponse.SUCCESS_CODE, null);
+        return Response.ofSuccess();
     }
 
 }

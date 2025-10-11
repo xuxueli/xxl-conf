@@ -4,7 +4,7 @@ import com.xxl.conf.admin.model.dto.ConfDataLogDTO;
 import com.xxl.conf.admin.model.entity.ConfData;
 import com.xxl.conf.admin.service.ApplicationService;
 import com.xxl.conf.admin.service.ConfDataLogService;
-import com.xxl.conf.admin.service.ConfDataService;
+import com.xxl.conf.admin.service.ConfDataBizService;
 import com.xxl.conf.admin.util.I18nUtil;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
@@ -19,10 +19,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.xxl.conf.admin.controller.biz.ConfDataController.hasPermissionApplication;
 
@@ -36,7 +34,7 @@ import static com.xxl.conf.admin.controller.biz.ConfDataController.hasPermission
 public class ConfDataLogController {
 
     @Resource
-    private ConfDataService confDataService;
+    private ConfDataBizService confDataService;
     @Resource
     private ConfDataLogService confDataLogService;
     @Resource

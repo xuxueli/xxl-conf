@@ -236,8 +236,8 @@
 				obj.env = $('#data_filter .env').val();
 				obj.appname = $("#data_filter select[name='appname']").val();
 				obj.key = $('#data_filter .key').val();
-				obj.start = params.offset;
-				obj.length = params.limit;
+				obj.offset = params.offset;
+				obj.pagesize = params.limit;
 				return obj;
 			},
 			resetHandler: function(data){

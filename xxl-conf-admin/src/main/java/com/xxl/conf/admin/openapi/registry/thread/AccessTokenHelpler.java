@@ -3,8 +3,7 @@ package com.xxl.conf.admin.openapi.registry.thread;
 
 import com.xxl.conf.admin.constant.enums.AccessTokenStatuEnum;
 import com.xxl.conf.admin.model.entity.AccessToken;
-import com.xxl.conf.admin.openapi.registry.config.RegistryFactory;
-import com.xxl.conf.admin.openapi.common.model.OpenApiRequest;
+import com.xxl.conf.admin.openapi.registry.config.RegistryBootstrap;
 import com.xxl.tool.core.CollectionTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +58,7 @@ public class AccessTokenHelpler {
                         ConcurrentSkipListSet<String> accessTokenStoreNew = new ConcurrentSkipListSet<>();
 
                         // query valid accesstoken data
-                        List<AccessToken> accessTokenList = RegistryFactory.getInstance().getAccessTokenMapper().queryValidityAccessToken(AccessTokenStatuEnum.NORMAL.getValue());
+                        List<AccessToken> accessTokenList = RegistryBootstrap.getInstance().getAccessTokenMapper().queryValidityAccessToken(AccessTokenStatuEnum.NORMAL.getValue());
                         if (CollectionTool.isNotEmpty(accessTokenList)) {
                             accessTokenStoreNew.addAll(accessTokenList.stream()
                                     .map(AccessToken::getAccessToken)
@@ -106,13 +105,12 @@ public class AccessTokenHelpler {
     /**
      * valid Request Token
      *
-     * @param request
+     * @param accessToken
      * @return
      */
-    public boolean validRequestToken(OpenApiRequest request) {
-        return request!=null
-                && request.getAccessToken()!=null
-                && accessTokenStore.contains(request.getAccessToken());
+    public boolean validRequestToken(String accessToken) {
+        return accessToken!=null
+                && accessTokenStore.contains(accessToken);
     }
 
 }

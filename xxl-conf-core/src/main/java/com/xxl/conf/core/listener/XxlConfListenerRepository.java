@@ -1,7 +1,7 @@
 package com.xxl.conf.core.listener;
 
 import com.xxl.conf.core.XxlConfHelper;
-import com.xxl.conf.core.factory.XxlConfFactory;
+import com.xxl.conf.core.factory.XxlConfBootstrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,9 +21,9 @@ public class XxlConfListenerRepository {
 
     // ---------------------- init ----------------------
 
-    private final XxlConfFactory xxlConfFactory;
-    public XxlConfListenerRepository(XxlConfFactory xxlConfFactory) {
-        this.xxlConfFactory = xxlConfFactory;
+    private final XxlConfBootstrap xxlConfBootstrap;
+    public XxlConfListenerRepository(XxlConfBootstrap xxlConfBootstrap) {
+        this.xxlConfBootstrap = xxlConfBootstrap;
     }
 
     // ---------------------- store ----------------------
@@ -72,7 +72,7 @@ public class XxlConfListenerRepository {
     public boolean addListener(String appname, String key, XxlConfListener xxlConfListener){
         // valid
         if (appname==null || appname.trim().isEmpty()) {
-            appname = xxlConfFactory.getAppname();
+            appname = xxlConfBootstrap.getAppname();
         }
         if (key==null || key.trim().isEmpty()) {
             return false;
@@ -106,7 +106,7 @@ public class XxlConfListenerRepository {
     public void notifyChange(String appname, String key, String value){
         // valid
         if (appname==null || appname.trim().isEmpty()) {
-            appname = xxlConfFactory.getAppname();
+            appname = xxlConfBootstrap.getAppname();
         }
         if (key==null || key.trim().isEmpty()) {
             return;

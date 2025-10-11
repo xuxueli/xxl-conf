@@ -93,7 +93,7 @@ public class SpringBeanRefreshListener implements XxlConfListener {
 
         if (beanFieldList!=null && !beanFieldList.isEmpty()) {
             for (BeanField beanField: beanFieldList) {
-                SpringXxlConfFactory.refreshBeanField(null, beanField, value);
+                SpringXxlConfBootstrap.refreshBeanField(null, beanField, value);
             }
         }
     }

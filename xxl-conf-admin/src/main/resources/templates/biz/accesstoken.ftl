@@ -155,8 +155,8 @@
 			queryParams: function (params) {
 				var obj = {};
 				obj.accessToken = $('#data_filter .accessToken').val();
-				obj.start = params.offset;
-				obj.length = params.limit;
+				obj.offset = params.offset;
+				obj.pagesize = params.limit;
 				return obj;
 			},
 			columns:[
