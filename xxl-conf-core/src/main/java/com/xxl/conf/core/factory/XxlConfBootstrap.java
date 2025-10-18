@@ -77,7 +77,7 @@ public class XxlConfBootstrap {
 	private void buildClient(){
 		// valid
 		if (StringTool.isBlank(address)) {
-			throw new XxlConfException("xxl-conf env can not be empty");
+			throw new XxlConfException("xxl-conf address can not be empty");
 		}
 		if (StringTool.isBlank(accesstoken)) {
 			throw new BizException("xxl-conf accesstoken can not be empty.");
@@ -117,7 +117,7 @@ public class XxlConfBootstrap {
 	 * load monitor client
 	 */
 	public ConfDataService loadMonitorClient(){
-		return monitorClientList.get(ThreadLocalRandom.current().nextInt(clientList.size()));
+		return monitorClientList.get(ThreadLocalRandom.current().nextInt(monitorClientList.size()));
 	}
 
 	// ---------------------- start / stop ----------------------

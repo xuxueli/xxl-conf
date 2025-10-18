@@ -306,7 +306,7 @@
 					align: 'left',
 					formatter: function(value, row, index) {
 						if (!value) {
-							return value;
+							return "";
 						}
 						var result = value.length<10
 								?value
