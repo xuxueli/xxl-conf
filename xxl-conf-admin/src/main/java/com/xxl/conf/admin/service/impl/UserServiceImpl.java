@@ -225,8 +225,8 @@ public class UserServiceImpl implements UserService {
 
         // result
         PageModel<UserDTO> pageModel = new PageModel<UserDTO>();
-        pageModel.setPageData(pageListDto);
-        pageModel.setTotalCount(totalCount);
+        pageModel.setData(pageListDto);
+        pageModel.setTotal(totalCount);
 
         return pageModel;
     }

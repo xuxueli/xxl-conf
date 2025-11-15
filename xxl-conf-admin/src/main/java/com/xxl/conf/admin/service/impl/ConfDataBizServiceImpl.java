@@ -147,8 +147,8 @@ public class ConfDataBizServiceImpl implements ConfDataBizService {
 
 		// result
 		PageModel<ConfData> pageModel = new PageModel<ConfData>();
-		pageModel.setPageData(pageList);
-		pageModel.setTotalCount(totalCount);
+		pageModel.setData(pageList);
+		pageModel.setTotal(totalCount);
 
 		return pageModel;
 	}

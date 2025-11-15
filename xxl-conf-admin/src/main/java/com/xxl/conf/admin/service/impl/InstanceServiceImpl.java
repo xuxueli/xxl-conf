@@ -105,8 +105,8 @@ public class InstanceServiceImpl implements InstanceService {
 
 		// result
 		PageModel<InstanceDTO> pageModel = new PageModel<>();
-		pageModel.setPageData(instanceDTOList);
-		pageModel.setTotalCount(totalCount);
+		pageModel.setData(instanceDTOList);
+		pageModel.setTotal(totalCount);
 
 		return pageModel;
 	}

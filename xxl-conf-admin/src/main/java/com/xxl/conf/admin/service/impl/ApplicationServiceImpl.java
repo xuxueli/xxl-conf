@@ -94,8 +94,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 		// result
 		PageModel<Application> pageModel = new PageModel<>();
-		pageModel.setPageData(pageList);
-		pageModel.setTotalCount(totalCount);
+		pageModel.setData(pageList);
+		pageModel.setTotal(totalCount);
 
 		return pageModel;
 	}

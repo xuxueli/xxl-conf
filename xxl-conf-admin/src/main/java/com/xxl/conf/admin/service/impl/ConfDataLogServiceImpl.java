@@ -101,8 +101,8 @@ public class ConfDataLogServiceImpl implements ConfDataLogService {
 
 		// result
 		PageModel<ConfDataLogDTO> pageModel = new PageModel<>();
-		pageModel.setPageData(pageList2);
-		pageModel.setTotalCount(totalCount);
+		pageModel.setData(pageList2);
+		pageModel.setTotal(totalCount);
 
 		return pageModel;
 	}

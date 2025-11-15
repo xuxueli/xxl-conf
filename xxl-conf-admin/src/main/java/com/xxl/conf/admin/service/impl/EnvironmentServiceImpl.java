@@ -119,8 +119,8 @@ public class EnvironmentServiceImpl implements EnvironmentService {
 
 		// result
 		PageModel<Environment> pageModel = new PageModel<Environment>();
-		pageModel.setPageData(pageList);
-		pageModel.setTotalCount(totalCount);
+		pageModel.setData(pageList);
+		pageModel.setTotal(totalCount);
 
 		return pageModel;
 	}

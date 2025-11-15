@@ -85,8 +85,8 @@ public class AccessTokenServiceImpl implements AccessTokenService {
 
 		// result
 		PageModel<AccessTokenDTO> pageModel = new PageModel<>();
-		pageModel.setPageData(accessTokenDTOList);
-		pageModel.setTotalCount(totalCount);
+		pageModel.setData(accessTokenDTOList);
+		pageModel.setTotal(totalCount);
 
 		return pageModel;
 	}
