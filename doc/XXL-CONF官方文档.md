@@ -961,11 +961,12 @@ Header：
 
 ### v2.2.0 Release Notes[ING]
 - 1、【升级】升级多项maven依赖至较新版本，如 springboot、spring、mybatis、xxl-sso 等；
-- 2、【ING】XXL-CONF 配置历史Diff及一键回滚能力完善；
-- 3、【ING】配置onChange调整为异步线程处理，避免耗时监听逻辑影响性能；
-- 4、【ING】启动预热优化，加载当前AppName下全量配置预热；
-- 5、【ING】首页报表数据处理；Sample示例，动态线程池处理，动态JDBC处理等；
-- 6、【ING】Springboot 微服务 接入 注册中心 Sample示例；
+- 2、【优化】增加主题皮肤选项并优化界面交互；
+- 3、【ING】XXL-CONF 配置历史Diff及一键回滚能力完善；
+- 4、【ING】配置onChange调整为异步线程处理，避免耗时监听逻辑影响性能；
+- 5、【ING】启动预热优化，加载当前AppName下全量配置预热；
+- 6、【ING】首页报表数据处理；Sample示例，动态线程池处理，动态JDBC处理等；
+- 7、【ING】Springboot 微服务 接入 注册中心 Sample示例；
 
 
 ### TODO LIST
