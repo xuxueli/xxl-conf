@@ -11,7 +11,7 @@ import com.xxl.conf.admin.service.ConfDataBizService;
 import com.xxl.conf.admin.util.I18nUtil;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.StringTool;
-import com.xxl.tool.gson.GsonTool;
+import com.xxl.tool.json.GsonTool;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;

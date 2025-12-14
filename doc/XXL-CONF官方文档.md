@@ -960,7 +960,7 @@ Header：
   (注意：该版本针对通讯协议进行标准化调整，服务端与客户端需要一并升级；但SDK API向下兼容适配；)
 
 ### v2.2.0 Release Notes[ING]
-- 1、【升级】升级多项maven依赖至较新版本，如 springboot、spring、mybatis、xxl-sso 等；
+- 1、【升级】升级至 SpringBoot4；升级多项maven依赖至较新版本，如 springboot、spring、mybatis、xxl-sso 等；
 - 2、【优化】增加主题皮肤选项并优化界面交互；
 - 3、【优化】配置管理编辑器优化，提升配置编辑体验；
 - 4、【ING】XXL-CONF 配置历史Diff及一键回滚能力完善；

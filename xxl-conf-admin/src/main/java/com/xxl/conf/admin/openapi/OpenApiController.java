@@ -10,7 +10,7 @@ import com.xxl.conf.core.openapi.registry.model.DiscoveryRequest;
 import com.xxl.conf.core.openapi.registry.model.RegisterRequest;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.core.StringTool;
-import com.xxl.tool.gson.GsonTool;
+import com.xxl.tool.json.GsonTool;
 import com.xxl.tool.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

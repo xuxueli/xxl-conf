@@ -8,7 +8,7 @@ import com.xxl.conf.admin.openapi.confdata.config.ConfDataBootstrap;
 import com.xxl.conf.admin.openapi.registry.config.RegistryBootstrap;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.DateTool;
-import com.xxl.tool.gson.GsonTool;
+import com.xxl.tool.json.GsonTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

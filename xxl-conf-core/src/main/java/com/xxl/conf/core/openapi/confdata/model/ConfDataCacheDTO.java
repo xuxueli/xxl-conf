@@ -1,6 +1,6 @@
 package com.xxl.conf.core.openapi.confdata.model;
 
-import com.xxl.tool.encrypt.Md5Tool;
+import com.xxl.tool.crypto.Md5Tool;
 
 import java.io.Serializable;
 

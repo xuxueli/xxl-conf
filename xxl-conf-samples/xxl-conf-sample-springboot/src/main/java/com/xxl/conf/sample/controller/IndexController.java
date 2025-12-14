@@ -4,7 +4,7 @@ import com.xxl.conf.core.XxlConfHelper;
 import com.xxl.conf.core.annotation.XxlConf;
 import com.xxl.conf.core.listener.XxlConfListener;
 import com.xxl.tool.core.StringTool;
-import com.xxl.tool.gson.GsonTool;
+import com.xxl.tool.json.GsonTool;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;

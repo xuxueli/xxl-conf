@@ -1,7 +1,7 @@
 package com.xxl.conf.admin.web.error;
 
-import com.xxl.tool.exception.BizException;
-import com.xxl.tool.gson.GsonTool;
+import com.xxl.tool.error.BizException;
+import com.xxl.tool.json.GsonTool;
 import com.xxl.tool.response.Response;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
