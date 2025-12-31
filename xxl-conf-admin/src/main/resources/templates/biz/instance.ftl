@@ -369,13 +369,13 @@
 			writeFormData: function(row) {
 
 				// base data
-				$("#updateModal .form input[name='id']").val( row.id );
-				$("#updateModal .form input[name='env']").val( row.env );
-				$("#updateModal .form input[name='appname']").val( row.appname );
-				$("#updateModal .form input[name='ip']").val( row.ip );
-				$("#updateModal .form input[name='port']").val( row.port );
-				$("#updateModal .form select[name='registerModel']").val( row.registerModel );
-				$("#updateModal .form textarea[name='extendInfo']").val( row.extendInfo );
+				$("#updateModal [name='id']").val( row.id );
+				$("#updateModal [name='env']").val( row.env );
+				$("#updateModal [name='appname']").val( row.appname );
+				$("#updateModal [name='ip']").val( row.ip );
+				$("#updateModal [name='port']").val( row.port );
+				$("#updateModal [name='registerModel']").val( row.registerModel );
+				$("#updateModal [name='extendInfo']").val( row.extendInfo );
 			},
 			rules : {
 				ip : {

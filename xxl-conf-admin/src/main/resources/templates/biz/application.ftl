@@ -258,10 +258,10 @@
 			writeFormData: function(row) {
 
 				// base data
-				$("#updateModal .form input[name='id']").val( row.id );
-				$("#updateModal .form input[name='appname']").val( row.appname );
-				$("#updateModal .form input[name='name']").val( row.name );
-				$("#updateModal .form textarea[name='desc']").val( row.desc );
+				$("#updateModal [name='id']").val( row.id );
+				$("#updateModal [name='appname']").val( row.appname );
+				$("#updateModal [name='name']").val( row.name );
+				$("#updateModal [name='desc']").val( row.desc );
 			},
 			rules : {
 				name : {
