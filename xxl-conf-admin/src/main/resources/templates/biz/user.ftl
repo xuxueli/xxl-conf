@@ -354,17 +354,17 @@
 			},
 			writeFormData: function() {
 				// write default data
-				$('#addModal .form input[name="roleId"]').prop('checked', false).iCheck('update');
+				$('#addModal [name="roleId"]').prop('checked', false).iCheck('update');
 			},
 			readFormData: function() {
 
 				// request
 				return {
-					"username": $("#addModal .form input[name=username]").val(),
-					"password": $("#addModal .form input[name=password]").val(),
-					"status": $("#addModal .form select[name=status]").val(),
-					"realName": $("#addModal .form input[name=realName]").val(),
-					"role": $('#addModal .form input[name="role"]:checked').val()
+					"username": $("#addModal [name=username]").val(),
+					"password": $("#addModal [name=password]").val(),
+					"status": $("#addModal [name=status]").val(),
+					"realName": $("#addModal [name=realName]").val(),
+					"role": $('#addModal [name="role"]:checked').val()
 				};
 			}
 		});
@@ -377,12 +377,12 @@
 			writeFormData: function(row) {
 
 				// base data
-				$("#updateModal .form input[name='id']").val( row.id );
-				$("#updateModal .form input[name='username']").val( row.username );
-				$("#updateModal .form input[name='password']").val( '' );
-				$("#updateModal .form select[name='status']").val( row.status );
-				$("#updateModal .form input[name='realName']").val( row.realName );
-				$('#updateModal .form input[name="role"][value="'+ row.role +'"]').prop('checked', true).iCheck('update');
+				$("#updateModal [name='id']").val( row.id );
+				$("#updateModal [name='username']").val( row.username );
+				$("#updateModal [name='password']").val( '' );
+				$("#updateModal [name='status']").val( row.status );
+				$("#updateModal [name='realName']").val( row.realName );
+				$('#updateModal [name="role"][value="'+ row.role +'"]').prop('checked', true).iCheck('update');
 			},
 			rules : {
 				realName : {
@@ -399,12 +399,12 @@
 			readFormData: function() {
 				// request
 				return {
-					"id": $("#updateModal .form input[name=id]").val(),
-					"username": $("#updateModal .form input[name=username]").val(),
-					"password": $("#updateModal .form input[name=password]").val(),
-					"status": $("#updateModal .form select[name=status]").val(),
-					"realName": $("#updateModal .form input[name=realName]").val(),
-					"role": $('#updateModal .form input[name="role"]:checked').val()
+					"id": $("#updateModal [name=id]").val(),
+					"username": $("#updateModal [name=username]").val(),
+					"password": $("#updateModal [name=password]").val(),
+					"status": $("#updateModal [name=status]").val(),
+					"realName": $("#updateModal [name=realName]").val(),
+					"role": $('#updateModal [name="role"]:checked').val()
 				};
 			}
 		});
@@ -423,12 +423,12 @@
 			var row = rows[0];
 
 			// fill data
-			$("#grantAppnamesModal .form input[name='username']").val(row.username)
+			$("#grantAppnamesModal [name='username']").val(row.username)
 			var appnameDataChoose;
 			if (row.appnames) {
 				appnameDataChoose = $(row.appnames.split(","));
 			}
-			$("#grantAppnamesModal .form input[name='application']").each(function () {
+			$("#grantAppnamesModal [name='application']").each(function () {
 				if ( $.inArray($(this).val(), appnameDataChoose) > -1 ) {
 					$(this).prop("checked",true).iCheck('update');
 				} else {
@@ -442,9 +442,9 @@
 		$('#grantAppnamesModal .ok').click(function () {
 
 			// find select application arr
-			var username = $("#grantAppnamesModal .form input[name='username']").val();
+			var username = $("#grantAppnamesModal [name='username']").val();
 			var selectedApplications = [];
-			$('#grantAppnamesModal .form input[name="application"]:checked').each(function () {
+			$('#grantAppnamesModal [name="application"]:checked').each(function () {
 				selectedApplications.push($(this).val());
 			});
 
