@@ -218,7 +218,7 @@ public class RegistryCacheHelpler {
             String envAppNameKey = buildCacheKey(messageForRegistryDTO.getEnv(), messageForRegistryDTO.getAppname());
             String oldCacheDTOMD5 = registryCacheMd5Store.get(envAppNameKey);
 
-            // set data (key exists and not match)
+            // set data (key exists and not match, need broadcast )
             if (!(oldCacheDTOMD5!=null && oldCacheDTOMD5.equals(newCacheDTOMD5))) {
                 registryCacheStore.put(envAppNameKey, newCacheDTO);
                 registryCacheMd5Store.put(envAppNameKey, newCacheDTOMD5);      // only match md5, speed up match process
