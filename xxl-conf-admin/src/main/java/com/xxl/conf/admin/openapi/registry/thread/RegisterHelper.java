@@ -6,6 +6,8 @@ import com.xxl.conf.admin.model.dto.MessageForRegistryDTO;
 import com.xxl.conf.admin.model.entity.Instance;
 import com.xxl.conf.admin.openapi.registry.config.RegistryBootstrap;
 import com.xxl.conf.core.openapi.registry.model.RegisterRequest;
+import com.xxl.tool.concurrent.CyclicThread;
+import com.xxl.tool.core.DateTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.json.GsonTool;
 import com.xxl.tool.response.Response;
@@ -29,7 +31,7 @@ import java.util.concurrent.*;
  * @author xuxueli
  */
 public class RegisterHelper {
-    private static Logger logger = LoggerFactory.getLogger(RegisterHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(RegisterHelper.class);
 
     /**
      * Expired To Clean Interval, by hour
@@ -42,14 +44,9 @@ public class RegisterHelper {
     private ThreadPoolExecutor registerOrUnregisterThreadPool = null;
 
     /**
-     * registry monitor (will remove instance that expired more than 1 day)
+     * registry cleanup threadmonitor (will remove instance that expired more than 1 day)
      */
-    private Thread registryMonitorThread;
-
-    /**
-     * thread stop variable
-     */
-    private volatile boolean toStop = false;
+    private CyclicThread registryCleanupThread;
 
 
     /**
@@ -78,32 +75,21 @@ public class RegisterHelper {
                     }
                 });
 
-        // 2、registryMonitorThread， for registry clean
-        registryMonitorThread = MessageHelpler.startThread(new Runnable() {
+        // 2、registryCleanupThread， for registry clean
+        registryCleanupThread = new CyclicThread("RegisterHelper-registryCleanupThread", true, new Runnable() {
             @Override
             public void run() {
-                logger.info(">>>>>>>>>>> xxl-conf, RegistryHelpler-registryMonitorThread start");
-                while (!toStop) {
-                    try {
-                        // TODO, clean dead instance
 
-                    } catch (Throwable e) {
-                        if (!toStop) {
-                            logger.error(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-fullSyncThread error:{}", e.getMessage(), e);
-                        }
-                    }
-                    try {
-                        //
-                        TimeUnit.HOURS.sleep(EXPIRED_TO_CLEAN_TIME);
-                    } catch (Throwable e) {
-                        if (!toStop) {
-                            logger.error(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-fullSyncThread error2:{}", e.getMessage(), e);
-                        }
-                    }
+                // delete expired auto instance, expired for 24 hours
+                Date registerHeartbeat = DateTool.addHours(new Date(), -EXPIRED_TO_CLEAN_TIME);
+                int ret = RegistryBootstrap.getInstance().getInstanceMapper().deleteExpiredAutoInstance(InstanceRegisterModelEnum.AUTO.getValue(), registerHeartbeat);
+                if (ret > 0) {
+                    logger.info(">>>>>>>>>>> xxl-conf, RegisterHelper-registryCleanupThread deleteExpiredAutoInstance count:{}", ret);
                 }
-                logger.info(">>>>>>>>>>> xxl-conf, RegistryHelpler-registryMonitorThread stop");
+
             }
-        }, "xxl-conf, admin RegistryCacheHelpler-messageListenThread");
+        }, EXPIRED_TO_CLEAN_TIME * 60 * 60 * 1000, true);
+        registryCleanupThread.start();
 
     }
 
@@ -111,13 +97,6 @@ public class RegisterHelper {
      * stop
      */
     public void stop() {
-        // mark stop
-        toStop = true;
-        try {
-            TimeUnit.SECONDS.sleep(1);
-        } catch (Throwable e) {
-            logger.error(e.getMessage(), e);
-        }
 
         // 1、stop registryOrRemoveThreadPool
         try {
@@ -126,8 +105,10 @@ public class RegisterHelper {
             logger.error(e.getMessage(), e);
         }
 
-        // 2、registryMonitorThread
-        MessageHelpler.stopThread(registryMonitorThread);
+        // 2、stop registryMonitorThread
+        if (registryCleanupThread != null) {
+            registryCleanupThread.stop();
+        }
     }
 
     // ---------------------- helper ----------------------
@@ -135,8 +116,8 @@ public class RegisterHelper {
     /**
      * registry
      *
-     * @param request
-     * @return
+     * @param request request
+     * @return  response
      */
     public Response<String> registry(RegisterRequest request) {
         // valid
@@ -182,8 +163,8 @@ public class RegisterHelper {
     /**
      * unregister
      *
-     * @param request
-     * @return
+     * @param request request
+     * @return response
      */
     public Response<String> unregister(RegisterRequest request) {
         // valid

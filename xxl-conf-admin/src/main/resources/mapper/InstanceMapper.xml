@@ -134,6 +134,12 @@
             AND t.`register_model` = #{instance.registerModel}
     </delete>
 
+    <delete id="deleteExpiredAutoInstance" parameterType="java.util.Map" >
+        DELETE FROM xxl_conf_instance AS t
+        WHERE t.`register_model` = #{registerModel}
+          AND t.register_heartbeat <![CDATA[ < ]]> #{registerHeartbeat}
+    </delete>
+
     <insert id="addAutoInstance" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="instance.id" >
         INSERT INTO xxl_conf_instance (
             `env`,

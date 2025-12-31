@@ -84,6 +84,19 @@ public interface InstanceMapper {
     int deleteAutoInstance(@Param("instance") Instance instance);
 
     /**
+     * 删除过期的实例
+     *
+     * 删除逻辑：
+     *      1、仅 AUTO 注册类型节点允许删除；
+     *      2、删除时间间隔超过 value 的实例；
+     *
+     * @param registerModel
+     * @param registerHeartbeat
+     * @return
+     */
+    int deleteExpiredAutoInstance(@Param("registerModel") int registerModel, @Param("registerHeartbeat") Date registerHeartbeat);
+
+    /**
      * 新增自动注册的实例
      *
      * 新增逻辑：
