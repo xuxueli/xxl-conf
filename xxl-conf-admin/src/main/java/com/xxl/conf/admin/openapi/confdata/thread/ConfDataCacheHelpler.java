@@ -133,17 +133,17 @@ public class ConfDataCacheHelpler {
                 // find diff and push
                 if (CollectionTool.isNotEmpty(diffConfList)) {
                     pushClient(diffConfList);
-                    logger.info(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-fullSyncThread find diffData and pushClient, diffConfList:{}", diffConfList);
+                    logger.info(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-confDataCacheThread find diffData and pushClient, diffConfList:{}", diffConfList);
                 }
 
                 // 5、replace with new data
                 confDataCacheStore = confDataCacheStoreNew;
-                logger.debug(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-fullSyncThread success, confDataCacheStore:{}", confDataCacheStore);
+                logger.debug(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-confDataCacheThread success, confDataCacheStore:{}", confDataCacheStore);
 
                 // first sycs success, log warmUp
                 if (!warmUp) {
                     warmUp = true;
-                    logger.debug(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-fullSyncThread warmUp finish");
+                    logger.debug(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-confDataCacheThread warmUp finish");
                 }
 
             }
