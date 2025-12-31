@@ -17,7 +17,7 @@ import jakarta.annotation.Resource;
  */
 @Configuration
 public class RegistryBootstrap implements InitializingBean, DisposableBean {
-    private static Logger logger = LoggerFactory.getLogger(RegistryBootstrap.class);
+    private static final Logger logger = LoggerFactory.getLogger(RegistryBootstrap.class);
 
     // ---------------------- instance ----------------------
     private static RegistryBootstrap instance;
