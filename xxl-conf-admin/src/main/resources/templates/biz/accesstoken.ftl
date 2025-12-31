@@ -181,7 +181,7 @@
 					align: 'left',
 					formatter: function(value, row, index) {
 						var ret = value;
-						$("#addModal .form select[name='status']").children("option").each(function() {
+						$("#addModal [name='status']").children("option").each(function() {
 							if ($(this).val() === row.status+"") {
 								ret = $(this).html();
 							}
@@ -242,9 +242,9 @@
 			writeFormData: function(row) {
 
 				// base data
-				$("#updateModal .form input[name='id']").val( row.id );
-				$("#updateModal .form select[name='status']").val( row.status );
-				$("#updateModal .form input[name='accessToken']").val( row.accessToken );
+				$("#updateModal [name='id']").val( row.id );
+				$("#updateModal [name='status']").val( row.status );
+				$("#updateModal [name='accessToken']").val( row.accessToken );
 			},
 			rules : {
 				accessToken : {
