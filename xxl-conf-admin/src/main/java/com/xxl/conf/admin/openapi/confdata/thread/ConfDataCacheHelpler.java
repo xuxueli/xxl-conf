@@ -3,10 +3,10 @@ package com.xxl.conf.admin.openapi.confdata.thread;
 import com.xxl.conf.admin.model.dto.MessageForConfDataDTO;
 import com.xxl.conf.admin.model.entity.ConfData;
 import com.xxl.conf.admin.openapi.confdata.config.ConfDataBootstrap;
-import com.xxl.conf.admin.openapi.registry.thread.MessageHelpler;
 import com.xxl.conf.core.openapi.confdata.model.ConfDataCacheDTO;
-import com.xxl.conf.core.openapi.confdata.model.ConfDataRequest;
 import com.xxl.conf.core.openapi.confdata.model.ConfDataInfo;
+import com.xxl.conf.core.openapi.confdata.model.ConfDataRequest;
+import com.xxl.tool.concurrent.CyclicThread;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.response.Response;
 import org.slf4j.Logger;
@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * confdata cache helper
@@ -30,28 +29,23 @@ import java.util.concurrent.TimeUnit;
  * @author xuxueli
  */
 public class ConfDataCacheHelpler {
-    private static Logger logger = LoggerFactory.getLogger(ConfDataCacheHelpler.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConfDataCacheHelpler.class);
 
     /**
-     * 本地缓存：完整数据
+     * 配置数据 - 本地缓存：
      *
+     *  1、数据格式：
      * <pre>
-     *      Cache-Data：
-     *          Key：String
-     *              格式：env##appname##key
-     *              示例："test##app02##k1"
-     *          Value：ConfDataCacheDTO
-     *              value
-     *              md5
-     *      // 示例
      *      {
-     *          "test##app02##k1": {
-     *              "value": "v1",
-     *              "md5": "md5"
+     *          "test##app02##key01": {                     // key  ： "{Env}##{Appname}##{Key}"
+     *              "env": "test",                          // Env（环境唯一标识）
+     *              "appname": "app01",                     // AppName（服务唯一标识）
+     *              "key": "key01",                         // Key
+     *              "value": "value01",                     // 配置数据
+     *              "valueMd5": "md5"                       // 配置数据MD5
      *          },
-     *          "test##app02##k1": {
-     *              "value": "v1",
-     *                "md5": "md5"
+     *          "test##app02##key02": {
+     *              ...
      *          }
      *      }
      * </pre>
@@ -64,11 +58,6 @@ public class ConfDataCacheHelpler {
     public static final int REFRESH_INTERVAL = 30;
 
     /**
-     * thread stop variable
-     */
-    private volatile boolean toStop = false;
-
-    /**
      * first full-sync status, true if sync success
      */
     private volatile boolean warmUp = false;
@@ -78,91 +67,89 @@ public class ConfDataCacheHelpler {
      * 1、范围：DB中全量配置数据，同步至 confDataCacheStore；整个Map覆盖更新；
      * 2、间隔：REFRESH_INTERVAL
      */
-    private Thread fullSyncThread;
+    private CyclicThread confDataCacheThread;
 
     /**
      * start
      */
     public void start(){
-        // 1、run fullSyncThread
-        fullSyncThread = MessageHelpler.startThread(new Runnable() {
+
+        confDataCacheThread = new CyclicThread("RegistryCacheHelpler-registryCacheThread", true, new Runnable() {
             @Override
             public void run() {
-                // DB中全量注册数据，同步至 CacheStore；整个Map覆盖更新；
-                logger.info(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-fullSyncThread start");
-                while (!toStop) {
-                    try {
-                        // a、init new map
-                        ConcurrentMap<String, ConfDataCacheDTO> confDataCacheStoreNew = new ConcurrentHashMap<>();
 
-                        // b、load all env-appname
-                        List<ConfData> envAndAppNameList = ConfDataBootstrap.getInstance().getConfDataMapper().queryEnvAndAppName();
+                // 1、init new map
+                ConcurrentMap<String, ConfDataCacheDTO> confDataCacheStoreNew = new ConcurrentHashMap<>();
 
-                        // c、process each env-appname
-                        if (CollectionTool.isNotEmpty(envAndAppNameList)) {
-                            for (ConfData envAndAppNameData : envAndAppNameList) {
-                                // query data by env-appname
-                                List<ConfData> confDataList = ConfDataBootstrap.getInstance().getConfDataMapper().queryByEnvAndAppName(envAndAppNameData.getEnv(), envAndAppNameData.getAppname());
+                // 2、load all env-appname
+                List<ConfData> envAndAppNameList = ConfDataBootstrap.getInstance().getConfDataMapper().queryEnvAndAppName();
 
-                                // process each key of "env-appname
-                                if (CollectionTool.isNotEmpty(confDataList)) {
-                                    for (ConfData confData : confDataList) {
-                                        // fill key cache
-                                        String cacheKey = buildCacheKey(confData.getEnv(), confData.getAppname(), confData.getKey());
-                                        ConfDataCacheDTO  cacheValue = new ConfDataCacheDTO(confData.getEnv(), confData.getAppname(), confData.getKey(), confData.getValue());
+                // 3、process each env-appname
+                if (CollectionTool.isNotEmpty(envAndAppNameList)) {
+                    for (ConfData envAndAppNameData : envAndAppNameList) {
+                        // query data by env-appname
+                        List<ConfData> confDataList = ConfDataBootstrap.getInstance().getConfDataMapper().queryByEnvAndAppName(envAndAppNameData.getEnv(), envAndAppNameData.getAppname());
 
-                                        confDataCacheStoreNew.put(cacheKey, cacheValue);
-                                    }
-                                }
+                        // process each key of "env-appname
+                        if (CollectionTool.isNotEmpty(confDataList)) {
+                            for (ConfData confData : confDataList) {
+                                // fill cache of each confData
+                                String cacheKey = buildCacheKey(confData.getEnv(), confData.getAppname(), confData.getKey());
+                                ConfDataCacheDTO  cacheValue = new ConfDataCacheDTO(confData.getEnv(), confData.getAppname(), confData.getKey(), confData.getValue());
+
+                                // set data
+                                confDataCacheStoreNew.put(cacheKey, cacheValue);
                             }
-                        }
-
-                        /**
-                         * d、Diff识别不一致数据，客户端推送
-                         *
-                         * Diff判定逻辑：以旧CacheMap为基础遍历；新Key不存在，不一致；新Key存在但Value不同，不一致；
-                         */
-                        List<ConfDataCacheDTO> diffConfList = new ArrayList<>();
-                        for (String envAppNameKey : confDataCacheStore.keySet()) {
-                            ConfDataCacheDTO confDataOld = confDataCacheStore.get(envAppNameKey);
-                            ConfDataCacheDTO confDataNew = confDataCacheStoreNew.get(envAppNameKey);
-
-                            if (!(confDataNew!=null && confDataNew.getValueMd5().equals(confDataOld.getValueMd5()))) {
-                                diffConfList.add(confDataOld);
-                            }
-                        }
-                        // find diff and push
-                        if (CollectionTool.isNotEmpty(diffConfList)) {
-                            pushClient(diffConfList);
-                            logger.info(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-fullSyncThread find diffData and pushClient, diffConfList:{}", diffConfList);
-                        }
-
-                        // e、replace with new data
-                        confDataCacheStore = confDataCacheStoreNew;
-                        logger.debug(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-fullSyncThread success, confDataCacheStore:{}", confDataCacheStore);
-
-                        // first full-sycs success, warmUp
-                        if (!warmUp) {
-                            warmUp = true;
-                            logger.debug(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-fullSyncThread warmUp finish");
-                        }
-                    } catch (Throwable e) {
-                        if (!toStop) {
-                            logger.error(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-fullSyncThread error:{}", e.getMessage(), e);
-                        }
-                    }
-                    try {
-                        TimeUnit.SECONDS.sleep(REFRESH_INTERVAL);
-                    } catch (Throwable e) {
-                        if (!toStop) {
-                            logger.error(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-fullSyncThread error2:{}", e.getMessage(), e);
                         }
                     }
                 }
-                logger.info(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-fullSyncThread stop");
-            }
-        }, ">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-fullSyncThread");
 
+                /**
+                 * 4、Diff识别不一致数据，客户端推送：
+                 *      - 老服务-节点下线：旧CacheMap存在，新CacheMap不存在；
+                 *      - 老服务-节点变化：旧CacheMap 与 新CacheMap对比，不一致；
+                 *      - 新服务（新上线）：旧CacheMap不存在，忽略；
+                 */
+                List<ConfDataCacheDTO> diffConfList = new ArrayList<>();
+                for (String envAppNameKey : confDataCacheStore.keySet()) {
+                    ConfDataCacheDTO confDataOld = confDataCacheStore.get(envAppNameKey);
+                    ConfDataCacheDTO confDataNew = confDataCacheStoreNew.get(envAppNameKey);
+
+                    if (confDataNew==null || !confDataNew.getValueMd5().equals(confDataOld.getValueMd5())) {
+                        diffConfList.add(confDataOld);
+                    }
+                }
+                // find diff and push
+                if (CollectionTool.isNotEmpty(diffConfList)) {
+                    pushClient(diffConfList);
+                    logger.info(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-fullSyncThread find diffData and pushClient, diffConfList:{}", diffConfList);
+                }
+
+                // 5、replace with new data
+                confDataCacheStore = confDataCacheStoreNew;
+                logger.debug(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-fullSyncThread success, confDataCacheStore:{}", confDataCacheStore);
+
+                // first sycs success, log warmUp
+                if (!warmUp) {
+                    warmUp = true;
+                    logger.debug(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-fullSyncThread warmUp finish");
+                }
+
+            }
+        }, REFRESH_INTERVAL * 1000, true);
+        confDataCacheThread.start();
+
+    }
+
+    /**
+     * stop
+     */
+    public void stop(){
+
+        // confDataCacheThread
+        if (confDataCacheThread != null) {
+            confDataCacheThread.stop();
+        }
     }
 
     /**
@@ -175,22 +162,6 @@ public class ConfDataCacheHelpler {
         }
         // do push
         ConfDataBootstrap.getInstance().getConfDataDeferredResultHelpler().pushClient(diffConfList);
-    }
-
-    /**
-     * stop
-     */
-    public void stop(){
-        // mark stop
-        toStop = true;
-        try {
-            TimeUnit.SECONDS.sleep(1);
-        } catch (Throwable e) {
-            logger.error(e.getMessage(), e);
-        }
-
-        // stop thread
-        MessageHelpler.stopThread(fullSyncThread);
     }
 
     // ---------------------- tool ----------------------

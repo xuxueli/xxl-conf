@@ -59,7 +59,7 @@ public class ConfDataDeferredResultHelpler {
      * start
      */
     public void start() {
-        deferredResultMonitorThread  = new CyclicThread("RegistryDeferredResultHelpler-deferredResultMonitorThread", true, new Runnable() {
+        deferredResultMonitorThread  = new CyclicThread("ConfDataDeferredResultHelpler-deferredResultMonitorThread", true, new Runnable() {
             @Override
             public void run() {
 

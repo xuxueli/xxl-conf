@@ -61,7 +61,7 @@ public class RegistryCacheHelpler {
      *      - 频率：90s/次（三倍心跳间隔）；
      *
      * 3、注册数据是否有效，判定逻辑：
-     *      - 动态注册：心跳间隔30s，三倍间隔时间内存在心跳判定有效，否则无效；(registerModel + registerHeartbeat)
+     *      - 动态注册：心跳间隔30s，三倍间隔时间（90s）内存在心跳判定有效，否则无效；(registerModel + registerHeartbeat)
      *      - 持久化注册：永久有效；
      *      - 禁用注册：无效
      */
@@ -100,7 +100,7 @@ public class RegistryCacheHelpler {
      *          - 全量刷新：定期全量检测配置md5摘要，对比DB数据，不一致主动刷新；
      *      - 说明：
      *          - 1、范围：DB中全量注册数据，同步至 registryCacheStore；整个Map覆盖更新；
-     *          - 2、间隔：3倍心跳（REGISTRY_BEAT_TIME * 3）；
+     *          - 2、间隔：30s；
      *          - 3、过滤：过滤掉无效数据；
      *
      *
@@ -171,14 +171,14 @@ public class RegistryCacheHelpler {
                 logger.debug(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-registryCacheThread success, registryCacheStore:{}, registryCacheMd5Store:{}",
                         registryCacheStore, registryCacheMd5Store);
 
-                // first full-sycs success, warmUp
+                // first sycs success, log warmUp
                 if (!warmUp) {
                     warmUp = true;
                     logger.info(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-registryCacheThread warmUp finish");
                 }
 
             }
-        }, REGISTRY_BEAT_TIME * 3 * 1000, true);
+        }, REGISTRY_BEAT_TIME * 1000, true);
         registryCacheThread.start();
 
     }
