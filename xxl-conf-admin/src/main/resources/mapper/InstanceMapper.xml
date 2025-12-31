@@ -167,4 +167,9 @@
         WHERE t.`env` = #{env}
     </select>
 
+    <select id="count" parameterType="java.util.Map" resultType="int" >
+        SELECT count(1)
+        FROM xxl_conf_instance
+    </select>
+
 </mapper>

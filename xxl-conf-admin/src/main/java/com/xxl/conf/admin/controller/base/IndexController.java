@@ -3,7 +3,9 @@ package com.xxl.conf.admin.controller.base;
 import com.xxl.conf.admin.constant.enums.RoleEnum;
 import com.xxl.conf.admin.model.dto.XxlBootResourceDTO;
 import com.xxl.conf.admin.model.entity.Environment;
+import com.xxl.conf.admin.service.ApplicationService;
 import com.xxl.conf.admin.service.EnvironmentService;
+import com.xxl.conf.admin.service.InstanceService;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
 import com.xxl.sso.core.model.LoginInfo;
@@ -76,7 +78,6 @@ public class IndexController {
 		List<XxlBootResourceDTO> resourceDTOList = Arrays.asList(
 				new XxlBootResourceDTO(1, 0, "首页",1, "", "/dashboard", "fa fa-home", 1, 0, null),
 				new XxlBootResourceDTO(2, 0, "配置中心",1, "", "/confdata", " fa-database", 2, 0, null),
-				// TODO，配置管理（配置类型；int、long、boolean、json、text），历史版本（记录，类型；diff、回滚；）
 				new XxlBootResourceDTO(3, 0, "注册中心",1, "", "/instance", " fa-cubes", 3, 0, null),
 				new XxlBootResourceDTO(4, 0, "服务管理",1, "ADMIN", "/application", " fa-cloud", 4, 0,null),
 				new XxlBootResourceDTO(5, 0, "环境管理",1, "ADMIN", "/environment", "fa-server", 5, 0, null),
@@ -96,9 +97,24 @@ public class IndexController {
 		return resourceDTOList;
 	}
 
+	@Resource
+	private ApplicationService applicationService;
+	@Resource
+	private InstanceService instanceService;;
+
 	@RequestMapping("/dashboard")
 	@XxlSso
-	public String dashboard(HttpServletRequest request, Model model) {
+	public String dashboard(Model model) {
+
+		// dashboard info
+		int envCount = environmentService.findAll().getData().size();
+		int appCount = applicationService.findAll().getData().size();
+		int instanceCount = instanceService.count().getData();
+
+		model.addAttribute("envCount", envCount);
+		model.addAttribute("appCount", appCount);
+		model.addAttribute("instanceCount", instanceCount);
+
 		return "base/dashboard";
 	}
 

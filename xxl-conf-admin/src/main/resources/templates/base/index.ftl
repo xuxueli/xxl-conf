@@ -47,7 +47,7 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <#list environmentList as item>
-                                <li class="changeEnv" env="${item.env}" ><a href="javascript:;">${item.env} [${item.name}]</a></li>
+                                <li class="changeEnv" env="${item.env}" ><a href="javascript:;">${item.name}  [${item.env}]</a></li>
                             </#list>
                             <#--<li class="divider"></li>-->
                         </ul>

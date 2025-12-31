@@ -101,4 +101,9 @@ public interface InstanceMapper {
      */
     int countByEnv(@Param("env") String env);
 
+    /**
+     * 统计所有实例数
+     */
+    int count();
+
 }

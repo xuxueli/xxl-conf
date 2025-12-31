@@ -111,4 +111,10 @@ public class InstanceServiceImpl implements InstanceService {
 		return pageModel;
 	}
 
+	@Override
+	public Response<Integer> count() {
+		int count = instanceMapper.count();
+		return Response.ofSuccess(count);
+	}
+
 }

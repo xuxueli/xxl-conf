@@ -39,4 +39,9 @@ public interface InstanceService {
     */
     public PageModel<InstanceDTO> pageList(int offset, int pagesize, String appname, String env);
 
+    /**
+    * 统计
+    */
+    public Response<Integer> count();
+
 }

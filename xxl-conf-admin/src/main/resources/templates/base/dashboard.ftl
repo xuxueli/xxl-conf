@@ -20,10 +20,19 @@
         <div class="row">
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="info-box">
+                    <span class="info-box-icon bg-green"><i class="ion ion-ios-gear-outline"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">环境数量</span>
+                        <span class="info-box-number">${envCount}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="info-box">
                     <span class="info-box-icon bg-aqua"><i class="fa fa-cloud"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">服务数量</span>
-                        <span class="info-box-number">***</span>
+                        <span class="info-box-number">${appCount}</span>
                     </div>
                 </div>
             </div>
@@ -32,16 +41,7 @@
                     <span class="info-box-icon bg-red"><i class="fa fa-cubes"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">注册节点数量</span>
-                        <span class="info-box-number">***</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 col-sm-6 col-xs-12">
-                <div class="info-box">
-                    <span class="info-box-icon bg-green"><i class="ion ion-ios-gear-outline"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">环境数量</span>
-                        <span class="info-box-number">***</span>
+                        <span class="info-box-number">${instanceCount}</span>
                     </div>
                 </div>
             </div>
