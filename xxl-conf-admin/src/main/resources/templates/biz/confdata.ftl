@@ -101,13 +101,10 @@
 							<div class="form-group">
 								<label for="lastname" class="col-sm-2 control-label">AppName<font color="red">*</font></label>
 								<div class="col-sm-9">
-									<select class="form-control " style="width: 100%;" name="appname" >
-										<#list applicationList as item>
-											<option value="${item.appname}" >${item.appname}</option>
-										</#list>
-									</select>
+									<input type="text" class="form-control" name="appname" readonly >
 								</div>
 							</div>
+
 							<div class="form-group">
 								<label for="lastname" class="col-sm-2 control-label">配置Key<font color="red">*</font></label>
 								<div class="col-sm-9"><input type="text" class="form-control" name="key" placeholder="${I18n.system_please_input}配置key" maxlength="200" ></div>
@@ -205,9 +202,9 @@
 
 		// ---------------------- select2 ----------------------
 
-		$("#addModal .form select[name='appname']").select2();
-		$("#updateModal .form select[name='appname']").select2();
-		$("#data_filter select[name='appname']").select2();
+		/*$("#addModal [name='appname']").select2();
+		$("#updateModal [name='appname']").select2();*/
+		$("#data_filter [name='appname']").select2();
 
 		// ---------------------- main table ----------------------
 
@@ -330,11 +327,11 @@
 
 				// base data
 				let currentEnv = window.parent.findEnv();
-				$("#addModal .form input[name='env']").val( currentEnv );
+				$("#addModal [name='env']").val( currentEnv );
 
 				// set appname (select2)
 				let appname = $("#data_filter select[name='appname']").val();
-				$("#addModal .form select[name='appname']").val(appname).trigger("change");
+				$("#addModal [name='appname']").val(appname).trigger("change");
 
 			},
 			rules : {
@@ -368,12 +365,12 @@
 			writeFormData: function(row) {
 
 				// base data
-				$("#updateModal .form input[name='id']").val( row.id );
-				$("#updateModal .form input[name='env']").val( row.env );
-				$("#updateModal .form input[name='appname']").val( row.appname );
-				$("#updateModal .form input[name='key']").val( row.key );
-				$("#updateModal .form textarea[name='value']").val( row.value );
-				$("#updateModal .form input[name='desc']").val( row.desc );
+				$("#updateModal [name='id']").val( row.id );
+				$("#updateModal [name='env']").val( row.env );
+				$("#updateModal [name='appname']").val( row.appname );
+				$("#updateModal [name='key']").val( row.key );
+				$("#updateModal [name='value']").val( row.value );
+				$("#updateModal [name='desc']").val( row.desc );
 			},
 			rules : {
 				desc : {
