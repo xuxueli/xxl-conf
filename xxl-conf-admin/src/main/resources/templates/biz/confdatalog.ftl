@@ -114,14 +114,14 @@
 							<#-- 展示内容 -->
 							<table style="width: 100%;height: 400px;" >
 								 <tr>
-									<td style="width: 33.3333%;" ><label>旧配置：</label></td>
-									<td style="width: 33.3333%;" ><label>新配置：</label></td>
-									<td style="width: 33.3333%;" ><label>配置Diff：</label></td>
+									<td style="width: 33.3333%;height: 20px;" ><label>旧配置：</label></td>
+									<td style="width: 33.3333%;height: 20px;" ><label>新配置：</label></td>
+									<td style="width: 33.3333%;height: 20px;" ><label>配置Diff：</label></td>
 								</tr>
 								<tr>
-									<td style="width: 33.3333%;" ><textarea id="oldData" readonly style="width: 100%;height: 100%;" ></textarea></td>
-									<td style="width: 33.3333%;" ><textarea id="newData" readonly style="width: 100%;height: 100%;" ></textarea></td>
-									<td style="width: 33.3333%;" ><div style="width: 100%;height: 100%;" ><pre id="diffResult" style="white-space: normal;"></pre></div></td>
+									<td><textarea id="oldData" readonly style="width: 98%;height: 100%;border: solid 2px #d2d6de;" ></textarea></td>
+									<td><textarea id="newData" readonly style="width: 98%;height: 100%;border: solid 2px #d2d6de;" ></textarea></td>
+									<td><pre id="diffResult" style="width: 100%;height: 100%;white-space: normal;border: solid 2px #d2d6de;"></pre></td>
 								</tr>
 							</table>
 
