@@ -4,9 +4,10 @@ import com.xxl.conf.admin.constant.enums.InstanceRegisterModelEnum;
 import com.xxl.conf.admin.model.dto.MessageForRegistryDTO;
 import com.xxl.conf.admin.model.entity.Instance;
 import com.xxl.conf.admin.openapi.registry.config.RegistryBootstrap;
-import com.xxl.conf.core.openapi.registry.model.DiscoveryRequest;
 import com.xxl.conf.core.openapi.registry.model.DiscoveryData;
+import com.xxl.conf.core.openapi.registry.model.DiscoveryRequest;
 import com.xxl.conf.core.openapi.registry.model.InstanceCacheDTO;
+import com.xxl.tool.concurrent.CyclicThread;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.DateTool;
 import com.xxl.tool.core.StringTool;
@@ -19,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -35,47 +35,51 @@ import java.util.stream.Collectors;
  * @author xuxueli
  */
 public class RegistryCacheHelpler {
-    private static Logger logger = LoggerFactory.getLogger(RegistryCacheHelpler.class);
+    private static final Logger logger = LoggerFactory.getLogger(RegistryCacheHelpler.class);
 
     /**
-     * 注册信息本地缓存：完整数据
+     * 注册信息 - 本地缓存：
      *
+     *  1、数据格式：
      * <pre>
-     *      DB-Instance：DB完整注册信息。
-     *          env：Env（环境唯一标识）
-     *          appname：AppName（服务唯一标识）
-     *          ip：注册节点IP
-     *          port：注册节点端口号
-     *          registerModel：注册模式
-     *          registerHeartbeat：节点最后心跳时间，动态注册时判定是否过期
-     *          extendInfo：扩展信息
-     *      Cache-Data：
-     *          Key：String
-     *              格式：env##appname
-     *              示例："test##app02"
-     *          Value：ArrayList<Object>
-     *              ip
-     *              port
-     *              extendInfo
-     *      注册数据是否有效，判定逻辑：
-     *          动态注册：心跳间隔30s，三倍间隔时间内存在心跳判定有效，否则无效；(registerModel + registerHeartbeat)
-     *          持久化注册：永久有效；
-     *          禁用注册：无效
+     *      {
+     *          "test##app01": [                        // key  ： "{Env}##{Appname}"
+     *              {                                   // value： List<Instance>
+     *                  "env": "test",                          // Env（环境唯一标识）
+     *                  "appname": "app01",                     // AppName（服务唯一标识）
+     *                  "ip": "192.168.1.1",                    // 注册节点IP
+     *                  "port": 8080,                           // 注册节点端口号
+     *                  "extendInfo": "..."                     // 扩展信息
+     *              }
+     *          ],
+     *          "test##app02": []
+     *      }
      * </pre>
+     *
+     * 2、注册信息缓存更新逻辑：
+     *      - 数据流向：DB -> Cache
+     *      - 频率：90s/次（三倍心跳间隔）；
+     *
+     * 3、注册数据是否有效，判定逻辑：
+     *      - 动态注册：心跳间隔30s，三倍间隔时间内存在心跳判定有效，否则无效；(registerModel + registerHeartbeat)
+     *      - 持久化注册：永久有效；
+     *      - 禁用注册：无效
      */
     private volatile ConcurrentMap<String, List<InstanceCacheDTO>> registryCacheStore = new ConcurrentHashMap<>();
+
     /**
-     * 注册信息本地缓存：MD5摘要
+     * 注册信息摘要（Md5） - 本地缓存：
      *
+     *  1、数据格式：
      * <pre>
-     *     说明：数据为注册信息JSON序列化后再Md5的信息，用户快速比对缓存与客户端信息是否一致。一致则不进行更新，幂等跳过；否则再详细比对。
-     *     Cache-Data：
-     *          Key：String
-     *              格式：env##appname
-     *              示例："test##app02"
-     *          Value：String
-     *              格式：md5( registryCacheStore#value )
+     *      {
+     *          "test##app01": "xxxxx",         // key:value = "{Env}##{Appname}" : md5( JSON(registryCacheStore#value) )
+     *          "test##app02": "xxxxx"
      * </pre>
+     *
+     * 2、注册信息缓存更新逻辑：
+     *      - 数据流向：DB -> Cache -> Md5( json )
+     *      - 说明：数据为注册信息JSON序列化后再Md5的信息，用户快速比对缓存与客户端信息是否一致。一致则不进行更新，幂等跳过；否则再详细比对。
      */
     private volatile ConcurrentMap<String, String> registryCacheMd5Store = new ConcurrentHashMap<>();
 
@@ -85,109 +89,107 @@ public class RegistryCacheHelpler {
     public static final int REGISTRY_BEAT_TIME = 30;
 
     /**
-     * thread stop variable
-     */
-    private volatile boolean toStop = false;
-
-    /**
      * first full-sync status, true if sync success
      */
     private volatile boolean warmUp = false;
 
     /**
-     * 全量同步
-     * 1、范围：DB中全量注册数据，同步至 registryCacheStore；整个Map覆盖更新；
-     * 2、间隔：3倍心跳（REGISTRY_BEAT_TIME * 3）；
-     * 3、过滤：过滤掉无效数据；
+     * 全量同步：
+     *      - 全量：
+     *          - 启动预热：启动时全量查询DB，预热本地缓存；
+     *          - 全量刷新：定期全量检测配置md5摘要，对比DB数据，不一致主动刷新；
+     *      - 说明：
+     *          - 1、范围：DB中全量注册数据，同步至 registryCacheStore；整个Map覆盖更新；
+     *          - 2、间隔：3倍心跳（REGISTRY_BEAT_TIME * 3）；
+     *          - 3、过滤：过滤掉无效数据；
+     *
+     *
+     *  增量更新：监听广播消息，增量更新；
+     *      - MessageHelpler
+     *      - 说明：
+     *          - 1、说明：实时监听广播消息，根据消息类型实时更新指定注册数据，从DB 同步至 registryCacheStore；单条数据维度覆盖更新；
+     *          - 2、间隔：1s/次，实时检测广播消息；无消息则跳过；
+     *          - 3、过滤：过滤掉无效数据；
      */
-    private Thread fullSyncThread;
-
-    /**
-     * 增量(实时)同步
-     * 1、说明：实时监听广播消息，根据消息类型实时更新指定注册数据，从DB 同步至 registryCacheStore；单条数据维度覆盖更新；
-     * 2、间隔：1s/次，实时检测广播消息；无消息则跳过；
-     * 3、过滤：过滤掉无效数据；
-     */
-    // MessageHelpler
+    private CyclicThread registryCacheThread;
 
     /**
      * start
      */
     public void start(){
-        // 1、run fullSyncThread
-        fullSyncThread = MessageHelpler.startThread(new Runnable() {
+
+        registryCacheThread = new CyclicThread("RegistryCacheHelpler-registryCacheThread", true, new Runnable() {
             @Override
             public void run() {
-                // DB中全量注册数据，同步至 registryCacheStore；整个Map覆盖更新；
-                logger.info(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-fullSyncThread start");
-                while (!toStop) {
-                    try {
-                        // a、init new map
-                        ConcurrentMap<String, List<InstanceCacheDTO>> registryCacheStoreNew = new ConcurrentHashMap<>();
-                        ConcurrentMap<String, String> registryCacheMd5StoreNew = new ConcurrentHashMap<>();
 
-                        // b、load all env-appname
-                        List<Instance> envAndAppNameList = RegistryBootstrap.getInstance().getInstanceMapper().queryEnvAndAppName();
+                // 1、init new map
+                ConcurrentMap<String, List<InstanceCacheDTO>> registryCacheStoreNew = new ConcurrentHashMap<>();
+                ConcurrentMap<String, String> registryCacheMd5StoreNew = new ConcurrentHashMap<>();
 
-                        // c、process each env-appname
-                        if (CollectionTool.isNotEmpty(envAndAppNameList)) {
-                            for (Instance instance : envAndAppNameList) {
-                                // build key
-                                String envAppNameKey = buildCacheKey(instance.getEnv(), instance.getAppname());
+                // 2、load all env-appname
+                List<Instance> envAndAppNameList = RegistryBootstrap.getInstance().getInstanceMapper().queryEnvAndAppName();
 
-                                // build validValud
-                                List<InstanceCacheDTO> cacheValue = buildValidCache(instance.getEnv(), instance.getAppname());
+                // 3、process each env-appname
+                if (CollectionTool.isNotEmpty(envAndAppNameList)) {
+                    for (Instance instance : envAndAppNameList) {
+                        // build key
+                        String envAppNameKey = buildCacheKey(instance.getEnv(), instance.getAppname());
 
-                                // build validValud-md5
-                                String cacheValueMd5 = Md5Tool.md5(GsonTool.toJson(cacheValue));
+                        // build validValud
+                        List<InstanceCacheDTO> cacheValue = buildValidCache(instance.getEnv(), instance.getAppname());
 
-                                // set data
-                                registryCacheStoreNew.put(envAppNameKey, cacheValue);
-                                registryCacheMd5StoreNew.put(envAppNameKey, cacheValueMd5);      // only match md5, speed up match process
-                            }
-                        }
+                        // build validValud-md5
+                        String cacheValueMd5 = Md5Tool.md5(GsonTool.toJson(cacheValue));
 
-                        /**
-                         * d、Diff识别不一致数据，客户端推送
-                         *
-                         * Diff判定逻辑：以旧CacheMap为基础遍历；新Key不存在，不一致；新Key存在但Value不同，不一致；
-                         */
-                        List<String> envAppnameDiffList = registryCacheMd5Store.keySet().stream()
-                                .filter(item -> !registryCacheMd5StoreNew.containsKey(item) || !registryCacheMd5StoreNew.get(item).equals(registryCacheMd5Store.get(item)))
-                                .collect(Collectors.toList());
-                        if (CollectionTool.isNotEmpty(envAppnameDiffList)) {
-                            logger.info(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-fullSyncThread find diffData and pushClient, envAppnameDiffList:{}", envAppnameDiffList);
-                            pushClient(envAppnameDiffList);
-                        }
-
-                        // e、replace with new data
-                        registryCacheStore = registryCacheStoreNew;
-                        registryCacheMd5Store = registryCacheMd5StoreNew;
-                        logger.debug(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-fullSyncThread success, registryCacheStore:{}, registryCacheMd5Store:{}",
-                                registryCacheStore, registryCacheMd5Store);
-
-                        // first full-sycs success, warmUp
-                        if (!warmUp) {
-                            warmUp = true;
-                            logger.info(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-fullSyncThread warmUp finish");
-                        }
-                    } catch (Throwable e) {
-                        if (!toStop) {
-                            logger.error(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-fullSyncThread error:{}", e.getMessage(), e);
-                        }
-                    }
-                    try {
-                        TimeUnit.SECONDS.sleep(REGISTRY_BEAT_TIME * 3);
-                    } catch (Throwable e) {
-                        if (!toStop) {
-                            logger.error(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-fullSyncThread error2:{}", e.getMessage(), e);
-                        }
+                        // set data
+                        registryCacheStoreNew.put(envAppNameKey, cacheValue);
+                        registryCacheMd5StoreNew.put(envAppNameKey, cacheValueMd5);      // only match md5, speed up match process
                     }
                 }
-                logger.info(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-fullSyncThread stop");
-            }
-        }, ">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-fullSyncThread");
 
+                /**
+                 * 4、Diff识别不一致数据，客户端推送：
+                 *      - 老服务-节点下线：旧CacheMap存在，新CacheMap不存在；
+                 *      - 老服务-节点变化：旧CacheMap 与 新CacheMap对比，不一致；
+                 *      - 新服务（新上线）：旧CacheMap不存在，忽略；
+                 */
+                List<String> envAppnameDiffList = registryCacheMd5Store
+                        .keySet()
+                        .stream()
+                        .filter(item -> !registryCacheMd5StoreNew.containsKey(item)
+                                        || !registryCacheMd5StoreNew.get(item).equals(registryCacheMd5Store.get(item))
+                        )
+                        .collect(Collectors.toList());
+                if (CollectionTool.isNotEmpty(envAppnameDiffList)) {
+                    logger.info(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-registryCacheThread find diffData and pushClient, envAppnameDiffList:{}", envAppnameDiffList);
+                    pushClient(envAppnameDiffList);
+                }
+
+                // 5、replace with new data
+                registryCacheStore = registryCacheStoreNew;
+                registryCacheMd5Store = registryCacheMd5StoreNew;
+                logger.debug(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-registryCacheThread success, registryCacheStore:{}, registryCacheMd5Store:{}",
+                        registryCacheStore, registryCacheMd5Store);
+
+                // first full-sycs success, warmUp
+                if (!warmUp) {
+                    warmUp = true;
+                    logger.info(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-registryCacheThread warmUp finish");
+                }
+
+            }
+        }, REGISTRY_BEAT_TIME * 3 * 1000, true);
+        registryCacheThread.start();
+
+    }
+
+    /**
+     * stop
+     */
+    public void stop(){
+        if (registryCacheThread != null) {
+            registryCacheThread.stop();
+        }
     }
 
     /**
@@ -245,30 +247,14 @@ public class RegistryCacheHelpler {
         RegistryBootstrap.getInstance().getRegistryDeferredResultHelpler().pushClient(envAppnameDiffList);
     }
 
-    /**
-     * stop
-     */
-    public void stop(){
-        // mark stop
-        toStop = true;
-        try {
-            TimeUnit.SECONDS.sleep(1);
-        } catch (Throwable e) {
-            logger.error(e.getMessage(), e);
-        }
-
-        // stop thread
-        MessageHelpler.stopThread(fullSyncThread);
-    }
-
     // ---------------------- tool ----------------------
 
     /**
      * make cache key
      *
-     * @param env
-     * @param appname
-     * @return
+     * @param env env
+     * @param appname appname
+     * @return cache key
      */
     public static String buildCacheKey(String env, String appname){
         return String.format("%s##%s", env, appname);
@@ -277,9 +263,9 @@ public class RegistryCacheHelpler {
     /**
      * build valid cache
      *
-     * @param env
-     * @param appname
-     * @return
+     * @param env env
+     * @param appname appname
+     * @return  cache
      */
     private List<InstanceCacheDTO> buildValidCache(String env, String appname){
         // result
@@ -320,9 +306,9 @@ public class RegistryCacheHelpler {
     /**
      * find OnLine Instance
      *
-     * @param env
-     * @param appname
-     * @return
+     * @param env env
+     * @param appname appname
+     * @return Instance dto list
      */
     private List<InstanceCacheDTO> findOnLineInstance(String env, String appname){
         // valid
@@ -343,9 +329,9 @@ public class RegistryCacheHelpler {
     /**
      * find OnLine Instance-MD5
      *
-     * @param env
-     * @param appname
-     * @return
+     * @param env env
+     * @param appname appname
+     * @return Instance-MD5
      */
     private String findOnLineInstanceMd5(String env, String appname){
         // valid
@@ -366,8 +352,8 @@ public class RegistryCacheHelpler {
     /**
      * discovery OnLine Instance
      *
-     * @param request
-     * @return
+     * @param request request
+     * @return  response
      */
     public Response<DiscoveryData> discoveryOnLineInstance(DiscoveryRequest request) {
         // valid

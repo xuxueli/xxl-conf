@@ -33,6 +33,14 @@ public class MessageHelpler {
 
     /**
      * readed message id-list, avoid duplicate processing
+     *
+     *  1、数据结构：
+     *  <pre>
+     *      [
+     *          1000,
+     *          1001
+     *      ]
+     *  </pre>
      */
     private final List<Long> readedMessageIds = Collections.synchronizedList(new ArrayList<>());
 

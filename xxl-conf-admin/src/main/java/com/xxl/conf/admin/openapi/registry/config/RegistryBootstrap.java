@@ -114,15 +114,7 @@ public class RegistryBootstrap implements InitializingBean, DisposableBean {
             logger.error("RegistryFactory - registryCacheHelpler: start error", e);
         }
 
-        // 2、MessageHelpler
-        try {
-            messageHeader = new MessageHelpler();
-            messageHeader.start();
-        } catch (Throwable e) {
-            logger.error("RegistryFactory - messageHeader: start error", e);
-        }
-
-        // 3、RegisterHelper
+        // 2、RegisterHelper
         try {
             registerHelper = new RegisterHelper();
             registerHelper.start();
@@ -130,12 +122,20 @@ public class RegistryBootstrap implements InitializingBean, DisposableBean {
             logger.error("RegistryFactory - registerHelper: start error", e);
         }
 
-        // 4、RegistryDeferredResultHelpler
+        // 3、RegistryDeferredResultHelpler
         try {
             registryDeferredResultHelpler = new RegistryDeferredResultHelpler();
             registryDeferredResultHelpler.start();
         } catch (Throwable e) {
             logger.error("RegistryFactory - registryDeferredResultHelpler: start error", e);
+        }
+
+        // 4、MessageHelpler
+        try {
+            messageHeader = new MessageHelpler();
+            messageHeader.start();
+        } catch (Throwable e) {
+            logger.error("RegistryFactory - messageHeader: start error", e);
         }
 
         // 5、AccessTokenHelpler
@@ -156,25 +156,25 @@ public class RegistryBootstrap implements InitializingBean, DisposableBean {
             logger.error("RegistryFactory - registryCacheHelpler: stop error", e);
         }
 
-        // 2、MessageHeader
-        try {
-            messageHeader.stop();
-        } catch (Throwable e) {
-            logger.error("RegistryFactory - messageHeader: stop error", e);
-        }
-
-        // 3、RegisterHelper
+        // 2、RegisterHelper
         try {
             registerHelper.stop();
         } catch (Throwable e) {
             logger.error("RegistryFactory - registerHelper: stop error", e);
         }
 
-        // 4、RegistryDeferredResultHelpler
+        // 3、RegistryDeferredResultHelpler
         try {
             registryDeferredResultHelpler.stop();
         } catch (Throwable e) {
             logger.error("RegistryFactory - registryDeferredResultHelpler: stop error", e);
+        }
+
+        // 4、MessageHeader
+        try {
+            messageHeader.stop();
+        } catch (Throwable e) {
+            logger.error("RegistryFactory - messageHeader: stop error", e);
         }
 
         // 5、AccessTokenHelpler
