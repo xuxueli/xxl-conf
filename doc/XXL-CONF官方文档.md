@@ -994,7 +994,7 @@ alter table xxl_conf_data_log
 - 集群管理：新增“集群（Cluster）”维度，针对配置、注册细化维度为 “env-clustor-appkey”，集群间相互隔离；
   - 配置数据：key=env-clustor-appkey；value=Map（配置KV）
   - 注册数据：key=env-clustor-appkey；value=List（注册实例）
-- 配置数据存储、同步：
+- 配置数据存储：
   - 服务端：key=env-clustor-appkey；值全量放treeMap。大内存。
   - 客户端：
     - 预热：分页page查询，查询服务端treemap；客户端全量缓存；
@@ -1005,6 +1005,7 @@ alter table xxl_conf_data_log
 - 配置治理：
   - 权限管理：用户拆分“管理员、普通用户、只读用户”三类角色；配置和注册操作，校验是否有权限，然后在看权限类型；
   - 审核管理：配置发布支持卡空审核，普通用户修改，必需其他管理员确认后生效；
+  - 配置状态：区分 “未发布、已发布” 状态，审核通过发布生效；
   - 灰度发布：将配置推送到指定环境上的指定ip或者指定模块进程；配置存多份，交互上体现是否存在灰度，可操作推全或回退；
 - 配置多类型，Text、JSON、Properties、Boolean、Long、Double；
 - 多配置注解：线程池、邮箱、jdbc、JavaBean。待评估；
