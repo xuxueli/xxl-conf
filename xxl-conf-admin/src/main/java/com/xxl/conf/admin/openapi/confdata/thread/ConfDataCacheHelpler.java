@@ -63,9 +63,20 @@ public class ConfDataCacheHelpler {
     private volatile boolean warmUp = false;
 
     /**
-     * 全量同步
-     * 1、范围：DB中全量配置数据，同步至 confDataCacheStore；整个Map覆盖更新；
-     * 2、间隔：REFRESH_INTERVAL
+     * 全量同步：
+     *      - 全量：
+     *          - 启动预热：启动时全量查询DB，预热本地缓存；
+     *          - 全量刷新：定期全量检测配置md5摘要，对比DB数据，不一致主动刷新；
+     *      - 说明：
+     *          - 1、范围：DB中全量配置数据，同步至 confDataCacheStore；整个Map覆盖更新；
+     *          - 2、间隔：30s；
+     *
+     *
+     *  增量更新：监听广播消息，增量更新；
+     *      - MessageHelpler
+     *      - 说明：
+     *          - 1、说明：实时监听广播消息，根据消息类型实时更新指定注册数据，从DB 同步至 confDataCacheThread；单条数据维度覆盖更新；
+     *          - 2、间隔：1s/次，实时检测广播消息；无消息则跳过；
      */
     private CyclicThread confDataCacheThread;
 
@@ -74,7 +85,7 @@ public class ConfDataCacheHelpler {
      */
     public void start(){
 
-        confDataCacheThread = new CyclicThread("RegistryCacheHelpler-registryCacheThread", true, new Runnable() {
+        confDataCacheThread = new CyclicThread("ConfDataCacheHelpler-confDataCacheThread", true, new Runnable() {
             @Override
             public void run() {
 
