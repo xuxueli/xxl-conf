@@ -26,13 +26,25 @@ public class AccessTokenHelpler {
     private static final Logger logger = LoggerFactory.getLogger(AccessTokenHelpler.class);
 
     /**
-     * 客户端监听器
-
+     * AccessToken 本地缓存
+     *
+     *  1、数据结构：
+     *  <pre>
+     *      [
+     *          "xxxx",
+     *          "xxxx",
+     *          "xxxxx"
+     *      ]
+     *  </pre>
      */
     private volatile Set<String> accessTokenStore = new ConcurrentSkipListSet<>();
 
     /**
-     * registry monitor (will remove instance that expired more than 1 day)
+     * AccessToken 定期缓存同步组件
+     *
+     *  1、AccessToken 定期缓存数据同步
+     *      - 数据流向：DB -> Cache
+     *      - 频率：30s/次；
      */
     private CyclicThread accessTokenThread;
 

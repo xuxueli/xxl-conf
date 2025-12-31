@@ -6,14 +6,17 @@ import com.xxl.conf.admin.model.dto.MessageForRegistryDTO;
 import com.xxl.conf.admin.model.entity.Message;
 import com.xxl.conf.admin.openapi.confdata.config.ConfDataBootstrap;
 import com.xxl.conf.admin.openapi.registry.config.RegistryBootstrap;
+import com.xxl.tool.concurrent.CyclicThread;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.DateTool;
 import com.xxl.tool.json.GsonTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -26,12 +29,12 @@ import java.util.stream.Collectors;
  * @author xuxueli
  */
 public class MessageHelpler {
-    private static Logger logger = LoggerFactory.getLogger(MessageHelpler.class);
+    private static final Logger logger = LoggerFactory.getLogger(MessageHelpler.class);
 
     /**
-     * message filtering to avoid duplicate processing
+     * readed message id-list, avoid duplicate processing
      */
-    private volatile List<Long> readedMessageIds = Collections.synchronizedList(new ArrayList());
+    private final List<Long> readedMessageIds = Collections.synchronizedList(new ArrayList<>());
 
     /**
      * msg clean Interval, by second
@@ -39,79 +42,57 @@ public class MessageHelpler {
     public static final int CLEAN_INTERVAL_TIME = 30;
 
     /**
-     * thread stop variable
-     */
-    private volatile boolean toStop = false;
-
-    /**
      * 实时广播消息
      */
-    private Thread messageListenThread;
+    private CyclicThread messageListenThread;
 
     /**
      * start
      */
     public void start(){
 
-        // 3、messageListenThread
-        messageListenThread = startThread(new Runnable() {
+        messageListenThread = new CyclicThread("MessageHelpler-messageListenThread", true, new Runnable() {
             @Override
             public void run() {
-                logger.info(">>>>>>>>>>> xxl-conf, MessageHelpler-messageListenThread start");
-                while (!toStop) {
-                    try {
-                        // a、detect real-time messages, Once per second
-                        Date msgTimeValidStart = DateTool.addSeconds(new Date(), -1 * 10);
-                        Date msgTimeValidEnd = DateTool.addMinutes(msgTimeValidStart, 5);
-                        List<Long> excludeMsgIds = readedMessageIds.size()>50?readedMessageIds.subList(0, 50):readedMessageIds;
+                // 1、detect real-time messages, Once per second
+                Date msgTimeValidStart = DateTool.addSeconds(new Date(), -1 * 10);
+                Date msgTimeValidEnd = DateTool.addMinutes(msgTimeValidStart, 5);
+                List<Long> excludeMsgIds = readedMessageIds.size()>50?readedMessageIds.subList(0, 50):readedMessageIds;
 
-                        List<Message> messageList = RegistryBootstrap.getInstance().getMessageMapper().queryValidMessage(msgTimeValidStart, msgTimeValidEnd, excludeMsgIds);
+                List<Message> messageList = RegistryBootstrap.getInstance().getMessageMapper().queryValidMessage(msgTimeValidStart, msgTimeValidEnd, excludeMsgIds);
 
-                        // b、dispatch message
-                        if (CollectionTool.isNotEmpty(messageList)) {
+                // 2、dispatch message
+                if (CollectionTool.isNotEmpty(messageList)) {
 
-                            // 1、parse message by type
-                            List<MessageForRegistryDTO> messageForRegistryDTOList = messageList.stream()
-                                    .filter(item->item.getType()== MessageTypeEnum.REGISTRY.getValue())
-                                    .map(item-> (GsonTool.fromJson(item.getData(), MessageForRegistryDTO.class)))
-                                    .collect(Collectors.toList());
-                            List<MessageForConfDataDTO> messageForConfDataDTOList = messageList.stream()
-                                    .filter(item->item.getType()== MessageTypeEnum.CONFDATA.getValue())
-                                    .map(item-> (GsonTool.fromJson(item.getData(), MessageForConfDataDTO.class)))
-                                    .collect(Collectors.toList());
+                    // 2.1、parse message by type
+                    List<MessageForRegistryDTO> messageForRegistryDTOList = messageList.stream()
+                            .filter(item->item.getType()== MessageTypeEnum.REGISTRY.getValue())
+                            .map(item-> (GsonTool.fromJson(item.getData(), MessageForRegistryDTO.class)))
+                            .collect(Collectors.toList());
+                    List<MessageForConfDataDTO> messageForConfDataDTOList = messageList.stream()
+                            .filter(item->item.getType()== MessageTypeEnum.CONFDATA.getValue())
+                            .map(item-> (GsonTool.fromJson(item.getData(), MessageForConfDataDTO.class)))
+                            .collect(Collectors.toList());
 
-                            // 2、process registry message
-                            RegistryBootstrap.getInstance().getRegistryCacheHelpler().checkUpdateAndPush(messageForRegistryDTOList);
+                    // 2.2、process registry message
+                    RegistryBootstrap.getInstance().getRegistryCacheHelpler().checkUpdateAndPush(messageForRegistryDTOList);
 
-                            // 3、process confdata message
-                            ConfDataBootstrap.getInstance().getConfDataCacheHelpler().checkUpdateAndPush(messageForConfDataDTOList);
-                        }
-
-                        // c、store msgId, avoid repeat message
-                        readedMessageIds.addAll(messageList.stream().map(Message::getId).collect(Collectors.toList()));
-
-                        // d、clean old message， Avoid too often clean
-                        if ( (System.currentTimeMillis()/1000) % CLEAN_INTERVAL_TIME ==0) {
-                            RegistryBootstrap.getInstance().getMessageMapper().cleanMessageInValid(msgTimeValidStart, msgTimeValidEnd);
-                            readedMessageIds.clear();
-                        }
-
-                    } catch (Throwable e) {
-                        if (!toStop) {
-                            logger.error(">>>>>>>>>>> xxl-conf, MessageHelpler-messageListenThread error:{}", e.getMessage(), e);
-                        }
-                    }
-                    try {
-                        TimeUnit.SECONDS.sleep(1);
-                    } catch (Throwable e) {
-                        if (!toStop) {
-                            logger.error(">>>>>>>>>>> xxl-conf, MessageHelpler-messageListenThread error2:{}", e.getMessage(), e);
-                        }
-                    }
+                    // 2.3、process confdata message
+                    ConfDataBootstrap.getInstance().getConfDataCacheHelpler().checkUpdateAndPush(messageForConfDataDTOList);
                 }
-                logger.info(">>>>>>>>>>> xxl-conf, MessageHelpler-messageListenThread stop");
+
+                // 3、store msgId, avoid repeat message
+                readedMessageIds.addAll(messageList.stream().map(Message::getId).toList());
+
+                // 4、clean old message， Avoid too often clean
+                if ( (System.currentTimeMillis()/1000) % CLEAN_INTERVAL_TIME ==0) {
+                    RegistryBootstrap.getInstance().getMessageMapper().cleanMessageInValid(msgTimeValidStart, msgTimeValidEnd);
+                    readedMessageIds.clear();
+                }
+
             }
-        }, "xxl-conf, admin MessageHelpler-messageListenThread");
+        }, 1 * 1000, true);
+        messageListenThread.start();
 
     }
 
@@ -119,16 +100,9 @@ public class MessageHelpler {
      * stop
      */
     public void stop(){
-        // mark stop
-        toStop = true;
-        try {
-            TimeUnit.SECONDS.sleep(1);
-        } catch (Throwable e) {
-            logger.error(e.getMessage(), e);
+        if (messageListenThread != null) {
+            messageListenThread.stop();
         }
-
-        // stop thread
-        stopThread(messageListenThread);
     }
 
     // ---------------------- util ----------------------
@@ -136,9 +110,9 @@ public class MessageHelpler {
     /**
      * start thread
      *
-     * @param runnable
-     * @param name
-     * @return
+     * @param runnable runnable
+     * @param name thread name
+     * @return  thread
      */
     public static Thread startThread(Runnable runnable, String name) {
         Thread thread = new Thread(runnable);
@@ -151,7 +125,7 @@ public class MessageHelpler {
     /**
      * stop thread
      *
-     * @param thread
+     * @param thread thread
      */
     public static void stopThread(Thread thread) {
         if (thread.getState() != Thread.State.TERMINATED){
@@ -170,8 +144,8 @@ public class MessageHelpler {
     /**
      * broadcast message
      *
-     * @param messageTypeEnum
-     * @param data
+     * @param messageTypeEnum message type
+     * @param data data
      */
     public static void broadcastMessage(MessageTypeEnum messageTypeEnum, String data){
         // message

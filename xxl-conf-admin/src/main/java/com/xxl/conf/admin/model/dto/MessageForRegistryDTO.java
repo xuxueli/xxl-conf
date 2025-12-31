@@ -13,11 +13,6 @@ public class MessageForRegistryDTO implements Serializable {
     private static final long serialVersionUID = 42L;
 
     /**
-     * id
-     */
-    private long instanceId;
-
-    /**
      * Env（环境唯一标识）
      */
     private String env;
@@ -27,20 +22,17 @@ public class MessageForRegistryDTO implements Serializable {
      */
     private String appname;
 
+    /**
+     * id
+     */
+    private long instanceId;
+
     public MessageForRegistryDTO() {
     }
     public MessageForRegistryDTO(Instance instance) {
-        this.instanceId = instance.getId();
         this.env = instance.getEnv();
         this.appname = instance.getAppname();
-    }
-
-    public long getInstanceId() {
-        return instanceId;
-    }
-
-    public void setInstanceId(long instanceId) {
-        this.instanceId = instanceId;
+        this.instanceId = instance.getId();
     }
 
     public String getEnv() {
@@ -57,6 +49,14 @@ public class MessageForRegistryDTO implements Serializable {
 
     public void setAppname(String appname) {
         this.appname = appname;
+    }
+
+    public long getInstanceId() {
+        return instanceId;
+    }
+
+    public void setInstanceId(long instanceId) {
+        this.instanceId = instanceId;
     }
 
 }
