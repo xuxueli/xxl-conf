@@ -969,9 +969,12 @@ Header：
 - 7、【优化】配置Diff：支持行维度对比配置数据变更，提升配置安全及追溯效率；
 
 ```
+// 表变更SQL脚本：
 alter table xxl_conf_data_log
     add old_value text not null comment '变更前，配置项Value';
 ```
+
+- 8、【优化】重构项目依赖管理，将依赖版本统一到父级pom；
 
 - 8、【ING】配置监听/onChange优化为异步线程处理，避免耗时监听逻辑影响系统性能；
 - 8、【ING】配置中心以及客户端重构：

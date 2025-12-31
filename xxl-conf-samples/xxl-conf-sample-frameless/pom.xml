@@ -18,14 +18,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-reload4j</artifactId>
-            <version>${slf4j-api.version}</version>
         </dependency>
 
         <!-- xxl-conf-client -->
         <dependency>
             <groupId>com.xuxueli</groupId>
             <artifactId>xxl-conf-core</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
 
     </dependencies>

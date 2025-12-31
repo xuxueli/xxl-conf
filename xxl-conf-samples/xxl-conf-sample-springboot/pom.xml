@@ -11,18 +11,6 @@
     <artifactId>xxl-conf-sample-springboot</artifactId>
     <packaging>jar</packaging>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-parent</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <!-- spring-boot-starter-web (spring-webmvc + tomcat) -->
         <dependency>
@@ -39,7 +27,6 @@
         <dependency>
             <groupId>com.xuxueli</groupId>
             <artifactId>xxl-conf-core</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
 
     </dependencies>
