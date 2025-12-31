@@ -210,8 +210,7 @@
 
 		// ---------------------- select2 ----------------------
 		
-		$("#addModal .form select[name='appname']").select2()
-		$("#updateModal .form select[name='appname']").select2()
+		$("#addModal [name='appname']").select2();
 
 		// ---------------------- main table ----------------------
 
@@ -286,7 +285,7 @@
 					align: 'left',
 					formatter: function(value, row, index) {
 						var ret = value;
-						$("#addModal .form select[name='registerModel']").children("option").each(function() {
+						$("#addModal [name='registerModel']").children("option").each(function() {
 							if ($(this).val() === row.registerModel+"") {
 								ret = $(this).html();
 							}
@@ -333,7 +332,7 @@
 
 				// base data
 				let currentEnv = window.parent.findEnv();
-				$("#addModal .form input[name='env']").val( currentEnv );
+				$("#addModal [name='env']").val( currentEnv );
 			},
 			rules : {
 				ip : {
