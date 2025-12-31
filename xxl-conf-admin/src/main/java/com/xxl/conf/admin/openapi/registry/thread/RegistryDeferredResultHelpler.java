@@ -2,6 +2,7 @@ package com.xxl.conf.admin.openapi.registry.thread;
 
 
 import com.xxl.conf.core.openapi.registry.model.DiscoveryRequest;
+import com.xxl.tool.concurrent.CyclicThread;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.MapTool;
 import com.xxl.tool.response.Response;
@@ -9,11 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.async.DeferredResult;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * registry DeferredResult helpler
@@ -28,33 +28,31 @@ import java.util.stream.Collectors;
  * @author xuxueli
  */
 public class RegistryDeferredResultHelpler {
-    private static Logger logger = LoggerFactory.getLogger(RegistryDeferredResultHelpler.class);
+    private static final Logger logger = LoggerFactory.getLogger(RegistryDeferredResultHelpler.class);
 
     /**
      * 客户端监听器
      *
+     *  1、数据结构：
      * <pre>
-     *     说明：以instance 维护关注的 客户端监听器 集合；
-     *     Cache-Data：
-     *          Key：String （与 RegistryCacheHelpler 缓存key保持一致）
-     *              格式：env##appname
-     *              示例："test##app02"
-     *          Value：List
-     *              格式：DeferredResult，客户端注册
+     *     {
+     *         "test##app01": [                         // key  ： "{Env}##{Appname}"        // 与 RegistryCacheHelpler 缓存key保持一致
+     *              DeferredResult,                     // value： List<DeferredResult>      // 监听客户端，延迟结果
+     *              DeferredResult
+     *         ]
+     *     }
      * </pre>
+     *
+     *  2、说明：关注 appname 的 instance 注册信息的，客户端监听器 集合；
      */
-    private volatile Map<String, CopyOnWriteArrayList<DeferredResult>> registryDeferredResultMap = new ConcurrentHashMap<>();
+    private final Map<String, CopyOnWriteArrayList<DeferredResult>> registryDeferredResultMap = new ConcurrentHashMap<>();
 
     /**
-     * registry monitor (will remove instance that expired more than 1 day)
+     * registry monitor
+     *
+     *  1、remove instance that expired more than 24 hours
      */
-    private Thread deferredResultMonitorThread;
-
-    /**
-     * thread stop variable
-     */
-    private volatile boolean toStop = false;
-
+    private CyclicThread deferredResultMonitorThread;
 
     /**
      * start
@@ -62,57 +60,38 @@ public class RegistryDeferredResultHelpler {
     public void start() {
 
         // deferredResultMonitorThread， for clean
-        deferredResultMonitorThread = MessageHelpler.startThread(new Runnable() {
+        deferredResultMonitorThread = new CyclicThread("RegistryDeferredResultHelpler-deferredResultMonitorThread", true, new Runnable() {
             @Override
             public void run() {
-                logger.info(">>>>>>>>>>> xxl-conf, RegistryDeferredResultHelpler-deferredResultMonitorThread stop.");
-                while (!toStop) {
-                    try {
-                        // clean dead DeferredResult
-                        if (MapTool.isNotEmpty(registryDeferredResultMap)) {
-                            for (Map.Entry<String, CopyOnWriteArrayList<DeferredResult>> entry : registryDeferredResultMap.entrySet()) {
-                                String key = entry.getKey();
-                                CopyOnWriteArrayList<DeferredResult> deferredResultList = entry.getValue();
-                                if (CollectionTool.isNotEmpty(deferredResultList)) {
-                                    List<DeferredResult> toRemove = deferredResultList.stream().filter(item->item.isSetOrExpired()).collect(Collectors.toList());
-                                    deferredResultList.removeAll(toRemove);     // thread-safe write
-                                } else {
-                                    registryDeferredResultMap.remove(key);
-                                }
-                            }
-                        }
-                    } catch (Throwable e) {
-                        if (!toStop) {
-                            logger.error(">>>>>>>>>>> xxl-conf, RegistryDeferredResultHelpler-deferredResultMonitorThread error:{}", e.getMessage(), e);
-                        }
-                    }
-                    try {
-                        TimeUnit.SECONDS.sleep(RegistryCacheHelpler.REGISTRY_BEAT_TIME * 3);
-                    } catch (Throwable e) {
-                        if (!toStop) {
-                            logger.error(">>>>>>>>>>> xxl-conf, RegistryDeferredResultHelpler-deferredResultMonitorThread error2:{}", e.getMessage(), e);
+
+                // clean dead DeferredResult
+                if (MapTool.isNotEmpty(registryDeferredResultMap)) {
+                    for (Map.Entry<String, CopyOnWriteArrayList<DeferredResult>> entry : registryDeferredResultMap.entrySet()) {
+                        // entry
+                        String key = entry.getKey();
+                        CopyOnWriteArrayList<DeferredResult> deferredResultList = entry.getValue();
+
+                        // remove dead DeferredResult
+                        if (CollectionTool.isNotEmpty(deferredResultList)) {
+                            List<DeferredResult> toRemove = deferredResultList.stream().filter(DeferredResult::isSetOrExpired).toList();
+                            deferredResultList.removeAll(toRemove);     // thread-safe write
+                        } else {
+                            registryDeferredResultMap.remove(key);
                         }
                     }
                 }
-                logger.info(">>>>>>>>>>> xxl-conf, RegistryDeferredResultHelpler-deferredResultMonitorThread finish.");
+
             }
-        }, "xxl-conf, RegistryDeferredResultHelpler-deferredResultMonitorThread");
+        }, RegistryCacheHelpler.REGISTRY_BEAT_TIME * 3 * 1000, true);
+        deferredResultMonitorThread.start();
 
     }
 
     public void stop() {
-        // mark stop
-        toStop = true;
-        try {
-            TimeUnit.SECONDS.sleep(1);
-        } catch (Throwable e) {
-            logger.error(e.getMessage(), e);
+        // deferredResultMonitorThread
+        if (deferredResultMonitorThread != null) {
+            deferredResultMonitorThread.stop();
         }
-
-        // TODO1，registryDeferredResultMap clean
-
-        // stop thread
-        MessageHelpler.stopThread(deferredResultMonitorThread);
     }
 
     // ---------------------- helper ----------------------
@@ -120,8 +99,7 @@ public class RegistryDeferredResultHelpler {
     /**
      * pushClient
      *
-     * @param envAppnameList
-     * @return
+     * @param envAppnameList envAppnameList
      */
     public void pushClient(List<String> envAppnameList){
         if (CollectionTool.isEmpty(envAppnameList)) {
@@ -143,8 +121,8 @@ public class RegistryDeferredResultHelpler {
     /**
      * monitor
      *
-     * @param request
-     * @return
+     * @param request request
+     * @return DeferredResult
      */
     public DeferredResult<Response<String>> monitor(DiscoveryRequest request) {
 

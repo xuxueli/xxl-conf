@@ -86,6 +86,7 @@ public class RegisterHelper {
                 if (ret > 0) {
                     logger.info(">>>>>>>>>>> xxl-conf, RegisterHelper-registryCleanupThread deleteExpiredAutoInstance count:{}", ret);
                 }
+                logger.debug(">>>>>>>>>>> xxl-conf, RegisterHelper-registryCleanupThread deleteExpiredAutoInstance count:{}", ret);
 
             }
         }, EXPIRED_TO_CLEAN_TIME * 60 * 60 * 1000, true);
