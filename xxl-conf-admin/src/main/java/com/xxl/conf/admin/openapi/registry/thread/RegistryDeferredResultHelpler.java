@@ -43,7 +43,7 @@ public class RegistryDeferredResultHelpler {
      *     }
      * </pre>
      *
-     *  2、说明：关注 appname 的 instance 注册信息的，客户端监听器 集合；
+     *  2、说明：appname 维度，管理 客户端监听器 集合；
      */
     private final Map<String, CopyOnWriteArrayList<DeferredResult>> registryDeferredResultMap = new ConcurrentHashMap<>();
 
