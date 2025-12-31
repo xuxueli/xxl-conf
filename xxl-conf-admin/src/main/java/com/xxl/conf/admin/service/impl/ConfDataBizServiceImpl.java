@@ -50,7 +50,7 @@ public class ConfDataBizServiceImpl implements ConfDataBizService {
 		// opt
 		confDataMapper.insert(confData);
 		// log
-		confDataLogMapper.insert(new ConfDataLog(confData.getId(), confData.getValue(), optUserName));
+		confDataLogMapper.insert(new ConfDataLog(confData.getId(), "", confData.getValue(), optUserName));
 
 		// broadcast message
 		MessageHelpler.broadcastMessage(MessageTypeEnum.CONFDATA, GsonTool.toJson(new MessageForConfDataDTO(confData)));
@@ -71,9 +71,10 @@ public class ConfDataBizServiceImpl implements ConfDataBizService {
 
 		// delete
 		int ret = confDataMapper.delete(ids);
+
 		// log
 		for (Long id: ids) {
-			confDataLogMapper.insert(new ConfDataLog(id, "", optUserName));
+			confDataLogMapper.insert(new ConfDataLog(id, "", "Deleted", optUserName));
 		}
 		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
@@ -89,11 +90,17 @@ public class ConfDataBizServiceImpl implements ConfDataBizService {
 			return Response.ofFail("必要参数缺失");
 		}
 
+		// load conf-data
+		ConfData confDataOld = confDataMapper.load(confData.getId());
+		if (confDataOld == null) {
+			return Response.ofFail("必要参数非法");
+		}
+
 		// opt
 		int ret = confDataMapper.update(confData);
 		if (ret > 0) {
 			// log
-			confDataLogMapper.insert(new ConfDataLog(confData.getId(), confData.getValue(), optUserName));
+			confDataLogMapper.insert(new ConfDataLog(confData.getId(), confDataOld.getValue(), confData.getValue(), optUserName));
 
 			// broadcast message
 			MessageHelpler.broadcastMessage(MessageTypeEnum.CONFDATA, GsonTool.toJson(new MessageForConfDataDTO(confData)));
@@ -103,7 +110,7 @@ public class ConfDataBizServiceImpl implements ConfDataBizService {
 
 	@Override
 	public Response<String> updateDataValue(long dataId, String value, String optUserName) {
-		// load conf data
+		// load conf-data
 		ConfData confData = confDataMapper.load(dataId);
 
 		// valid
@@ -119,7 +126,7 @@ public class ConfDataBizServiceImpl implements ConfDataBizService {
 		int ret = confDataMapper.update(confData);
 		if (ret > 0) {
 			// log
-			confDataLogMapper.insert(new ConfDataLog(confData.getId(), confData.getValue(), optUserName));
+			confDataLogMapper.insert(new ConfDataLog(confData.getId(), confData.getValue(), value, optUserName));
 
 			// broadcast message
 			MessageHelpler.broadcastMessage(MessageTypeEnum.CONFDATA, GsonTool.toJson(new MessageForConfDataDTO(confData)));

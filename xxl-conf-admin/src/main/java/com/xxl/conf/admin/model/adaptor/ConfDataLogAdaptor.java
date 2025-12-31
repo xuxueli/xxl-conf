@@ -11,6 +11,7 @@ public class ConfDataLogAdaptor {
         ConfDataLogDTO confDataLogDTO = new ConfDataLogDTO();
         confDataLogDTO.setId(confDataLog.getId());
         confDataLogDTO.setDataId(confDataLog.getDataId());
+        confDataLogDTO.setOldValue(confDataLog.getOldValue());
         confDataLogDTO.setValue(confDataLog.getValue());
         confDataLogDTO.setOptUsername(confDataLog.getOptUsername());
         confDataLogDTO.setAddTime(DateTool.formatDateTime(confDataLog.getAddTime()));

@@ -27,7 +27,8 @@ CREATE TABLE `xxl_conf_data` (
 CREATE TABLE `xxl_conf_data_log` (
     `id`                 bigint(20)      NOT NULL AUTO_INCREMENT,
     `data_id`            bigint(20)      NOT NULL COMMENT '配置数据ID',
-    `value`              text            NOT NULL COMMENT '历史数据，配置项Value',
+    `old_value`          text            NOT NULL COMMENT '变更前，配置项Value',
+    `value`              text            NOT NULL COMMENT '变更后，配置项Value',
     `opt_username`       varchar(50)     NOT NULL COMMENT '操作人，账号',
     `add_time`           datetime        NOT NULL COMMENT '新增时间',
     `update_time`        datetime        NOT NULL COMMENT '更新时间',

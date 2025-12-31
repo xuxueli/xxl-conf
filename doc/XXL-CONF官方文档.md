@@ -966,7 +966,13 @@ Header：
 - 4、【优化】操作体验优化：表格交互调整为单行选中模式；禁用分页循环；优化分页限制文案；
 - 5、【优化】交互优化：仪表板统计信息展示完善；新增配置默认选中当前服务；
 - 6、【优化】配置编辑器升级为CodeMirror，提升交互体验；
-- 7、【ING】配置Diff支持：支持对比配置数据，提升交互体验；
+- 7、【优化】配置Diff：支持行维度对比配置数据变更，提升配置安全及追溯效率；
+
+```
+alter table xxl_conf_data_log
+    add old_value text not null comment '变更前，配置项Value';
+```
+
 - 8、【ING】配置监听/onChange优化为异步线程处理，避免耗时监听逻辑影响系统性能；
 - 8、【ING】配置中心以及客户端重构：
   - 数据格式：key=env-appkey；value=Map（配置KV）；

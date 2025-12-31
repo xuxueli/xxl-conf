@@ -468,7 +468,7 @@
 
 		$("#data_operation .confDataLog").click(function(){
 			// get select rows
-			var rows = $.adminTable.table.bootstrapTable('getSelections');
+			var rows = $.adminTable.selectRows();
 			if (rows.length !== 1) {
 				layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
 				return;

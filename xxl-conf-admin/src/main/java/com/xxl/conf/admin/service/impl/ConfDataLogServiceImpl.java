@@ -58,11 +58,11 @@ public class ConfDataLogServiceImpl implements ConfDataLogService {
 	/**
 	* 更新
 	*/
-	@Override
+	/*@Override
 	public Response<String> update(ConfDataLog confDataLog) {
 		int ret = confDataLogMapper.update(confDataLog);
 		return ret>0? Response.ofSuccess() : Response.ofFail();
-	}
+	}*/
 
 	@Override
 	public Response<String> rollback(String optUserName, long dataLogId) {

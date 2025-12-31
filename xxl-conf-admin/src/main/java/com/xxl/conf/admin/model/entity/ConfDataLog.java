@@ -22,7 +22,12 @@ public class ConfDataLog implements Serializable {
     private long dataId;
 
     /**
-    * 历史数据，配置项Value
+     * 变更前，配置项Value
+     */
+    private String oldValue;
+
+    /**
+    * 变更后，配置项Value
     */
     private String value;
 
@@ -43,8 +48,9 @@ public class ConfDataLog implements Serializable {
 
     public ConfDataLog() {
     }
-    public ConfDataLog(long dataId, String value, String optUsername) {
+    public ConfDataLog(long dataId, String oldValue, String value, String optUsername) {
         this.dataId = dataId;
+        this.oldValue = oldValue;
         this.value = value;
         this.optUsername = optUsername;
     }
@@ -63,6 +69,14 @@ public class ConfDataLog implements Serializable {
 
     public void setDataId(long dataId) {
         this.dataId = dataId;
+    }
+
+    public String getOldValue() {
+        return oldValue;
+    }
+
+    public void setOldValue(String oldValue) {
+        this.oldValue = oldValue;
     }
 
     public String getValue() {

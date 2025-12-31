@@ -6,6 +6,7 @@
     <resultMap id="ConfDataLog" type="com.xxl.conf.admin.model.entity.ConfDataLog" >
         <result column="id" property="id" />
         <result column="data_id" property="dataId" />
+        <result column="old_value" property="oldValue" />
         <result column="value" property="value" />
         <result column="opt_username" property="optUsername" />
         <result column="add_time" property="addTime" />
@@ -15,6 +16,7 @@
     <sql id="Base_Column_List">
         t.`id`,
         t.`data_id`,
+        t.`old_value`,
         t.`value`,
         t.`opt_username`,
         t.`add_time`,
@@ -24,6 +26,7 @@
     <insert id="insert" parameterType="java.util.Map" >
         INSERT INTO xxl_conf_data_log (
             `data_id`,
+            `old_value`,
             `value`,
             `opt_username`,
             `add_time`,
@@ -31,6 +34,7 @@
         )
         VALUES(
                   #{confDataLog.dataId} ,
+                  #{confDataLog.oldValue} ,
                   #{confDataLog.value} ,
                   #{confDataLog.optUsername} ,
                   NOW() ,
@@ -50,6 +54,7 @@
         UPDATE xxl_conf_data_log
         SET
             `data_id` = #{confDataLog.dataId},
+            `old_value` = #{confDataLog.oldValue},
             `value` = #{confDataLog.value},
             `opt_username` = #{confDataLog.optUsername},
             `update_time` = NOW()

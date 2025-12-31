@@ -27,7 +27,7 @@ public interface ConfDataLogService {
     /**
     * 更新
     */
-    public Response<String> update(ConfDataLog confDataLog);
+    /*public Response<String> update(ConfDataLog confDataLog);*/
 
     /**
      * 回顾配置

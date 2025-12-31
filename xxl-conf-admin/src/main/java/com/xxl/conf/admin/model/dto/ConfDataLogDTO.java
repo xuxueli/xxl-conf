@@ -22,8 +22,13 @@ public class ConfDataLogDTO implements Serializable {
     private long dataId;
 
     /**
-    * 历史数据，配置项Value
-    */
+     * 变更前，配置项Value
+     */
+    private String oldValue;
+
+    /**
+     * 变更后，配置项Value
+     */
     private String value;
 
     /**
@@ -56,6 +61,14 @@ public class ConfDataLogDTO implements Serializable {
 
     public void setDataId(long dataId) {
         this.dataId = dataId;
+    }
+
+    public String getOldValue() {
+        return oldValue;
+    }
+
+    public void setOldValue(String oldValue) {
+        this.oldValue = oldValue;
     }
 
     public String getValue() {
