@@ -8,6 +8,8 @@
 	<@netCommon.commonStyle />
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.css">
 	<link rel="stylesheet" href="${request.contextPath}/static/adminlte/bower_components/select2/select2.min.css">
+	<link rel="stylesheet" href="${request.contextPath}/static/plugins/codemirror/lib/codemirror.css">
+	<link rel="stylesheet" href="${request.contextPath}/static/plugins/codemirror/addon/hint/show-hint.css">
 	<style>
 		/* select2 */
 		.select2-container--default .select2-selection--single {
@@ -15,6 +17,13 @@
 			border-radius: 0;
 			height: 34px;
 			padding: 6px 12px;
+		}
+		/* CodeMirror */
+		#addValueIDE #updateValueIDE {
+			height: 300px;
+		}
+		.CodeMirror {
+			border: 1px solid #ccc;
 		}
 	</style>
 	<!-- 1-style end -->
@@ -113,10 +122,16 @@
 								<label for="lastname" class="col-sm-2 control-label">配置描述<font color="red">*</font></label>
 								<div class="col-sm-9"><input type="text" class="form-control" name="desc" placeholder="${I18n.system_please_input}配置描述" maxlength="100" ></div>
 							</div>
+							<#--<div class="form-group">
+								<label for="lastname" class="col-sm-2 control-label">配置Value<font color="black">*</font></label>
+								<div class="col-sm-9">
+									<textarea type="text" class="form-control" name="value" maxlength="3000" style="height: 150px;" ></textarea>
+								</div>
+							</div>-->
 							<div class="form-group">
 								<label for="lastname" class="col-sm-2 control-label">配置Value<font color="black">*</font></label>
 								<div class="col-sm-9">
-									<textarea type="text" class="form-control" name="value" id="addConfDataIDE" maxlength="3000" style="height: 150px;" ></textarea>
+									<div id="addValueIDE" ></div>
 								</div>
 							</div>
 
@@ -165,7 +180,7 @@
 							<div class="form-group">
 								<label for="lastname" class="col-sm-2 control-label">配置Value<font color="black">*</font></label>
 								<div class="col-sm-9">
-									<textarea type="text" class="form-control" name="value" placeholder="${I18n.system_please_input}" maxlength="3000" style="height: 150px;" ></textarea>
+									<div id="updateValueIDE" ></div>
 								</div>
 							</div>
 
@@ -194,6 +209,9 @@
 <script src="${request.contextPath}/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
 <script src="${request.contextPath}/static/adminlte/plugins/iCheck/icheck.min.js"></script>
 <script src="${request.contextPath}/static/adminlte/bower_components/select2/select2.min.js"></script>
+<script src="${request.contextPath}/static/plugins/codemirror/lib/codemirror.js"></script>
+<script src="${request.contextPath}/static/plugins/codemirror/addon/hint/show-hint.js"></script>
+<script src="${request.contextPath}/static/plugins/codemirror/addon/hint/anyword-hint.js"></script>
 <#-- admin table -->
 <script src="${request.contextPath}/static/biz/common/admin.table.js"></script>
 <script src="${request.contextPath}/static/biz/common/admin.util.js"></script>
@@ -202,9 +220,42 @@
 
 		// ---------------------- select2 ----------------------
 
-		/*$("#addModal [name='appname']").select2();
-		$("#updateModal [name='appname']").select2();*/
+		// init filter : appname
 		$("#data_filter [name='appname']").select2();
+
+		/**
+		 * init editor：add value
+		 */
+		var addValueIDE = CodeMirror(document.getElementById("addValueIDE"), {
+			//mode : null,
+			theme: "default",
+			lineNumbers : true,
+			indentWithTabs: false,
+			tabSize: 4,
+			indentUnit:4,
+			matchBrackets : true,
+			lineWrapping : true
+		});
+		$("#addModal").on('shown.bs.modal', function () {
+			addValueIDE.refresh();
+		});
+
+		/**
+		 * init editor：update value
+		 */
+		var updateValueIDE = CodeMirror(document.getElementById("updateValueIDE"), {
+			//mode : null,
+			theme: "default",
+			lineNumbers : true,
+			indentWithTabs: false,
+			tabSize: 4,
+			indentUnit:4,
+			matchBrackets : true,
+			lineWrapping : true
+		});
+		$("#updateModal").on('shown.bs.modal', function () {
+			updateValueIDE.refresh();
+		});
 
 		// ---------------------- main table ----------------------
 
@@ -333,6 +384,8 @@
 				let appname = $("#data_filter select[name='appname']").val();
 				$("#addModal [name='appname']").val(appname).trigger("change");
 
+				// init value editor
+				addValueIDE.setValue('');
 			},
 			rules : {
 				desc : {
@@ -353,7 +406,14 @@
 			},
 			readFormData: function() {
 				// request
-				return $("#addModal .form").serializeArray();
+				return {
+					"id": $("#addModal [name=id]").val(),
+					"env": $("#addModal [name=env]").val(),
+					"appname": $("#addModal [name=appname]").val(),
+					"key": $("#addModal [name=key]").val(),
+					"value": addValueIDE.getValue(),
+					"desc": $("#addModal [name=desc]").val()
+				}
 			}
 		});
 
@@ -369,8 +429,9 @@
 				$("#updateModal [name='env']").val( row.env );
 				$("#updateModal [name='appname']").val( row.appname );
 				$("#updateModal [name='key']").val( row.key );
-				$("#updateModal [name='value']").val( row.value );
+				updateValueIDE.setValue( row.value );
 				$("#updateModal [name='desc']").val( row.desc );
+
 			},
 			rules : {
 				desc : {
@@ -391,7 +452,15 @@
 			},
 			readFormData: function() {
 				// request
-				return $("#updateModal .form").serializeArray();
+				return {
+					"id": $("#updateModal [name=id]").val(),
+					"env": $("#updateModal [name=env]").val(),
+					"appname": $("#updateModal [name=appname]").val(),
+					"key": $("#updateModal [name=key]").val(),
+					"value": updateValueIDE.getValue(),
+					"desc": $("#updateModal [name=desc]").val()
+				}
+				//return $("#updateModal .form").serializeArray();
 			}
 		});
 
