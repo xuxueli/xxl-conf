@@ -1,6 +1,6 @@
 package com.xxl.conf.sample.config;
 
-import com.xxl.conf.core.factory.support.SpringXxlConfBootstrap;
+import com.xxl.conf.core.bootstrap.support.SpringXxlConfBootstrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

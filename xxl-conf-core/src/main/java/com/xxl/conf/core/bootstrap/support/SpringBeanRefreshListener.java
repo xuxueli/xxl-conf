@@ -1,4 +1,4 @@
-package com.xxl.conf.core.factory.support;
+package com.xxl.conf.core.bootstrap.support;
 
 import com.xxl.conf.core.listener.XxlConfListener;
 import com.xxl.conf.core.listener.XxlConfListenerRepository;

@@ -1,7 +1,7 @@
 package com.xxl.conf.core.confdata;
 
 import com.xxl.conf.core.XxlConfHelper;
-import com.xxl.conf.core.factory.XxlConfBootstrap;
+import com.xxl.conf.core.bootstrap.XxlConfBootstrap;
 import com.xxl.conf.core.openapi.confdata.model.ConfDataInfo;
 import com.xxl.conf.core.openapi.confdata.model.ConfDataRequest;
 import com.xxl.tool.core.MapTool;

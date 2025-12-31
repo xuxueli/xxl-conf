@@ -1,9 +1,9 @@
-package com.xxl.conf.core.factory.support;
+package com.xxl.conf.core.bootstrap.support;
 
 import com.xxl.conf.core.XxlConfHelper;
 import com.xxl.conf.core.annotation.XxlConf;
 import com.xxl.conf.core.exception.XxlConfException;
-import com.xxl.conf.core.factory.XxlConfBootstrap;
+import com.xxl.conf.core.bootstrap.XxlConfBootstrap;
 import com.xxl.conf.core.util.FieldReflectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

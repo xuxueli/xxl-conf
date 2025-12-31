@@ -1,7 +1,7 @@
 package com.xxl.conf.sample.frameless;
 
 import com.xxl.conf.core.XxlConfHelper;
-import com.xxl.conf.core.factory.XxlConfBootstrap;
+import com.xxl.conf.core.bootstrap.XxlConfBootstrap;
 import com.xxl.conf.core.listener.XxlConfListener;
 import com.xxl.conf.core.util.PropUtil;
 import org.slf4j.Logger;

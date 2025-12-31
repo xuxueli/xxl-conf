@@ -1,7 +1,7 @@
 package com.xxl.conf.core.listener;
 
 import com.xxl.conf.core.XxlConfHelper;
-import com.xxl.conf.core.factory.XxlConfBootstrap;
+import com.xxl.conf.core.bootstrap.XxlConfBootstrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

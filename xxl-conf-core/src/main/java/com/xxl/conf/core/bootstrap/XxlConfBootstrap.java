@@ -1,4 +1,4 @@
-package com.xxl.conf.core.factory;
+package com.xxl.conf.core.bootstrap;
 
 import com.xxl.conf.core.confdata.XxlConfLocalCacheHelper;
 import com.xxl.conf.core.constant.Consts;

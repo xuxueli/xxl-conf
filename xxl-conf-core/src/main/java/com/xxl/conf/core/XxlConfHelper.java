@@ -1,6 +1,6 @@
 package com.xxl.conf.core;
 
-import com.xxl.conf.core.factory.XxlConfBootstrap;
+import com.xxl.conf.core.bootstrap.XxlConfBootstrap;
 import com.xxl.conf.core.listener.XxlConfListener;
 
 /**
