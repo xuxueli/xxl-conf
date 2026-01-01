@@ -15,28 +15,28 @@ public @interface XxlConf {
     /**
      * conf appname; if empty, the appname of current service will be used
      *
-     * @return
+     * @return appname
      */
     String appname() default "";
 
     /**
      * conf key
      *
-     * @return
+     * @return conf key
      */
     String value();
 
     /**
      * conf default value
      *
-     * @return
+     * @return conf default value
      */
     String defaultValue() default "";
 
     /**
      *  whether you need a callback refresh, when the value changes.
      *
-     * @return
+     * @return  true means need a callback refresh
      */
     boolean callback() default true;
 }

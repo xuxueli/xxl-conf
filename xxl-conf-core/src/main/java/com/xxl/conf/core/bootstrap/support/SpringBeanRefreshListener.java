@@ -52,10 +52,10 @@ public class SpringBeanRefreshListener implements XxlConfListener {
      * bean-field repository
      *
      * <pre>
-     *     // Data Structure
      *     {
-     *          "app02##k1": [{
-     *              ...
+     *          "app02##key01": [{              // "{Appname}##{Key}"
+     *              BeanField01,                // List<BeanField>
+     *              BeanFiel02
      *          }],
      *          "app02##k1": {
      *              ...
@@ -63,7 +63,11 @@ public class SpringBeanRefreshListener implements XxlConfListener {
      *      }
      * </pre>
      */
-    private static Map<String, List<BeanField>> listenerKey2BeanField = new ConcurrentHashMap<String, List<BeanField>>();
+    private static final Map<String, List<BeanField>> listenerKey2BeanField = new ConcurrentHashMap<>();
+
+    /**
+     * add bean-field
+     */
     public static void addBeanField(String appname, String key, BeanField beanField){
 
         // build listenerKey

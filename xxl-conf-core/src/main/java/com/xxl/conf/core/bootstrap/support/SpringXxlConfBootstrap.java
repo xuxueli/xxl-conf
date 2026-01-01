@@ -24,7 +24,7 @@ import java.lang.reflect.Field;
  * @author xuxueli 2015-9-12 19:42:49
  */
 public class SpringXxlConfBootstrap implements InitializingBean, DisposableBean, ApplicationContextAware, SmartInstantiationAwareBeanPostProcessor {
-	private static Logger logger = LoggerFactory.getLogger(SpringXxlConfBootstrap.class);
+	private static final Logger logger = LoggerFactory.getLogger(SpringXxlConfBootstrap.class);
 
 
 	// ---------------------- config ----------------------
@@ -96,11 +96,11 @@ public class SpringXxlConfBootstrap implements InitializingBean, DisposableBean,
 						String confKey = xxlConf.value();
 						String confValue = XxlConfHelper.get(confKey, xxlConf.defaultValue());
 
-						// resolves placeholders
+						// 1、process conf when initialize
 						SpringBeanRefreshListener.BeanField beanField = new SpringBeanRefreshListener.BeanField(beanName, fieldName);
 						refreshBeanField(bean, beanField, confValue);
 
-						// watch
+						// 2、watch conf when changed
 						if (xxlConf.callback()) {
 							SpringBeanRefreshListener.addBeanField(appname, confKey, beanField);
 						}
