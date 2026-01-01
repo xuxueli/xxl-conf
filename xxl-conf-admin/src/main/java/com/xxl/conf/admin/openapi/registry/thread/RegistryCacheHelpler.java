@@ -7,6 +7,7 @@ import com.xxl.conf.admin.openapi.registry.config.RegistryBootstrap;
 import com.xxl.conf.core.openapi.registry.model.DiscoveryData;
 import com.xxl.conf.core.openapi.registry.model.DiscoveryRequest;
 import com.xxl.conf.core.openapi.registry.model.InstanceCacheDTO;
+import com.xxl.conf.core.util.ConfDataUtil;
 import com.xxl.tool.concurrent.CyclicThread;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.DateTool;
@@ -133,7 +134,7 @@ public class RegistryCacheHelpler {
                 if (CollectionTool.isNotEmpty(envAndAppNameList)) {
                     for (Instance instance : envAndAppNameList) {
                         // build key
-                        String envAppNameKey = buildCacheKey(instance.getEnv(), instance.getAppname());
+                        String envAppNameKey = ConfDataUtil.buildEnvAppname(instance.getEnv(), instance.getAppname());
 
                         // build validValud
                         List<InstanceCacheDTO> cacheValue = buildValidCache(instance.getEnv(), instance.getAppname());
@@ -210,7 +211,7 @@ public class RegistryCacheHelpler {
             String newCacheDTOMD5 = Md5Tool.md5(GsonTool.toJson(newCacheDTO));
 
             // load cache
-            String envAppNameKey = buildCacheKey(messageForRegistryDTO.getEnv(), messageForRegistryDTO.getAppname());
+            String envAppNameKey = ConfDataUtil.buildEnvAppname(messageForRegistryDTO.getEnv(), messageForRegistryDTO.getAppname());
             String oldCacheDTOMD5 = registryCacheMd5Store.get(envAppNameKey);
 
             // set data (key exists and not match, need broadcast )
@@ -243,17 +244,6 @@ public class RegistryCacheHelpler {
     }
 
     // ---------------------- tool ----------------------
-
-    /**
-     * make cache key
-     *
-     * @param env env
-     * @param appname appname
-     * @return cache key
-     */
-    public static String buildCacheKey(String env, String appname){
-        return String.format("%s##%s", env, appname);
-    }
 
     /**
      * build valid cache
@@ -315,7 +305,7 @@ public class RegistryCacheHelpler {
         }
 
         // build key
-        String envAppNameKey = buildCacheKey(env, appname);
+        String envAppNameKey = ConfDataUtil.buildEnvAppname(env, appname);
 
         // get Instance
         return registryCacheStore.get(envAppNameKey);
@@ -338,7 +328,7 @@ public class RegistryCacheHelpler {
         }
 
         // build key
-        String envAppNameKey = buildCacheKey(env, appname);
+        String envAppNameKey = ConfDataUtil.buildEnvAppname(env, appname);
 
         // get Instance-MD5
         return registryCacheMd5Store.get(envAppNameKey);

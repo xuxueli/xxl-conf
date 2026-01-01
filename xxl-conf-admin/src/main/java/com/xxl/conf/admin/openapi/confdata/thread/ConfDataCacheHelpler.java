@@ -4,6 +4,7 @@ import com.xxl.conf.admin.model.dto.MessageForConfDataDTO;
 import com.xxl.conf.admin.model.entity.ConfData;
 import com.xxl.conf.admin.openapi.confdata.config.ConfDataBootstrap;
 import com.xxl.conf.core.openapi.confdata.model.*;
+import com.xxl.conf.core.util.ConfDataUtil;
 import com.xxl.tool.concurrent.CyclicThread;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.MapTool;
@@ -108,7 +109,7 @@ public class ConfDataCacheHelpler {
                         }
 
                         // 2.2、build keyMap of appname
-                        String envAppname_Key = buildCacheKey(envAndAppNameData.getEnv(), envAndAppNameData.getAppname());
+                        String envAppname_Key = ConfDataUtil.buildEnvAppname(envAndAppNameData.getEnv(), envAndAppNameData.getAppname());
                         ConcurrentHashMap<String, ConfDataCacheDTO> keyMap_of_appname_new = confDataStoreNew.computeIfAbsent(envAppname_Key, k -> new ConcurrentHashMap<>());
 
                         // 2.3、write value for keyMap
@@ -189,17 +190,6 @@ public class ConfDataCacheHelpler {
     // ---------------------- tool ----------------------
 
     /**
-     * make cache key
-     *
-     * @param env env
-     * @param appname appname
-     * @return cache key
-     */
-    public static String buildCacheKey(String env, String appname){
-        return String.format("%s##%s", env, appname);
-    }
-
-    /**
      * check update and push
      *
      * @param messageForConfDataDTOList messageForConfDataDTOList
@@ -226,7 +216,7 @@ public class ConfDataCacheHelpler {
                     new ConfDataCacheDTO(messageForConfDataDTO.getEnv(), messageForConfDataDTO.getAppname(), messageForConfDataDTO.getKey(), "");
 
             // cacheData
-            String envAppname_Key = buildCacheKey(confDataNew.getEnv(), confDataNew.getAppname());
+            String envAppname_Key = ConfDataUtil.buildEnvAppname(confDataNew.getEnv(), confDataNew.getAppname());
             ConcurrentHashMap<String, ConfDataCacheDTO> keyMap_of_appname_local = confDataStore.get(envAppname_Key);
             ConfDataCacheDTO confDataOld = keyMap_of_appname_local!=null?keyMap_of_appname_local.get(confDataNew.getKey()):null;
 
@@ -262,7 +252,7 @@ public class ConfDataCacheHelpler {
         // fill data
         Map<String, List<String>> appnameKeyData = new HashMap<>();
         for (String appname : request.getAppnameList()) {
-            String envAppname_Key = buildCacheKey(request.getEnv(), appname);
+            String envAppname_Key = ConfDataUtil.buildEnvAppname(request.getEnv(), appname);
             ConcurrentHashMap<String, ConfDataCacheDTO> keyMap_of_appname_local = confDataStore.get(envAppname_Key);
             if (MapTool.isNotEmpty(keyMap_of_appname_local)) {
                 appnameKeyData.put(appname, new ArrayList<>(keyMap_of_appname_local.keySet()));
@@ -301,7 +291,7 @@ public class ConfDataCacheHelpler {
             }
 
             // load and valid confData-cache
-            String envAppname_Key = buildCacheKey(request.getEnv(), appname);
+            String envAppname_Key = ConfDataUtil.buildEnvAppname(request.getEnv(), appname);
             ConcurrentHashMap<String, ConfDataCacheDTO> keyMap_of_appname_local = confDataStore.get(envAppname_Key);
             if (MapTool.isEmpty(keyMap_of_appname_local)) {
                 continue;

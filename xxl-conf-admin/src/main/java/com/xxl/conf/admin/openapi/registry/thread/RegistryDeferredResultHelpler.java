@@ -2,6 +2,7 @@ package com.xxl.conf.admin.openapi.registry.thread;
 
 
 import com.xxl.conf.core.openapi.registry.model.DiscoveryRequest;
+import com.xxl.conf.core.util.ConfDataUtil;
 import com.xxl.tool.concurrent.CyclicThread;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.MapTool;
@@ -139,7 +140,7 @@ public class RegistryDeferredResultHelpler {
         // monitor by client
         for (String appname: request.getAppnameList()) {
             // monitor key, same as cache key
-            String cacheKey = RegistryCacheHelpler.buildCacheKey(request.getEnv(), appname);
+            String cacheKey = ConfDataUtil.buildEnvAppname(request.getEnv(), appname);
             registryDeferredResultMap
                     .computeIfAbsent(cacheKey, k -> new CopyOnWriteArrayList<>())       // thread-safe write, put list
                     .add(deferredResult);                                                     // thread-safe write, add list-data

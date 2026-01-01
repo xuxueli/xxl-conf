@@ -2,6 +2,7 @@ package com.xxl.conf.admin.openapi.confdata.thread;
 
 import com.xxl.conf.core.openapi.confdata.model.ConfDataCacheDTO;
 import com.xxl.conf.core.openapi.confdata.model.MonitorRequest;
+import com.xxl.conf.core.util.ConfDataUtil;
 import com.xxl.tool.concurrent.CyclicThread;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.MapTool;
@@ -96,13 +97,6 @@ public class ConfDataDeferredResultHelpler {
     // ---------------------- helper ----------------------
 
     /**
-     * make cache key
-     */
-    public static String buildMonitorKey(String env, String appname){
-        return String.format("%s##%s", env, appname);
-    }
-
-    /**
      * pushClient
      */
     public void pushClient(List<ConfDataCacheDTO> diffConfList){
@@ -113,7 +107,7 @@ public class ConfDataDeferredResultHelpler {
         // find client and push
         for (ConfDataCacheDTO confDataCacheDTO: diffConfList) {
             // build param
-            String envAppnameKey = buildMonitorKey(confDataCacheDTO.getEnv(), confDataCacheDTO.getAppname());
+            String envAppnameKey = ConfDataUtil.buildEnvAppname(confDataCacheDTO.getEnv(), confDataCacheDTO.getAppname());
             String failMsg = "Monitor key update: env="+confDataCacheDTO.getEnv()+", appname="+ confDataCacheDTO.getAppname() +", key="+confDataCacheDTO.getKey();
 
             // do push
@@ -151,7 +145,7 @@ public class ConfDataDeferredResultHelpler {
         for (String appname: request.getAppnameList()) {
 
             // monitor key
-            String envAppnameKey = buildMonitorKey(request.getEnv(), appname);
+            String envAppnameKey = ConfDataUtil.buildEnvAppname(request.getEnv(), appname);
 
             // registry monitor
             registryDeferredResultMap
