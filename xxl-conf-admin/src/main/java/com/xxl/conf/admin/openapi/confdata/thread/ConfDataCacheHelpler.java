@@ -208,24 +208,25 @@ public class ConfDataCacheHelpler {
                 continue;
             }
 
-            // newData
+            // 1、build newData
             ConfData confData = ConfDataBootstrap.getInstance().getConfDataMapper()
                     .queryByEnvAndAppNameAndKey(messageForConfDataDTO.getEnv(), messageForConfDataDTO.getAppname(), messageForConfDataDTO.getKey());
             ConfDataCacheDTO  confDataNew = confData!=null?
                     new ConfDataCacheDTO(confData.getEnv(), confData.getAppname(), confData.getKey(), confData.getValue()):
                     new ConfDataCacheDTO(messageForConfDataDTO.getEnv(), messageForConfDataDTO.getAppname(), messageForConfDataDTO.getKey(), "");
 
-            // cacheData
+            // 2、load cacheData
             String envAppname_Key = ConfDataUtil.buildEnvAppname(confDataNew.getEnv(), confDataNew.getAppname());
-            ConcurrentHashMap<String, ConfDataCacheDTO> keyMap_of_appname_local = confDataStore.get(envAppname_Key);
-            ConfDataCacheDTO confDataOld = keyMap_of_appname_local!=null?keyMap_of_appname_local.get(confDataNew.getKey()):null;
+            ConcurrentHashMap<String, ConfDataCacheDTO> keyMap_of_appname_local = confDataStore.computeIfAbsent(envAppname_Key, k -> new ConcurrentHashMap<>());
+            ConfDataCacheDTO confDataOld = keyMap_of_appname_local.get(confDataNew.getKey());
 
+            // 3、valid if change
             if (!(confDataOld!=null && confDataNew.getValueMd5().equals(confDataOld.getValueMd5()))) {
 
-                // update cache
+                // 3.1、refresh old data
                 keyMap_of_appname_local.put(confDataNew.getKey(), confDataNew);
 
-                // push client
+                // 3.2、push client
                 pushClient(List.of(confDataNew));
                 logger.info(">>>>>>>>>>> xxl-conf, ConfDataCacheHelpler-checkUpdateAndPush find diffData and pushClient, diffConfList:{}", confDataNew);
             }

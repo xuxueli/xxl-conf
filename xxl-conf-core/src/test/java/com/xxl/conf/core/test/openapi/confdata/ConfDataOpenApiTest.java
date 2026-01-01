@@ -61,11 +61,16 @@ public class ConfDataOpenApiTest {
                 "xxl-conf-sample", List.of("sample.key01", "sample.key02", "sample.key03", "key04"),
                 "xxl-conf-sample02", List.of("key01", "key02")
         ));
-        request.setSimpleQuery(true);
+        request.setSimpleQuery(false);
         logger.info("request:{}", request);
 
         // invoke
         Response<QueryDataResponse> response = getClient().queryData(request);
+        logger.info("response:{}", GsonTool.toJsonPretty(response));
+
+        // invoke2
+        request.setSimpleQuery(true);
+        response = getClient().queryData(request);
         logger.info("response:{}", GsonTool.toJsonPretty(response));
     }
 
