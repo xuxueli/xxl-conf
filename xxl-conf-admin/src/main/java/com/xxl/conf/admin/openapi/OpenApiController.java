@@ -4,7 +4,9 @@ import com.xxl.conf.admin.openapi.confdata.config.ConfDataBootstrap;
 import com.xxl.conf.admin.openapi.registry.config.RegistryBootstrap;
 import com.xxl.conf.core.constant.Consts;
 import com.xxl.conf.core.openapi.confdata.ConfDataService;
-import com.xxl.conf.core.openapi.confdata.model.ConfDataRequest;
+import com.xxl.conf.core.openapi.confdata.model.MonitorRequest;
+import com.xxl.conf.core.openapi.confdata.model.QueryDataRequest;
+import com.xxl.conf.core.openapi.confdata.model.QueryKeyRequest;
 import com.xxl.conf.core.openapi.registry.RegistryService;
 import com.xxl.conf.core.openapi.registry.model.DiscoveryRequest;
 import com.xxl.conf.core.openapi.registry.model.RegisterRequest;
@@ -12,13 +14,12 @@ import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.json.GsonTool;
 import com.xxl.tool.response.Response;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * @author xuxueli 2018-11-29
@@ -74,20 +75,28 @@ public class OpenApiController {
         // dispatch request
         try {
             switch (uri) {
-                case "query": {
+                case "queryKey": {
+                    /**
+                     * 配置Key查询 API
+                     * 说明：查询配置Key信息
+                     */
+                    QueryKeyRequest request = GsonTool.fromJson(data, QueryKeyRequest.class);
+                    return confdataService.queryKey(request);
+                }
+                case "queryData": {
                     /**
                      * 配置数据查询 API
                      * 说明：查询配置数据信息
                      */
-                    ConfDataRequest request = GsonTool.fromJson(data, ConfDataRequest.class);
-                    return confdataService.query(request);
+                    QueryDataRequest request = GsonTool.fromJson(data, QueryDataRequest.class);
+                    return confdataService.queryData(request);
                 }
                 case "monitor":{
                     /**
                      * 配置数据监控 API
                      * 说明：long-polling 接口，主动阻塞一段时间（默认30s）；直至阻塞超时或配置信息变动时响应；
                      */
-                    ConfDataRequest request = GsonTool.fromJson(data, ConfDataRequest.class);
+                    MonitorRequest request = GsonTool.fromJson(data, MonitorRequest.class);
                     return ConfDataBootstrap.getInstance().getConfDataDeferredResultHelpler().monitor(request);
                     // return confdataService.monitor(request);
                 }

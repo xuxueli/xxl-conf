@@ -169,7 +169,7 @@ public class SpringXxlConfBootstrap implements InitializingBean, DisposableBean,
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
+		SpringXxlConfBootstrap.applicationContext = applicationContext;
 	}
 
 }

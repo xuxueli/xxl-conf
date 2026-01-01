@@ -2,14 +2,17 @@ package com.xxl.conf.core.confdata;
 
 import com.xxl.conf.core.XxlConfHelper;
 import com.xxl.conf.core.bootstrap.XxlConfBootstrap;
-import com.xxl.conf.core.openapi.confdata.model.ConfDataInfo;
-import com.xxl.conf.core.openapi.confdata.model.ConfDataRequest;
+import com.xxl.conf.core.openapi.confdata.model.*;
+import com.xxl.tool.concurrent.CyclicThread;
 import com.xxl.tool.core.MapTool;
 import com.xxl.tool.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -19,11 +22,11 @@ import java.util.concurrent.TimeUnit;
  * @author xuxueli 2018-02-01 19:11:25
  */
 public class XxlConfLocalCacheHelper {
-    private static Logger logger = LoggerFactory.getLogger(XxlConfHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(XxlConfHelper.class);
 
     // ---------------------- init ----------------------
 
-    private XxlConfBootstrap xxlConfBootstrap;
+    private volatile XxlConfBootstrap xxlConfBootstrap;
     public XxlConfLocalCacheHelper(XxlConfBootstrap xxlConfBootstrap) {
         this.xxlConfBootstrap = xxlConfBootstrap;
     }
@@ -33,225 +36,177 @@ public class XxlConfLocalCacheHelper {
 
     /**
      * <pre>
-     *     // Data Structure
-     *     "confData":{
-     *          "app01":{
-     *              "k1": "v1",
-     *              "k2": "v2"
-     *          }
-     *     }
-     *     "confDataMd5":{
-     *          "app01":{
-     *              "k1": md5(data),
-     *              "k2": md5(data)
-     *          }
+     *     {
+     *         "app01":{                        // Map: "{Appname}" -> Map<{Key}, ConfDataCacheDTO>
+     *             "key01": {                   // Map: {Key} -> ConfDataCacheDTO
+     *                 "key": "key01",              // ConfDataCacheDTO: key
+     *                 "value":"value01",           // ConfDataCacheDTO: value
+     *                 "valueMd5":"md5"             // ConfDataCacheDTO: valueMd5
+     *             },
+     *             "key02": {...}
+     *         },
+     *         "app02":{...}
      *     }
      * </pre>
      */
-    private final ConcurrentHashMap<String, ConcurrentHashMap<String, String>> confData = new ConcurrentHashMap<>();
-
-    private final ConcurrentHashMap<String, ConcurrentHashMap<String, String>> confDataMd5 = new ConcurrentHashMap<>();
-
-    /**
-     * make cache key
-     */
-    /*public String buildCacheKey(String appname, String key){
-        return String.format("%s##%s", appname, key);
-    }*/
+    private final ConcurrentHashMap<String, ConcurrentHashMap<String, ConfDataCacheDTO>> confDataStore = new ConcurrentHashMap<>();
 
     // ---------------------- start / stop ----------------------
 
+    private CyclicThread refreshThread;
 
-    private Thread refreshThread;
-    private boolean toStop = false;
+    /**
+     * first full-sync status, true if sync success
+     */
+    private volatile boolean warmUp = false;
 
     /**
      * start
      */
     public void start(){
-        // preload: TODO，1、本地文件，可用性；2、根据本地文件，批量预热，性能;3、非法数据过滤；
 
-        // refresh thread
-        refreshThread = startThread(new Runnable() {
+        /**
+         *  客户端：
+         *      - 启动预热：启动时查询全量key，分批查询全量配置数据预热；                        （warmUp）
+         *      - 全量刷新：定期全量检测配置md5摘要，对比本地与远程数据，不一致主动刷新；60s/次；   （monitor/60s + refresh/all）
+         *      - 增量更新：监听appkey，监听配置变更，触发全量比对刷新；                        （monitor/60s + refresh/all）
+         *      - 降级：全量比度内存数据与本地file（“/xxl-conf/env/clustor/confdata/appkey.prop”），不一致更新本地数据；5min/次； // TODO
+         *  说明：
+         *      - refreshThread：
+         */
+        refreshThread = new CyclicThread("XxlConfLocalCacheHelper-refreshThread", true, new Runnable() {
             @Override
             public void run() {
-                logger.info(">>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper-refreshThread start.");
-                while (!toStop) {
-                    try {
-                        refreshData();
-                    } catch (Throwable e) {
-                        if (!toStop && !(e instanceof InterruptedException)) {
-                            logger.error(">>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper-refreshThread error:{}", e.getMessage(), e);
-                        }
+
+                // 1、warmUp
+                if (!warmUp) {
+                    // request
+                    QueryKeyRequest queryKeyRequest = new QueryKeyRequest();
+                    queryKeyRequest.setEnv(xxlConfBootstrap.getEnv());
+                    queryKeyRequest.setAppnameList(List.of(xxlConfBootstrap.getAppname()));
+
+                    // 1.1、queryKey
+                    Response<QueryKeyResponse> queryKeyResponse = xxlConfBootstrap.loadClient().queryKey(queryKeyRequest);
+
+                    // parse response
+                    if (Response.isSuccess(queryKeyResponse) && queryKeyResponse.getData()!=null) {
+                        // parse queryKey response
+                        Map<String, List<String>> appnameKeyData = queryKeyResponse.getData().getAppnameKeyData();
+
+                        // 1.2、refresh + notify
+                        remoteQueryWithRefreshAndNotify(appnameKeyData);
                     }
+
+                    warmUp = true;
+                    logger.debug(">>>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper-refreshThread warmUp finish");
+                    return;
+                }
+
+                // pass if no-data
+                if (confDataStore.isEmpty()) {
                     try {
-                        TimeUnit.SECONDS.sleep(1);
-                    } catch (Throwable e) {
-                        if (!toStop) {
-                            logger.error(">>>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper-refreshThread error2:{}", e.getMessage(), e);
-                        }
+                        TimeUnit.SECONDS.sleep(3);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return;
+                }
+
+                // 2、monitor
+                MonitorRequest request = new MonitorRequest();
+                request.setEnv(xxlConfBootstrap.getEnv());
+                request.setAppnameList(new ArrayList<>(confDataStore.keySet()));
+                // 2.1、monitor
+                xxlConfBootstrap.loadMonitorClient().monitor(request);
+                // sleep：a、avoid fail-retry too quick；b、make sure server broadcast complete
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+                // 2.2、remote query and refresh + notify
+                Map<String, List<String>> appnameKeyData = new HashMap<>();
+                for (String appname : confDataStore.keySet()) {
+                    if (confDataStore.get(appname)!=null && !confDataStore.get(appname).isEmpty()) {
+                        appnameKeyData.put(appname, confDataStore.get(appname).keySet().stream().toList());
                     }
                 }
-                logger.info(">>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper-refreshThread stoped.");
+                // refresh + notify
+                remoteQueryWithRefreshAndNotify(appnameKeyData);
+                logger.debug(">>>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper-refreshThread remoteQueryWithRefreshAndNotify[1] finish");
             }
-        }, "xxl-conf, XxlConfLocalCacheHelper-refreshThread");
+        }, 1000, true);
+        refreshThread.start();
     }
 
     /**
      * stop
      */
     public void stop(){
-        // mark stop
-        toStop = true;
-
-        // do stop
-        stopThread(refreshThread);
-    }
-
-
-    // ------------ tool
-
-    /**
-     * start thread
-     *
-     * @param runnable
-     * @param name
-     * @return
-     */
-    private static Thread startThread(Runnable runnable, String name) {
-        Thread thread = new Thread(runnable);
-        thread.setDaemon(true);
-        thread.setName(name);
-        thread.start();
-        return thread;
-    }
-
-    /**
-     * stop thread
-     *
-     * @param thread
-     */
-    private static void stopThread(Thread thread) {
-        if (thread.getState() != Thread.State.TERMINATED){
-            // interrupt and wait
-            thread.interrupt();
-            try {
-                thread.join();
-            } catch (Throwable e) {
-                logger.error(e.getMessage(), e);
-            }
+        if (refreshThread != null) {
+            refreshThread.stop();
         }
     }
-
 
     // ---------------------- util ----------------------
 
     /**
-     * refresh Cache (Mirror not support), with real-time minitor
-     */
-    private void refreshData() throws InterruptedException{
-
-        // valid
-        if (confData.isEmpty()) {
-            TimeUnit.SECONDS.sleep(3);
-            return;
-        }
-
-        // monitor param
-        Map<String, List<String>> confKey = new HashMap<>();
-        for (Map.Entry<String, ConcurrentHashMap<String, String>> entry: confData.entrySet()) {
-            String appname = entry.getKey();
-            List<String> keyList = new ArrayList<>(entry.getValue().keySet());
-            confKey.put(appname, keyList);
-        }
-
-        // openapi monitor
-        try {
-            ConfDataRequest request = new ConfDataRequest();
-            request.setEnv(xxlConfBootstrap.getEnv());
-            request.setConfKey(confKey);
-            request.setSimpleQuery(true);
-            Response<String> monitorResponse = xxlConfBootstrap.loadMonitorClient().monitor(request);
-        } catch (Exception e) {
-            logger.debug(">>>>>>>>>> xxl-conf, refreshData monitor error:{}", e.getMessage());
-        }
-
-        // 1、avoid fail-retry too quick；2、make sure server broadcast complete
-        TimeUnit.SECONDS.sleep(1);
-
-        // remote param
-        confKey.clear();
-        for (Map.Entry<String, ConcurrentHashMap<String, String>> entry: confData.entrySet()) {
-            String appname = entry.getKey();
-            List<String> keyList = new ArrayList<>(entry.getValue().keySet());
-            confKey.put(appname, keyList);
-        }
-        // remote
-        remoteQueryWithRefreshAndNotify(confKey);
-        logger.debug(">>>>>>>>>> xxl-conf, refreshCacheAndMirror success.");
-    }
-
-    /**
      * remote query, with refresh and notify
+     *
+     * @param appnameKeyData appnameKeyData
      */
-    private void remoteQueryWithRefreshAndNotify(Map<String, List<String>> confKey){
+    private void remoteQueryWithRefreshAndNotify(Map<String, List<String>> appnameKeyData){
 
-        // openapi query
-        ConfDataRequest request = new ConfDataRequest();
+        // request
+        QueryDataRequest request = new QueryDataRequest();
         request.setEnv(xxlConfBootstrap.getEnv());
-        request.setConfKey(confKey);
+        request.setAppnameKeyData(appnameKeyData);
         request.setSimpleQuery(false);
-        Response<ConfDataInfo> queryConfDataResponse = xxlConfBootstrap.loadClient().query(request);
+        // 1、queryData
+        Response<QueryDataResponse> queryConfDataResponse = xxlConfBootstrap.loadClient().queryData(request);
 
-        // parse response
-        if (queryConfDataResponse.isSuccess()
+        // response
+        if (Response.isSuccess(queryConfDataResponse)
                 && queryConfDataResponse.getData()!=null
                 && MapTool.isNotEmpty(queryConfDataResponse.getData().getConfData()))  {
 
-            ConfDataInfo confDataInfo = queryConfDataResponse.getData();
-            for (String appname: confDataInfo.getConfData().keySet()) {
+            // 2、process exist confData, refresh + notify
+            Map<String, Map<String, ConfDataCacheDTO>> confData = queryConfDataResponse.getData().getConfData();
+            for (String appname: confData.keySet()) {
 
-                // local-data of appname
-                ConcurrentHashMap<String, String> confDataOfAppname = confData.computeIfAbsent(appname, k->new ConcurrentHashMap<>());
-                ConcurrentHashMap<String, String> confDataMd5OfAppname = confDataMd5.computeIfAbsent(appname, k->new ConcurrentHashMap<>());
+                // load keyMap
+                Map<String, ConfDataCacheDTO> keyMap_of_appname_remote = confData.get(appname);
+                ConcurrentHashMap<String, ConfDataCacheDTO> keyMap_of_appname_local = confDataStore.computeIfAbsent(appname, k->new ConcurrentHashMap<>());
 
                 // each key
-                for (String key: confDataInfo.getConfData().get(appname).keySet()) {
-                    String value = confDataInfo.getConfData().get(appname).get(key);
-                    String valueMd5 = confDataInfo.getConfDataMd5().containsKey(appname)
-                            ? confDataInfo.getConfDataMd5().get(appname).get(key)
-                            :"";
+                for (String key: keyMap_of_appname_remote.keySet()) {
+                    ConfDataCacheDTO new_value = keyMap_of_appname_remote.get(key);
+                    ConfDataCacheDTO local_value = keyMap_of_appname_local.get(key);
 
-                    // diff check
-                    if (valueMd5.equals(confDataMd5OfAppname.get(key))) {
-                        // filter repeat data
+                    // diff check, pass repeat-data
+                    if (local_value!=null && local_value.getValueMd5().equals(new_value.getValueMd5())) {
                         continue;
                     }
 
                     // refresh data
-                    confDataOfAppname.put(key, value);
-                    confDataMd5OfAppname.put(key, valueMd5);
+                    keyMap_of_appname_local.put(key, new_value);
 
                     // notify
-                    xxlConfBootstrap.getListenerRepository().notifyChange(appname, key, value);
+                    xxlConfBootstrap.getListenerRepository().notifyChange(appname, key, new_value.getValue());
                 }
             }
         }
 
-        // support cache null value
-        for (String appname: confKey.keySet()) {
-
-            // local-data of appname
-            ConcurrentHashMap<String, String> confDataOfAppname = confData.computeIfAbsent(appname, k->new ConcurrentHashMap<>());
-            ConcurrentHashMap<String, String> confDataMd5OfAppname = confDataMd5.computeIfAbsent(appname, k->new ConcurrentHashMap<>());
+        // 3、process no-exist confData, write none
+        for (String appname: appnameKeyData.keySet()) {
+            // load keyMap
+            ConcurrentHashMap<String, ConfDataCacheDTO> keyMap_of_appname_local = confDataStore.computeIfAbsent(appname, k->new ConcurrentHashMap<>());
 
             // each key
-            for (String key: confKey.get(appname)) {
-                if (!confDataOfAppname.containsKey(key)) {
-                    confDataOfAppname.put(key, "");
-                }
-                if (!confDataMd5OfAppname.containsKey(key)) {
-                    confDataMd5OfAppname.put(key, "");
+            for (String key: appnameKeyData.get(appname)) {
+                if (!keyMap_of_appname_local.containsKey(key)) {
+                    keyMap_of_appname_local.put(key, new ConfDataCacheDTO(xxlConfBootstrap.getEnv(), appname, key, ""));
                 }
             }
         }
@@ -282,23 +237,23 @@ public class XxlConfLocalCacheHelper {
     public String get(String appname, String key, String defaultVal) {
 
         // 1、get by cache
-        if (confData.containsKey(appname) && confData.get(appname).containsKey(key)) {
-            return confData.get(appname).get(key);
+        if (confDataStore.containsKey(appname) && confDataStore.get(appname).containsKey(key)) {
+            return confDataStore.get(appname).get(key).getValue();
         }
 
         // 2、get from remote; get-and-watch
-        Map<String, List<String>> confKey = new HashMap<>();
-        confKey.put(appname, Arrays.asList(key));
-        // remote
         try {
-            remoteQueryWithRefreshAndNotify(confKey);
+            Map<String, List<String>> appnameKeyData = new HashMap<>();
+            appnameKeyData.put(appname, List.of(key));
+            // refresh + notify
+            remoteQueryWithRefreshAndNotify(appnameKeyData);
         } catch (Exception e) {
             logger.error(">>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper - get error, appname:{}, key:{}", appname, key, e);
         }
 
         // 2.1、new data from remote
-        if (confData.containsKey(appname) && confData.get(appname).containsKey(key)) {
-            return confData.get(appname).get(key);
+        if (confDataStore.containsKey(appname) && confDataStore.get(appname).containsKey(key)) {
+            return confDataStore.get(appname).get(key).getValue();
         }
 
         // 3、default

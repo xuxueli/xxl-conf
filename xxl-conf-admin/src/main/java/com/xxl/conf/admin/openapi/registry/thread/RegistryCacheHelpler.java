@@ -147,17 +147,12 @@ public class RegistryCacheHelpler {
                     }
                 }
 
-                /**
-                 * 4、Diff识别不一致数据，客户端推送：
-                 *      - 老服务-节点下线：旧CacheMap存在，新CacheMap不存在；
-                 *      - 老服务-节点变化：旧CacheMap 与 新CacheMap对比，不一致；
-                 *      - 新服务（新上线）：旧CacheMap不存在，忽略；
-                 */
+                // 4、Diff识别不一致数据>客户端推送：检测旧配置（旧配置才被使用，才需要监听），新配置与之不一致则推送；
                 List<String> envAppnameDiffList = registryCacheMd5Store
                         .keySet()
                         .stream()
-                        .filter(item -> !registryCacheMd5StoreNew.containsKey(item)
-                                        || !registryCacheMd5StoreNew.get(item).equals(registryCacheMd5Store.get(item))
+                        .filter(item ->
+                                !(registryCacheMd5StoreNew.containsKey(item) && registryCacheMd5StoreNew.get(item).equals(registryCacheMd5Store.get(item)))
                         )
                         .collect(Collectors.toList());
                 if (CollectionTool.isNotEmpty(envAppnameDiffList)) {

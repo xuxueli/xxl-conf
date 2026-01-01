@@ -44,7 +44,7 @@ public class XxlConfListenerRepository {
      * </pre>
      */
     private final ConcurrentHashMap<String, List<XxlConfListener>> keyListenerRepository = new ConcurrentHashMap<>();
-    private final List<XxlConfListener> noKeyConfRepository = Collections.synchronizedList(new ArrayList<XxlConfListener>());
+    private final List<XxlConfListener> noKeyConfRepository = Collections.synchronizedList(new ArrayList<>());
 
     /**
      * build cache key
@@ -56,7 +56,7 @@ public class XxlConfListenerRepository {
     /**
      * add none-key listener, nofity when first-use + change
      *
-     * @param xxlConfListener
+     * @param xxlConfListener  listener
      */
     public void addNoKeyListener(XxlConfListener xxlConfListener){
         noKeyConfRepository.add(xxlConfListener);
@@ -64,10 +64,10 @@ public class XxlConfListenerRepository {
     /**
      * add listener, nofity when first-use + change
      *
-     * @param appname
-     * @param key
-     * @param xxlConfListener
-     * @return
+     * @param appname           appname
+     * @param key               key
+     * @param xxlConfListener   listener
+     * @return  true: add success
      */
     public boolean addListener(String appname, String key, XxlConfListener xxlConfListener){
         // valid
@@ -101,7 +101,7 @@ public class XxlConfListenerRepository {
     /**
      * invoke listener on xxl conf change
      *
-     * @param key
+     * @param key key
      */
     public void notifyChange(String appname, String key, String value){
         // valid

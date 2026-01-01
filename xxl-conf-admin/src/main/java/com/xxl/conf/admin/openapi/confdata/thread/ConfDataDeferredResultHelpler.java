@@ -1,7 +1,7 @@
 package com.xxl.conf.admin.openapi.confdata.thread;
 
 import com.xxl.conf.core.openapi.confdata.model.ConfDataCacheDTO;
-import com.xxl.conf.core.openapi.confdata.model.ConfDataRequest;
+import com.xxl.conf.core.openapi.confdata.model.MonitorRequest;
 import com.xxl.tool.concurrent.CyclicThread;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.MapTool;
@@ -134,7 +134,7 @@ public class ConfDataDeferredResultHelpler {
     /**
      * monitor
      */
-    public DeferredResult<Response<String>> monitor(ConfDataRequest request) {
+    public DeferredResult<Response<String>> monitor(MonitorRequest request) {
 
         // init
         DeferredResult<Response<String>> deferredResult = new DeferredResult<>(
@@ -142,15 +142,18 @@ public class ConfDataDeferredResultHelpler {
                 Response.ofSuccess("Monitor timeout, no key updated."));
 
         // valid
-        if (request == null || request.getConfKey()==null) {
+        if (request == null || CollectionTool.isEmpty(request.getAppnameList())) {
             deferredResult.setResult(Response.ofFail("request invalid"));
             return deferredResult;
         }
 
         // monitor by client
-        for (String appname: request.getConfKey().keySet()) {
+        for (String appname: request.getAppnameList()) {
+
             // monitor key
             String envAppnameKey = buildMonitorKey(request.getEnv(), appname);
+
+            // registry monitor
             registryDeferredResultMap
                     .computeIfAbsent(envAppnameKey, k -> new CopyOnWriteArrayList<>())       // thread-safe write, put list
                     .add(deferredResult);                                                           // thread-safe write, add list-data

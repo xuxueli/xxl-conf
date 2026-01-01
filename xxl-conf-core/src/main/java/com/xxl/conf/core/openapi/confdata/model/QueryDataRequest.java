@@ -4,7 +4,12 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class ConfDataRequest implements Serializable {
+/**
+ * QueryKey Request
+ *
+ * @author xuxueli 2025-01-12
+ */
+public class QueryDataRequest implements Serializable {
     private static final long serialVersionUID = 42L;
 
     /**
@@ -13,17 +18,9 @@ public class ConfDataRequest implements Serializable {
     private String env;
 
     /**
-     * <pre>
-     *     {
-     *         "env":"test",
-     *         "confKey":{
-     *             "app01": ["k1", "k2"],
-     *             "app02": ["k3", "k4"]
-     *         }
-     *     }
-     * </pre>
+     * AppName -> List<Key>
      */
-    private Map<String, List<String>> confKey;
+    private Map<String, List<String>> appnameKeyData;
 
     /**
      * simple Query
@@ -40,12 +37,12 @@ public class ConfDataRequest implements Serializable {
         this.env = env;
     }
 
-    public Map<String, List<String>> getConfKey() {
-        return confKey;
+    public Map<String, List<String>> getAppnameKeyData() {
+        return appnameKeyData;
     }
 
-    public void setConfKey(Map<String, List<String>> confKey) {
-        this.confKey = confKey;
+    public void setAppnameKeyData(Map<String, List<String>> appnameKeyData) {
+        this.appnameKeyData = appnameKeyData;
     }
 
     public boolean isSimpleQuery() {
@@ -58,10 +55,11 @@ public class ConfDataRequest implements Serializable {
 
     @Override
     public String toString() {
-        return "ConfDataRequest{" +
+        return "QueryDataRequest{" +
                 "env='" + env + '\'' +
-                ", confKey=" + confKey +
+                ", appnameKeyData=" + appnameKeyData +
                 ", simpleQuery=" + simpleQuery +
                 '}';
     }
+
 }

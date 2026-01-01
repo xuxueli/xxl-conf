@@ -100,7 +100,7 @@ public class XxlConfBootstrap {
 					.proxy(ConfDataService.class));
 			monitorClientList.add(HttpTool.createClient()
 					.url(finalUrl)
-					.timeout(30 * 1000)
+					.timeout(60 * 1000)
 					.header(Consts.XXL_CONF_ACCESS_TOKEN, accesstoken)
 					.proxy(ConfDataService.class));
 		}
@@ -140,11 +140,11 @@ public class XxlConfBootstrap {
 			// build broker client
 			buildClient();
 
-			// init
+			// 1、XxlConfListenerRepository
 			listenerRepository = new XxlConfListenerRepository(this);
-			localCacheHelper = new XxlConfLocalCacheHelper(this);
 
-			// start (+thread, cycle refresh + monitor, notify change-data)
+			// 2、XxlConfLocalCacheHelper (+thread, cycle refresh + monitor, notify change-data)
+			localCacheHelper = new XxlConfLocalCacheHelper(this);
 			localCacheHelper.start();
 
 			logger.info(">>>>>>>>>>> xxl-conf started.");
@@ -158,7 +158,10 @@ public class XxlConfBootstrap {
 	 */
 	public void stop() {
         try {
-			localCacheHelper.stop();
+			// 1、XxlConfLocalCacheHelper
+			if (localCacheHelper != null) {
+				localCacheHelper.stop();
+			}
 			logger.info(">>>>>>>>>>> xxl-conf stopped.");
         } catch (Exception e) {
 			logger.info(">>>>>>>>>>> xxl-conf stop error:{}", e.getMessage(), e);
