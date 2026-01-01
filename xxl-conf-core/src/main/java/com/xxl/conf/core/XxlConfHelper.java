@@ -15,10 +15,10 @@ public class XxlConfHelper {
 	/**
 	 * get conf data
 	 *
-	 * @param appname
-	 * @param key
-	 * @param defaultVal
-	 * @return
+	 * @param appname appname
+	 * @param key  key
+	 * @param defaultVal default value
+	 * @return  String
 	 */
 	public static String get(String appname, String key, String defaultVal) {
 		return XxlConfBootstrap.getInstance().getLocalCacheHelper().get(appname, key, defaultVal);
@@ -27,9 +27,9 @@ public class XxlConfHelper {
 	/**
 	 * get conf data
 	 *
-	 * @param key
-	 * @param defaultVal
-	 * @return
+	 * @param key  key
+	 * @param defaultVal default value
+	 * @return  String
 	 */
 	public static String get(String key, String defaultVal) {
 		return get(XxlConfBootstrap.getInstance().getAppname(), key, defaultVal);
@@ -38,8 +38,8 @@ public class XxlConfHelper {
 	/**
 	 * get conf data
 	 *
-	 * @param key
-	 * @return
+	 * @param key  key
+	 * @return  String
 	 */
 	public static String get(String key) {
 		return get(key, null);
@@ -51,8 +51,8 @@ public class XxlConfHelper {
 	/**
 	 * get conf (boolean)
 	 *
-	 * @param key
-	 * @return
+	 * @param key  key
+	 * @return  Boolean
 	 */
 	public static Boolean getBoolean(String appname, String key, Boolean defaultVal) {
 		String value = get(appname, key, null);
@@ -73,8 +73,8 @@ public class XxlConfHelper {
 	/**
 	 * get conf (int)
 	 *
-	 * @param key
-	 * @return
+	 * @param key  key
+	 * @return  Integer
 	 */
 	public static Integer getInteger(String appname, String key, Integer defaultVal) {
 		String value = get(key, null);
@@ -86,9 +86,9 @@ public class XxlConfHelper {
 	/**
 	 * get conf (int)
 	 *
-	 * @param key
-	 * @param defaultVal
-	 * @return
+	 * @param key  key
+	 * @param defaultVal default value
+	 * @return  Integer
 	 */
 	public static Integer getInteger(String key, Integer defaultVal) {
 		return getInteger(XxlConfBootstrap.getInstance().getAppname(), key, defaultVal);
@@ -96,8 +96,8 @@ public class XxlConfHelper {
 
 	/**
 	 * get conf (int)
-	 * @param key
-	 * @return
+	 * @param key  key
+	 * @return  Integer
 	 */
 	public static Integer getInteger(String key) {
 		return getInteger(key, null);
@@ -108,8 +108,8 @@ public class XxlConfHelper {
 	/**
 	 * get conf (short)
 	 *
-	 * @param key
-	 * @return
+	 * @param key  key
+	 * @return  Short
 	 */
 	public static Short getShort(String appname, String key, Short defaultVal) {
 		String value = get(key, null);
@@ -122,9 +122,9 @@ public class XxlConfHelper {
 	/**
 	 * get conf (short)
 	 *
-	 * @param key
-	 * @param defaultVal
-	 * @return
+	 * @param key  key
+	 * @param defaultVal default value
+	 * @return  Short
 	 */
 	public static Short getShort(String key, Short defaultVal) {
 		return getShort(XxlConfBootstrap.getInstance().getAppname(), key, defaultVal);
@@ -132,8 +132,8 @@ public class XxlConfHelper {
 
 	/**
 	 * get conf (short)
-	 * @param key
-	 * @return
+	 * @param key key
+	 * @return Short
 	 */
 	public static Short getShort(String key) {
 		return getShort(key, null);
@@ -144,8 +144,8 @@ public class XxlConfHelper {
 	/**
 	 * get conf (long)
 	 *
-	 * @param key
-	 * @return
+	 * @param key key
+	 * @return Long
 	 */
 	public static Long getLong(String appname, String key, Long defaultVal) {
 		String value = get(key, null);
@@ -158,9 +158,9 @@ public class XxlConfHelper {
 	/**
 	 * get conf (long)
 	 *
-	 * @param key
-	 * @param defaultVal
-	 * @return
+	 * @param key key
+	 * @param defaultVal default value
+	 * @return Long
 	 */
 	public static Long getLong(String key, Long defaultVal) {
 		return getLong(XxlConfBootstrap.getInstance().getAppname(), key, defaultVal);
@@ -168,7 +168,7 @@ public class XxlConfHelper {
 
 	/**
 	 * get conf (long)
-	 * @param key
+	 * @param key key
 	 * @return
 	 */
 	public static Long getLong(String key) {
@@ -180,8 +180,8 @@ public class XxlConfHelper {
 	/**
 	 * get conf (double)
 	 *
-	 * @param key
-	 * @return
+	 * @param key key
+	 * @return  Double
 	 */
 	public static Double getDouble(String appname, String key, Double defaultVal) {
 		String value = get(key, null);
@@ -194,9 +194,9 @@ public class XxlConfHelper {
 	/**
 	 * get conf (double)
 	 *
-	 * @param key
-	 * @param defaultVal
-	 * @return
+	 * @param key key
+	 * @param defaultVal default value
+	 * @return  Double
 	 */
 	public static Double getDouble(String key, Double defaultVal) {
 		return getDouble(XxlConfBootstrap.getInstance().getAppname(), key, defaultVal);
@@ -204,8 +204,8 @@ public class XxlConfHelper {
 
 	/**
 	 * get conf (double)
-	 * @param key
-	 * @return
+	 * @param key key
+	 * @return  Double
 	 */
 	public static Double getDouble(String key) {
 		return getDouble(key, null);
@@ -216,8 +216,8 @@ public class XxlConfHelper {
 	/**
 	 * get conf (Float)
 	 *
-	 * @param key
-	 * @return
+	 * @param key  key
+	 * @return Float
 	 */
 	public static Float getFloat(String appname, String key, Float defaultVal) {
 		String value = get(key, null);
@@ -230,9 +230,9 @@ public class XxlConfHelper {
 	/**
 	 * get conf (double)
 	 *
-	 * @param key
-	 * @param defaultVal
-	 * @return
+	 * @param key key
+	 * @param defaultVal default value
+	 * @return Float
 	 */
 	public static Float getFloat(String key, Float defaultVal) {
 		return getFloat(XxlConfBootstrap.getInstance().getAppname(), key, defaultVal);
@@ -240,8 +240,8 @@ public class XxlConfHelper {
 
 	/**
 	 * get conf (double)
-	 * @param key
-	 * @return
+	 * @param key key
+	 * @return Float
 	 */
 	public static Float getFloat(String key) {
 		return getFloat(key, null);
@@ -253,9 +253,9 @@ public class XxlConfHelper {
 	/**
 	 * add listener
 	 *
-	 * @param key
-	 * @param xxlConfListener
-	 * @return
+	 * @param key key
+	 * @param xxlConfListener listener
+	 * @return true / false
 	 */
 	public static boolean addListener(String appname, String key, XxlConfListener xxlConfListener){
 		return XxlConfBootstrap.getInstance().getListenerHelper().addListener(appname, key, xxlConfListener);
@@ -264,9 +264,9 @@ public class XxlConfHelper {
 	/**
 	 * add listener
 	 *
-	 * @param key
-	 * @param xxlConfListener
-	 * @return
+	 * @param key key
+	 * @param xxlConfListener listener
+	 * @return true/false
 	 */
 	public static boolean addListener(String key, XxlConfListener xxlConfListener){
 		return addListener(XxlConfBootstrap.getInstance().getAppname(), key, xxlConfListener);

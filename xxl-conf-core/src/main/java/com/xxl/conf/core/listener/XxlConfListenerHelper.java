@@ -107,8 +107,8 @@ public class XxlConfListenerHelper {
      *
      * <pre>
      *     {
-     *          "app02##k1": [{             // ListenerKey
-     *              XxlConfListener01,
+     *          "app02##k1": [{             // "{Appname}##{Key}"
+     *              XxlConfListener01,      // List<Listener>
      *              XxlConfListener02
      *          }],
      *          "app02##k1": {
