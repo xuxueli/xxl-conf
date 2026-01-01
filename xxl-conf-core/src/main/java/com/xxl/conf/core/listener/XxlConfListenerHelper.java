@@ -68,8 +68,8 @@ public class XxlConfListenerHelper {
                         }
 
                         // 1、notify none-key
-                        if (!noKeyConfRepository.isEmpty()) {
-                            for (XxlConfListener confListener: noKeyConfRepository) {
+                        if (!allKeyConfRepository.isEmpty()) {
+                            for (XxlConfListener confListener: allKeyConfRepository) {
                                 try {
                                     confListener.onChange(confDataCacheDTO.getAppname(), confDataCacheDTO.getKey(), confDataCacheDTO.getValue());
                                 } catch (Exception e) {
@@ -103,7 +103,7 @@ public class XxlConfListenerHelper {
     }
 
     /**
-     * listener repository
+     * listener for specific-key
      *
      * <pre>
      *     {
@@ -118,18 +118,22 @@ public class XxlConfListenerHelper {
      * </pre>
      */
     private final ConcurrentHashMap<String, List<XxlConfListener>> keyListenerRepository = new ConcurrentHashMap<>();
-    private final List<XxlConfListener> noKeyConfRepository = Collections.synchronizedList(new ArrayList<>());
 
     /**
-     * add none-key listener, nofity when first-use + change
+     * listener for all-key
+     */
+    private final List<XxlConfListener> allKeyConfRepository = Collections.synchronizedList(new ArrayList<>());
+
+    /**
+     * add listener for all-key （only nofity-change）
      *
      * @param xxlConfListener  listener
      */
-    public void addNoKeyListener(XxlConfListener xxlConfListener){
-        noKeyConfRepository.add(xxlConfListener);
+    public void addAllKeyListener(XxlConfListener xxlConfListener){
+        allKeyConfRepository.add(xxlConfListener);
     }
     /**
-     * add listener, nofity when first-use + change
+     * add listener for specific-key （called-directly + nofity-change）
      *
      * @param appname           appname
      * @param key               key
@@ -148,7 +152,7 @@ public class XxlConfListenerHelper {
             return false;
         }
 
-        // 1、first use
+        // 1、first init
         try {
             String value = XxlConfHelper.get(appname, key, null);
             xxlConfListener.onChange(appname, key, value);
