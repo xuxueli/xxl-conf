@@ -258,7 +258,7 @@ public class XxlConfHelper {
 	 * @return
 	 */
 	public static boolean addListener(String appname, String key, XxlConfListener xxlConfListener){
-		return XxlConfBootstrap.getInstance().getListenerRepository().addListener(appname, key, xxlConfListener);
+		return XxlConfBootstrap.getInstance().getListenerHelper().addListener(appname, key, xxlConfListener);
 	}
 
 	/**

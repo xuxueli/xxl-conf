@@ -193,7 +193,7 @@ public class XxlConfLocalCacheHelper {
                     keyMap_of_appname_local.put(key, new_value);
 
                     // notify
-                    xxlConfBootstrap.getListenerRepository().notifyChange(appname, key, new_value.getValue());
+                    xxlConfBootstrap.getListenerHelper().notifyChange(new ConfDataCacheDTO(xxlConfBootstrap.getEnv(), appname, key, new_value.getValue()));
                 }
             }
         }

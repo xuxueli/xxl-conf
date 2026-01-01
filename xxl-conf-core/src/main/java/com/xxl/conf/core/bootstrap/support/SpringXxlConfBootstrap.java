@@ -65,7 +65,7 @@ public class SpringXxlConfBootstrap implements InitializingBean, DisposableBean,
 		xxlConfBootstrap.start();
 
 		// add bean-refresh listner, for all key
-		xxlConfBootstrap.getListenerRepository().addNoKeyListener(new SpringBeanRefreshListener());
+		xxlConfBootstrap.getListenerHelper().addNoKeyListener(new SpringBeanRefreshListener());
 	}
 
 	@Override

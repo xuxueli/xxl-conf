@@ -1,7 +1,7 @@
 package com.xxl.conf.core.bootstrap.support;
 
 import com.xxl.conf.core.listener.XxlConfListener;
-import com.xxl.conf.core.listener.XxlConfListenerRepository;
+import com.xxl.conf.core.listener.XxlConfListenerHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +67,7 @@ public class SpringBeanRefreshListener implements XxlConfListener {
     public static void addBeanField(String appname, String key, BeanField beanField){
 
         // build listenerKey
-        String listenerKey = XxlConfListenerRepository.buildListenerKey(appname, key);
+        String listenerKey = XxlConfListenerHelper.buildListenerKey(appname, key);
         List<BeanField> beanFieldList = listenerKey2BeanField.computeIfAbsent(listenerKey, k -> new ArrayList<>());
 
         // avoid repeat refresh
@@ -88,7 +88,7 @@ public class SpringBeanRefreshListener implements XxlConfListener {
     public void onChange(String appname, String key, String value) throws Exception {
 
         // build listenerKey
-        String listenerKey = XxlConfListenerRepository.buildListenerKey(appname, key);
+        String listenerKey = XxlConfListenerHelper.buildListenerKey(appname, key);
         List<BeanField> beanFieldList = listenerKey2BeanField.get(listenerKey);
 
         if (beanFieldList!=null && !beanFieldList.isEmpty()) {

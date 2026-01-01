@@ -44,7 +44,7 @@ public class ConfDataOpenApiTest {
         // param
         QueryKeyRequest request = new QueryKeyRequest();
         request.setEnv("test");
-        request.setAppnameList(Arrays.asList("xxl-conf-sample", "xxl-conf-admin02"));
+        request.setAppnameList(Arrays.asList("xxl-conf-sample", "xxl-conf-sample02"));
         logger.info("request:{}", request);
 
         // invoke
@@ -79,7 +79,7 @@ public class ConfDataOpenApiTest {
         // param
         MonitorRequest request = new MonitorRequest();
         request.setEnv("test");
-        request.setAppnameList(Arrays.asList("xxl-conf-sample", "xxl-conf-admin02"));
+        request.setAppnameList(Arrays.asList("xxl-conf-sample", "xxl-conf-sample02"));
         logger.info("request:{}", request);
 
         // invoke

@@ -3,7 +3,7 @@ package com.xxl.conf.core.bootstrap;
 import com.xxl.conf.core.confdata.XxlConfLocalCacheHelper;
 import com.xxl.conf.core.constant.Consts;
 import com.xxl.conf.core.exception.XxlConfException;
-import com.xxl.conf.core.listener.XxlConfListenerRepository;
+import com.xxl.conf.core.listener.XxlConfListenerHelper;
 import com.xxl.conf.core.openapi.confdata.ConfDataService;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.error.BizException;
@@ -123,10 +123,10 @@ public class XxlConfBootstrap {
 	// ---------------------- start / stop ----------------------
 
 	private XxlConfLocalCacheHelper localCacheHelper;
-	private XxlConfListenerRepository listenerRepository;
+	private XxlConfListenerHelper listenerHelper;
 
-	public XxlConfListenerRepository getListenerRepository() {
-		return listenerRepository;
+	public XxlConfListenerHelper getListenerHelper() {
+		return listenerHelper;
 	}
 	public XxlConfLocalCacheHelper getLocalCacheHelper() {
 		return localCacheHelper;
@@ -140,8 +140,9 @@ public class XxlConfBootstrap {
 			// build broker client
 			buildClient();
 
-			// 1、XxlConfListenerRepository
-			listenerRepository = new XxlConfListenerRepository(this);
+			// 1、XxlConfListenerHelper
+			listenerHelper = new XxlConfListenerHelper(this);
+			listenerHelper.start();
 
 			// 2、XxlConfLocalCacheHelper (+thread, cycle refresh + monitor, notify change-data)
 			localCacheHelper = new XxlConfLocalCacheHelper(this);
@@ -158,7 +159,13 @@ public class XxlConfBootstrap {
 	 */
 	public void stop() {
         try {
-			// 1、XxlConfLocalCacheHelper
+
+			// 1、XxlConfListenerHelper
+			if (listenerHelper != null) {
+				listenerHelper.stop();
+			}
+
+			// 2、XxlConfLocalCacheHelper
 			if (localCacheHelper != null) {
 				localCacheHelper.stop();
 			}
