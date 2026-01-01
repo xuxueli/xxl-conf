@@ -6,7 +6,6 @@ package com.xxl.conf.core.exception;
  * @author xuxueli 2018-02-01 19:04:52
  */
 public class XxlConfException extends RuntimeException {
-
     private static final long serialVersionUID = 42L;
 
     public XxlConfException(String msg) {

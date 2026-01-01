@@ -1,5 +1,6 @@
 package com.xxl.conf.core.bootstrap;
 
+import com.xxl.conf.core.confdata.XxlConfFileHelper;
 import com.xxl.conf.core.confdata.XxlConfLocalCacheHelper;
 import com.xxl.conf.core.constant.Consts;
 import com.xxl.conf.core.exception.XxlConfException;
@@ -35,29 +36,34 @@ public class XxlConfBootstrap {
 
 	// ---------------------- base conf ----------------------
 
-	private String appname;
-	private String env;
 	private String address;
 	private String accesstoken;
+	private String appname;
+	private String env;
+	private String filepath;
 
-	public String getAppname() {
-		return appname;
-	}
-	public String getEnv() {
-		return env;
-	}
 	public String getAddress() {
 		return address;
 	}
 	public String getAccesstoken() {
 		return accesstoken;
 	}
+	public String getAppname() {
+		return appname;
+	}
+	public String getEnv() {
+		return env;
+	}
+	public String getFilepath() {
+		return filepath;
+	}
 
-	public XxlConfBootstrap(String appname, String env, String address, String accesstoken) {
-		this.appname = appname;
-		this.env = env;
+	public XxlConfBootstrap(String address, String accesstoken, String appname, String env, String filepath) {
 		this.address = address;
 		this.accesstoken = accesstoken;
+		this.appname = appname;
+		this.env = env;
+		this.filepath = filepath;
 
 		// instance
 		XxlConfBootstrap.xxlConfBootstrap = this;
@@ -124,12 +130,16 @@ public class XxlConfBootstrap {
 
 	private XxlConfLocalCacheHelper localCacheHelper;
 	private XxlConfListenerHelper listenerHelper;
+	private XxlConfFileHelper fileHelper;
 
 	public XxlConfListenerHelper getListenerHelper() {
 		return listenerHelper;
 	}
 	public XxlConfLocalCacheHelper getLocalCacheHelper() {
 		return localCacheHelper;
+	}
+	public XxlConfFileHelper getFileHelper() {
+		return fileHelper;
 	}
 
 	/**
@@ -140,11 +150,15 @@ public class XxlConfBootstrap {
 			// build broker client
 			buildClient();
 
-			// 1、XxlConfListenerHelper
+			// 1、XxlConfFileHelper
+			fileHelper = new XxlConfFileHelper(this);
+			fileHelper.start();
+
+			// 2、XxlConfListenerHelper
 			listenerHelper = new XxlConfListenerHelper(this);
 			listenerHelper.start();
 
-			// 2、XxlConfLocalCacheHelper (+thread, cycle refresh + monitor, notify change-data)
+			// 3、XxlConfLocalCacheHelper (+thread, cycle refresh + monitor, notify change-data)
 			localCacheHelper = new XxlConfLocalCacheHelper(this);
 			localCacheHelper.start();
 
@@ -159,16 +173,21 @@ public class XxlConfBootstrap {
 	 */
 	public void stop() {
         try {
+			// 1、XxlConfFileHelper
+			if (fileHelper != null) {
+				fileHelper.stop();
+			}
 
-			// 1、XxlConfListenerHelper
+			// 2、XxlConfListenerHelper
 			if (listenerHelper != null) {
 				listenerHelper.stop();
 			}
 
-			// 2、XxlConfLocalCacheHelper
+			// 3、XxlConfLocalCacheHelper
 			if (localCacheHelper != null) {
 				localCacheHelper.stop();
 			}
+
 			logger.info(">>>>>>>>>>> xxl-conf stopped.");
         } catch (Exception e) {
 			logger.info(">>>>>>>>>>> xxl-conf stop error:{}", e.getMessage(), e);

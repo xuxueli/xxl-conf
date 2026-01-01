@@ -78,10 +78,11 @@ public class FramelessApplication {
         Properties prop = PropUtil.loadProp("xxl-conf.properties");
 
         xxlConfBootstrap = new XxlConfBootstrap(
+                prop.getProperty("xxl.conf.admin.address"),
+                prop.getProperty("xxl.conf.admin.accesstoken"),
                 prop.getProperty("xxl.conf.client.appname"),
                 prop.getProperty("xxl.conf.client.env"),
-                prop.getProperty("xxl.conf.admin.address"),
-                prop.getProperty("xxl.conf.admin.accesstoken")
+                prop.getProperty("xxl.conf.client.filepath")
         );
         xxlConfBootstrap.start();
     }

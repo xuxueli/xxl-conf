@@ -1,6 +1,5 @@
 package com.xxl.conf.core.confdata;
 
-import com.xxl.conf.core.XxlConfHelper;
 import com.xxl.conf.core.bootstrap.XxlConfBootstrap;
 import com.xxl.conf.core.openapi.confdata.model.*;
 import com.xxl.tool.concurrent.CyclicThread;
@@ -9,6 +8,7 @@ import com.xxl.tool.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,10 +19,16 @@ import java.util.concurrent.TimeUnit;
 /**
  * local cache conf
  *
+ *  客户端：
+ *      - 启动预热：启动时查询全量key，分批查询全量配置数据预热，默认重试3次；             （warmUp）
+ *      - 全量刷新：定期全量检测配置md5摘要，对比本地与远程数据，不一致主动刷新；60s/次；   （monitor/60s + refresh/all）
+ *      - 增量更新：监听appkey，监听配置变更，触发全量比对刷新；                        （monitor/60s + refresh/all）
+ *      - 降级：全量比度内存数据与本地file（“/xxl-conf/env/clustor/confdata/appkey.prop”），不一致更新本地数据；5min/次； （warmUp）
+ *
  * @author xuxueli 2018-02-01 19:11:25
  */
 public class XxlConfLocalCacheHelper {
-    private static final Logger logger = LoggerFactory.getLogger(XxlConfHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(XxlConfLocalCacheHelper.class);
 
     // ---------------------- init ----------------------
 
@@ -56,51 +62,71 @@ public class XxlConfLocalCacheHelper {
     private CyclicThread refreshThread;
 
     /**
-     * first full-sync status, true if sync success
-     */
-    private volatile boolean warmUp = false;
-
-    /**
      * start
      */
     public void start(){
 
         /**
-         *  客户端：
-         *      - 启动预热：启动时查询全量key，分批查询全量配置数据预热；                        （warmUp）
+         * 1、warmUp
+         *
+         *  说明：
+         *      - 启动预热：启动时查询全量key，分批查询全量配置数据预热，默认重试3次；                        （warmUp）
+         *      - 降级：全量比度内存数据与本地file（“/xxl-conf/env/clustor/confdata/appkey.prop”），不一致更新本地数据；5min/次； （warmUp）
+          */
+        boolean warmUp = false;
+        for (int i = 0; i < 3; i++) {
+            // 1.1、try warmUp 3 times from remote
+            try {
+                QueryKeyRequest queryKeyRequest = new QueryKeyRequest();
+                queryKeyRequest.setEnv(xxlConfBootstrap.getEnv());
+                queryKeyRequest.setAppnameList(List.of(xxlConfBootstrap.getAppname()));
+
+                // 1.1、queryKey
+                Response<QueryKeyResponse> queryKeyResponse = xxlConfBootstrap.loadClient().queryKey(queryKeyRequest);
+
+                // parse response
+                if (Response.isSuccess(queryKeyResponse) && queryKeyResponse.getData()!=null) {
+                    // parse queryKey response
+                    Map<String, List<String>> appnameKeyData = queryKeyResponse.getData().getAppnameKeyData();
+
+                    // 1.2、refresh + notify
+                    remoteQueryWithRefreshAndNotify(appnameKeyData);
+                }
+                logger.info(">>>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper warmUp success from remote");
+                warmUp = true;
+                break;
+            } catch (Throwable e) {
+                logger.error(">>>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper warmUp error, try {} times: {}", i, e.getMessage(), e);
+            }
+        }
+        if (!warmUp) {
+            // 1.2、load from file
+            try {
+                HashMap<String, ConfDataCacheDTO> keyMap_of_appname_file = xxlConfBootstrap.getFileHelper().queryData(xxlConfBootstrap.getEnv(), xxlConfBootstrap.getAppname());
+                if (MapTool.isNotEmpty(keyMap_of_appname_file)) {
+                    for (String key : keyMap_of_appname_file.keySet()) {
+                        ConfDataCacheDTO confData = keyMap_of_appname_file.get(key);
+                        // write conf-data
+                        confDataStore.computeIfAbsent(xxlConfBootstrap.getAppname(), k -> new ConcurrentHashMap<>()).put(key, confData);
+                    }
+                    logger.info(">>>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper warmUp success from file");
+                }
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+
+        /**
+         * 2、refreshThread
+         *
+         *  说明：
          *      - 全量刷新：定期全量检测配置md5摘要，对比本地与远程数据，不一致主动刷新；60s/次；   （monitor/60s + refresh/all）
          *      - 增量更新：监听appkey，监听配置变更，触发全量比对刷新；                        （monitor/60s + refresh/all）
-         *      - 降级：全量比度内存数据与本地file（“/xxl-conf/env/clustor/confdata/appkey.prop”），不一致更新本地数据；5min/次； // TODO
-         *  说明：
-         *      - refreshThread：
          */
         refreshThread = new CyclicThread("XxlConfLocalCacheHelper-refreshThread", true, new Runnable() {
             @Override
             public void run() {
-
-                // 1、warmUp
-                if (!warmUp) {
-                    // request
-                    QueryKeyRequest queryKeyRequest = new QueryKeyRequest();
-                    queryKeyRequest.setEnv(xxlConfBootstrap.getEnv());
-                    queryKeyRequest.setAppnameList(List.of(xxlConfBootstrap.getAppname()));
-
-                    // 1.1、queryKey
-                    Response<QueryKeyResponse> queryKeyResponse = xxlConfBootstrap.loadClient().queryKey(queryKeyRequest);
-
-                    // parse response
-                    if (Response.isSuccess(queryKeyResponse) && queryKeyResponse.getData()!=null) {
-                        // parse queryKey response
-                        Map<String, List<String>> appnameKeyData = queryKeyResponse.getData().getAppnameKeyData();
-
-                        // 1.2、refresh + notify
-                        remoteQueryWithRefreshAndNotify(appnameKeyData);
-                    }
-
-                    warmUp = true;
-                    logger.debug(">>>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper-refreshThread warmUp finish");
-                    return;
-                }
 
                 // pass if no-data
                 if (confDataStore.isEmpty()) {
@@ -125,14 +151,14 @@ public class XxlConfLocalCacheHelper {
                     throw new RuntimeException(e);
                 }
 
-                // 2.2、remote query and refresh + notify
+                // 3、remote query and refresh + notify
                 Map<String, List<String>> appnameKeyData = new HashMap<>();
                 for (String appname : confDataStore.keySet()) {
                     if (confDataStore.get(appname)!=null && !confDataStore.get(appname).isEmpty()) {
                         appnameKeyData.put(appname, confDataStore.get(appname).keySet().stream().toList());
                     }
                 }
-                // refresh + notify
+                // 3.1、refresh + notify
                 remoteQueryWithRefreshAndNotify(appnameKeyData);
                 logger.debug(">>>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper-refreshThread remoteQueryWithRefreshAndNotify[1] finish");
             }
@@ -218,9 +244,9 @@ public class XxlConfLocalCacheHelper {
     /**
      * get conf data
      *
-     * @param key
-     * @param defaultVal
-     * @return
+     * @param key conf key
+     * @param defaultVal conf default value
+     * @return conf value
      */
     public String get(String key, String defaultVal) {
         return get(xxlConfBootstrap.getAppname(), key, defaultVal);
@@ -229,10 +255,10 @@ public class XxlConfLocalCacheHelper {
     /**
      * get conf data
      *
-     * @param appname
-     * @param key
-     * @param defaultVal
-     * @return
+     * @param appname conf appname
+     * @param key conf key
+     * @param defaultVal conf default value
+     * @return conf value
      */
     public String get(String appname, String key, String defaultVal) {
 
@@ -245,7 +271,7 @@ public class XxlConfLocalCacheHelper {
         try {
             Map<String, List<String>> appnameKeyData = new HashMap<>();
             appnameKeyData.put(appname, List.of(key));
-            // refresh + notify
+            // 2.1、refresh + notify
             remoteQueryWithRefreshAndNotify(appnameKeyData);
         } catch (Exception e) {
             logger.error(">>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper - get error, appname:{}, key:{}", appname, key, e);
@@ -258,6 +284,13 @@ public class XxlConfLocalCacheHelper {
 
         // 3、default
         return defaultVal;
+    }
+
+    /**
+     * get all conf data
+     */
+    public ConcurrentHashMap<String, ConcurrentHashMap<String, ConfDataCacheDTO>> getAllConfData() {
+        return confDataStore;
     }
 
 }

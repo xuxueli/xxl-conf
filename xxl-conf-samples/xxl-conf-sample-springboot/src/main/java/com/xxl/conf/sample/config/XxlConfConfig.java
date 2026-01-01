@@ -14,8 +14,13 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class XxlConfConfig {
-    private Logger logger = LoggerFactory.getLogger(XxlConfConfig.class);
+    private static final Logger logger = LoggerFactory.getLogger(XxlConfConfig.class);
 
+    @Value("${xxl.conf.admin.address}")
+    private String address;
+
+    @Value("${xxl.conf.admin.accesstoken}")
+    private String accesstoken;
 
     @Value("${xxl.conf.client.appname}")
     private String appname;
@@ -23,11 +28,8 @@ public class XxlConfConfig {
     @Value("${xxl.conf.client.env}")
     private String env;
 
-    @Value("${xxl.conf.admin.address}")
-    private String address;
-
-    @Value("${xxl.conf.admin.accesstoken}")
-    private String accesstoken;
+    @Value("${xxl.conf.client.filepath}")
+    private String filepath;
 
     @Bean
     public SpringXxlConfBootstrap xxlConfBootstrap() {
@@ -37,6 +39,7 @@ public class XxlConfConfig {
         xxlConfBootstrap.setEnv(env);
         xxlConfBootstrap.setAddress(address);
         xxlConfBootstrap.setAccesstoken(accesstoken);
+        xxlConfBootstrap.setFilepath(filepath);
 
         return xxlConfBootstrap;
     }

@@ -29,21 +29,15 @@ public class SpringXxlConfBootstrap implements InitializingBean, DisposableBean,
 
 	// ---------------------- config ----------------------
 
-	private String appname;
-
-	private String env;
-
 	private String address;
 
 	private String accesstoken;
 
-	public void setAppname(String appname) {
-		this.appname = appname;
-	}
+	private String appname;
 
-	public void setEnv(String env) {
-		this.env = env;
-	}
+	private String env;
+
+	private String filepath;
 
 	public void setAddress(String address) {
 		this.address = address;
@@ -53,6 +47,17 @@ public class SpringXxlConfBootstrap implements InitializingBean, DisposableBean,
 		this.accesstoken = accesstoken;
 	}
 
+	public void setAppname(String appname) {
+		this.appname = appname;
+	}
+
+	public void setEnv(String env) {
+		this.env = env;
+	}
+
+	public void setFilepath(String filepath) {
+		this.filepath = filepath;
+	}
 
 	// ---------------------- start/stop ----------------------
 
@@ -61,10 +66,10 @@ public class SpringXxlConfBootstrap implements InitializingBean, DisposableBean,
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		// start
-		xxlConfBootstrap = new XxlConfBootstrap(appname, env, address, accesstoken);
+		xxlConfBootstrap = new XxlConfBootstrap(address, accesstoken, appname, env, filepath);
 		xxlConfBootstrap.start();
 
-		// add bean-refresh listner, for all key
+		// add bean-refresh listner, for "@XxlConf" change notify
 		xxlConfBootstrap.getListenerHelper().addAllKeyListener(new SpringBeanRefreshListener());
 	}
 
