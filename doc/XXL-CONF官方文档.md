@@ -245,7 +245,7 @@ xxl.conf.client.appname=xxl-conf-sample
 ## XXL-CONF 接入服务环境标识，根据该Env隔离配置，必填；
 xxl.conf.client.env=test
 
-## XXL-CONF 配置数据快照文件目录，可选
+## XXL-CONF 配置数据快照文件目录，配置中心故障时用作降级使用，为空则关闭降级功能，可选：
 xxl.conf.client.filepath=/data/applogs/xxl-conf/
 ```
 

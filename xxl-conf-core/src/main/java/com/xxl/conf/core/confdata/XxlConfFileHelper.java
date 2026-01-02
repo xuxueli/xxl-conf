@@ -43,7 +43,7 @@ public class XxlConfFileHelper {
 
         // valid filepath
         if (StringTool.isBlank(xxlConfBootstrap.getFilepath())) {
-            logger.warn(">>>>>>>>>>> xxl-conf XxlConfFileHelper-confFileThread not enabled, filepath not found.");
+            logger.info(">>>>>>>>>>> xxl-conf XxlConfFileHelper-confFileThread not enabled, filepath not found.");
             return;
         }
 
