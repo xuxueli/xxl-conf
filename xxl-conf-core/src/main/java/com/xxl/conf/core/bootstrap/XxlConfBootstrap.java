@@ -150,13 +150,13 @@ public class XxlConfBootstrap {
 			// build broker client
 			buildClient();
 
-			// 1、XxlConfFileHelper
-			fileHelper = new XxlConfFileHelper(this);
-			fileHelper.start();
-
-			// 2、XxlConfListenerHelper
+			// 1、XxlConfListenerHelper
 			listenerHelper = new XxlConfListenerHelper(this);
 			listenerHelper.start();
+
+			// 2、XxlConfFileHelper
+			fileHelper = new XxlConfFileHelper(this);
+			fileHelper.start();
 
 			// 3、XxlConfLocalCacheHelper (+thread, cycle refresh + monitor, notify change-data)
 			localCacheHelper = new XxlConfLocalCacheHelper(this);
@@ -173,14 +173,14 @@ public class XxlConfBootstrap {
 	 */
 	public void stop() {
         try {
-			// 1、XxlConfFileHelper
-			if (fileHelper != null) {
-				fileHelper.stop();
-			}
-
-			// 2、XxlConfListenerHelper
+			// 1、XxlConfListenerHelper
 			if (listenerHelper != null) {
 				listenerHelper.stop();
+			}
+
+			// 2、XxlConfFileHelper
+			if (fileHelper != null) {
+				fileHelper.stop();
 			}
 
 			// 3、XxlConfLocalCacheHelper
