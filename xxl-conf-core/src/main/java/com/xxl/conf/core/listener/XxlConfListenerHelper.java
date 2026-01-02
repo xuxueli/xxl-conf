@@ -39,7 +39,7 @@ public class XxlConfListenerHelper {
      */
     public void start(){
         notifyQuene = new MessageQueue<>(
-                "produceMessageQueue",
+                "notifyQuene",
                 messages -> {
 
                     // process message
@@ -64,7 +64,10 @@ public class XxlConfListenerHelper {
                                 } catch (Exception e) {
                                     logger.error(e.getMessage(), e);
                                 }
+                                logger.info(">>>>>>>>>>> xxl-conf, XxlConfListenerHelper notifyChange[1] finish: listener={}, appname={}, key={}",
+                                        listener.getClass(), confDataCacheDTO.getAppname(), confDataCacheDTO.getKey());
                             }
+
                         }
 
                         // 1、notify none-key
@@ -75,9 +78,10 @@ public class XxlConfListenerHelper {
                                 } catch (Exception e) {
                                     logger.error(e.getMessage(), e);
                                 }
+                                logger.debug(">>>>>>>>>>> xxl-conf, XxlConfListenerHelper notifyChange[2] finish: listener={}, appname={}, key={}",
+                                        confListener.getClass(), confDataCacheDTO.getAppname(), confDataCacheDTO.getKey());
                             }
                         }
-                        logger.info(">>>>>>>>>>> xxl-conf, XxlConfListenerHelper notifyChange finish: appname={}, key={}", confDataCacheDTO.getAppname(), confDataCacheDTO.getKey());
                     }
                 },
                 1,

@@ -23,8 +23,8 @@ import java.util.concurrent.TimeUnit;
  *  客户端：
  *      - A、启动预热：启动时查询全量key，分批查询全量配置数据预热，默认重试3次；                  （warmUp）
  *      - B、配置降级：如果启动预热失败，降级查询本地file；定期同步配置到本地file，默认3min/次；    （warmUp）
- *      - C、全量刷新：定期全量检测配置md5摘要，对比本地与远程数据，不一致主动刷新；60s/次；        （monitor/60s + refresh/all）
- *      - D、增量更新：监听appkey维度变更，识别变更后触发全量检测刷新；                          （monitor/60s + refresh/all）
+ *      - C、全量刷新：定期全量检测配置数据md5摘要，对比本地与远程数据，针对不一致主动刷新；60s/次；  （monitor/60s + detect&refresh/all）
+ *      - D、增量更新：监听appkey维度变更，识别变更后触发全量检测刷新；
  *
  *
  * @author xuxueli 2018-02-01 19:11:25
@@ -76,7 +76,8 @@ public class XxlConfLocalCacheHelper {
          *      - B、配置降级：如果启动预热失败，降级查询本地file；定期同步配置到本地file，默认3min/次；    （warmUp）
           */
         boolean warmUp = false;
-        for (int i = 0; i < 3; i++) {
+        int warmUpRetryCount = 3;
+        for (int i = 0; i < warmUpRetryCount; i++) {
             // A、启动预热: try 3 times from remote
             try {
 
@@ -107,7 +108,8 @@ public class XxlConfLocalCacheHelper {
             // B、配置降级：load from file
             try {
                 // 1.1、File queryData
-                ConcurrentHashMap<String, ConfDataCacheDTO> keyMap_of_appname_file = xxlConfBootstrap.getFileHelper().queryData(xxlConfBootstrap.getEnv(), xxlConfBootstrap.getAppname());
+                ConcurrentHashMap<String, ConfDataCacheDTO> keyMap_of_appname_file = xxlConfBootstrap.getFileHelper()
+                        .queryData(xxlConfBootstrap.getEnv(), xxlConfBootstrap.getAppname());
                 if (MapTool.isNotEmpty(keyMap_of_appname_file)) {
 
                     // 1.2、配置降级 for eath appname
@@ -124,13 +126,12 @@ public class XxlConfLocalCacheHelper {
             throw new XxlConfException("xxl-conf, XxlConfLocalCacheHelper warmUp fail, please check xxl-conf address and network conditions.");
         }
 
-
         /**
          * 2、refreshThread
          *
          *  说明：
-         *      - C、全量刷新：定期全量检测配置md5摘要，对比本地与远程数据，不一致主动刷新；60s/次；        （monitor/60s + refresh/all）
-         *      - D、增量更新：监听appkey维度变更，识别变更后触发全量检测刷新；                          （monitor/60s + refresh/all）
+         *      - C、全量刷新：定期全量检测配置数据md5摘要，对比本地与远程数据，针对不一致主动刷新；60s/次；  （monitor/60s + detect&refresh/all）
+         *      - D、增量更新：监听appkey维度变更，识别变更后触发全量检测刷新；
          */
         refreshThread = new CyclicThread("XxlConfLocalCacheHelper-refreshThread", true, new Runnable() {
             @Override
