@@ -97,6 +97,9 @@ public class XxlConfLocalCacheHelper {
                 break;
             } catch (Throwable e) {
                 logger.error(">>>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper warmUp error, try {} times: {}", i, e.getMessage(), e);
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException ignored) {}
             }
         }
         if (!warmUp) {

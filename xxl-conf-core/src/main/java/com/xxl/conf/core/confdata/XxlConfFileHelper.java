@@ -13,7 +13,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * file conf
@@ -50,26 +52,34 @@ public class XxlConfFileHelper {
             @Override
             public void run() {
                 try {
-                    // 1、build filepath: /data/applogs/xxl-conf/{confdata}/{env}/{appname01}.properties
-                    File filePathDir = new File(xxlConfBootstrap.getFilepath().trim(), "confdata");
-                    FileTool.createDirectories(filePathDir);
+                    // pass until localCacheHelper ready, wait other module init
+                    if (xxlConfBootstrap.getLocalCacheHelper() == null) {
+                        TimeUnit.SECONDS.sleep(3);
+                        if (xxlConfBootstrap.getLocalCacheHelper() == null) {
+                            return;
+                        }
+                    }
 
-                    // 2、load and write file-data
+                    // load and write file-data
                     ConcurrentHashMap<String, ConcurrentHashMap<String, ConfDataCacheDTO>> confData = xxlConfBootstrap.getLocalCacheHelper().getAllConfData();
                     if (MapTool.isNotEmpty(xxlConfBootstrap.getLocalCacheHelper().getAllConfData())) {
                         for (String appname : confData.keySet()) {
-                            // 3.1、file name
-                            String fileName = buildFilePath(xxlConfBootstrap.getEnv(), appname);
+                            // 1、build file-name
+                            String fileName = buildFilePath(appname);
 
-                            // 3.2、file data
+                            // 2、generate file-data
                             ConcurrentHashMap<String, ConfDataCacheDTO> keyMap = confData.get(appname);
-                            String keyMapJson = GsonTool.toJson(keyMap);
+                            String keyMapJson_new = GsonTool.toJson(new TreeMap<>(keyMap));
 
-                            // 3.3、write data
-                            FileTool.writeString(fileName, keyMapJson);
+                            // 3、write data
+                            String keyMapJson_old = FileTool.exists(fileName)?FileTool.readString(fileName): null;
+                            if (!keyMapJson_new.equals(keyMapJson_old)) {
+                                FileTool.writeString(fileName, keyMapJson_new);
+                                logger.info(">>>>>>>>>>> xxl-conf XxlConfFileHelper-confFileThread found conf changed, overwrite finish: fileName {}, appname: {}", fileName, appname);
+                            }
                         }
                     }
-                } catch (IOException e) {
+                } catch (Throwable e) {
                     throw new RuntimeException("XxlConfFileHelper-confFileThread error: " + e.getMessage(), e);
                 }
             }
@@ -88,17 +98,15 @@ public class XxlConfFileHelper {
 
     // ---------------------- tool ----------------------
 
-    private String buildFilePath(String env, String appname) throws IOException {
-        // build filepath: /data/applogs/xxl-conf/{confdata}/{env}/{appname01}.properties
+    private String buildFilePath(String appname) throws IOException {
+        // build filepath: /data/applogs/xxl-conf/{confdata}/{env}/{appname01}.txt
         File filePathDir = new File(xxlConfBootstrap.getFilepath().trim(), "confdata");
-        String fileName = filePathDir.getPath()
+
+        // build filename
+        return filePathDir.getPath()
                 .concat(File.separator).concat(xxlConfBootstrap.getEnv())
                 .concat(File.separator).concat(appname)
                 .concat(".txt");
-
-        // create dir
-        FileTool.createDirectories(new File(fileName));
-        return fileName;
     }
 
     /**
@@ -112,7 +120,7 @@ public class XxlConfFileHelper {
         // 1、build filepath: /data/applogs/xxl-conf/{confdata}/{env}/{appname01}.properties
         File filePathDir = new File(xxlConfBootstrap.getFilepath().trim(), "confdata");
         String fileName = filePathDir.getPath()
-                .concat(File.separator).concat(xxlConfBootstrap.getEnv())
+                .concat(File.separator).concat(env)
                 .concat(File.separator).concat(appname)
                 .concat(".txt");
 
