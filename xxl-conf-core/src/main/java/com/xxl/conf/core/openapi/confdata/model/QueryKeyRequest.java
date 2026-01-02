@@ -21,6 +21,13 @@ public class QueryKeyRequest implements Serializable {
      */
     private List<String> appnameList;
 
+    public QueryKeyRequest() {
+    }
+    public QueryKeyRequest(String env, List<String> appnameList) {
+        this.env = env;
+        this.appnameList = appnameList;
+    }
+
     public String getEnv() {
         return env;
     }

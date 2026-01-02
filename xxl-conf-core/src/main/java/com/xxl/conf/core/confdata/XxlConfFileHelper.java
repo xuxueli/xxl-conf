@@ -117,7 +117,7 @@ public class XxlConfFileHelper {
      * @return confData
      */
     public ConcurrentHashMap<String, ConfDataCacheDTO> queryData(String env, String appname) throws IOException {
-        // 1、build filepath: /data/applogs/xxl-conf/{confdata}/{env}/{appname01}.properties
+        // 1、build filepath: /data/applogs/xxl-conf/{confdata}/{env}/{appname01}.txt
         File filePathDir = new File(xxlConfBootstrap.getFilepath().trim(), "confdata");
         String fileName = filePathDir.getPath()
                 .concat(File.separator).concat(env)

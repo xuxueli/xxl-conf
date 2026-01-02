@@ -29,6 +29,14 @@ public class QueryDataRequest implements Serializable {
      */
     private boolean simpleQuery;
 
+    public QueryDataRequest() {
+    }
+    public QueryDataRequest(String env, Map<String, List<String>> appnameKeyData, boolean simpleQuery) {
+        this.env = env;
+        this.appnameKeyData = appnameKeyData;
+        this.simpleQuery = simpleQuery;
+    }
+
     public String getEnv() {
         return env;
     }

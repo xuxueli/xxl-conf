@@ -21,6 +21,13 @@ public class MonitorRequest implements Serializable {
      */
     private List<String> appnameList;
 
+    public MonitorRequest() {
+    }
+    public MonitorRequest(String env, List<String> appnameList) {
+        this.env = env;
+        this.appnameList = appnameList;
+    }
+
     public String getEnv() {
         return env;
     }
