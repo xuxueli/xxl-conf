@@ -1,6 +1,7 @@
 package com.xxl.conf.core.confdata;
 
 import com.xxl.conf.core.bootstrap.XxlConfBootstrap;
+import com.xxl.conf.core.exception.XxlConfException;
 import com.xxl.conf.core.openapi.confdata.model.*;
 import com.xxl.tool.concurrent.CyclicThread;
 import com.xxl.tool.core.MapTool;
@@ -83,20 +84,23 @@ public class XxlConfLocalCacheHelper {
 
                 // 1.1、queryKey
                 Response<QueryKeyResponse> queryKeyResponse = xxlConfBootstrap.loadClient().queryKey(queryKeyRequest);
+                if (!Response.isSuccess(queryKeyResponse)) {
+                    throw new XxlConfException("XxlConfLocalCacheHelper warmUp queryKey fail: " + queryKeyResponse.getMsg());
+                }
 
                 // parse response
-                if (Response.isSuccess(queryKeyResponse) && queryKeyResponse.getData()!=null) {
+                if (queryKeyResponse.getData()!=null) {
                     // parse queryKey response
                     Map<String, List<String>> appnameKeyData = queryKeyResponse.getData().getAppnameKeyData();
 
                     // 1.2、refresh + notify
                     remoteQueryWithRefreshAndNotify(appnameKeyData);
                 }
-                logger.info(">>>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper warmUp success from remote");
+                logger.info(">>>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper warmUp from remote success.");
                 warmUp = true;
                 break;
             } catch (Throwable e) {
-                logger.error(">>>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper warmUp error, try {} times: {}", i, e.getMessage(), e);
+                logger.error(">>>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper warmUp from remote error, try {} times: {}", i+1, e.getMessage(), e);
                 try {
                     TimeUnit.SECONDS.sleep(1);
                 } catch (InterruptedException ignored) {}
@@ -105,18 +109,24 @@ public class XxlConfLocalCacheHelper {
         if (!warmUp) {
             // 1.2、load from file
             try {
-                HashMap<String, ConfDataCacheDTO> keyMap_of_appname_file = xxlConfBootstrap.getFileHelper().queryData(xxlConfBootstrap.getEnv(), xxlConfBootstrap.getAppname());
+                // a、load keyMap of file
+                ConcurrentHashMap<String, ConfDataCacheDTO> keyMap_of_appname_file = xxlConfBootstrap.getFileHelper().queryData(xxlConfBootstrap.getEnv(), xxlConfBootstrap.getAppname());
                 if (MapTool.isNotEmpty(keyMap_of_appname_file)) {
-                    for (String key : keyMap_of_appname_file.keySet()) {
-                        ConfDataCacheDTO confData = keyMap_of_appname_file.get(key);
-                        // write conf-data
-                        confDataStore.computeIfAbsent(xxlConfBootstrap.getAppname(), k -> new ConcurrentHashMap<>()).put(key, confData);
-                    }
-                    logger.info(">>>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper warmUp success from file");
+
+                    // b、init keyMap of local
+                    ConcurrentHashMap<String, ConfDataCacheDTO> keyMap_of_appname_local = confDataStore.computeIfAbsent(xxlConfBootstrap.getAppname(), k -> new ConcurrentHashMap<>());
+
+                    // c、write file to local keyMap
+                    keyMap_of_appname_local.putAll(keyMap_of_appname_file);
+                    logger.info(">>>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper warmUp from file success.");
+                    warmUp = true;
                 }
             } catch (Throwable e) {
-                throw new RuntimeException(e);
+                logger.error(">>>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper warmUp from file error: {}", e.getMessage(), e);
             }
+        }
+        if (!warmUp) {
+            throw new XxlConfException("xxl-conf, XxlConfLocalCacheHelper warmUp fail, please check xxl-conf address and network conditions.");
         }
 
 
@@ -146,7 +156,7 @@ public class XxlConfLocalCacheHelper {
                 request.setEnv(xxlConfBootstrap.getEnv());
                 request.setAppnameList(new ArrayList<>(confDataStore.keySet()));
                 // 2.1、monitor
-                xxlConfBootstrap.loadMonitorClient().monitor(request);
+                Response<String> monitorResponse = xxlConfBootstrap.loadMonitorClient().monitor(request);
                 // sleep：a、avoid fail-retry too quick；b、make sure server broadcast complete
                 try {
                     TimeUnit.SECONDS.sleep(1);

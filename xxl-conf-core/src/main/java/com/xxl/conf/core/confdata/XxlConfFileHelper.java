@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -54,7 +54,7 @@ public class XxlConfFileHelper {
                 try {
                     // pass until localCacheHelper ready, wait other module init
                     if (xxlConfBootstrap.getLocalCacheHelper() == null) {
-                        TimeUnit.SECONDS.sleep(3);
+                        TimeUnit.SECONDS.sleep(5);
                         if (xxlConfBootstrap.getLocalCacheHelper() == null) {
                             return;
                         }
@@ -83,7 +83,7 @@ public class XxlConfFileHelper {
                     throw new RuntimeException("XxlConfFileHelper-confFileThread error: " + e.getMessage(), e);
                 }
             }
-        }, 5 * 60 * 1000, true);
+        }, 3 * 60 * 1000, true);
         confFileThread.start();
     }
 
@@ -116,7 +116,7 @@ public class XxlConfFileHelper {
      * @param appname appname
      * @return confData
      */
-    public HashMap<String, ConfDataCacheDTO> queryData(String env, String appname) throws IOException {
+    public ConcurrentHashMap<String, ConfDataCacheDTO> queryData(String env, String appname) throws IOException {
         // 1、build filepath: /data/applogs/xxl-conf/{confdata}/{env}/{appname01}.properties
         File filePathDir = new File(xxlConfBootstrap.getFilepath().trim(), "confdata");
         String fileName = filePathDir.getPath()
@@ -134,7 +134,8 @@ public class XxlConfFileHelper {
         if (StringTool.isBlank(keyMapJson)) {
             return null;
         }
-        return GsonTool.fromJsonMap(keyMapJson, String.class, ConfDataCacheDTO.class);
+        Map<String, ConfDataCacheDTO> keyMap = GsonTool.fromJsonMap(keyMapJson, String.class, ConfDataCacheDTO.class);
+        return new ConcurrentHashMap<>(keyMap);
     }
 
 }

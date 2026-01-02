@@ -146,52 +146,45 @@ public class XxlConfBootstrap {
 	 * start
 	 */
 	public void start() {
-        try {
-			// build broker client
-			buildClient();
+		// build broker client
+		buildClient();
 
-			// 1、XxlConfListenerHelper
-			listenerHelper = new XxlConfListenerHelper(this);
-			listenerHelper.start();
+		// 1、XxlConfListenerHelper
+		listenerHelper = new XxlConfListenerHelper(this);
+		listenerHelper.start();
 
-			// 2、XxlConfFileHelper
-			fileHelper = new XxlConfFileHelper(this);
-			fileHelper.start();
+		// 2、XxlConfFileHelper
+		fileHelper = new XxlConfFileHelper(this);
+		fileHelper.start();
 
-			// 3、XxlConfLocalCacheHelper (+thread, cycle refresh + monitor, notify change-data)
-			localCacheHelper = new XxlConfLocalCacheHelper(this);
-			localCacheHelper.start();
+		// 3、XxlConfLocalCacheHelper (+thread, cycle refresh + monitor, notify change-data)
+		localCacheHelper = new XxlConfLocalCacheHelper(this);
+		localCacheHelper.start();
 
-			logger.info(">>>>>>>>>>> xxl-conf started.");
-        } catch (Exception e) {
-			logger.info(">>>>>>>>>>> xxl-conf start error:{}", e.getMessage(), e);
-        }
+		logger.info(">>>>>>>>>>> xxl-conf started.");
+
     }
 
 	/**
 	 * stop
 	 */
 	public void stop() {
-        try {
-			// 1、XxlConfListenerHelper
-			if (listenerHelper != null) {
-				listenerHelper.stop();
-			}
+		// 1、XxlConfListenerHelper
+		if (listenerHelper != null) {
+			listenerHelper.stop();
+		}
 
-			// 2、XxlConfFileHelper
-			if (fileHelper != null) {
-				fileHelper.stop();
-			}
+		// 2、XxlConfFileHelper
+		if (fileHelper != null) {
+			fileHelper.stop();
+		}
 
-			// 3、XxlConfLocalCacheHelper
-			if (localCacheHelper != null) {
-				localCacheHelper.stop();
-			}
+		// 3、XxlConfLocalCacheHelper
+		if (localCacheHelper != null) {
+			localCacheHelper.stop();
+		}
 
-			logger.info(">>>>>>>>>>> xxl-conf stopped.");
-        } catch (Exception e) {
-			logger.info(">>>>>>>>>>> xxl-conf stop error:{}", e.getMessage(), e);
-        }
+		logger.info(">>>>>>>>>>> xxl-conf stopped.");
     }
 
 }
