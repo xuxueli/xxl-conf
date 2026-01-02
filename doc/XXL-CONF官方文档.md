@@ -233,17 +233,20 @@ XXL-CONF 集群部署时，项目配置文件保持一致即可。
 
 配置项说明
 ```
-## 当前服务唯一标识，默认根据该AppName查询配置，必填；
-xxl.conf.client.appname=xxl-conf-sample
-
-## 当前环境标识，根据该Env隔离配置，必填；
-xxl.conf.client.env=test
-
 ## XXL-CONF 服务端地址，多个逗号分隔，必填；
 xxl.conf.admin.address=http://localhost:8080/xxl-conf-admin
 
 ## XXL-CONF 底层通讯 Token，进行安全验证，必填；
 xxl.conf.admin.accesstoken=defaultaccesstoken
+
+## XXL-CONF 接入服务Appname，默认根据该Appname查询配置，必填；
+xxl.conf.client.appname=xxl-conf-sample
+
+## XXL-CONF 接入服务环境标识，根据该Env隔离配置，必填；
+xxl.conf.client.env=test
+
+## XXL-CONF 配置数据快照文件目录，可选
+xxl.conf.client.filepath=/data/applogs/xxl-conf/
 ```
 
 #### C、设置“XXL-CONF 初始化工厂”
@@ -263,6 +266,7 @@ public SpringXxlConfBootstrap xxlConfBootstrap() {
     xxlConfBootstrap.setEnv(env);
     xxlConfBootstrap.setAddress(address);
     xxlConfBootstrap.setAccesstoken(accesstoken);
+    xxlConfBootstrap.setFilepath(filepath);
 
     return xxlConfBootstrap;
 }
