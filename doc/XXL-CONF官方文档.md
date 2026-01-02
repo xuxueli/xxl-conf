@@ -187,20 +187,30 @@ java -jar xxl-conf-admin.jar --spring.datasource.url=jdbc:mysql://127.0.0.1:3306
 - 下载镜像
 
 ```
-// Docker地址：https://hub.docker.com/r/xuxueli/xxl-conf-admin/
-docker pull xuxueli/xxl-conf-admin
+/**
+* Docker地址：https://hub.docker.com/r/xuxueli/xxl-conf-admin/     
+* 建议指定版本号拉取镜像；
+*/ 
+docker pull xuxueli/xxl-conf-admin:{指定版本}
 ```
 
 - 创建容器并运行
 
 ```
-docker run -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/xxl-conf-admin
-
 /**
-* 如需自定义 mysql 等配置，可通过 "PARAMS" 指定，参数格式 RAMS="--key=value  --key2=value2" ；
-* 配置项参考文件：/xxl-conf/xxl-conf-admin/src/main/resources/application.properties
+* 如需自定义 “项目配置文件” 中配置项，比如 mysql 配置，可通过 "-e PARAMS" 指定，参数格式: -e PARAMS="--key=value --key2=value2"；
+* （配置项参考文件：/xxl-conf/xxl-conf-admin/src/main/resources/application.properties）
+* 如需自定义 “JVM内存参数”，可通过 "-e JAVA_OPTS" 指定，参数格式: -e JAVA_OPTS="-Xmx512m"
+* 如需自定义 “日志文件目录”，可通过 "-e LOG_HOME" 指定，参数格式: -e LOG_HOME=/data/applogs
 */
-docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_conf?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true " -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/xxl-conf-admin
+docker run -d \
+-e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_conf?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai" \
+-p 8080:8080 \
+-v /tmp:/data/applogs \
+--name xxl-conf-admin \
+xuxueli/xxl-conf-admin:{指定版本}
+
+docker run -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/xxl-conf-admin
 ```
 
 #### XXL-CONF 集群：
@@ -609,7 +619,6 @@ XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可�
 - DB宕机：对业务系统无影响，业务系统从配置中心磁盘与Client端镜像文件中获取配置数据；
 - 配置中心宕机 + DB宕机 + Client端镜像文件被删除：此时，只需要手动创建一份配置镜像文件，上传到Client端服务指定位置即可，业务无影响；
 
-
 ### 5.9 跨机房（异地多活）
 得益于配置中心集群关系对等特性，集群各节点提供幂等的配置服务；因此，异地跨机房部署时，只需要请求本机房配置中心即可，实现异地多活；
 
@@ -622,6 +631,29 @@ XXL-CONF拥有极高的容灾性，首先配置数据进行多级存储， 可�
 - 1、配置服务加载更快：配置请求本机房内搞定；
 - 2、配置服务更稳定：配置请求不需要跨机房，不需要考虑复杂的网络情况，更加稳定；
 - 2、容灾性：即使一个机房内配置中心全部宕机，仅会影响到本机房内服务加载数据，其他机房不会受到影响。
+
+### 5.10 Docker Compose 快速部署  
+支持通过 Docker Compose 方式部署并启动 XXL-CONF，包括：数据库、配置与注册中心。
+
+- 第一步：克隆 XXL-CONF
+```
+git clone --branch "$(curl -s https://api.github.com/repos/xuxueli/xxl-conf/releases/latest | jq -r .tag_name)" https://github.com/xuxueli/xxl-conf.git
+```
+
+- 第二步：构建 XXL-CONF
+```
+// 注意：如下命令需要在项目仓库根目录执行
+mvn clean package -Dmaven.test.skip=true
+```
+
+- 第三步：启动 XXL-CONF
+```
+docker compose down
+docker compose up -d
+
+// 其他：如需调整环境配置，如Mysql密码、端口等，可以在docker-compose.yml中修改；另外，如果需要修改Mysql数据持久化目录，可以通过 MYSQL_PATH 变量在启动时快速设置；
+MYSQL_PATH={自定义数据库持久化目录} docker compose up -d
+```
 
 
 ## 六、总体设计（注册中心）
@@ -965,17 +997,33 @@ Header：
 
 ### v2.2.0 Release Notes[2026-01-02]
 - 1、【升级】升级至 SpringBoot4；升级多项maven依赖至较新版本，如 springboot、spring、mybatis、xxl-sso 等；
-- 2、【新增】容灾降级：客户端会周期性同步配置到本地快照文件；在极端情况配置中心不可用时（如配置中心宕机），客户端降级使用本地配置快照文件，保障系统可用性；
-（新增配置项自定义本地文件快照目录 “xxl.conf.client.filepath=/data/applogs/xxl-conf/”）
-- 3、【优化】配置编辑器：升级为CodeMirror，提升交互体验；
-- 4、【优化】配置Diff：支持行维度对比配置数据变更，提升配置安全及追溯效率；
-- 5、【增强】一致性保障强化：强加建设 “启动预热+全量巡检+增量监听” 相结合的一致性保障策略。启动阶段主动初始化全量远程配置至本地，提供周期性配置比对巡检能力以及增量变更感知推动能力，确保配置数据准确性与一致性。
-- 6、【重构】配置监听重构为异步队列处理机制，避免耗时监听逻辑影响系统性能；
-- 7、【优化】组件线程代码重构，提升性能以及可维护性；
-- 8、【优化】增加主题皮肤选项并优化界面交互；
-- 9、【优化】操作体验优化：表格交互调整为单行选中模式；禁用分页循环；优化分页限制文案；
-- 10、【优化】交互优化：仪表板统计信息展示完善；新增配置默认选中当前服务；
-- 11、【优化】重构项目依赖管理，将依赖版本统一到父级pom；
+- 2、【新增】容灾降级：客户端会周期性同步配置到本地快照文件（新增配置项设置本地文件目录“xxl.conf.client.filepath”）；在极端情况配置中心不可用时（如配置中心宕机），客户端降级使用本地配置快照文件，保障系统可用性；
+- 3、【增强】一致性保障强化：强加建设 “启动预热+全量巡检+增量监听” 相结合的一致性保障策略。启动阶段主动初始化全量远程配置至本地，提供周期性配置比对巡检能力以及增量变更感知推动能力，确保配置数据准确性与一致性。
+- 4、【新增】新增 Docker Compose 配置，支持一键配置启动调度中心集群；
+
+<details>
+    <summary>Docker Compose启动步骤：</summary>    
+
+    ```
+    // 1、下载 XXL-CONF
+    git clone --branch "$(curl -s https://api.github.com/repos/xuxueli/xxl-conf/releases/latest | jq -r .tag_name)" https://github.com/xuxueli/xxl-conf.git
+    // 2、构建 XXL-CONF
+    mvn clean package -Dmaven.test.skip=true
+    // 3、启动 XXL-CONF
+    MYSQL_PATH={自定义数据库持久化目录} docker compose up -d
+    // 4、停止 XXL-CONF
+    docker compose down
+    ```
+</details>
+```
+- 5、【优化】配置编辑器：升级为CodeMirror，提升交互体验；
+- 6、【优化】配置Diff：支持行维度对比配置数据变更，提升配置安全及追溯效率；
+- 7、【重构】配置监听重构为异步队列处理机制，避免耗时监听逻辑影响系统性能；
+- 8、【优化】组件线程代码重构，提升性能以及可维护性；
+- 9、【优化】增加主题皮肤选项并优化界面交互；
+- 10、【优化】操作体验优化：表格交互调整为单行选中模式；禁用分页循环；优化分页限制文案；
+- 11、【优化】交互优化：仪表板统计信息展示完善；新增配置默认选中当前服务；
+- 12、【优化】重构项目依赖管理，将依赖版本统一到父级pom；
 
 **备注：**
 - a、该版本新增支持“启动预热”、“容灾降级”等新特性，客户端SDK依赖需要一并升级；

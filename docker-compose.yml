@@ -1,0 +1,56 @@
+# docker-compose version
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: xxl-conf-mysql
+    environment:
+      # 1、数据库密码设置，需要与Admin中配置一致：
+      MYSQL_ROOT_PASSWORD: root_pwd
+      # 2、数据库实例名称，需要与Admin中配置一致；
+      MYSQL_DATABASE: xxl_conf
+    ports:
+      - "3306:3306"
+    volumes:
+      # 说明：仅数据库首次初始化时执行；
+      - ./doc/db/tables_xxl_conf.sql:/docker-entrypoint-initdb.d/tables_xxl_conf.sql:ro
+      # 3、数据库持久化目录位置，建议自定义：
+      - ${MYSQL_PATH:-/Users/admin/program/docker/instance/mysql}/conf:/etc/mysql/conf.d
+      - ${MYSQL_PATH:-/Users/admin/program/docker/instance/mysql}/logs:/var/log/mysql
+      - ${MYSQL_PATH:-/Users/admin/program/docker/instance/mysql}/data:/var/lib/mysql
+    command: >-
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    networks:
+      - xxl-conf-network
+
+  xxl-conf-admin:
+    # 4、本地Build设置，如果期望使用推动DockerHub的镜像，可以注释当前启用的image、build配置，并启用如下设置版本的image配置；
+    #image: xuxueli/xxl-conf-admin:{version}
+    image: xuxueli/xxl-conf-admin:local
+    build:
+      context: ./xxl-conf-admin
+      dockerfile: Dockerfile
+    container_name: xxl-conf-admin
+    environment:
+      # 5、数据库密码设置，需要与上文Mysql中保持一致：
+      PARAMS: >-
+        --spring.datasource.url=jdbc:mysql://mysql:3306/xxl_conf?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+        --spring.datasource.username=root 
+        --spring.datasource.password=root_pwd
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - xxl-conf-network
+
+networks:
+  xxl-conf-network:
+    driver: bridge
