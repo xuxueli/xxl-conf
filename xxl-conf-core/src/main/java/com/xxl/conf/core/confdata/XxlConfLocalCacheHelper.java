@@ -212,7 +212,7 @@ public class XxlConfLocalCacheHelper {
                     // 2.3、queryData, refresh + notify
                     if (MapTool.isNotEmpty(appnameKeyData_changed)) {
                         remoteQueryDataWithRefreshAndNotify(xxlConfBootstrap.getEnv(), appnameKeyData_changed);
-                        logger.info(">>>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper-refreshThread detect changed confData and refresh finish, confData:{}", appnameKeyData_changed);
+                        logger.info(">>>>>>>>>>> xxl-conf, XxlConfLocalCacheHelper-refreshThread detect and refresh changed confData:{}", appnameKeyData_changed);
                     }
                 }
 
