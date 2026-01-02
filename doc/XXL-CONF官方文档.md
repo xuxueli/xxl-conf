@@ -1035,6 +1035,9 @@ alter table xxl_conf_data_log
     add old_value text not null comment '变更前，配置项Value';
 ```
 
+### v2.2.1 Release Notes[ING]
+- 1、【ING】配置同步：配置在Env、Cluster之间，提供快速同步功能；
+
 
 ### TODO LIST
 - 集群管理：新增“集群（Cluster）”维度，针对配置、注册细化维度为 “env-clustor-appkey”，集群间相互隔离；
