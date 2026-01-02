@@ -44,11 +44,11 @@ public class XxlConfLocalCacheHelper {
     /**
      * <pre>
      *     {
-     *         "app01":{                        // Map: "{Appname}" -> Map<{Key}, ConfDataCacheDTO>
-     *             "key01": {                   // Map: {Key} -> ConfDataCacheDTO
-     *                 "key": "key01",              // ConfDataCacheDTO: key
-     *                 "value":"value01",           // ConfDataCacheDTO: value
-     *                 "valueMd5":"md5"             // ConfDataCacheDTO: valueMd5
+     *         "app01":{                        // key   : "{Appname}" ->
+     *             "key01": {                   // value : Map<{Key}, ConfDataCacheDTO>
+     *                 "key": "key01",                  // ConfDataCacheDTO: key
+     *                 "value":"value01",               // ConfDataCacheDTO: value
+     *                 "valueMd5":"md5"                 // ConfDataCacheDTO: valueMd5
      *             },
      *             "key02": {...}
      *         },
