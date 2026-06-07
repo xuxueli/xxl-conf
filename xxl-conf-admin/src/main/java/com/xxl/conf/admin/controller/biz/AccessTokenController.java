@@ -39,7 +39,7 @@ public class AccessTokenController {
 
         model.addAttribute("AccessTokenStatuEnum", AccessTokenStatuEnum.values());
 
-        return "biz/accesstoken";
+        return "business/accesstoken";
     }
 
     /**

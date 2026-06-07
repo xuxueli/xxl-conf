@@ -51,7 +51,7 @@ public class ConfDataController {
         List<Application> applicationList = findPermissionApplication(request, applicationService);
         model.addAttribute("applicationList", applicationList);
 
-        return "biz/confdata";
+        return "business/confdata";
     }
 
     /**

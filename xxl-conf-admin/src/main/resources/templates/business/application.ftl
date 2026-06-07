@@ -2,7 +2,7 @@
 <html>
 <head>
 	<#-- import macro -->
-	<#import "../common/common.macro.ftl" as netCommon>
+	<#import "../framework/common/common.macro.ftl" as netCommon>
 
 	<!-- 1-style start -->
 	<@netCommon.commonStyle />
@@ -22,13 +22,13 @@
 				<div class="row" id="data_filter" >
 					<div class="col-xs-4">
 						<div class="input-group">
-							<span class="input-group-addon">Env（环境标识）</span>
-							<input type="text" class="form-control env" autocomplete="on" >
+							<span class="input-group-addon">AppName</span>
+							<input type="text" class="form-control appname" autocomplete="on" >
 						</div>
 					</div>
 					<div class="col-xs-4">
 						<div class="input-group">
-							<span class="input-group-addon">环境名称</span>
+							<span class="input-group-addon">服务名称</span>
 							<input type="text" class="form-control name" autocomplete="on" >
 						</div>
 					</div>
@@ -67,21 +67,21 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h4 class="modal-title" >${I18n.system_opt_add}环境</h4>
+						<h4 class="modal-title" >${I18n.system_opt_add}服务信息</h4>
 					</div>
 					<div class="modal-body">
 						<form class="form-horizontal form" role="form" >
 							<div class="form-group">
-								<label for="lastname" class="col-sm-2 control-label">Env<font color="red">*</font></label>
-								<div class="col-sm-8"><input type="text" class="form-control" name="env" placeholder="${I18n.system_please_input}Env（环境标识）" maxlength="10" ></div>
+								<label for="lastname" class="col-sm-3 control-label">AppName<font color="red">*</font></label>
+								<div class="col-sm-9"><input type="text" class="form-control" name="appname" placeholder="${I18n.system_please_input}AppName" maxlength="50" ></div>
 							</div>
 							<div class="form-group">
-								<label for="lastname" class="col-sm-2 control-label">环境名称<font color="red">*</font></label>
-								<div class="col-sm-8"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}环境名称" maxlength="20" ></div>
+								<label for="lastname" class="col-sm-3 control-label">服务名称<font color="red">*</font></label>
+								<div class="col-sm-9"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}服务名称" maxlength="20" ></div>
 							</div>
 							<div class="form-group">
-								<label for="lastname" class="col-sm-2 control-label">环境描述<font color="red">*</font></label>
-								<div class="col-sm-8"><textarea type="text" class="form-control" name="desc" placeholder="${I18n.system_please_input}环境描述" maxlength="100" ></textarea></div>
+								<label for="lastname" class="col-sm-3 control-label">服务描述<font color="red">*</font></label>
+								<div class="col-sm-9"><textarea type="text" class="form-control" name="desc" placeholder="${I18n.system_please_input}服务描述" maxlength="100" ></textarea></div>
 							</div>
 
 							<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
@@ -102,21 +102,21 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h4 class="modal-title" >${I18n.system_opt_edit}环境</h4>
+						<h4 class="modal-title" >${I18n.system_opt_edit}服务信息</h4>
 					</div>
 					<div class="modal-body">
 						<form class="form-horizontal form" role="form" >
 							<div class="form-group">
-								<label for="lastname" class="col-sm-2 control-label">Env<font color="red">*</font></label>
-								<div class="col-sm-8"><input type="text" class="form-control" name="env" placeholder="${I18n.system_please_input}Env（环境标识）" maxlength="10" readonly ></div>
+								<label for="lastname" class="col-sm-3 control-label">AppName<font color="red">*</font></label>
+								<div class="col-sm-9"><input type="text" class="form-control" name="appname" placeholder="${I18n.system_please_input}AppName" maxlength="50" readonly ></div>
 							</div>
 							<div class="form-group">
-								<label for="lastname" class="col-sm-2 control-label">环境名称<font color="red">*</font></label>
-								<div class="col-sm-8"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}环境名称" maxlength="20" ></div>
+								<label for="lastname" class="col-sm-3 control-label">服务名称<font color="red">*</font></label>
+								<div class="col-sm-9"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}服务名称" maxlength="20" ></div>
 							</div>
 							<div class="form-group">
-								<label for="lastname" class="col-sm-2 control-label">环境描述<font color="red">*</font></label>
-								<div class="col-sm-8"><textarea type="text" class="form-control" name="desc" placeholder="${I18n.system_please_input}环境描述" maxlength="100" ></textarea></div>
+								<label for="lastname" class="col-sm-3 control-label">服务描述<font color="red">*</font></label>
+								<div class="col-sm-9"><textarea type="text" class="form-control" name="desc" placeholder="${I18n.system_please_input}服务描述" maxlength="100" ></textarea></div>
 							</div>
 
 							<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
@@ -153,10 +153,10 @@
 		 */
 		$.adminTable.initTable({
 			table: '#data_list',
-			url: base_url + "/environment/pageList",
+			url: base_url + "/application/pageList",
 			queryParams: function (params) {
 				var obj = {};
-				obj.env = $('#data_filter .env').val();
+				obj.appname = $('#data_filter .appname').val();
 				obj.name = $('#data_filter .name').val();
 				obj.offset = params.offset;
 				obj.pagesize = params.limit;
@@ -171,19 +171,19 @@
 					align: 'center',
 					valign: 'middle'
 				}, {
-					title: 'Env',
-					field: 'env',
+					title: 'AppName',
+					field: 'appname',
 					width: '30',
 					widthUnit: '%',
 					align: 'left'
 				}, {
-					title: '环境名称',
+					title: '服务名称',
 					field: 'name',
 					width: '30',
 					widthUnit: '%',
 					align: 'left'
 				},{
-					title: '环境描述',
+					title: '服务描述',
 					field: 'desc',
 					width: '35',
 					widthUnit: '%',
@@ -202,24 +202,24 @@
 		 * init delete
 		 */
 		$.adminTable.initDelete({
-			url: base_url + "/environment/delete"
+			url: base_url + "/application/delete"
 		});
 
 		/**
 		 * init add
 		 */
 		// add validator method
-		jQuery.validator.addMethod("envValid", function(value, element) {
-			var valid = /^[a-z][a-z0-9]*$/;
+		jQuery.validator.addMethod("appnameValid", function(value, element) {
+			var valid = /^[a-z][a-z0-9-]*$/;
 			return this.optional(element) || valid.test(value);
-		}, '限制小写字母开头，由小写字母、数字组成' );
+		}, '限制小写字母开头，由小写字母、数字和中划线组成' );
 		$.adminTable.initAdd( {
-			url: base_url + "/environment/insert",
+			url: base_url + "/application/insert",
 			rules : {
-				env : {
+				appname : {
 					required : true,
-					rangelength:[4, 10],
-					envValid: true
+					rangelength:[4, 50],
+					appnameValid: true
 				},
 				name : {
 					required : true,
@@ -231,9 +231,9 @@
 				}
 			},
 			messages : {
-				env : {
+				appname : {
 					required : I18n.system_please_input,
-					rangelength: I18n.system_lengh_limit + "[4-20]"
+					rangelength: I18n.system_lengh_limit + "[4-50]"
 				},
 				name : {
 					required : I18n.system_please_input,
@@ -241,7 +241,7 @@
 				},
 				desc : {
 					required : I18n.system_please_input,
-					rangelength: I18n.system_lengh_limit + "[2-20]"
+					rangelength: I18n.system_lengh_limit + "[4-100]"
 				}
 			},
 			readFormData: function() {
@@ -254,12 +254,12 @@
 		 * init update
 		 */
 		$.adminTable.initUpdate( {
-			url: base_url + "/environment/update",
+			url: base_url + "/application/update",
 			writeFormData: function(row) {
 
 				// base data
 				$("#updateModal [name='id']").val( row.id );
-				$("#updateModal [name='env']").val( row.env );
+				$("#updateModal [name='appname']").val( row.appname );
 				$("#updateModal [name='name']").val( row.name );
 				$("#updateModal [name='desc']").val( row.desc );
 			},
@@ -280,7 +280,7 @@
 				},
 				desc : {
 					required : I18n.system_please_input,
-					rangelength: I18n.system_lengh_limit + "[2-20]"
+					rangelength: I18n.system_lengh_limit + "[4-100]"
 				}
 			},
 			readFormData: function() {

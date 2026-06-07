@@ -2,7 +2,7 @@
 <html>
 <head>
 	<#-- import macro -->
-	<#import "../common/common.macro.ftl" as netCommon>
+	<#import "../framework/common/common.macro.ftl" as netCommon>
 
 	<!-- 1-style start -->
 	<@netCommon.commonStyle />
@@ -20,10 +20,16 @@
 		<div class="box" style="margin-bottom:9px;">
 			<div class="box-body">
 				<div class="row" id="data_filter" >
-					<div class="col-xs-6">
+					<div class="col-xs-4">
 						<div class="input-group">
-							<span class="input-group-addon">AccessToken</span>
-							<input type="text" class="form-control accessToken" autocomplete="on" >
+							<span class="input-group-addon">Env（环境标识）</span>
+							<input type="text" class="form-control env" autocomplete="on" >
+						</div>
+					</div>
+					<div class="col-xs-4">
+						<div class="input-group">
+							<span class="input-group-addon">环境名称</span>
+							<input type="text" class="form-control name" autocomplete="on" >
 						</div>
 					</div>
 					<div class="col-xs-1">
@@ -61,23 +67,21 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h4 class="modal-title" >${I18n.system_opt_add}AccessToken</h4>
+						<h4 class="modal-title" >${I18n.system_opt_add}环境</h4>
 					</div>
 					<div class="modal-body">
 						<form class="form-horizontal form" role="form" >
 							<div class="form-group">
-								<label for="lastname" class="col-sm-3 control-label">AccessToken<font color="black">*</font></label>
-								<div class="col-sm-9"><input type="text" class="form-control" name="accessToken" placeholder="${I18n.system_please_input}AccessToken" maxlength="50" ></div>
+								<label for="lastname" class="col-sm-2 control-label">Env<font color="red">*</font></label>
+								<div class="col-sm-8"><input type="text" class="form-control" name="env" placeholder="${I18n.system_please_input}Env（环境标识）" maxlength="10" ></div>
 							</div>
 							<div class="form-group">
-								<label for="lastname" class="col-sm-3 control-label">生效状态<font color="red">*</font></label>
-								<div class="col-sm-9">
-									<select class="form-control" name="status" >
-										<#list AccessTokenStatuEnum as item>
-											<option value="${item.value}" >${item.desc}</option>
-										</#list>
-									</select>
-								</div>
+								<label for="lastname" class="col-sm-2 control-label">环境名称<font color="red">*</font></label>
+								<div class="col-sm-8"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}环境名称" maxlength="20" ></div>
+							</div>
+							<div class="form-group">
+								<label for="lastname" class="col-sm-2 control-label">环境描述<font color="red">*</font></label>
+								<div class="col-sm-8"><textarea type="text" class="form-control" name="desc" placeholder="${I18n.system_please_input}环境描述" maxlength="100" ></textarea></div>
 							</div>
 
 							<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
@@ -98,23 +102,21 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h4 class="modal-title" >${I18n.system_opt_edit}AccessToken</h4>
+						<h4 class="modal-title" >${I18n.system_opt_edit}环境</h4>
 					</div>
 					<div class="modal-body">
 						<form class="form-horizontal form" role="form" >
 							<div class="form-group">
-								<label for="lastname" class="col-sm-3 control-label">AccessToken<font color="black">*</font></label>
-								<div class="col-sm-9"><input type="text" class="form-control" name="accessToken" placeholder="${I18n.system_please_input}AccessToken" maxlength="50" readonly ></div>
+								<label for="lastname" class="col-sm-2 control-label">Env<font color="red">*</font></label>
+								<div class="col-sm-8"><input type="text" class="form-control" name="env" placeholder="${I18n.system_please_input}Env（环境标识）" maxlength="10" readonly ></div>
 							</div>
 							<div class="form-group">
-								<label for="lastname" class="col-sm-3 control-label">生效状态<font color="red">*</font></label>
-								<div class="col-sm-9">
-									<select class="form-control" name="status" >
-										<#list AccessTokenStatuEnum as item>
-											<option value="${item.value}" >${item.desc}</option>
-										</#list>
-									</select>
-								</div>
+								<label for="lastname" class="col-sm-2 control-label">环境名称<font color="red">*</font></label>
+								<div class="col-sm-8"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}环境名称" maxlength="20" ></div>
+							</div>
+							<div class="form-group">
+								<label for="lastname" class="col-sm-2 control-label">环境描述<font color="red">*</font></label>
+								<div class="col-sm-8"><textarea type="text" class="form-control" name="desc" placeholder="${I18n.system_please_input}环境描述" maxlength="100" ></textarea></div>
 							</div>
 
 							<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
@@ -151,10 +153,11 @@
 		 */
 		$.adminTable.initTable({
 			table: '#data_list',
-			url: base_url + "/accesstoken/pageList",
+			url: base_url + "/environment/pageList",
 			queryParams: function (params) {
 				var obj = {};
-				obj.accessToken = $('#data_filter .accessToken').val();
+				obj.env = $('#data_filter .env').val();
+				obj.name = $('#data_filter .name').val();
 				obj.offset = params.offset;
 				obj.pagesize = params.limit;
 				return obj;
@@ -168,32 +171,29 @@
 					align: 'center',
 					valign: 'middle'
 				}, {
-					title: 'AccessToken',
-					field: 'accessToken',
-					width: '40',
-					widthUnit: '%',
-					align: 'left'
-				},{
-					title: '生效状态',
-					field: 'status',
-					width: '20',
-					widthUnit: '%',
-					align: 'left',
-					formatter: function(value, row, index) {
-						var ret = value;
-						$("#addModal [name='status']").children("option").each(function() {
-							if ($(this).val() === row.status+"") {
-								ret = $(this).html();
-							}
-						});
-						return ret;
-					}
-				}, {
-					title: '创建时间',
-					field: 'addTime',
+					title: 'Env',
+					field: 'env',
 					width: '30',
 					widthUnit: '%',
 					align: 'left'
+				}, {
+					title: '环境名称',
+					field: 'name',
+					width: '30',
+					widthUnit: '%',
+					align: 'left'
+				},{
+					title: '环境描述',
+					field: 'desc',
+					width: '35',
+					widthUnit: '%',
+					align: 'left',
+					formatter: function(value, row, index) {
+						var result = value.length<20
+								?value
+								:value.substring(0, 20) + '...';
+						return '<span title="'+ value +'">'+ result +'</span>';
+					}
 				}
 			]
 		});
@@ -202,30 +202,46 @@
 		 * init delete
 		 */
 		$.adminTable.initDelete({
-			url: base_url + "/accesstoken/delete"
+			url: base_url + "/environment/delete"
 		});
 
 		/**
 		 * init add
 		 */
 		// add validator method
-		jQuery.validator.addMethod("accessTokenValid", function(value, element) {
+		jQuery.validator.addMethod("envValid", function(value, element) {
 			var valid = /^[a-z][a-z0-9]*$/;
 			return this.optional(element) || valid.test(value);
 		}, '限制小写字母开头，由小写字母、数字组成' );
 		$.adminTable.initAdd( {
-			url: base_url + "/accesstoken/insert",
+			url: base_url + "/environment/insert",
 			rules : {
-				accessToken : {
+				env : {
 					required : true,
-					rangelength:[4, 50],
-					accessTokenValid: true
+					rangelength:[4, 10],
+					envValid: true
+				},
+				name : {
+					required : true,
+					rangelength:[4, 20]
+				},
+				desc : {
+					required : true,
+					rangelength:[4, 100]
 				}
 			},
 			messages : {
-				accessToken : {
+				env : {
 					required : I18n.system_please_input,
-					rangelength: I18n.system_lengh_limit + "[4-50]"
+					rangelength: I18n.system_lengh_limit + "[4-20]"
+				},
+				name : {
+					required : I18n.system_please_input,
+					rangelength: I18n.system_lengh_limit + "[4-20]"
+				},
+				desc : {
+					required : I18n.system_please_input,
+					rangelength: I18n.system_lengh_limit + "[2-20]"
 				}
 			},
 			readFormData: function() {
@@ -238,25 +254,33 @@
 		 * init update
 		 */
 		$.adminTable.initUpdate( {
-			url: base_url + "/accesstoken/update",
+			url: base_url + "/environment/update",
 			writeFormData: function(row) {
 
 				// base data
 				$("#updateModal [name='id']").val( row.id );
-				$("#updateModal [name='status']").val( row.status );
-				$("#updateModal [name='accessToken']").val( row.accessToken );
+				$("#updateModal [name='env']").val( row.env );
+				$("#updateModal [name='name']").val( row.name );
+				$("#updateModal [name='desc']").val( row.desc );
 			},
 			rules : {
-				accessToken : {
-					required : false,
-					rangelength:[4, 50],
-					accessTokenValid: true
+				name : {
+					required : true,
+					rangelength:[4, 20]
+				},
+				desc : {
+					required : true,
+					rangelength:[4, 100]
 				}
 			},
 			messages : {
-				accessToken : {
+				name : {
 					required : I18n.system_please_input,
-					rangelength: I18n.system_lengh_limit + "[4-50]"
+					rangelength: I18n.system_lengh_limit + "[4-20]"
+				},
+				desc : {
+					required : I18n.system_please_input,
+					rangelength: I18n.system_lengh_limit + "[2-20]"
 				}
 			},
 			readFormData: function() {

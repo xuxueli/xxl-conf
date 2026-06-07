@@ -48,7 +48,7 @@ public class LoginController {
 			modelAndView.setView(new RedirectView("/",true,false));
 			return modelAndView;
 		}
-		return new ModelAndView("base/login");
+		return new ModelAndView("framework/base/login");
 	}
 
 	@RequestMapping(value="/doLogin", method=RequestMethod.POST)

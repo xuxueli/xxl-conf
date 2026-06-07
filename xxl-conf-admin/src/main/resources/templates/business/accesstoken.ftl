@@ -2,7 +2,7 @@
 <html>
 <head>
 	<#-- import macro -->
-	<#import "../common/common.macro.ftl" as netCommon>
+	<#import "../framework/common/common.macro.ftl" as netCommon>
 
 	<!-- 1-style start -->
 	<@netCommon.commonStyle />
@@ -20,16 +20,10 @@
 		<div class="box" style="margin-bottom:9px;">
 			<div class="box-body">
 				<div class="row" id="data_filter" >
-					<div class="col-xs-4">
+					<div class="col-xs-6">
 						<div class="input-group">
-							<span class="input-group-addon">AppName</span>
-							<input type="text" class="form-control appname" autocomplete="on" >
-						</div>
-					</div>
-					<div class="col-xs-4">
-						<div class="input-group">
-							<span class="input-group-addon">服务名称</span>
-							<input type="text" class="form-control name" autocomplete="on" >
+							<span class="input-group-addon">AccessToken</span>
+							<input type="text" class="form-control accessToken" autocomplete="on" >
 						</div>
 					</div>
 					<div class="col-xs-1">
@@ -67,21 +61,23 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h4 class="modal-title" >${I18n.system_opt_add}服务信息</h4>
+						<h4 class="modal-title" >${I18n.system_opt_add}AccessToken</h4>
 					</div>
 					<div class="modal-body">
 						<form class="form-horizontal form" role="form" >
 							<div class="form-group">
-								<label for="lastname" class="col-sm-3 control-label">AppName<font color="red">*</font></label>
-								<div class="col-sm-9"><input type="text" class="form-control" name="appname" placeholder="${I18n.system_please_input}AppName" maxlength="50" ></div>
+								<label for="lastname" class="col-sm-3 control-label">AccessToken<font color="black">*</font></label>
+								<div class="col-sm-9"><input type="text" class="form-control" name="accessToken" placeholder="${I18n.system_please_input}AccessToken" maxlength="50" ></div>
 							</div>
 							<div class="form-group">
-								<label for="lastname" class="col-sm-3 control-label">服务名称<font color="red">*</font></label>
-								<div class="col-sm-9"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}服务名称" maxlength="20" ></div>
-							</div>
-							<div class="form-group">
-								<label for="lastname" class="col-sm-3 control-label">服务描述<font color="red">*</font></label>
-								<div class="col-sm-9"><textarea type="text" class="form-control" name="desc" placeholder="${I18n.system_please_input}服务描述" maxlength="100" ></textarea></div>
+								<label for="lastname" class="col-sm-3 control-label">生效状态<font color="red">*</font></label>
+								<div class="col-sm-9">
+									<select class="form-control" name="status" >
+										<#list AccessTokenStatuEnum as item>
+											<option value="${item.value}" >${item.desc}</option>
+										</#list>
+									</select>
+								</div>
 							</div>
 
 							<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
@@ -102,21 +98,23 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h4 class="modal-title" >${I18n.system_opt_edit}服务信息</h4>
+						<h4 class="modal-title" >${I18n.system_opt_edit}AccessToken</h4>
 					</div>
 					<div class="modal-body">
 						<form class="form-horizontal form" role="form" >
 							<div class="form-group">
-								<label for="lastname" class="col-sm-3 control-label">AppName<font color="red">*</font></label>
-								<div class="col-sm-9"><input type="text" class="form-control" name="appname" placeholder="${I18n.system_please_input}AppName" maxlength="50" readonly ></div>
+								<label for="lastname" class="col-sm-3 control-label">AccessToken<font color="black">*</font></label>
+								<div class="col-sm-9"><input type="text" class="form-control" name="accessToken" placeholder="${I18n.system_please_input}AccessToken" maxlength="50" readonly ></div>
 							</div>
 							<div class="form-group">
-								<label for="lastname" class="col-sm-3 control-label">服务名称<font color="red">*</font></label>
-								<div class="col-sm-9"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}服务名称" maxlength="20" ></div>
-							</div>
-							<div class="form-group">
-								<label for="lastname" class="col-sm-3 control-label">服务描述<font color="red">*</font></label>
-								<div class="col-sm-9"><textarea type="text" class="form-control" name="desc" placeholder="${I18n.system_please_input}服务描述" maxlength="100" ></textarea></div>
+								<label for="lastname" class="col-sm-3 control-label">生效状态<font color="red">*</font></label>
+								<div class="col-sm-9">
+									<select class="form-control" name="status" >
+										<#list AccessTokenStatuEnum as item>
+											<option value="${item.value}" >${item.desc}</option>
+										</#list>
+									</select>
+								</div>
 							</div>
 
 							<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
@@ -153,11 +151,10 @@
 		 */
 		$.adminTable.initTable({
 			table: '#data_list',
-			url: base_url + "/application/pageList",
+			url: base_url + "/accesstoken/pageList",
 			queryParams: function (params) {
 				var obj = {};
-				obj.appname = $('#data_filter .appname').val();
-				obj.name = $('#data_filter .name').val();
+				obj.accessToken = $('#data_filter .accessToken').val();
 				obj.offset = params.offset;
 				obj.pagesize = params.limit;
 				return obj;
@@ -171,29 +168,32 @@
 					align: 'center',
 					valign: 'middle'
 				}, {
-					title: 'AppName',
-					field: 'appname',
-					width: '30',
-					widthUnit: '%',
-					align: 'left'
-				}, {
-					title: '服务名称',
-					field: 'name',
-					width: '30',
+					title: 'AccessToken',
+					field: 'accessToken',
+					width: '40',
 					widthUnit: '%',
 					align: 'left'
 				},{
-					title: '服务描述',
-					field: 'desc',
-					width: '35',
+					title: '生效状态',
+					field: 'status',
+					width: '20',
 					widthUnit: '%',
 					align: 'left',
 					formatter: function(value, row, index) {
-						var result = value.length<20
-								?value
-								:value.substring(0, 20) + '...';
-						return '<span title="'+ value +'">'+ result +'</span>';
+						var ret = value;
+						$("#addModal [name='status']").children("option").each(function() {
+							if ($(this).val() === row.status+"") {
+								ret = $(this).html();
+							}
+						});
+						return ret;
 					}
+				}, {
+					title: '创建时间',
+					field: 'addTime',
+					width: '30',
+					widthUnit: '%',
+					align: 'left'
 				}
 			]
 		});
@@ -202,46 +202,30 @@
 		 * init delete
 		 */
 		$.adminTable.initDelete({
-			url: base_url + "/application/delete"
+			url: base_url + "/accesstoken/delete"
 		});
 
 		/**
 		 * init add
 		 */
 		// add validator method
-		jQuery.validator.addMethod("appnameValid", function(value, element) {
-			var valid = /^[a-z][a-z0-9-]*$/;
+		jQuery.validator.addMethod("accessTokenValid", function(value, element) {
+			var valid = /^[a-z][a-z0-9]*$/;
 			return this.optional(element) || valid.test(value);
-		}, '限制小写字母开头，由小写字母、数字和中划线组成' );
+		}, '限制小写字母开头，由小写字母、数字组成' );
 		$.adminTable.initAdd( {
-			url: base_url + "/application/insert",
+			url: base_url + "/accesstoken/insert",
 			rules : {
-				appname : {
+				accessToken : {
 					required : true,
 					rangelength:[4, 50],
-					appnameValid: true
-				},
-				name : {
-					required : true,
-					rangelength:[4, 20]
-				},
-				desc : {
-					required : true,
-					rangelength:[4, 100]
+					accessTokenValid: true
 				}
 			},
 			messages : {
-				appname : {
+				accessToken : {
 					required : I18n.system_please_input,
 					rangelength: I18n.system_lengh_limit + "[4-50]"
-				},
-				name : {
-					required : I18n.system_please_input,
-					rangelength: I18n.system_lengh_limit + "[4-20]"
-				},
-				desc : {
-					required : I18n.system_please_input,
-					rangelength: I18n.system_lengh_limit + "[4-100]"
 				}
 			},
 			readFormData: function() {
@@ -254,33 +238,25 @@
 		 * init update
 		 */
 		$.adminTable.initUpdate( {
-			url: base_url + "/application/update",
+			url: base_url + "/accesstoken/update",
 			writeFormData: function(row) {
 
 				// base data
 				$("#updateModal [name='id']").val( row.id );
-				$("#updateModal [name='appname']").val( row.appname );
-				$("#updateModal [name='name']").val( row.name );
-				$("#updateModal [name='desc']").val( row.desc );
+				$("#updateModal [name='status']").val( row.status );
+				$("#updateModal [name='accessToken']").val( row.accessToken );
 			},
 			rules : {
-				name : {
-					required : true,
-					rangelength:[4, 20]
-				},
-				desc : {
-					required : true,
-					rangelength:[4, 100]
+				accessToken : {
+					required : false,
+					rangelength:[4, 50],
+					accessTokenValid: true
 				}
 			},
 			messages : {
-				name : {
+				accessToken : {
 					required : I18n.system_please_input,
-					rangelength: I18n.system_lengh_limit + "[4-20]"
-				},
-				desc : {
-					required : I18n.system_please_input,
-					rangelength: I18n.system_lengh_limit + "[4-100]"
+					rangelength: I18n.system_lengh_limit + "[4-50]"
 				}
 			},
 			readFormData: function() {

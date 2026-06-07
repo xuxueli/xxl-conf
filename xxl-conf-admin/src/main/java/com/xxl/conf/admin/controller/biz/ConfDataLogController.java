@@ -63,7 +63,7 @@ public class ConfDataLogController {
             throw new RuntimeException(I18nUtil.getString("system_permission_limit"));
         }
 
-        return "biz/confdatalog";
+        return "business/confdatalog";
     }
 
     /**

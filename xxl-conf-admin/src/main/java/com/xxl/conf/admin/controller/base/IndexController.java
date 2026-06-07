@@ -65,7 +65,7 @@ public class IndexController {
 		}
 		model.addAttribute(XXL_CONF_CURRENT_ENV, currentEnv);
 
-		return "base/index";
+		return "framework/base/index";
 	}
 
 	/**
@@ -115,13 +115,13 @@ public class IndexController {
 		model.addAttribute("appCount", appCount);
 		model.addAttribute("instanceCount", instanceCount);
 
-		return "base/dashboard";
+		return "framework/base/dashboard";
 	}
 
 	@RequestMapping("/help")
 	@XxlSso
 	public String help() {
-		return "base/help";
+		return "framework/base/help";
 	}
 
 	@RequestMapping(value = "/errorpage")
@@ -131,7 +131,7 @@ public class IndexController {
 		String exceptionMsg = "HTTP Status Code: "+response.getStatus();
 
 		mv.addObject("exceptionMsg", exceptionMsg);
-		mv.setViewName("common/common.errorpage");
+		mv.setViewName("framework/common/common.errorpage");
 		return mv;
 	}
 

@@ -34,7 +34,7 @@ public class EnvironmentController {
     @RequestMapping
     @XxlSso(role = Consts.ADMIN_ROLE)
     public String index(Model model) {
-        return "biz/environment";
+        return "business/environment";
     }
 
     /**

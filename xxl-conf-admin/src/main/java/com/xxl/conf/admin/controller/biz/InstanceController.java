@@ -55,7 +55,7 @@ public class InstanceController {
         List<Application> applicationList = applicationService.findAll().getData();
         model.addAttribute("applicationList", applicationList);
 
-        return "biz/instance";
+        return "business/instance";
     }
 
     /**

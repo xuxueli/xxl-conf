@@ -34,7 +34,7 @@ public class ApplicationController {
     @RequestMapping
     @XxlSso
     public String index(Model model) {
-        return "biz/application";
+        return "business/application";
     }
 
     /**

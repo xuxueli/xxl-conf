@@ -48,7 +48,7 @@ public class UserController {
         List<Application> applicationList = appResp!=null?appResp.getData():null;
         model.addAttribute("applicationList", applicationList);
 
-        return "biz/user";
+        return "business/user";
     }
 
     @RequestMapping("/pageList")
