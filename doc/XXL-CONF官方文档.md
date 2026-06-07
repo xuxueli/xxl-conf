@@ -244,7 +244,7 @@ XXL-CONF 集群部署时，项目配置文件保持一致即可。
 配置项说明
 ```
 ## XXL-CONF 服务端地址，多个逗号分隔，必填；
-xxl.conf.admin.address=http://localhost:8080/xxl-conf-admin
+xxl.conf.admin.address=http://localhost:8080
 
 ## XXL-CONF 底层通讯 Token，进行安全验证，必填；
 xxl.conf.admin.accesstoken=defaultaccesstoken
@@ -1035,7 +1035,13 @@ alter table xxl_conf_data_log
     add old_value text not null comment '变更前，配置项Value';
 ```
 
-### v2.2.1 Release Notes[ING]
+### v2.2.1 Release Notes[2026-06-07]
+- 1、【调整】配置中心移除context-path前缀配置项，简化客户端配置；
+（存量客户端升级需要注意：升级后需要将配置项 "xxl.conf.admin.address" 中的 context-path 前缀移除）
+- 2、【升级】升级多项依赖至较新版本；
+
+
+### v2.2.2 Release Notes[ING]
 - 1、【ING】配置同步：配置在Env、Cluster之间，提供快速同步功能；
 
 
