@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xxl.conf.admin.mapper.ConfDataLogMapper">
+<mapper namespace="com.xxl.conf.admin.business.mapper.ConfDataLogMapper">
 
-    <resultMap id="ConfDataLog" type="com.xxl.conf.admin.model.entity.ConfDataLog" >
+    <resultMap id="ConfDataLog" type="com.xxl.conf.admin.business.model.entity.ConfDataLog" >
         <result column="id" property="id" />
         <result column="data_id" property="dataId" />
         <result column="old_value" property="oldValue" />

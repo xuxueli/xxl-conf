@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xxl.conf.admin.mapper.AccessTokenMapper">
+<mapper namespace="com.xxl.conf.admin.business.mapper.AccessTokenMapper">
 
-    <resultMap id="AccessToken" type="com.xxl.conf.admin.model.entity.AccessToken" >
+    <resultMap id="AccessToken" type="com.xxl.conf.admin.business.model.entity.AccessToken" >
         <result column="id" property="id" />
         <result column="access_token" property="accessToken" />
         <result column="status" property="status" />

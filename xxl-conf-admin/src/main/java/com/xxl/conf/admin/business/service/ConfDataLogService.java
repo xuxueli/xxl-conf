@@ -1,0 +1,48 @@
+package com.xxl.conf.admin.business.service;
+
+import java.util.List;
+
+import com.xxl.conf.admin.business.model.dto.ConfDataLogDTO;
+import com.xxl.conf.admin.business.model.entity.ConfDataLog;
+import com.xxl.tool.response.Response;
+import com.xxl.tool.response.PageModel;
+
+/**
+* ConfDataLog Service
+*
+* Created by xuxueli on '2025-01-11 23:08:28'.
+*/
+public interface ConfDataLogService {
+
+    /**
+    * 新增
+    */
+    public Response<String> insert(ConfDataLog confDataLog);
+
+    /**
+    * 删除
+    */
+    public Response<String> delete(List<Long> ids);
+
+    /**
+    * 更新
+    */
+    /*public Response<String> update(ConfDataLog confDataLog);*/
+
+    /**
+     * 回顾配置
+     */
+    public Response<String> rollback(String optUserName, long dataLogId);
+
+    /**
+    * Load查询
+    */
+    public Response<ConfDataLog> load(Long id);
+
+    /**
+    * 分页查询
+    */
+    public PageModel<ConfDataLogDTO> pageList(int offset, int pagesize, long dataId);
+
+
+}

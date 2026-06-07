@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xxl.conf.admin.mapper.EnvironmentMapper">
+<mapper namespace="com.xxl.conf.admin.business.mapper.EnvironmentMapper">
 
-    <resultMap id="Environment" type="com.xxl.conf.admin.model.entity.Environment" >
+    <resultMap id="Environment" type="com.xxl.conf.admin.business.model.entity.Environment" >
         <result column="id" property="id" />
         <result column="env" property="env" />
         <result column="name" property="name" />

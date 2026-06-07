@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xxl.conf.admin.mapper.InstanceMapper">
+<mapper namespace="com.xxl.conf.admin.business.mapper.InstanceMapper">
 
-    <resultMap id="Instance" type="com.xxl.conf.admin.model.entity.Instance" >
+    <resultMap id="Instance" type="com.xxl.conf.admin.business.model.entity.Instance" >
         <result column="id" property="id" />
         <result column="env" property="env" />
         <result column="appname" property="appname" />
