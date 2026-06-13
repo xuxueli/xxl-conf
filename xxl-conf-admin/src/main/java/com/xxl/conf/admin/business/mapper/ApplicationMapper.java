@@ -60,4 +60,10 @@ public interface ApplicationMapper {
      */
     public List<Application> findAll();
 
+    /**
+     * 新增，忽略已存在的
+     * @return
+     */
+    public int insertIgnore(@Param("applicationList") List<Application> applicationList);
+
 }

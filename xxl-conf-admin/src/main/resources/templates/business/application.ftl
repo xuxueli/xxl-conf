@@ -77,7 +77,7 @@
 							</div>
 							<div class="form-group">
 								<label for="lastname" class="col-sm-3 control-label">服务名称<font color="red">*</font></label>
-								<div class="col-sm-9"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}服务名称" maxlength="20" ></div>
+								<div class="col-sm-9"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}服务名称" maxlength="50" ></div>
 							</div>
 							<div class="form-group">
 								<label for="lastname" class="col-sm-3 control-label">服务描述<font color="red">*</font></label>
@@ -112,7 +112,7 @@
 							</div>
 							<div class="form-group">
 								<label for="lastname" class="col-sm-3 control-label">服务名称<font color="red">*</font></label>
-								<div class="col-sm-9"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}服务名称" maxlength="20" ></div>
+								<div class="col-sm-9"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}服务名称" maxlength="50" ></div>
 							</div>
 							<div class="form-group">
 								<label for="lastname" class="col-sm-3 control-label">服务描述<font color="red">*</font></label>
@@ -223,7 +223,7 @@
 				},
 				name : {
 					required : true,
-					rangelength:[4, 20]
+					rangelength:[4, 50]
 				},
 				desc : {
 					required : true,
@@ -237,7 +237,7 @@
 				},
 				name : {
 					required : I18n.system_please_input,
-					rangelength: I18n.system_lengh_limit + "[4-20]"
+					rangelength: I18n.system_lengh_limit + "[4-50]"
 				},
 				desc : {
 					required : I18n.system_please_input,
@@ -266,7 +266,7 @@
 			rules : {
 				name : {
 					required : true,
-					rangelength:[4, 20]
+					rangelength:[4, 50]
 				},
 				desc : {
 					required : true,
@@ -276,7 +276,7 @@
 			messages : {
 				name : {
 					required : I18n.system_please_input,
-					rangelength: I18n.system_lengh_limit + "[4-20]"
+					rangelength: I18n.system_lengh_limit + "[4-50]"
 				},
 				desc : {
 					required : I18n.system_please_input,

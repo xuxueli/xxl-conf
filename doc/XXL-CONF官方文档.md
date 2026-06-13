@@ -1044,7 +1044,9 @@ alter table xxl_conf_data_log
 
 
 ### v2.2.2 Release Notes[ING]
-- 1、【ING】配置同步：配置在Env、Cluster之间，提供快速同步功能；
+- 1、【新增】Application自动注册，支持从注册中心自动感知并生成新服务；
+- 2、【优化】Application名称字段长度调整到50，支持更长的应用名称；
+- 3、【ING】配置同步：配置在Env、Cluster之间，提供快速同步功能；
 
 
 ### TODO LIST

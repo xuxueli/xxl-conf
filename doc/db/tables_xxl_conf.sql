@@ -69,7 +69,7 @@ CREATE TABLE `xxl_conf_message` (
 CREATE TABLE `xxl_conf_application` (
     `id`            int(11)         NOT NULL AUTO_INCREMENT,
     `appname`       varchar(50)     NOT NULL COMMENT 'AppName（服务唯一标识）',
-    `name`          varchar(20)     NOT NULL COMMENT '服务名称',
+    `name`          varchar(50)     NOT NULL COMMENT '服务名称',
     `desc`          varchar(100)    NOT NULL COMMENT '服务描述',
     `add_time`      datetime        NOT NULL COMMENT '新增时间',
     `update_time`   datetime        NOT NULL COMMENT '更新时间',

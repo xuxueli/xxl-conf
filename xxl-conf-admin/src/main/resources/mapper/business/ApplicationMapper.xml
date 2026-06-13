@@ -100,4 +100,24 @@
         ORDER BY t.`appname` ASC
     </select>
 
+    <insert id="insertIgnore" parameterType="java.util.Map">
+        INSERT IGNORE INTO xxl_conf_application (
+            `appname`,
+            `name`,
+            `desc`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES
+        <foreach collection="applicationList" item="item" separator=",">
+        (
+            #{item.appname},
+            #{item.name},
+            #{item.desc},
+            NOW(),
+            NOW()
+        )
+        </foreach>
+    </insert>
+
 </mapper>

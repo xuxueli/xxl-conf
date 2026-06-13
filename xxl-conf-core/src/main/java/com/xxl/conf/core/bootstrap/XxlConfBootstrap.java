@@ -98,7 +98,7 @@ public class XxlConfBootstrap {
 		// broker client
 		List<String> addressList = Arrays.stream(address.split(",")).filter(StringTool::isNotBlank).toList();
 		for (String url : addressList) {
-			String finalUrl = url + "/openapi/confdata";
+			String finalUrl = url + "/openapi/confdata";	// todo, fix url suffix
 			clientList.add(HttpTool.createClient()
 					.url(finalUrl)
 					.timeout(3 * 1000)

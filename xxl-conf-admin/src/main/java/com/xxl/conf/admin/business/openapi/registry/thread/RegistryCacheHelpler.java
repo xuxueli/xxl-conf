@@ -1,5 +1,6 @@
 package com.xxl.conf.admin.business.openapi.registry.thread;
 
+import com.xxl.conf.admin.business.model.entity.Application;
 import com.xxl.conf.admin.framework.constant.enums.InstanceRegisterModelEnum;
 import com.xxl.conf.admin.business.model.dto.MessageForRegistryDTO;
 import com.xxl.conf.admin.business.model.entity.Instance;
@@ -103,6 +104,7 @@ public class RegistryCacheHelpler {
      *          - 1、范围：DB中全量注册数据，同步至 registryCacheStore；整个Map覆盖更新；
      *          - 2、间隔：30s；
      *          - 3、过滤：过滤掉无效数据；
+     *          - 4、服务初始化：AppName 初始化；
      *
      *
      *  增量更新：监听广播消息，增量更新；
@@ -126,6 +128,7 @@ public class RegistryCacheHelpler {
                 // 1、init new map
                 ConcurrentMap<String, List<InstanceCacheDTO>> registryCacheStoreNew = new ConcurrentHashMap<>();
                 ConcurrentMap<String, String> registryCacheMd5StoreNew = new ConcurrentHashMap<>();
+                Set<String> appNameSet = new HashSet<>();
 
                 // 2、load all env-appname
                 List<Instance> envAndAppNameList = RegistryBootstrap.getInstance().getInstanceMapper().queryEnvAndAppName();
@@ -145,6 +148,9 @@ public class RegistryCacheHelpler {
                         // set data
                         registryCacheStoreNew.put(envAppNameKey, cacheValue);
                         registryCacheMd5StoreNew.put(envAppNameKey, cacheValueMd5);      // only match md5, speed up match process
+
+                        // collect appName
+                        appNameSet.add(instance.getAppname());
                     }
                 }
 
@@ -171,6 +177,18 @@ public class RegistryCacheHelpler {
                 if (!warmUp) {
                     warmUp = true;
                     logger.info(">>>>>>>>>>> xxl-conf, RegistryCacheHelpler-registryCacheThread warmUp finish");
+                }
+
+                // 6、init application: from new registry data
+                if (CollectionTool.isNotEmpty(appNameSet)) {
+                    List<Application> newApps = appNameSet.stream().map(appName -> {
+                        Application application = new Application();
+                        application.setAppname(appName);
+                        application.setName(appName);
+                        application.setDesc("Automatically created by the client system.");
+                        return application;
+                    }).toList();
+                    RegistryBootstrap.getInstance().getApplicationMapper().insertIgnore(newApps);
                 }
 
             }

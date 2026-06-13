@@ -16,7 +16,7 @@
 	<!-- 2-biz start -->
 	<div class="login-box">
 		<div class="login-logo">
-			<a>XXL<b>CONF</b></a>
+			<a><b>XXL-CONF</b></a>
 		</div>
 		<form id="loginForm" method="post" >
 			<div class="login-box-body">
