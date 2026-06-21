@@ -150,8 +150,8 @@
 <script src="${request.contextPath}/static/adminlte/bower_components/select2/select2.min.js"></script>
 <script src="${request.contextPath}/static/plugins/jsdiff/diff.js"></script>
 <#-- admin table -->
-<script src="${request.contextPath}/static/biz/common/admin.table.js"></script>
-<script src="${request.contextPath}/static/biz/common/admin.util.js"></script>
+<script src="${request.contextPath}/static/framework/admin.table.js"></script>
+<script src="${request.contextPath}/static/framework/admin.util.js"></script>
 <script>
 	$(function() {
 

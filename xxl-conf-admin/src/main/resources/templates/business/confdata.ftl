@@ -213,8 +213,8 @@
 <script src="${request.contextPath}/static/plugins/codemirror/addon/hint/show-hint.js"></script>
 <script src="${request.contextPath}/static/plugins/codemirror/addon/hint/anyword-hint.js"></script>
 <#-- admin table -->
-<script src="${request.contextPath}/static/biz/common/admin.table.js"></script>
-<script src="${request.contextPath}/static/biz/common/admin.util.js"></script>
+<script src="${request.contextPath}/static/framework/admin.table.js"></script>
+<script src="${request.contextPath}/static/framework/admin.util.js"></script>
 <script>
 	$(function() {
 
